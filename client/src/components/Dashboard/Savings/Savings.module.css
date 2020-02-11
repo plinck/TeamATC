@@ -1,0 +1,16 @@
+
+.wrapper {
+    position: relative;
+    max-height: 250px;
+    /* margin-top: -35%; */
+}
+
+.overlay {
+    width: 100%;
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 50%;
+    bottom: 0;
+    margin: auto
+}

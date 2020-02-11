@@ -1,0 +1,43 @@
+header {
+    min-height: 70vh;
+    background: linear-gradient( rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.5) ), url("/images/smallbusiness.jpg");
+    background-repeat: no-repeat;
+    background-position: center; 
+    margin: -65px 0px -20px 0px;
+}
+
+main {
+    min-height: 55vh;
+    background: #0d47a1;
+    margin: 0px 0px -20px 0px;
+
+}
+
+/* .textbox {
+    margin-top: 10%;
+} */
+
+.textboxCont {
+    height: 100%;
+}
+
+.landing-btn {
+    border-radius: 20px;
+    font-weight: 500;
+    margin: 15px 10px;
+}
+
+.cont {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.signUp {
+     min-height: 70vh;
+    background: linear-gradient( rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.5) ), url("/images/smallbusiness5.jpg");
+    background-repeat: no-repeat;
+    background-position: center; 
+    margin: 0px 0px -20px 0px;
+}

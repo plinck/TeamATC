@@ -1,0 +1,11 @@
+.safeDepositDisplay {
+    color: red;
+    text-align: center;
+    font-weight: 500;
+    font-size: 300%;
+    margin-top: 0px;
+}
+
+.safeDepositBtn {
+    margin-top: 25px;
+}

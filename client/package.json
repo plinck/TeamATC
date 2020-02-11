@@ -1,0 +1,43 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^3.9.4",
+    "@material-ui/icons": "^3.0.2",
+    "axios": "^0.18.1",
+    "dotenv": "^7.0.0",
+    "firebase": "^5.11.1",
+    "inputmask": "^4.0.9",
+    "materialize-css": "^1.0.0",
+    "moment": "^2.24.0",
+    "plotly.js": "^1.52.2",
+    "react": "^16.12.0",
+    "react-csv": "^1.1.2",
+    "react-dom": "^16.12.0",
+    "react-number-format": "^4.3.1",
+    "react-plotly.js": "^2.4.0",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "2.1.8",
+    "react-text-mask": "^5.4.3",
+    "reactjs-popup": "^1.5.0",
+    "recompose": "^0.30.0",
+    "underscore": "^1.9.2"
+  },
+  "scripts": {
+    "start": "react-scripts --max_old_space_size=4096 start",
+    "build": "react-scripts --max_old_space_size=4096 build",
+    "test": "react-scripts --max_old_space_size=4096 test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "proxy": "http://localhost:5000"
+}

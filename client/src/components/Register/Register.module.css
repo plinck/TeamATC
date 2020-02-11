@@ -1,0 +1,11 @@
+
+input {
+    border: none !important;
+    height: inherit !important;
+    margin: 0px !important;
+    font-size: inherit !important;
+}
+
+input:focus{
+    box-shadow: none !important;
+}

@@ -1,0 +1,35 @@
+{
+  "name": "project3",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "axios": "^0.18.1",
+    "case-sensitive-paths-webpack-plugin": "^2.3.0",
+    "concurrently": "^4.1.2",
+    "dotenv": "^7.0.0",
+    "express": "^4.17.1",
+    "firebase": "^5.11.0",
+    "firebase-admin": "^7.4.0",
+    "mongoose": "^5.8.11",
+    "prop-types": "^15.6.1",
+    "react": "^15.5.4",
+    "react-csv": "^1.1.1"
+  },
+  "scripts": {
+    "client-install": "npm install --prefix client",
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "cd client && npm install && npm run build"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}

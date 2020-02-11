@@ -1,0 +1,15 @@
+.displayCredit {
+    color: green;
+    text-align: center;
+    font-weight: 500;
+    font-size: 300%;
+    margin-top: 0px;
+}
+
+.card-title {
+    text-align: center;
+}
+
+.pCard {
+    padding: 10px !important;
+}
