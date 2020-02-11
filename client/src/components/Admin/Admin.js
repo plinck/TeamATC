@@ -29,7 +29,7 @@ class Admin extends React.Component {
     render() {
         const message = this.props && this.props.location && this.props.location.state ? this.props.location.state.message : "";
 
-        if (this.props.user.authUser && this.props.user.isAdmin) {
+        // if (this.props.user.authUser && this.props.user.isAdmin) {
             return ( 
                 <div className="container">
                     <div className="row center-align">
@@ -40,15 +40,15 @@ class Admin extends React.Component {
                     <div>{message}</div>
                 </div>
             );
-        } else if (this.props.user.authUser) {                
-            return (
-                <Redirect to="/dashboard" />
-            );  
-        } else  {                
-            return (
-                <Redirect to="/signin" />
-            );      
-        }
+        // } else if (this.props.user.authUser) {                
+        //     return (
+        //         <Redirect to="/dashboard" />
+        //     );  
+        // } else  {                
+        //     return (
+        //         <Redirect to="/signin" />
+        //     );      
+        // }
     }
 }
 

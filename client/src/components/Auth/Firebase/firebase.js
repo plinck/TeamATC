@@ -4,8 +4,8 @@ import 'firebase/firestore';
 import 'firebase/functions';
 
 // For the life of me I cant get REACT (when in client/) to read ENV vars and google isnt helping me ...
-// Firebase Config using react env
-// const config = {
+// firebaseConfig using react env
+// const firebaseConfig = {
 //   apiKey: process.env.REACT_APP_API_KEY,
 //   authDomain: process.env.REACT_APP_AUTH_DOMAIN,
 //   databaseURL: process.env.REACT_APP_DATABASE_URL,
@@ -13,13 +13,15 @@ import 'firebase/functions';
 //   storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
 //   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID
 // };
-const config = {
-  apiKey: "AIzaSyDCddfdNSdSf19cWK7je91aJtlyh3zBp4Q",
-  authDomain: "project3-noahpauljj-fintech2.firebaseapp.com",
-  databaseURL: "https://project3-noahpauljj-fintech2.firebaseio.com",
-  projectId: "project3-noahpauljj-fintech2",
-  storageBucket: "project3-noahpauljj-fintech2.appspot.com",
-  messagingSenderId: "87243866145"
+const firebaseConfig = {
+  apiKey: "AIzaSyBmeZVx6YKWwqMP8FvsEyoG0eIxcinHYc4",
+  authDomain: "teamatc-challenge.firebaseapp.com",
+  databaseURL: "https://teamatc-challenge.firebaseio.com",
+  projectId: "teamatc-challenge",
+  storageBucket: "teamatc-challenge.appspot.com",
+  messagingSenderId: "961307717305",
+  appId: "1:961307717305:web:faa30c4e8b56dc5c097568",
+  measurementId: "G-FXGMVHS2ZX"
 };
 
 // Firebase state already initialized so we dont do more that once
@@ -29,7 +31,7 @@ class Firebase {
   constructor() {
     try {
       if (!firebaseInialized) {
-        firebase.initializeApp(config);
+        firebase.initializeApp(firebaseConfig);
         firebaseInialized = true;
       }
     } catch (err) {

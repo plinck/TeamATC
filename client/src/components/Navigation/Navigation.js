@@ -102,6 +102,7 @@ class Navigation extends React.Component {
       <ul>
         <li><NavLink to="/">Landing</NavLink></li>
         <li><NavLink to="/signin">Sign In</NavLink></li>
+        <li><NavLink onClick={this.forceCloseSideNav} to="/admin">Admin</NavLink></li>
       </ul>
       ;
 
