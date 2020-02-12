@@ -53,7 +53,7 @@ class UserAPI {
             .then(() => {
                 console.log("Auth Profile for User successfully updated!");
                 // update
-                // Note: DO NOT update claimns since that can only be done by admin
+                // Note: DO NOT update claims since that can only be done by admin
                 db.collection('users').doc(user.id).set({
                     firstName: user.firstName,
                     lastName: user.lastName,

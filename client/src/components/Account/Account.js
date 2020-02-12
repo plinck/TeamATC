@@ -33,8 +33,9 @@ class Account extends React.Component {
       return null;
     }
 
-    if (this.props.user.authUser) {
-      return ( 
+    //if (this.props.user.authUser) {
+    if (true) {
+        return ( 
         <div>
           <AccountForm 
             uid={uid}

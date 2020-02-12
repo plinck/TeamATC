@@ -4,23 +4,11 @@ const path = require('path');
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 
-const mongoose = require("mongoose");
-
-// Require all models
-//const db = require("./models");
-
 // Parse request body as JSON
 app.use(express.urlencoded({
     extended: true
 }));
 app.use(express.json());
-
-// connect mongoose
-const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-1qm5r.gcp.mongodb.net/fintechdb?retryWrites=true`;
-// Connect to the Mongo DB ATLAS
-mongoose.connect(uri, {
-    useNewUrlParser: true
-});
 
 // // Connect to the Mongo DB LOCAL
 // mongoose.connect("mongodb://localhost:27017/fintechdb", {
@@ -30,8 +18,6 @@ mongoose.connect(uri, {
 require("./routes/api-auth-routes.js")(app);
 require("./routes/api-user-routes.js")(app);
 require("./routes/api-banker-routes.js")(app);
-require("./routes/api-note-routes.js")(app);
-require("./routes/api-prospect-routes.js")(app);
 require("./routes/api-firebase.js")(app);
 
 //app.use(express.static(path.join(__dirname, 'client', 'build')));

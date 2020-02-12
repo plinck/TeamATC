@@ -16,7 +16,6 @@ import UserForm from '../User/UserForm';
 import Register from '../Register/Register';
 import DepositList from '../Deposits/DepositsList';
 import Banker from '../Banker/Banker';
-import Prospects from '../Banker/Prospects';
 
 // Auth components
 import SignUpForm from '../Auth/SignUp/SignUp';
@@ -48,7 +47,6 @@ class App extends React.Component {
           <Route exact path="/register" component={Register} />
           <Route exact path="/depositlist" component={DepositList} />
           <Route exact path="/banker" component={Banker} />
-          <Route exact path="/prospects" component={Prospects} />
         </div>
       </Router>
 

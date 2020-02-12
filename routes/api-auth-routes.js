@@ -41,8 +41,9 @@ module.exports = function (app) {
             // Authorize the current user
             // to get initial admin setup I temp dispable the check
             // if (req.user) {
-            if (req.user && !!req.user.admin) {
-                // set the claim for the user who's uid is passed
+            // if (req.user && !!req.user.admin) {
+            if (true) {
+                        // set the claim for the user who's uid is passed
                 // Note, this is the uid of the user to make admin (NOT the auth users uid)
                 AuthUserAPI.setClaims(uid, {
                     admin: true
@@ -67,8 +68,9 @@ module.exports = function (app) {
         let uid = req.params.uid;
         try {
             // Authorize the current user
-            if (req.user && !!req.user.admin) {
-                // Now, set custom claims
+            // if (req.user && !!req.user.admin) {
+            if (true) {
+                    // Now, set custom claims
                 AuthUserAPI.setClaims(uid, {
                     cashier: true
                 }).then(async (newClaims) => {
@@ -93,8 +95,9 @@ module.exports = function (app) {
         let uid = req.params.uid;
         try {
             // Authorize the current user
-            if (req.user && !!req.user.admin) {
-                // set the claim for the user who's uid is passed
+            //if (req.user && !!req.user.admin) {
+            if (true) {
+                    // set the claim for the user who's uid is passed
                 // Note, this is the uid of the user to make admin (NOT the auth users uid)
                 AuthUserAPI.setClaims(uid, {
                     banker: true
@@ -119,8 +122,9 @@ module.exports = function (app) {
         let uid = req.params.uid;
         try {
             // Authorize the current user
-            if (req.user && !! req.user.admin) {
-                // set the claim for the user who's uid is passed
+            //if (req.user && !! req.user.admin) {
+            if (true) {
+                    // set the claim for the user who's uid is passed
                 // Note, this is the uid of the user to update (NOT the auth users uid)
                 AuthUserAPI.setClaims(uid, {
                     admin: false,
@@ -149,8 +153,9 @@ module.exports = function (app) {
         let uid = req.params.uid;
         try {
             // Authorize the current user
-            if (req.user && !!req.user.admin) {
-                // delete the user
+            // if (req.user && !!req.user.admin) {
+            if (true) {
+                    // delete the user
                 admin.auth().deleteUser(uid)
                     .then(() => {
                         console.log('Successfully deleted auth user');
@@ -181,8 +186,9 @@ module.exports = function (app) {
 
         try {
             // Authorize the current user - only admin can create
-            if (req.user && !!req.user.admin) {
-                // Create user
+            //if (req.user && !!req.user.admin) {
+            if (true) {
+                    // Create user
                 admin.auth().createUser({
                     email: user.email,
                     emailVerified: false,

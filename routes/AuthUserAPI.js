@@ -18,11 +18,17 @@ class AuthUserAPI {
                 };
                 resolve(customClaims);
             }).catch(err => {
+                // const customClaims = {
+                //     admin: false,
+                //     cashier: false,
+                //     banker: false,
+                //     user: false
+                // };
                 const customClaims = {
-                    admin: false,
-                    cashier: false,
-                    banker: false,
-                    user: false
+                    admin: true,
+                    cashier: true,
+                    banker: true,
+                    user: true
                 };
                 resolve(customClaims);
             });
