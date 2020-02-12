@@ -154,7 +154,13 @@ class AccountForm extends React.Component {
         } = this.state;
 
         const isValid = firstName !== "" && lastName !== "" && phoneNumber !== "";
-        const isDisabled = false
+        var isRoleEditEnabled = false;
+
+        // DO NOT allow users to edit their own role even if admin as bad
+        // things can happen
+        // if (isAdmin) {
+        //     isRoleEditEnabled = true;
+        // }
 
         return ( 
             <div className="container">
@@ -233,41 +239,40 @@ class AccountForm extends React.Component {
 
                     <form className="Container">
                     <br />
-                    <hr />
+                    {isRoleEditEnabled ? <hr /> : ""}
+                    {isRoleEditEnabled ? 
                     <FormControl component="fieldset" className={classes.formControl}>
                         <FormLabel component="legend">Current Roles <i>(can not edit your own roles)</i></FormLabel>
                         <FormGroup row >
-
-                        <FormControlLabel 
-                            disabled={isDisabled}
-                            control={
-                            <Checkbox checked={isCashier}/>
-                            }
+                            <FormControlLabel 
+                                disabled={!isRoleEditEnabled}
+                                control={<Checkbox checked={isCashier}/>}
                             label="Cashier"
-                        />
-                        <FormControlLabel
-                            disabled={isDisabled}
-                            control={
-                            <Checkbox checked={isAdmin}/>
-                            }
-                            label="Admin"
-                        />
-                        <FormControlLabel
-                            disabled={isDisabled}
-                            control={
-                            <Checkbox checked={isBanker}/>
-                            }
-                            label="Banker"
-                        />
-                        <FormControlLabel
-                            disabled={isDisabled}
-                            control={
-                            <Checkbox checked={isUser}/>
-                            }
-                            label="User"
-                        />
+                            /> 
+                            <FormControlLabel
+                                disabled={!isRoleEditEnabled}
+                                control={
+                                <Checkbox checked={isAdmin}/>
+                                }
+                                label="Admin"
+                            />
+                            <FormControlLabel
+                                disabled={!isRoleEditEnabled}
+                                control={
+                                <Checkbox checked={isBanker}/>
+                                }
+                                label="Banker"
+                            />
+                            <FormControlLabel
+                                disabled={!isRoleEditEnabled}
+                                control={
+                                <Checkbox checked={isUser}/>
+                                }
+                                label="User"
+                            />
                         </FormGroup>
-                    </FormControl>
+                    </FormControl> :
+                    ""}
                     </form>
                     <hr />    
                     <br />

@@ -22,8 +22,7 @@ class Admin extends React.Component {
     render() {
         const message = this.props && this.props.location && this.props.location.state ? this.props.location.state.message : "";
 
-        // if (this.props.user.authUser && this.props.user.isAdmin) {
-        if (true) {
+        if (this.props.user.authUser && this.props.user.isAdmin) {
             return ( 
             <div className="container">
                 <div className="row center-align">
