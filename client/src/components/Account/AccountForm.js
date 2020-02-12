@@ -154,6 +154,7 @@ class AccountForm extends React.Component {
         } = this.state;
 
         const isValid = firstName !== "" && lastName !== "" && phoneNumber !== "";
+        const isDisabled = false
 
         return ( 
             <div className="container">
@@ -238,28 +239,28 @@ class AccountForm extends React.Component {
                         <FormGroup row >
 
                         <FormControlLabel 
-                            disabled
+                            disabled={isDisabled}
                             control={
                             <Checkbox checked={isCashier}/>
                             }
                             label="Cashier"
                         />
                         <FormControlLabel
-                            disabled
+                            disabled={isDisabled}
                             control={
                             <Checkbox checked={isAdmin}/>
                             }
                             label="Admin"
                         />
                         <FormControlLabel
-                            disabled
+                            disabled={isDisabled}
                             control={
                             <Checkbox checked={isBanker}/>
                             }
                             label="Banker"
                         />
                         <FormControlLabel
-                            disabled
+                            disabled={isDisabled}
                             control={
                             <Checkbox checked={isUser}/>
                             }
