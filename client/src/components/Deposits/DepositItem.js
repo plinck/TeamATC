@@ -16,41 +16,35 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 const SimpleExpansionPanel = (props) => {
     // decontruct props
     const {
-        amount,
-        ones,
-        fives,
-        tens,
-        twenties,
-        fifties,
-        hundreds,
-        time,
-        email,
         firstName,
         lastName,
-        awaitingSettlement,
-        settled
+        email,
+        team,
+        date,
+        activityType, // swim, bike, run
+        distance,
+        distanceUnits,
+        time,
     } = props.deposit;
     let jsDate = new Date(time);
     const dateTime = moment(jsDate).format("YYYY-MM-DD HH:mm:ss");
 
-    let depositState = "";
-    let depositIcon = "";
-    if (!!settled) {
-        depositState = "Settled";
-        depositIcon = "done_all";
-    } else if (awaitingSettlement) {
-        depositState = "Awaiting Settledment";
-        depositIcon = "mail_outline";
+    let activityIcon = "";
+    if (activityType.toLowercase() == "swim") {
+        activityIcon = "done_all";
+    } else if ((activityType.toLowercase() == "bike")) {
+        activityIcon = "mail_outline";
+    } else if ((activityType.toLowercase() == "run")){
+        activityIcon = "lock";
     } else {
-        depositState = "In Safe";
-        depositIcon = "lock";
+        activityIcon = "lock";      // unknown
     }
 
     return (
         <ExpansionPanel>
             <ExpansionPanelSummary className="row" expandIcon={< ExpandMoreIcon />}>
                 <Tooltip title={depositState}>
-                    <i className="material-icons green-text col s1 m1">{depositIcon}</i>
+                    <i className="material-icons green-text col s1 m1">{activityIcon}</i>
                 </Tooltip>
 
                 <Typography className="col s5 m3">{dateTime}</Typography>
