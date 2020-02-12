@@ -2,7 +2,6 @@ import React from 'react';
 import { Redirect } from 'react-router';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 
-import Prospects from "./Prospects";
 import DepositsArchive from "./DepositsArchive";
 import SafeDeposits from "./SafeDeposits/SafeDeposits";
 import AwaitingSettlement from "./AwaitingSettlement/AwaitingSettlement";
@@ -17,7 +16,6 @@ class Banker extends React.Component {
         this._isMounted = false;
 
         this.state = {
-            showProspects: true,
             showDeposits: false,
             depositsArchive: [],
             balanceInSafe: 0,
@@ -78,7 +76,6 @@ class Banker extends React.Component {
         DepositsArchiveDB.getInSafeDeposits().then(depositsArray => {
             if (this._isMounted) {
                 this.setState({
-                    showProspects: false,
                     showDeposits: true,
                     depositsArchive: [...depositsArray]
                 });    
@@ -110,7 +107,6 @@ class Banker extends React.Component {
         DepositsArchiveDB.getAwaitingSettlementWithUser().then(depositsArray => {
             if (this._isMounted) {
                 this.setState({
-                    showProspects: false,
                     showDeposits: true,
                     depositsArchive: [...depositsArray]
                 });    
@@ -142,7 +138,6 @@ class Banker extends React.Component {
         DepositsArchiveDB.getSettledDeposits().then(depositsArray => {
             if (this._isMounted) {
                 this.setState({
-                    showProspects: false,
                     showDeposits: true,
                     depositsArchive: [...depositsArray]
                 }); 
@@ -170,15 +165,6 @@ class Banker extends React.Component {
         });
     }
   
-    showProspects = () => {
-        if (this._isMounted) {
-            this.setState({
-                showProspects: true,
-                showDeposits: false
-            });
-        }
-    }
-
     // refresh when totals change
     refreshTotals() {
         this.getInSafeTotal();
@@ -191,7 +177,6 @@ class Banker extends React.Component {
         DepositsArchiveDB.getWithUser().then(deposits => {
             if (this._isMounted) {
                 this.setState({
-                    showProspects: false,
                     showDeposits: true,
                     depositsArchive: [...deposits]
                 });  
@@ -251,10 +236,7 @@ class Banker extends React.Component {
                         {/*}
                         <button className="btn center-align blue darken-4" onClick={this.getWithUser}>Get With User</button>{" "}
                         */}
-                        <button className="btn center-align blue darken-4" onClick={this.showProspects}>Display Prospects</button>{" "}
                     </div>
-                    {this.state.showProspects ? <h5 className="center-align">Prospects</h5> : null}
-                    {this.state.showProspects ? <Prospects /> : null}
                     {this.state.showDeposits ? <h5 className="center-align">Deposits</h5> : null}
                     {this.state.showDeposits ? <DepositsArchive depositsArchive={this.state.depositsArchive}/> : null}
                 </div>

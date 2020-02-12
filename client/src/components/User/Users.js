@@ -119,8 +119,9 @@ class Users extends React.Component {
     }
 
     render() {
-        if (this.props.user.authUser && this.props.user.isAdmin) {
-            return (
+        //if (this.props.user.authUser && this.props.user.isAdmin) {
+        if (true) {
+        return (
                 <div className="row">
                 <div>{this.state.message}</div>
                 {this.state.users.map((user) => {
