@@ -36,7 +36,6 @@ class Navigation extends React.Component {
     instance.close();
   }
 
-
   render() {
 
     let navBarClass = '';
@@ -97,12 +96,10 @@ class Navigation extends React.Component {
     </ul>
       ;
 
-
     const navigationNonAuth =
       <ul>
         <li><NavLink to="/">Landing</NavLink></li>
         <li><NavLink to="/signin">Sign In</NavLink></li>
-        <li><NavLink onClick={this.forceCloseSideNav} to="/admin">Admin</NavLink></li>
       </ul>
       ;
 
@@ -112,8 +109,7 @@ class Navigation extends React.Component {
     // ANY COMPONENT that needs authUser info uses consumer this way
 
     let navBar, navBarMobile;
-    //if (this.props.user.authUser && this.props.user.isAdmin) {
-    if (true) {
+    if (this.props.user.authUser && this.props.user.isAdmin) {
       navBar = navigationAdmin;
       navBarMobile = navigationAdminMobile;
     } else if (this.props.user.authUser) {
