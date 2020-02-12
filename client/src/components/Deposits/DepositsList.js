@@ -75,7 +75,7 @@ class DepositList extends React.Component {
                     <br></br>
                     <CSVLink
                         data={this.state.deposits}
-                        filename={'dollaroo-transactions.csv'}
+                        filename={'teamatc-transactions.csv'}
                         className='btn blue darken-4'
                         target="_blank"
                     >EXPORT TO CSV</CSVLink>

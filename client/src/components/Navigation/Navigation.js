@@ -45,7 +45,7 @@ class Navigation extends React.Component {
       navBarClass = 'transparent z-depth-0';
     } else {
       navBarClass = 'z-depth-0 blue darken-4'
-      name = 'Dollaroo'
+      name = 'TeamATC Challenge'
     }
 
 
@@ -129,7 +129,7 @@ class Navigation extends React.Component {
         <div className='navbar-fixed'>
           <nav className={navBarClass}>
             <div className="container nav-wrapper">
-              <a href="/" className="brand-logo"><img className="logo" src="../images/logo.png" alt="Dollaroo Logo"/> <span>{name}</span></a>
+              <a href="/" className="brand-logo"><img className="logo" src="../images/logo.png" alt="TeamATC Challenge Logo"/> <span>{name}</span></a>
               <a href="#!" data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
               <ul className="right hide-on-med-and-down">
                 {navBar}
