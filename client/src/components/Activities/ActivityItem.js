@@ -30,11 +30,11 @@ const SimpleExpansionPanel = (props) => {
     const dateTime = moment(jsDate).format("YYYY-MM-DD HH:mm:ss");
 
     let activityIcon = "";
-    if (activityType.toLowercase() == "swim") {
+    if (activityType.toLowercase() === "swim") {
         activityIcon = "done_all";
-    } else if ((activityType.toLowercase() == "bike")) {
+    } else if ((activityType.toLowercase() === "bike")) {
         activityIcon = "mail_outline";
-    } else if ((activityType.toLowercase() == "run")){
+    } else if ((activityType.toLowercase() === "run")){
         activityIcon = "lock";
     } else {
         activityIcon = "lock";      // unknown
@@ -66,8 +66,6 @@ const SimpleExpansionPanel = (props) => {
 const materialCollection = (props) => {
     // decontruct props
     const {
-        firstName,
-        lastName,
         email,
         team,
         activityDateTime,

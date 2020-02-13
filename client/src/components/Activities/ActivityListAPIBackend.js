@@ -41,6 +41,8 @@ class ActivityList extends React.Component {
 
     getActivities = () => {
         // Get with security
+        console.log("GETTING ACTIVITIES APIBackend");
+
         this.setState({ loadingFlag: true });
         Util.apiGet("/api/activity/activities")
         .then(res => {

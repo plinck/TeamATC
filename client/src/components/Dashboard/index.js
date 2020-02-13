@@ -1,6 +1,5 @@
 import React from 'react';
 import './dashboard.css';
-import { Link } from 'react-router-dom';
 import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
 import { Redirect } from 'react-router';
 import Distance from './Distance/Distance';

@@ -31,6 +31,7 @@ const styles = theme => ({
 class ActivityList extends React.Component {
     constructor(props) {
         super(props);
+        console.log(`Constructor ${JSON.stringify(props)}`);
 
         this.state = {
             loadingFlag: false,
@@ -40,6 +41,8 @@ class ActivityList extends React.Component {
     }
 
     getActivities = () => {
+        console.log("GETTING ACTIVITIES ActivityList");
+
         // Get with security
         Util.apiGet("/api/activity/activities")
             .then(res => {
@@ -57,12 +60,16 @@ class ActivityList extends React.Component {
 
     // get all on mount
     componentDidMount() {
+        /*
+        console.log("MOUNTED");
         this.getActivities();
         this.setState({ loadingFlag: true });
+        */
     }
 
     render() {
         const { classes } = this.props;
+        console.log(`Render classes ${JSON.stringify(classes)}`);
 
         // Some props take time to get ready so return null when uid not avaialble
         if (this.props.user.uid === null) {
@@ -71,14 +78,15 @@ class ActivityList extends React.Component {
 
         if (this.props.user.authUser) {
             return (
+                {/*}
                 <div className="container">
                     <br></br>
                     <CSVLink
                         data={this.state.activities}
                         filename={'teamatc-transactions.csv'}
                         className='btn blue darken-4'
-                        target="_blank"
-                    >EXPORT TO CSV</CSVLink>
+                        target="_blank">
+                    EXPORT TO CSV</CSVLink>
                     <div className={classes.root}>
                         <div className="row">
                             <h5 className="col s6 m3">Time</h5>
@@ -89,6 +97,7 @@ class ActivityList extends React.Component {
                             <h5 className="col s6 m3 offset-m3">Distance</h5>
                         </div>
                         {this.state.loadingFlag ? <div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div> : null}
+                        
                         {this.state.activities.map((activity) => {
                             return (
                                 <div key={activity.id}>
@@ -97,8 +106,10 @@ class ActivityList extends React.Component {
                                 </div>
                             );
                         })}
+                    
                     </div>
                 </div>
+                    */}
             );
         } else {
             return (

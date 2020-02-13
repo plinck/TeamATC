@@ -39,47 +39,6 @@ const styles = theme => ({
     }
 });
 
-function NumberFormatPhone(props) {
-    const { inputRef, onChange, ...other } = props;
-
-    return (
-        <NumberFormat
-            {...other}
-            getInputRef={inputRef}
-            onValueChange={values => {
-                onChange({
-                    target: {
-                        value: values.value,
-                    },
-                });
-            }}
-            format="(###) ###-####"
-            mask=""
-        />
-    );
-}
-
-function NumberFormatDate(props) {
-    const { inputRef, onChange, ...other } = props;
-
-    return (
-        <NumberFormat
-            {...other}
-            getInputRef={inputRef}
-            onValueChange={values => {
-                console.log(`Date value: ${values.value}`)            
-                onChange({
-                    target: {
-                        value: values.value,
-                    },
-                });
-            }}
-            format="##/##/####"
-            mask=""
-        />
-    );
-}
-
 function NumberFormatCustom(props) {
     const { inputRef, onChange, ...other } = props;
 
@@ -175,12 +134,11 @@ class Activity extends React.Component {
 
     updateDatabase = () => {
         const db = Util.getFirestoreDB();
-        const fb = Util.getFirebaseFirestore();
 
         // Deal with Date - convert MM/DD/YYYY to date object and then Firestore timestamp
         let jsDateArray = [];
         let jsDateString = this.state.activityDateTime;
-        if (jsDateString.length == 10) {
+        if (jsDateString.length === 10) {
             jsDateArray = jsDateString.split("/");
             if (jsDateArray.length < 3) {
                 alert(`Bad Date - Activity Update Failed: ${this.state.activityDateTime}`);
@@ -292,7 +250,7 @@ class Activity extends React.Component {
                                         </MuiPickersUtilsProvider>   
                                         */}                     
 
-                                        <TextField className="datepicker"
+                                        <TextField
                                             id="activityDateTime"
                                             name="activityDateTime"
                                             label="Date"
