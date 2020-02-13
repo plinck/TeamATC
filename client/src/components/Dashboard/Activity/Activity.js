@@ -125,6 +125,13 @@ class Activity extends React.Component {
 
         let elem = document.querySelector(".modal");
         M.Modal.init(elem);
+        let datePicker = document.querySelector(".datepicker");
+        M.init(datePicker);
+        datePicker.pickadate({
+            selectMonths: true, // Creates a dropdown to control month
+            selectYears: 15 // Creates a dropdown of 15 years to control year
+        });
+
     }
 
     calculate = () => {
@@ -149,6 +156,12 @@ class Activity extends React.Component {
             this.setState({ [name]: 0 });
         }
     };
+
+    handleDateChange(event) {
+        this.setState({
+            [event.target.name]: event.target.value
+        });
+    }
 
     onChange = event => {
         this.setState({
@@ -239,18 +252,18 @@ class Activity extends React.Component {
                                             onChange={this.onChange}
                                         />
 
-                                        <TextField
+                                        <TextField className='datepicker'
                                             id="activityDateTime"
                                             label="Date"
                                             placeholder="02/01/2020"
                                             multiline
                                             className={classes.textField}
-                                            type="text"
+                                            type="date"
                                             name="activityDateTime"
                                             autoComplete="text"
                                             margin="normal"
-                                            value={activityDateTime}
-                                            onChange={this.onChange}
+                                            data-value={activityDateTime}
+                                            onChange={this.handleDateChange}
                                         />
 
                                         <TextField
