@@ -23,6 +23,14 @@ db.collection("activities").onSnapshot((querySnapshot) => {
         _distanceTotal += activity.distance;
         _durationTotal += activity.duration;
         activity.id = doc.id;
+        //console.log(`activityDateTime: ${JSON.stringify(activity.activityDateTime)}`)
+        
+        try {
+            let jsDate = activity.activityDateTime.toDate();
+            activity.activityDateTime = jsDate; // Overwrite so deal with Javasceipt all the time
+        } catch (error) {
+            console.error(`Invalid Date: ${activity.activityDateTime} in record: ${activity.id}`)         
+        }
 
         const userRef = db.collection("users").doc(activity.uid);
         const userQuery = userRef.get()
@@ -56,7 +64,6 @@ module.exports = function (app) {
     // Send all activities
     app.get("/api/activity/activities", requiresLogin, (req, res) => {
         let activities = _activities;
-        console.log(`Activity data: ${JSON.stringify(_activities, undefined, 2)}`)
 
         res.json(activities);
     });

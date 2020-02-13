@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Plot from 'react-plotly.js';
 import _ from "underscore";
 import moment from "moment";
@@ -161,7 +162,8 @@ class ActivityByDay extends React.Component {
                             </div>
                             <div className="card-action pCard">
                                 <div className="center-align">
-                                    <button onClick={this.viewDetails} className="waves-effect waves-light dash-btn blue darken-4 btn">More Details</button>
+                                    <Link to="/activity/activitieslist" className="waves-effect waves-light dash-btn blue darken-4 btn activityBtn">More Details</Link>
+
                                 </div>
                             </div>
                         </div>

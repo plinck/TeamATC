@@ -31,17 +31,14 @@ const styles = theme => ({
 class ActivityList extends React.Component {
     constructor(props) {
         super(props);
-        console.log(`Constructor ${JSON.stringify(props)}`);
 
         this.state = {
             loadingFlag: false,
-            activities: [
-            ]
+            activities: null
         };
     }
 
     getActivities = () => {
-        console.log("GETTING ACTIVITIES ActivityList");
 
         // Get with security
         Util.apiGet("/api/activity/activities")
@@ -60,11 +57,8 @@ class ActivityList extends React.Component {
 
     // get all on mount
     componentDidMount() {
-        /*
-        console.log("MOUNTED");
         this.getActivities();
         this.setState({ loadingFlag: true });
-        */
     }
 
     render() {
@@ -78,7 +72,6 @@ class ActivityList extends React.Component {
 
         if (this.props.user.authUser) {
             return (
-                {/*}
                 <div className="container">
                     <br></br>
                     <CSVLink
@@ -96,7 +89,6 @@ class ActivityList extends React.Component {
                             <h5 className="col s6 m3">Duration</h5>
                             <h5 className="col s6 m3 offset-m3">Distance</h5>
                         </div>
-                        {this.state.loadingFlag ? <div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div> : null}
                         
                         {this.state.activities.map((activity) => {
                             return (
@@ -109,7 +101,6 @@ class ActivityList extends React.Component {
                     
                     </div>
                 </div>
-                    */}
             );
         } else {
             return (

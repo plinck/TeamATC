@@ -30,11 +30,12 @@ const SimpleExpansionPanel = (props) => {
     const dateTime = moment(jsDate).format("YYYY-MM-DD HH:mm:ss");
 
     let activityIcon = "";
-    if (activityType.toLowercase() === "swim") {
+
+    if (activityType.toLowerCase() === "swim") {
         activityIcon = "done_all";
-    } else if ((activityType.toLowercase() === "bike")) {
+    } else if ((activityType.toLowerCase() === "bike")) {
         activityIcon = "mail_outline";
-    } else if ((activityType.toLowercase() === "run")){
+    } else if ((activityType.toLowerCase() === "run")){
         activityIcon = "lock";
     } else {
         activityIcon = "lock";      // unknown
@@ -47,16 +48,16 @@ const SimpleExpansionPanel = (props) => {
                     <i className="material-icons green-text col s1 m1">{activityIcon}</i>
                 </Tooltip>
 
-                <Typography className="col s5 m3">{dateTime} ${team}</Typography>
+                <Typography className="col s5 m3">{dateTime} {team}</Typography>
                 <Typography className="col s6 m4">{`${firstName} ${lastName} (${email})`}</Typography>
                 <Typography
                     className="col s12 m2 offset-m2">
-                    ${distance.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ${distanceUnits}
+                    {distance.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {distanceUnits}
                 </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
                 <Typography className="row grey-text">
-                    ${duration.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} seconds
+                    {duration.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 </Typography>
             </ExpansionPanelDetails>
         </ExpansionPanel>

@@ -5,6 +5,7 @@ import { Redirect } from 'react-router';
 import Distance from './Distance/Distance';
 
 import ActivityByDay from "./Graphs/ActivityByDay";
+import ActivityList from "../Activities/ActivityList";
 
 
 // import ActivityByUser from "./Graphs/ActivityByUser";
@@ -18,7 +19,7 @@ import Util from '../Util/Util';
 
 class Home extends React.Component {
     state = {
-        activities: [],
+        activities: null,
         nbrActivities: 0,
         distance: 0,
         duration: 0,
@@ -57,6 +58,11 @@ class Home extends React.Component {
     }
 
     render() {
+        // Some props take time to get ready so return null when uid not avaialble
+        if (this.props.user.uid === null) {
+            return null;
+        }
+        
         if (this.props.user.authUser) {
             return (
                 <div>
@@ -88,6 +94,12 @@ class Home extends React.Component {
                                         activities={this.state.activities}
                                 />*/}
                             </div>
+                            {/* TEST GETTING ACTIVITIES */}
+                            <div className="row">
+                                <ActivityList
+                                />
+                            </div>
+                            
                         </div>
                     }
                 </div>
