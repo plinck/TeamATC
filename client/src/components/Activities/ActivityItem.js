@@ -20,13 +20,13 @@ const SimpleExpansionPanel = (props) => {
         lastName,
         email,
         team,
-        date,
+        activityDateTime,
         activityType, // swim, bike, run
         distance,
         distanceUnits,
-        time,
-    } = props.deposit;
-    let jsDate = new Date(time);
+        duration,
+    } = props.activity;
+    let jsDate = new Date(activityDateTime);
     const dateTime = moment(jsDate).format("YYYY-MM-DD HH:mm:ss");
 
     let activityIcon = "";
@@ -43,20 +43,20 @@ const SimpleExpansionPanel = (props) => {
     return (
         <ExpansionPanel>
             <ExpansionPanelSummary className="row" expandIcon={< ExpandMoreIcon />}>
-                <Tooltip title={depositState}>
+                <Tooltip title={activityType}>
                     <i className="material-icons green-text col s1 m1">{activityIcon}</i>
                 </Tooltip>
 
-                <Typography className="col s5 m3">{dateTime}</Typography>
+                <Typography className="col s5 m3">{dateTime} ${team}</Typography>
                 <Typography className="col s6 m4">{`${firstName} ${lastName} (${email})`}</Typography>
                 <Typography
                     className="col s12 m2 offset-m2">
-                    ${amount.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    ${distance.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ${distanceUnits}
                 </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
                 <Typography className="row grey-text">
-                    Ones: ${ones * 1}, Fives: ${fives * 5}, Tens: ${tens * 10}, Twentys: ${twenties * 20}, Fifties: ${fifties * 50}, Hundreds: ${hundreds * 100}
+                    ${duration.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} seconds
                 </Typography>
             </ExpansionPanelDetails>
         </ExpansionPanel>
@@ -65,18 +65,18 @@ const SimpleExpansionPanel = (props) => {
 
 const materialCollection = (props) => {
     // decontruct props
-    let {
-        amount,
-        ones,
-        fives,
-        tens,
-        twenties,
-        fifties,
-        hundreds,
-        time,
-        email
-    } = props.deposit;
-    let jsDate = new Date(time);
+    const {
+        firstName,
+        lastName,
+        email,
+        team,
+        activityDateTime,
+        activityType, // swim, bike, run
+        distance,
+        distanceUnits,
+        duration,
+    } = props.activity;
+    let jsDate = new Date(activityDateTime);
     const dateTime = moment(jsDate).format("YYYY-MM-DD HH:mm:ss");
 
     return (
@@ -85,13 +85,20 @@ const materialCollection = (props) => {
             <h5 className="title row">
                 <div className="col s6 m3">{dateTime}</div>
                 <div className="col s6 m3">{email}</div>
-                <div className="col s12 m3 offset-m3">${amount
+                <div className="col s6 m3 offset-m3">{team}</div>
+                <div className="col s6 m3">{activityType}</div>
+                <div className="col s6 m3">${duration
                     .toFixed(2)
                     .toString()
                     .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
-            </h5>
+                <div className="col s6 m3 offset-m3">${distance
+                        .toFixed(2)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ${distanceUnits}</div>
+
+                </h5>
             <div className="row grey-text">
-                <blockquote>Ones: ${ones * 1}, Fives: ${fives * 5}, Tens: ${tens * 10}, Twentys: ${twenties * 20}, Fifties: ${fifties * 50}, Hundreds: ${hundreds * 100}
+                <blockquote>${duration} seconds
                 </blockquote>
             </div>
             <a href="#!" className="secondary-content">
@@ -101,7 +108,7 @@ const materialCollection = (props) => {
     );
 };
 
-const DepositItem = (props) => {
+const ActivityItem = (props) => {
     if (false) {
         return (
             materialCollection(props)
@@ -113,4 +120,4 @@ const DepositItem = (props) => {
     );
 };
 
-export default withAuthUserContext(withRouter(DepositItem));
+export default withAuthUserContext(withRouter(ActivityItem));

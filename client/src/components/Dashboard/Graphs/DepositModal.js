@@ -35,10 +35,10 @@ class DepositModal extends React.Component {
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">{"Deposit Details"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{"Activitie Details"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Deposit Date: {this.props.date}
+                            Activitie Date: {this.props.date}
                             <br></br>
                             Amount: {this.props.amount}
                         </DialogContentText>

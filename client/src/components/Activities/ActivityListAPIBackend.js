@@ -5,7 +5,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
-import DepositItem from './DepositItem';
+import ActivityItem from './ActivityItem';
 import Util from '../Util/Util';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -28,28 +28,28 @@ const styles = theme => ({
     },
 });
 
-class DepositList extends React.Component {
+class ActivityList extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             loadingFlag: false,
-            deposits: [
+            activities: [
             ]
         };
     }
 
-    getDeposits = () => {
+    getActivities = () => {
         // Get with security
         this.setState({ loadingFlag: true });
-        Util.apiGet("/api/banker/allDeposits")
+        Util.apiGet("/api/activity/allActivitis")
         .then(res => {
             console.log(res.data);
-            let allDeposits = res.data;
-            let sortedByDate = allDeposits.sort((a, b) => {
+            let allActivitis = res.data;
+            let sortedByDate = allActivitis.sort((a, b) => {
                 return (a.time < b.time) ? 1 : -1;
             });
-            this.setState({ loadingFlag: false, deposits: sortedByDate });
+            this.setState({ loadingFlag: false, activities: sortedByDate });
         })
         .catch(err => {
             console.error(err);
@@ -59,7 +59,7 @@ class DepositList extends React.Component {
 
     // get all on mount
     componentDidMount() {
-        this.getDeposits();
+        this.getActivities();
     }
 
     render() {
@@ -76,22 +76,26 @@ class DepositList extends React.Component {
                 <div className="container">
                     <br></br>
                     <CSVLink
-                        data={this.state.deposits}
+                        data={this.state.activities}
                         filename={'teamatc-transactions.csv'}
                         className='btn blue darken-4'
                         target="_blank"
                     >EXPORT TO CSV</CSVLink>
                     <div className={classes.root}>
                         <div className="row">
-                            <h5 className="col s6 m3 offset-m1">Time</h5>
-                            <h5 className="col s6 m3">User</h5>
-                            <h5 className="col s12 m2 offset-m3">Amount</h5>
-                        </div>
-                        {this.state.loadingFlag ? <div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div> : null}
-                        {this.state.deposits.map((deposit) => {
+                        <h5 className="col s6 m3">Time</h5>
+                        <h5 className="col s6 m3">User</h5>
+                        <h5 className="col s6 m3 offset-m3">Team</h5>
+                        <h5 className="col s6 m3">Activity</h5>
+                        <h5 className="col s6 m3">Duration</h5>
+                        <h5 className="col s6 m3 offset-m3">Distance</h5>
+                    </div>
+                    {this.state.loadingFlag ? 
+                    <div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div> : null}
+                        {this.state.activities.map((activity) => {
                             return (
-                                <div key={deposit.id}>
-                                    <DepositItem deposit={deposit}
+                                <div key={activity.id}>
+                                    <ActivityItem activity={activity}
                                     />
                                 </div>
                             );
@@ -108,4 +112,4 @@ class DepositList extends React.Component {
 }
 
 
-export default withRouter(withAuthUserContext(withStyles(styles)(DepositList)));
+export default withRouter(withAuthUserContext(withStyles(styles)(ActivityList)));

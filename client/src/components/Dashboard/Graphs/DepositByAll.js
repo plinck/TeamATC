@@ -44,10 +44,10 @@ class DepositByAll extends React.Component {
 
         let lines = [];
 
-        let combiedData = this.props.deposits.concat(this.props.depositsArchive);
+        let combiedData = this.props.activities.concat(this.props.depositsArchive);
 
         let grouped = _.mapObject(_.groupBy(combiedData, 'email'),
-            list => list.map(deposit => deposit));
+            list => list.map(activity => activity));
 
 
         for (let i in grouped){
@@ -55,12 +55,12 @@ class DepositByAll extends React.Component {
                 return (a.time > b.time) ? 1 : -1;
             });
 
-            const times = sortedByDate.map((deposit) => {
-                return (deposit.time.toDate());
+            const times = sortedByDate.map((activity) => {
+                return (activity.time.toDate());
             });
 
-            const amounts = sortedByDate.map((deposit) => {
-                return (deposit.amount);
+            const amounts = sortedByDate.map((activity) => {
+                return (activity.amount);
             });
 
             const formattedAmounts = amounts.map(amount => "$" + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
@@ -77,12 +77,12 @@ class DepositByAll extends React.Component {
             })
         };
 
-        const sortedByDate = this.props.deposits.sort((a, b) => {
+        const sortedByDate = this.props.activities.sort((a, b) => {
             return (a.time > b.time) ? 1 : -1;
         });
         // convert to javascript date object so plotly can recognize it as a proper date
-        const times = sortedByDate.map((deposit) => {
-            return (deposit.time.toDate());
+        const times = sortedByDate.map((activity) => {
+            return (activity.time.toDate());
         });
 
         const earliestDate = times.length > 0 ? times[0] : new Date();
@@ -126,7 +126,7 @@ class DepositByAll extends React.Component {
     // go to details
     viewDetails = () => {
         this.props.history.push({
-            pathname: '/depositlist'
+            pathname: '/activitieslist'
         });
     }
 

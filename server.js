@@ -17,7 +17,7 @@ app.use(express.json());
 
 require("./routes/api-auth-routes.js")(app);
 require("./routes/api-user-routes.js")(app);
-require("./routes/api-banker-routes.js")(app);
+require("./routes/api-activity-routes.js")(app);
 require("./routes/api-firebase.js")(app);
 
 //app.use(express.static(path.join(__dirname, 'client', 'build')));

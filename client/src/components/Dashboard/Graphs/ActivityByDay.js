@@ -7,8 +7,8 @@ import { withRouter } from 'react-router-dom';
 
 import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
 
-class DepositByDay extends React.Component {
-    plotDeposits = (uid) => {
+class ActivityByDay extends React.Component {
+    plotActivities = (uid) => {
         const selectorOptions = {
             buttons: [
                 {
@@ -41,36 +41,35 @@ class DepositByDay extends React.Component {
                 }]
         };
 
-        let combiedData = this.props.deposits.concat(this.props.depositsArchive);
+        let combiedData = this.props.activities;
 
         const sortedByDate = combiedData.sort((a, b) => {
-            return (a.time > b.time) ? 1 : -1;
+            return (a.activityDateTime > b.activityDateTime) ? 1 : -1;
         });
 
-        // split deposits by day into object with all deposits for each day
-        let groups = _.groupBy(sortedByDate, (deposit) => {
-            let jsDate = new Date(deposit.time);
+        // split activities by day into object with all activities for each day
+        let groups = _.groupBy(sortedByDate, (activity) => {
+            let jsDate = new Date(activity.activityDateTime);
             return moment(jsDate).startOf('day').format();
         });
 
-    
-        // turn complex object into array by day with total for the day and each days deposits (for stacking later)
-        var dayDeposits = _.map(groups, (deposit, day) => {
-            let totalObj = deposit.reduce((a, b) => {
-                return ({ amount: a.amount + b.amount });
+        // turn complex object into array by day with total for the day and each days activities (for stacking later)
+        var dayActivities = _.map(groups, (activity, day) => {
+            let totalObj = activity.reduce((a, b) => {
+                return ({ distance: a.distance + b.distance });
             });
-            let total = totalObj.amount;
+            let total = totalObj.distance;
             return {
                 day: day,
                 total: total,
-                times: deposit
+                times: activity
             };
         });
-        // console.log(dayDeposits);
+        // console.log(dayActivities);
 
         // convert to javascript date object so plotly can recognize it as a proper date
-        const days = dayDeposits.map((deposit) => {
-            let jsDate = new Date(deposit.day);
+        const days = dayActivities.map((activity) => {
+            let jsDate = new Date(activity.day);
             // Convert to just day without time
             let month = '' + (jsDate.getMonth() + 1);
             let day = '' + jsDate.getDate();
@@ -85,13 +84,13 @@ class DepositByDay extends React.Component {
         const earliestDate = days.length > 0 ? days[0] : new Date();
         const latestDate = days.length > 0 ? days[days.length - 1] : new Date();
 
-        const amounts = dayDeposits.map((deposit) => {
-            return (deposit.total);
+        const distances = dayActivities.map((activity) => {
+            return (activity.total);
         });
 
-        const formattedAmounts = amounts.map(amount => "$" + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        const formattedDistance = distances.map(distance => distances.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 
-        // STILL NEED To stack all deposits for that day
+        // STILL NEED To stack all activities for that day
 
         return (
             <Plot
@@ -99,19 +98,19 @@ class DepositByDay extends React.Component {
                     {
                         type: 'bar',
                         mode: 'stack',
-                        name: 'Deposits by Day',
+                        name: 'Activities by Day',
                         x: days,
-                        y: amounts,
+                        y: distances,
                         marker: { color: 'rgb(13, 71, 161)' },
                         "hoverinfo": "text",
                         "line": { "width": 0.5 },
-                        text: formattedAmounts,
+                        text: formattedDistance,
                     },
                 ]}
                 layout={
                     {
                         autosize: true,
-                        /* title: 'Deposits By User' */
+                        /* title: 'Activities By User' */
                         xaxis: {
                             autorange: true,
                             range: [earliestDate, latestDate],
@@ -142,7 +141,7 @@ class DepositByDay extends React.Component {
     // go to details
     viewDetails = () => {
         this.props.history.push({
-            pathname: '/depositlist'
+            pathname: '/activitieslist'
         });
     }
 
@@ -158,8 +157,7 @@ class DepositByDay extends React.Component {
                     <div className="col s12 l6">
                         <div className="card">
                             <div className="card-content pCard">
-                                <span className="card-title">{this.props.title ? this.props.title : 'DepositByDay'}</span>
-                                {this.plotDeposits()}
+                                <span className="card-title">{this.props.title ? this.props.title : 'ActivityByDay'}</span>
                             </div>
                             <div className="card-action pCard">
                                 <div className="center-align">
@@ -168,6 +166,21 @@ class DepositByDay extends React.Component {
                             </div>
                         </div>
                     </div>
+                    {/*}
+                    <div className="col s12 l6">
+                        <div className="card">
+                            <div className="card-content pCard">
+                                <span className="card-title">{this.props.title ? this.props.title : 'ActivityByDay'}</span>
+                                {this.plotActivities()}
+                            </div>
+                            <div className="card-action pCard">
+                                <div className="center-align">
+                                    <button onClick={this.viewDetails} className="waves-effect waves-light dash-btn blue darken-4 btn">More Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    */}
                 </div>
             );
         } else {
@@ -178,4 +191,4 @@ class DepositByDay extends React.Component {
     }
 }
 
-export default withRouter(withAuthUserContext(DepositByDay));
+export default withRouter(withAuthUserContext(ActivityByDay));
