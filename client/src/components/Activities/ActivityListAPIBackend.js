@@ -42,11 +42,11 @@ class ActivityList extends React.Component {
     getActivities = () => {
         // Get with security
         this.setState({ loadingFlag: true });
-        Util.apiGet("/api/activity/allActivitis")
+        Util.apiGet("/api/activity/activities")
         .then(res => {
             console.log(res.data);
-            let allActivitis = res.data;
-            let sortedByDate = allActivitis.sort((a, b) => {
+            let activities = res.data;
+            let sortedByDate = activities.sort((a, b) => {
                 return (a.time < b.time) ? 1 : -1;
             });
             this.setState({ loadingFlag: false, activities: sortedByDate });

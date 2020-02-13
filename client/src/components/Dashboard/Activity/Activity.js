@@ -125,7 +125,7 @@ class Activity extends React.Component {
     componentDidMount() {
         this._mounted = true;
 
-        Util.apiGet("/api/firestore/activities")
+        Util.apiGet("/api/activity/activities")
             .then(res => {
                 if (this._mounted) {
                     this.setState({ activities: res.data }, () => this.calculate())
@@ -140,7 +140,7 @@ class Activity extends React.Component {
 
     calculate = () => {
 
-        Util.apiGet("/api/firestore/getActivityTotals")
+        Util.apiGet("/api/activity/activityTotals")
             .then(res => {
                 if (this._mounted) {
                     this.setState({
@@ -299,7 +299,7 @@ class Activity extends React.Component {
                                             placeholder="MM/DD/YYYY"
                                             multiline
                                             className={classes.textField}
-                                            type="date"
+                                            type="text"
                                             autoComplete="text"
                                             margin="normal"
                                             value={activityDateTime}

@@ -30,7 +30,7 @@ class Home extends React.Component {
         this._mounted = true;
         this.setState({ loadingFlag: true })
 
-        Util.apiGet("/api/firestore/activities")
+        Util.apiGet("/api/activity/activities")
             .then(res => {
                 console.log(res.data);
                 if (this._mounted) {
@@ -40,7 +40,7 @@ class Home extends React.Component {
             })
             .catch(err => console.error(err));
 
-        Util.apiGet("/api/firestore/getActivityTotals")
+        Util.apiGet("/api/activity/activityTotals")
         .then(res => {
             if (this._mounted) {
                 this.setState({

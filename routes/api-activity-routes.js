@@ -12,6 +12,10 @@ let _durationTotal = 0;
 // Get all activities anytime it changes and attach user to each
 db.collection("activities").onSnapshot((querySnapshot) => {
     activities = [];
+    _nbrActivities = 0;
+    _distanceTotal = 0;
+    _durationTotal = 0;
+
     const userQueries = [];
     querySnapshot.forEach(doc => {
         let activity = doc.data();
@@ -19,13 +23,6 @@ db.collection("activities").onSnapshot((querySnapshot) => {
         _distanceTotal += activity.distance;
         _durationTotal += activity.duration;
         activity.id = doc.id;
-
-        try {
-            activity.activityDateTime = activity.activityDateTme.toDate();
-        } catch (err) {
-            // catch all error
-            console.error(`Error caught in api-activity_routes.js for docId: ${activity.id } startup (bad data/date): ${err}`)
-        }
 
         const userRef = db.collection("users").doc(activity.uid);
         const userQuery = userRef.get()
@@ -57,16 +54,17 @@ module.exports = function (app) {
     });
 
     // Send all activities
-    app.get("/api/firestore/activities", requiresLogin, (req, res) => {
+    app.get("/api/activity/activities", requiresLogin, (req, res) => {
         let activities = _activities;
+        console.log(`Activity data: ${JSON.stringify(_activities, undefined, 2)}`)
 
         res.json(activities);
     });
     
     // Get activities in safe
-    app.get("/api/firestore/getActivityTotals", requiresLogin, (req, res) => {
+    app.get("/api/activity/activityTotals", requiresLogin, (req, res) => {
 
-        let result = new Promise((resolve, reject) => {
+        let result = new Promise((resolve) => {
             let total = {
                 nbrActivities: _nbrActivities,
                 distanceTotal: _distanceTotal,
@@ -79,7 +77,7 @@ module.exports = function (app) {
 
     // Send back total distance
     app.get("/api/activity/nbrActivities", requiresLogin, (req, res) => {
-        res.json(_distanceTotal);
+        res.json(_nbrActivities);
     }); 
 
     // Send back total distance

@@ -57,17 +57,17 @@ class ActivityList extends React.Component {
 
     // get all on mount
     componentDidMount() {
-        this.setState({ loadingFlag: true });
         this.getActivities();
+        this.setState({ loadingFlag: true });
     }
 
     render() {
         const { classes } = this.props;
 
         // Some props take time to get ready so return null when uid not avaialble
-        // if (this.props.user.uid === null) {
-        //     return null;
-        // }
+        if (this.props.user.uid === null) {
+            return null;
+        }
 
         if (this.props.user.authUser) {
             return (
