@@ -1,27 +1,36 @@
-import React from 'react';
-import Util from '../../Util/Util';
+import React from "react";
+import Util from "../../Util/Util";
 import M from "materialize-css/dist/js/materialize.min.js";
-import Modal from './ActivityModal';
-import { withAuthUserContext } from '../../Auth/Session/AuthUserContext';
-import { Redirect } from 'react-router';
-import NumberFormat from 'react-number-format';
-import TextField from '@material-ui/core/TextField';
-import { withStyles } from '@material-ui/core/styles';
+import Modal from "./ActivityModal";
+import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
+import { Redirect } from "react-router";
+import NumberFormat from "react-number-format";
+import TextField from "@material-ui/core/TextField";
+import { withStyles } from "@material-ui/core/styles";
+
+// import DateFnsUtils from '@date-io/date-fns';
+// import {
+//     MuiPickersUtilsProvider,
+//     KeyboardTimePicker,
+//     KeyboardDatePicker
+//   } from "@material-ui/pickers";
+  
+  
 
 const INITIAL_STATE = {
-    displayName: '',
-    team: '',
-    activityDateTime: '',
-    activityType: '', // swim, bike, run
-    distance: '',
-    distanceUnits: '',
-    duration: ''
+    displayName: "",
+    team: "",
+    activityDateTime: "",
+    activityType: "", // swim, bike, run
+    distance: "",
+    distanceUnits: "",
+    duration: ""
 };  
 
 const styles = theme => ({
     container: {
-        display: 'flex',
-        flexWrap: 'wrap',
+        display: "flex",
+        flexWrap: "wrap",
     },
     textField: {
         marginLeft: theme.spacing.unit,
@@ -58,6 +67,7 @@ function NumberFormatDate(props) {
             {...other}
             getInputRef={inputRef}
             onValueChange={values => {
+                console.log(`Date value: ${values.value}`)            
                 onChange({
                     target: {
                         value: values.value,
@@ -125,12 +135,6 @@ class Activity extends React.Component {
 
         let elem = document.querySelector(".modal");
         M.Modal.init(elem);
-        let datePicker = document.querySelector(".datepicker");
-        M.init(datePicker);
-        datePicker.pickadate({
-            selectMonths: true, // Creates a dropdown to control month
-            selectYears: 15 // Creates a dropdown of 15 years to control year
-        });
 
     }
 
@@ -156,7 +160,7 @@ class Activity extends React.Component {
             this.setState({ [name]: 0 });
         }
     };
-
+    
     handleDateChange(event) {
         this.setState({
             [event.target.name]: event.target.value
@@ -171,18 +175,37 @@ class Activity extends React.Component {
 
     updateDatabase = () => {
         const db = Util.getFirestoreDB();
+        const fb = Util.getFirebaseFirestore();
 
-        db.collection('activities').add({
+        // Deal with Date - convert MM/DD/YYYY to date object and then Firestore timestamp
+        let jsDateArray = [];
+        let jsDateString = this.state.activityDateTime;
+        if (jsDateString.length == 10) {
+            jsDateArray = jsDateString.split("/");
+            if (jsDateArray.length < 3) {
+                alert(`Bad Date - Activity Update Failed: ${this.state.activityDateTime}`);
+                return;
+            }
+        } else {
+            alert(`Bad Date - Activity Update Failed: ${this.state.activityDateTime}`);
+            return;
+        }
+
+        const jsDate = new Date(jsDateArray[2], jsDateArray[0], jsDateArray[1]);
+
+        db.collection("activities").add({
             team: this.state.team,
-            activityDateTime: this.state.activityDateTime,
+            activityDateTime: jsDate,
             activityType: this.state.activityType,
             distance: this.state.distance,
             distanceUnits: this.state.distanceUnits,
             duration: this.state.duration,
             email: this.props.user.authUser.email,
             uid: this.props.user.authUser.uid
-        }).catch(function (error) {
+        }).catch( (error) => {
             alert("Activity Update Failed: ", error);
+        }).then( () => {
+            alert("Activity Update Successful: ");
         });
     }
 
@@ -190,7 +213,6 @@ class Activity extends React.Component {
         event.preventDefault();
 
         this.updateDatabase();
-
     }
 
     render() {
@@ -252,18 +274,36 @@ class Activity extends React.Component {
                                             onChange={this.onChange}
                                         />
 
-                                        <TextField className='datepicker'
+                                        {/*
+                                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                            <KeyboardDatePicker
+                                                id="activityDateTime"
+                                                name="activityDateTime"
+                                                label="Date"
+                                                variant="inline"
+                                                format="MM/dd/yyyy"
+                                                margin="normal"
+                                                value={activityDateTime}
+                                                onChange={this.handleDateChange}
+                                                KeyboardButtonProps={{
+                                                'aria-label': 'change date',
+                                            }}
+                                            />  
+                                        </MuiPickersUtilsProvider>   
+                                        */}                     
+
+                                        <TextField className="datepicker"
                                             id="activityDateTime"
+                                            name="activityDateTime"
                                             label="Date"
-                                            placeholder="02/01/2020"
+                                            placeholder="MM/DD/YYYY"
                                             multiline
                                             className={classes.textField}
                                             type="date"
-                                            name="activityDateTime"
                                             autoComplete="text"
                                             margin="normal"
-                                            data-value={activityDateTime}
-                                            onChange={this.handleDateChange}
+                                            value={activityDateTime}
+                                            onChange={this.onChange}
                                         />
 
                                         <TextField
@@ -291,7 +331,7 @@ class Activity extends React.Component {
                                             autoComplete="text"
                                             margin="normal"
                                             value={distance}
-                                            onChange={this.handleChange('distance')}
+                                            onChange={this.handleChange("distance")}
                                             InputProps={{
                                                 inputComponent: NumberFormatCustom
                                             }}
@@ -322,7 +362,7 @@ class Activity extends React.Component {
                                             autoComplete="text"
                                             margin="normal"
                                             value={duration}
-                                            onChange={this.handleChange('duration')}
+                                            onChange={this.handleChange("duration")}
                                             InputProps={{
                                                 inputComponent: NumberFormatCustom
                                             }}
