@@ -44,9 +44,9 @@ class Home extends React.Component {
         .then(res => {
             if (this._mounted) {
                 this.setState({
-                    nbrActivities: res.data.nbrActivities,
-                    distance: res.data.distance,
-                    duration: res.data.duration
+                    nbrActivities: res.data.nbrActivities ? res.data.nbrActivities : 0,
+                    distance: res.data.distance ? res.data.distance : 0,
+                    duration: res.data.duration ? res.data.duration : 0
                 })
             }
         })

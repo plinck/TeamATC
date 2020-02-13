@@ -40,7 +40,11 @@ module.exports = function (app) {
     app.get("/api/firestore/getTotalActivities", requiresLogin, (req, res) => {
 
         let result = new Promise((resolve, reject) => {
-            let total = {distanceTotal, durationTotal}
+            let total = {
+                nbrActivities: 0,
+                distanceTotal: 0,
+                durationTotal: 0
+            }
             total.nbrActivities = 0;
             total.distanceTotal = 0;
             total.durationTotal = 0;

@@ -9,8 +9,7 @@ import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
 
 const INITIAL_STATE = {
-    firstName: '',
-    lastName: '',
+    displayName: '',
     team: '',
     activityDateTime: '',
     activityType: '', // swim, bike, run
@@ -31,6 +30,45 @@ const styles = theme => ({
     }
 });
 
+function NumberFormatPhone(props) {
+    const { inputRef, onChange, ...other } = props;
+
+    return (
+        <NumberFormat
+            {...other}
+            getInputRef={inputRef}
+            onValueChange={values => {
+                onChange({
+                    target: {
+                        value: values.value,
+                    },
+                });
+            }}
+            format="(###) ###-####"
+            mask=""
+        />
+    );
+}
+
+function NumberFormatDate(props) {
+    const { inputRef, onChange, ...other } = props;
+
+    return (
+        <NumberFormat
+            {...other}
+            getInputRef={inputRef}
+            onValueChange={values => {
+                onChange({
+                    target: {
+                        value: values.value,
+                    },
+                });
+            }}
+            format="##/##/####"
+            mask=""
+        />
+    );
+}
 
 function NumberFormatCustom(props) {
     const { inputRef, onChange, ...other } = props;
@@ -49,7 +87,6 @@ function NumberFormatCustom(props) {
                 });
             }}
             thousandSeparator
-        // prefix="$"
         />
     );
 }
@@ -62,6 +99,13 @@ class Activity extends React.Component {
         this._isMounted = false;
     
         this.state = { ...INITIAL_STATE };
+        // this.setState({
+        //     distanceTotal: res.data.distanceTotal,
+        //     durationTotal: res.data.durationTotal,
+        // })
+
+        // this.state.firstName = this.props.user.authUser.firstName
+        // this.state.lastName = this.props.user.authUser.lastName
     }
 
     componentWillUnmount() {
@@ -74,7 +118,7 @@ class Activity extends React.Component {
         Util.apiGet("/api/firestore/activities")
             .then(res => {
                 if (this._mounted) {
-                    this.setState({ activitys: res.data }, () => this.calculate())
+                    this.setState({ activities: res.data }, () => this.calculate())
                 }
             })
             .catch(err => console.error(err));
@@ -106,12 +150,16 @@ class Activity extends React.Component {
         }
     };
 
+    onChange = event => {
+        this.setState({
+            [event.target.name]: event.target.value
+        });
+    };
+
     updateDatabase = () => {
         const db = Util.getFirestoreDB();
 
-        db.collection('activitys').add({
-            firstName: this.state.firstName,
-            LastName: this.state.lastName,
+        db.collection('activities').add({
             team: this.state.team,
             activityDateTime: this.state.activityDateTime,
             activityType: this.state.activityType,
@@ -128,14 +176,15 @@ class Activity extends React.Component {
     onSubmitHandler = (event) => {
         event.preventDefault();
 
+        this.updateDatabase();
+
     }
 
     render() {
         const { classes } = this.props;
 
-        const {
-            firstName,
-            lastName,
+        var {
+            displayName,
             team,
             activityDateTime,
             activityType, // swim, bike, run
@@ -143,11 +192,16 @@ class Activity extends React.Component {
             distanceUnits,
             duration
         } = this.state;
+    
+        // wait for props to get ready
+        if (this.props.user.authUser) { 
+            displayName = this.props.user.authUser.displayName
+        }
 
         if (this.props.user.authUser) {
             return (
                 <div className="container">
-                    <Modal amount={this.state.amount} />
+                    <Modal distance={this.state.distance} />
                     <div className="col s12">
                         <div className="card">
                             <div className="card-content pCard">
@@ -158,38 +212,20 @@ class Activity extends React.Component {
 
                                         <TextField
                                             disabled
-                                            id="firstName"
-                                            label="firstName"
-                                            placeholder="FirstName"
+                                            id="displayName"
+                                            name="displayName"
+                                            label="displayName"
+                                            placeholder="Name"
                                             multiline
                                             className={classes.textField}
                                             type="text"
-                                            name="firstName"
                                             autoComplete="text"
                                             margin="normal"
-                                            value={firstName}
+                                            value={displayName}
                                             onChange={this.onChange}
-                                            />
                                         />
 
                                         <TextField
-                                            disabled
-                                            id="lastName"
-                                            label="lastName"
-                                            placeholder="LastName"
-                                            multiline
-                                            className={classes.textField}
-                                            type="text"
-                                            name="lastName"
-                                            autoComplete="text"
-                                            margin="normal"
-                                            value={lastName}
-                                            onChange={this.onChange}
-                                            />
-                                        />
-
-                                        <TextField
-                                            disabled
                                             id="team"
                                             label="team"
                                             placeholder="Team"
@@ -201,7 +237,6 @@ class Activity extends React.Component {
                                             margin="normal"
                                             value={team}
                                             onChange={this.onChange}
-                                            />
                                         />
 
                                         <TextField
@@ -216,7 +251,20 @@ class Activity extends React.Component {
                                             margin="normal"
                                             value={activityDateTime}
                                             onChange={this.onChange}
-                                            />
+                                        />
+
+                                        <TextField
+                                            id="activityType"
+                                            name="activityType"
+                                            label="Activity Type"
+                                            placeholder="swim,bike,or run"
+                                            multiline
+                                            className={classes.textField}
+                                            type="text"
+                                            autoComplete="text"
+                                            margin="normal"
+                                            value={activityType}
+                                            onChange={this.onChange}
                                         />
 
                                         <TextField
@@ -230,8 +278,24 @@ class Activity extends React.Component {
                                             autoComplete="text"
                                             margin="normal"
                                             value={distance}
+                                            onChange={this.handleChange('distance')}
+                                            InputProps={{
+                                                inputComponent: NumberFormatCustom
+                                            }}
+                                        />
+
+                                        <TextField
+                                            id="distanceUnits"
+                                            name="distanceUnits"
+                                            label="Units"
+                                            placeholder="miles"
+                                            multiline
+                                            className={classes.textField}
+                                            type="text"
+                                            autoComplete="text"
+                                            margin="normal"
+                                            value={distanceUnits}
                                             onChange={this.onChange}
-                                            />
                                         />
 
                                         <TextField
@@ -245,8 +309,10 @@ class Activity extends React.Component {
                                             autoComplete="text"
                                             margin="normal"
                                             value={duration}
-                                            onChange={this.onChange}
-                                            />
+                                            onChange={this.handleChange('duration')}
+                                            InputProps={{
+                                                inputComponent: NumberFormatCustom
+                                            }}
                                         />
 
                                         </form>
