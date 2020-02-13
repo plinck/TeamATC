@@ -1,21 +1,12 @@
 import React from "react";
-import Util from "../../Util/Util";
+import Util from "../Util/Util";
 import M from "materialize-css/dist/js/materialize.min.js";
 import Modal from "./ActivityModal";
-import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
+import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Redirect } from "react-router";
 import NumberFormat from "react-number-format";
 import TextField from "@material-ui/core/TextField";
 import { withStyles } from "@material-ui/core/styles";
-
-// import DateFnsUtils from '@date-io/date-fns';
-// import {
-//     MuiPickersUtilsProvider,
-//     KeyboardTimePicker,
-//     KeyboardDatePicker
-//   } from "@material-ui/pickers";
-  
-  
 
 const INITIAL_STATE = {
     displayName: "",
@@ -61,20 +52,13 @@ function NumberFormatCustom(props) {
 }
 
 
-class Activity extends React.Component {
+class ActivityForm extends React.Component {
     constructor(props) {
         super(props);
     
         this._isMounted = false;
     
         this.state = { ...INITIAL_STATE };
-        // this.setState({
-        //     distanceTotal: res.data.distanceTotal,
-        //     durationTotal: res.data.durationTotal,
-        // })
-
-        // this.state.firstName = this.props.user.authUser.firstName
-        // this.state.lastName = this.props.user.authUser.lastName
     }
 
     componentWillUnmount() {
@@ -120,12 +104,6 @@ class Activity extends React.Component {
         }
     };
     
-    handleDateChange(event) {
-        this.setState({
-            [event.target.name]: event.target.value
-        });
-    }
-
     onChange = event => {
         this.setState({
             [event.target.name]: event.target.value
@@ -232,24 +210,6 @@ class Activity extends React.Component {
                                             onChange={this.onChange}
                                         />
 
-                                        {/*
-                                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                            <KeyboardDatePicker
-                                                id="activityDateTime"
-                                                name="activityDateTime"
-                                                label="Date"
-                                                variant="inline"
-                                                format="MM/dd/yyyy"
-                                                margin="normal"
-                                                value={activityDateTime}
-                                                onChange={this.handleDateChange}
-                                                KeyboardButtonProps={{
-                                                'aria-label': 'change date',
-                                            }}
-                                            />  
-                                        </MuiPickersUtilsProvider>   
-                                        */}                     
-
                                         <TextField
                                             id="activityDateTime"
                                             name="activityDateTime"
@@ -349,7 +309,6 @@ class Activity extends React.Component {
         }
 
     }
-
 };
 
-export default withStyles(styles)(withAuthUserContext(Activity));
+export default withStyles(styles)(withAuthUserContext(ActivityForm));

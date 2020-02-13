@@ -3,9 +3,9 @@ import './dashboard.css';
 import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
 import { Redirect } from 'react-router';
 import Distance from './Distance/Distance';
+import Activities from "../Activity/Activities";
 
 import ActivityByDay from "./Graphs/ActivityByDay";
-import ActivityList from "../Activities/ActivityList";
 
 
 // import ActivityByUser from "./Graphs/ActivityByUser";
@@ -87,16 +87,10 @@ class Home extends React.Component {
                                     title={"Total Activities By Day"}
                                     activities={this.state.activities}
                                 />
-
-                                {/*this.props.user.isUser ? null :
-                                    <ActivityByUser
-                                        title={"Activities By User"}
-                                        activities={this.state.activities}
-                                />*/}
                             </div>
                             {/* TEST GETTING ACTIVITIES */}
                             <div className="row">
-                                <ActivityList
+                                <Activities
                                 />
                             </div>
                             

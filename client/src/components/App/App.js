@@ -9,11 +9,12 @@ import LandingPage from '../Landing';
 import HomePage from '../Dashboard';
 import Account from '../Account/Account';
 import Admin from '../Admin/Admin';
-import Activity from '../Dashboard/Activity/Activity';
+import Activities from '../Activity/Activities';
+import ActivityPage from '../Activity/ActivityPage';
+import ActivityForm from '../Activity/ActivityForm';
 import UserPage from '../User/UserPage';
 import UserForm from '../User/UserForm';
 import Register from '../Register/Register';
-import ActivityList from '../Activities/ActivityList';
 
 // Auth components
 import SignUpForm from '../Auth/SignUp/SignUp';
@@ -37,11 +38,12 @@ class App extends React.Component {
           <Route exact path="/dashboard" component={HomePage} />
           <Route exact path="/account" component={Account} />
           <Route exact path="/admin" component={Admin} />
+          <Route exact path="/activities" component={Activities} />
+          <Route exact path="/activitypage" component={ActivityPage} />
+          <Route exact path="/activityform" component={ActivityForm} />
           <Route exact path="/userpage" component={UserPage} />
           <Route exact path="/userform" component={UserForm} />
-          <Route exact path="/dashboard/activity" component={Activity} />
           <Route exact path="/register" component={Register} />
-          <Route exact path="/activitylist" component={ActivityList} />
         </div>
       </Router>
 

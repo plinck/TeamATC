@@ -1,4 +1,4 @@
-import Util from "../../Util/Util";
+import Util from "../Util/Util";
 
 class ActivityDB {
 
@@ -31,11 +31,11 @@ class ActivityDB {
             const db = Util.getFirestoreDB();
             let users = {} ;
             let activityArray = [];
-            db.collection('users').get().then((results) => {
+            db.collection("users").get().then((results) => {
                 results.forEach((doc) => {
                     users[doc.id] = doc.data();
                 });
-                const depRef = db.collection('activities').orderBy('time', 'desc');
+                const depRef = db.collection("activities").orderBy("time", "desc");
                 depRef.get().then((docSnaps) => {
                     docSnaps.forEach((doc) => {
                         const activity = doc.data();
@@ -67,8 +67,8 @@ class ActivityDB {
             const db = Util.getFirestoreDB();
 
             // then get from firestore
-            let activitiesArchive = [];
-            let docRef = db.collection("activities").orderBy('time', 'desc');
+            let activities = [];
+            let docRef = db.collection("activities").orderBy("activityDateTime", "desc");
             docRef.get().then((querySnapshot) => {
                 const userQueries = [];
                 querySnapshot.forEach(doc => {
@@ -88,14 +88,14 @@ class ActivityDB {
                     })
                     .catch(err => console.error(`Error getWithUserAlt.userQuery: ${err}`))
                     .finally(() => {
-                        activitiesArchive.push(activity);
+                        activities.push(activity);
                     });
                     userQueries.push(userQuery);
                 });
                 // This waits until ALL promises in the userQueries array are resolved
                 Promise.all(userQueries).then(() => {
-                    console.log('All userQueries Resolved');
-                    resolve(activitiesArchive);
+                    console.log("All userQueries Resolved");
+                    resolve(activities);
                 });
             }).catch(err => {
                 reject(`Error activitiesDB.getWithUserAlt ${err.message}`);
