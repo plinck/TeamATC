@@ -40,7 +40,7 @@ class Home extends React.Component {
             })
             .catch(err => console.error(err));
 
-        Util.apiGet("/api/firestore/getTotalActivities")
+        Util.apiGet("/api/firestore/getActivityTotals")
         .then(res => {
             if (this._mounted) {
                 this.setState({

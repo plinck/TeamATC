@@ -18,7 +18,6 @@ app.use(express.json());
 require("./routes/api-auth-routes.js")(app);
 require("./routes/api-user-routes.js")(app);
 require("./routes/api-activity-routes.js")(app);
-require("./routes/api-firebase.js")(app);
 
 //app.use(express.static(path.join(__dirname, 'client', 'build')));
 // //production mode - serve from build dir, else serve from public

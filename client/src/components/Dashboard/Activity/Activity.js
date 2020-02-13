@@ -136,7 +136,7 @@ class Activity extends React.Component {
 
     calculate = () => {
 
-        Util.apiGet("/api/firestore/getTotalActivities")
+        Util.apiGet("/api/firestore/getActivityTotals")
             .then(res => {
                 if (this._mounted) {
                     this.setState({

@@ -41,10 +41,10 @@ class ActivityList extends React.Component {
 
     getActivities = () => {
         // Get with security
-        Util.apiGet("/api/activity/allActivities")
+        Util.apiGet("/api/activity/activities")
             .then(res => {
-                let allActivities = res.data;
-                let sortedByDate = allActivities.sort((a, b) => {
+                let activities = res.data;
+                let sortedByDate = activities.sort((a, b) => {
                     return (a.actitityDateTime < b.actitityDateTime) ? 1 : -1;
                 });
                 this.setState({ loadingFlag: false, activities: sortedByDate });
