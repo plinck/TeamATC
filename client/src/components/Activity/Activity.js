@@ -35,20 +35,21 @@ class Activity extends React.Component {
         let activityIcon = "";
 
         if (activityType.toLowerCase() === "swim") {
-            activityIcon = "done_all";
+            activityIcon = "/images/icons8-swimming-50.png";
         } else if ((activityType.toLowerCase() === "bike")) {
-            activityIcon = "mail_outline";
+            activityIcon = "/images/icons8-triathlon-50.png";
         } else if ((activityType.toLowerCase() === "run")){
-            activityIcon = "lock";
+            activityIcon = "/images/icons8-running-50.png";
         } else {
-            activityIcon = "lock";      // unknown
+            activityIcon = "/images/icons8-triathlon-50.png";      // unknown
         }
 
         return (
             <ExpansionPanel>
                 <ExpansionPanelSummary className="row" expandIcon={< ExpandMoreIcon />}>
                     <Tooltip title={activityType}>
-                        <i className="material-icons green-text col s1 m1">{activityIcon}</i>
+                        <img style={{maxHeight: '24px'}} src={activityIcon} alt={activityType} />
+                        {/* <i className="material-icons green-text col s1 m1">{activityIcon}</i> */}
                     </Tooltip>
                     
                     {/*}

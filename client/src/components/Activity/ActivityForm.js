@@ -87,6 +87,7 @@ class ActivityForm extends React.Component {
             .then(res => {
                 if (this._mounted) {
                     this.setState({
+                        nbrActivities: res.data.nbrActivities,
                         distanceTotal: res.data.distanceTotal,
                         durationTotal: res.data.durationTotal,
                     })
@@ -169,6 +170,11 @@ class ActivityForm extends React.Component {
             displayName = this.props.user.authUser.displayName
         }
 
+        // Some props take time to get ready so return null when uid not avaialble
+        if (this.props.user.uid === null) {
+            return null;
+        }
+        
         if (this.props.user.authUser) {
             return (
                 <div className="container">

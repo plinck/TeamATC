@@ -15,7 +15,7 @@ const Distance =(props) => {
                         </div>
                         <div className="card-action pCard">
                             <div className="center-align ">
-                                <Link disabled={props.disabled} to="/dashboard/activity" className="waves-effect waves-light dash-btn blue darken-4 btn activityBtn">New Activity</Link>
+                                <Link disabled={props.disabled} to="/activityform" className="waves-effect waves-light dash-btn blue darken-4 btn activityBtn">New Activity</Link>
                             </div>
                         </div>
                     </div>
@@ -28,7 +28,7 @@ const Distance =(props) => {
                         </div>
                         <div className="card-action pCard">
                             <div className="center-align ">
-                                <Link disabled={props.disabled} to="/dashboard/activity" className="waves-effect waves-light dash-btn blue darken-4 btn activityBtn">New Activity</Link>
+                                <Link disabled={props.disabled} to="/activityform" className="waves-effect waves-light dash-btn blue darken-4 btn activityBtn">New Activity</Link>
                             </div>
                         </div>
                     </div>
@@ -41,7 +41,7 @@ const Distance =(props) => {
                         </div>
                         <div className="card-action pCard">
                             <div className="center-align ">
-                                <Link disabled={props.disabled} to="/dashboard/activity" className="waves-effect waves-light dash-btn blue darken-4 btn activityBtn">New Activity</Link>
+                                <Link disabled={props.disabled} to="/activityform" className="waves-effect waves-light dash-btn blue darken-4 btn activityBtn">New Activity</Link>
                             </div>
                         </div>
                     </div>

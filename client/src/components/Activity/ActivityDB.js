@@ -23,9 +23,9 @@ class ActivityDB {
     }
 
     // -------------------------------------------------------------------------------------------------
-    // Activities : getWithUser - get all actiities with their firstName lastName
+    // Activities : getUserWithActivity - get all actiities with their firstName lastName
     // This isnt SUPER effecient since it gets all users even if they havent had an activity
-    static getWithUser = () => {
+    static getUserWithActivity = () => {
         // its a promise so return
         return new Promise((resolve, reject) => {
             const db = Util.getFirestoreDB();
@@ -48,20 +48,20 @@ class ActivityDB {
                     });
                     resolve(activityArray);
                 }).catch((err) => {
-                    console.error("Error in ActivityDB.getWithUser activities: ", err);
+                    console.error("Error in ActivityDB.getUserWithActivity activities: ", err);
                     reject(`Error in ActivityDBgetWithUser activities: ${err}`);
                 });
             }).catch((err) => {
-                console.error("Error in ActivityDB.getWithUser user : ", err);
-                reject(`Error in ActivityDB.getWithUser user: ${err}`);
+                console.error("Error in ActivityDB.getUserWithActivity user : ", err);
+                reject(`Error in ActivityDB.getUserWithActivity user: ${err}`);
             });
         }); // promise
     }// method
 
     // -------------------------------------------------------------------------------------------------
-    // Activities : getWithUser - get all depoists with their firstName lastName
+    // Activities : getUserWithActivity - get all depoists with their firstName lastName
     // This is alternate method that uses promise.all
-    static getWithUserAlt = () => {
+    static getActivityWithUser = () => {
         // its a promise so return
         return new Promise((resolve, reject) => {
             const db = Util.getFirestoreDB();
@@ -80,13 +80,12 @@ class ActivityDB {
                     const userQuery = userRef.get()
                     .then ( user => {
                         if (user.exists) {
-                            console.log(`Got user: ${user.data().firstName}`);
                             activity.firstName = user.data().firstName;
                             activity.lastName = user.data().lastName;
                             activity.email = user.data().email;
                         }
                     })
-                    .catch(err => console.error(`Error getWithUserAlt.userQuery: ${err}`))
+                    .catch(err => console.error(`Error getActivityWithUser.userQuery: ${err}`))
                     .finally(() => {
                         activities.push(activity);
                     });
@@ -94,11 +93,10 @@ class ActivityDB {
                 });
                 // This waits until ALL promises in the userQueries array are resolved
                 Promise.all(userQueries).then(() => {
-                    console.log("All userQueries Resolved");
                     resolve(activities);
                 });
             }).catch(err => {
-                reject(`Error activitiesDB.getWithUserAlt ${err.message}`);
+                reject(`Error activitiesDB.getActivityWithUser ${err.message}`);
             });
         });
     }

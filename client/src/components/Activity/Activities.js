@@ -40,7 +40,7 @@ class Activities extends React.Component {
     getActivities = () => {
         // Get with security
         // comes back sorted already
-        ActivityDB.getWithUserAlt()
+        ActivityDB.getActivityWithUser()
             .then(res => {
                 let activities = res;
                 this.setState({ activities: activities });
