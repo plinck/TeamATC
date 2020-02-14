@@ -12,6 +12,12 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
+// For select input field
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import Select from "@material-ui/core/Select";
+
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { withFirebase } from '../Auth/Firebase/FirebaseContext';
@@ -42,6 +48,7 @@ const styles = theme => ({
   selectEmpty: {
       marginTop: theme.spacing.unit * 2,
   },
+  
 });
 
 function NumberFormatPhone(props) {
@@ -208,6 +215,8 @@ class UserForm extends React.Component {
   };
 
   onChange = event => {
+    console.log([event.target.name]);
+    console.log(event.target.value);
 
     this.setState({
         [event.target.name]: event.target.value
@@ -338,18 +347,25 @@ class UserForm extends React.Component {
               onChange={this.onChange}
               />
 
-              <TextField
-              id="teamName"
-              name="teamName"
-              label="Team Name"
-              multiline
-              value={teamName}
-              placeholder="teamname"
-              className={classes.textField}
-              type="text"
-              margin="normal"
-              onChange={this.onChange}
-              />
+              <FormControl required className={classes.formControl}>
+                <InputLabel id="teamNameLabel">Team Name</InputLabel>
+                <Select
+                  labelId="teamNameLabel"
+                  id="teamUid"
+                  name="teamUid"
+                  multiline
+                  type="text"
+                  margin="normal"
+                  value={teamUid}
+                  onChange={this.onChange}
+                  className={classes.textField}>
+
+                  <MenuItem value={"SePT3HTDR8EUbQgHCkf1"}>Rahuligan</MenuItem>
+                  <MenuItem value={"QwUhcThKRBQQE7nIu3ys"}>Scottie</MenuItem>
+                </Select>
+              </FormControl>
+      
+
 
               <TextField
               id="firstName"
