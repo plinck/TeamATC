@@ -68,6 +68,13 @@ class Util {
     return db;
   }
 
+  static getFirebaseFirestore = () => {
+    const firebase = new Firebase();
+    const fb = firebase.firestore;
+
+    return fb;
+  }
+
   static apiGet = async (api) => {
     const firebase = new Firebase();
     const token = await firebase.doRefreshToken(true);

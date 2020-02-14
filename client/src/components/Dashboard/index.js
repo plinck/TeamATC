@@ -1,28 +1,28 @@
 import React from 'react';
-import ProvisionalCredit from './ProvisionalCredit/provisionalCredit';
-import Balance from './Balance/Balance';
-import Savings from './Savings/Savings';
 import './dashboard.css';
 import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
 import { Redirect } from 'react-router';
-import DepositByUser from "./Graphs/DepositByUser";
-import DepositByDay from "./Graphs/DepositByDay";
-import DepositBubble from "./Graphs/DepositBubble";
-import DepositByDenomination from "./Graphs/DepositByDenomination";
-import ProvisionalCreditOverTime from "./Graphs/ProvisionalCreditOverTime"
+import Distance from './Distance/Distance';
+import Activities from "../Activity/Activities";
+
+import ActivityByDay from "./Graphs/ActivityByDay";
+
+
+// import ActivityByUser from "./Graphs/ActivityByUser";
+// import DepositBubble from "./Graphs/DepositBubble";
+// import DepositByDenomination from "./Graphs/DepositByDenomination";
+// import ProvisionalCreditOverTime from "./Graphs/ProvisionalCreditOverTime"
+
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import Util from '../Util/Util';
 
 class Home extends React.Component {
     state = {
-        deposits: [],
-        credit: 0,
-        pendingCredit: 0,
-        cash: 0,
-        depositsArchive: [],
-        cashHistory: [],
-        creditHistory: [],
+        activities: null,
+        nbrActivities: 0,
+        distance: 0,
+        duration: 0,
         loadingFlag: false
     }
 
@@ -30,69 +30,39 @@ class Home extends React.Component {
         this._mounted = true;
         this.setState({ loadingFlag: true })
 
-        Util.apiGet("/api/firestore/cash")
-            .then(res => {
-                if (this._mounted) {
-                    this.setState({ cashHistory: res.data })
-                }
-            })
-            .catch(err => console.error(err));
-
-        Util.apiGet("/api/firestore/credit")
-            .then(res => {
-                if (this._mounted) {
-                    this.setState({ creditHistory: res.data })
-                }
-            })
-            .catch(err => console.error(err));
-
-        Util.apiGet("/api/firestore/getSafeDeposits")
-            .then(res => {
-                if (this._mounted) {
-                    this.setState({
-                        cash: res.data,
-                        credit: res.data * .975
-                    })
-                }
-            })
-            .catch(err => console.error(err));
-
-        Util.apiGet("/api/firestore/depositsArchive")
-            .then(res => {
-                if (this._mounted) {
-                    this.setState({ depositsArchive: res.data })
-                }
-            })
-            .catch(err => console.error(err));
-
-        Util.apiGet("/api/firestore/deposits")
+        Util.apiGet("/api/activity/activities")
             .then(res => {
                 console.log(res.data);
                 if (this._mounted) {
-                    this.setState({ deposits: res.data })
+                    this.setState({ activities: res.data })
+                    this.setState({ loadingFlag: false })
                 }
             })
             .catch(err => console.error(err));
 
-        Util.apiGet("/api/firestore/getPendingTotal")
-            .then(res => {
-                if (this._mounted) {
-                    this.setState({
-                        pendingCredit: res.data * .975,
-                        loadingFlag: false
-                    })
-                }
-            })
-            .catch(err => console.error(err));
-
+        Util.apiGet("/api/activity/activityTotals")
+        .then(res => {
+            if (this._mounted) {
+                this.setState({
+                    nbrActivities: res.data.nbrActivities ? res.data.nbrActivities : 0,
+                    distance: res.data.distance ? res.data.distance : 0,
+                    duration: res.data.duration ? res.data.duration : 0
+                })
+            }
+        })
+        .catch(err => console.error(err));
     }
 
     componentWillUnmount() {
         this._mounted = false;
     }
 
-
     render() {
+        // Some props take time to get ready so return null when uid not avaialble
+        if (this.props.user.uid === null) {
+            return null;
+        }
+        
         if (this.props.user.authUser) {
             return (
                 <div>
@@ -105,41 +75,25 @@ class Home extends React.Component {
 
                         <div className="container">
                             <div className="row">
-                                <ProvisionalCredit credit={this.state.credit + this.state.pendingCredit} />
-                                <Balance balance={this.state.cash} disabled={this.props.user.isAdmin ? false : this.props.user.isCashier ? false : true} />
-                                <Savings credit={this.state.credit} />
+                                <Distance 
+                                    nbrActivities={this.state.nbrActivities} distance={this.state.distance} duration={this.state.distance}
+                                    disabled={this.props.user.isAdmin ? false : this.props.user.isCashier ? false : true}
+                                />
                             </div>
+
+
                             <div className="row">
-                                <DepositByDay
-                                    title={"Total Deposits By Day"}
-                                    deposits={this.state.deposits}
-                                    depositsArchive={this.state.depositsArchive}
-                                />
-
-                                {this.props.user.isUser ? null :
-                                    <DepositByUser
-                                        title={"Deposits By User"}
-                                        deposits={this.state.deposits}
-                                        depositsArchive={this.state.depositsArchive}
-                                    />}
-
-                                <DepositBubble
-                                    title={"All Deposits"}
-                                    deposits={this.state.deposits}
-                                    depositsArchive={this.state.depositsArchive}
-                                />
-
-                                <DepositByDenomination
-                                    title={"Number of Bills By Denomination"}
-                                    deposits={this.state.deposits}
-                                    depositsArchive={this.state.depositsArchive}
-                                />
-
-                                <ProvisionalCreditOverTime
-                                    title={"Provisional Credit Over Time"}
-                                    balance={this.state.creditHistory}
+                                <ActivityByDay
+                                    title={"Total Activities By Day"}
+                                    activities={this.state.activities}
                                 />
                             </div>
+                            {/* TEST GETTING ACTIVITIES */}
+                            <div className="row">
+                                <Activities
+                                />
+                            </div>
+                            
                         </div>
                     }
                 </div>

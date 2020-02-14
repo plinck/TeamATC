@@ -52,12 +52,12 @@ class ProvisionalCreditOverTime extends React.Component {
             return (a.time > b.time) ? 1 : -1;
         });
 
-        const times = sortedByDate.map((deposit) => {
-            return (new Date(deposit.time));
+        const times = sortedByDate.map((activity) => {
+            return (new Date(activity.time));
         });
 
-        const balances = sortedByDate.map((deposit) => {
-            return (deposit.balance);
+        const balances = sortedByDate.map((activity) => {
+            return (activity.balance);
         });
 
 
@@ -115,7 +115,7 @@ class ProvisionalCreditOverTime extends React.Component {
     // go to details
     viewDetails = () => {
         this.props.history.push({
-            pathname: '/depositlist'
+            pathname: '/activitieslist'
         });
     }
 
