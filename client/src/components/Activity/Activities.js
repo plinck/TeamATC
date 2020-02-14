@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom';
 import { Redirect } from 'react-router';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import Activity from './Activity';
 import ActivityDB from './ActivityDB';

@@ -279,7 +279,9 @@ class UserAPI {
                 displayName: `${user.firstName} ${user.lastName}`,
                 phoneNumber: user.phoneNumber,
                 email: user.email.toLowerCase(),
-                photoURL: user.photoURL ? user.photoURL : ""    
+                photoURL: user.photoURL ? user.photoURL : "",
+                teamUid: user.teamUid ? user.teamUid  : "",
+                teamName: user.teamName ? user.teamName  : ""
             },{ merge: true }).then(() => {
                 resolve();
             }).catch(err => {
