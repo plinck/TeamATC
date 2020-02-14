@@ -2,7 +2,7 @@ import React from 'react';
 import './dashboard.css';
 import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
 import { Redirect } from 'react-router';
-import Distance from './Distance/Distance';
+import SummaryTotal from './SummaryTotal/SummaryTotal';
 import Activities from "../Activity/Activities";
 
 import ActivityByDay from "./Graphs/ActivityByDay";
@@ -21,8 +21,8 @@ class Home extends React.Component {
     state = {
         activities: null,
         nbrActivities: 0,
-        distance: 0,
-        duration: 0,
+        distanceTotal: 0,
+        durationTotal: 0,
         loadingFlag: false
     }
 
@@ -45,8 +45,8 @@ class Home extends React.Component {
             if (this._mounted) {
                 this.setState({
                     nbrActivities: res.data.nbrActivities ? res.data.nbrActivities : 0,
-                    distance: res.data.distance ? res.data.distance : 0,
-                    duration: res.data.duration ? res.data.duration : 0
+                    distanceTotal: res.data.distanceTotal ? res.data.distanceTotal : 0,
+                    durationTotal: res.data.durationTotal ? res.data.durationTotal : 0
                 })
             }
         })
@@ -75,8 +75,8 @@ class Home extends React.Component {
 
                         <div className="container">
                             <div className="row">
-                                <Distance 
-                                    nbrActivities={this.state.nbrActivities} distance={this.state.distance} duration={this.state.distance}
+                                <SummaryTotal 
+                                    nbrActivities={this.state.nbrActivities} distanceTotal={this.state.distanceTotal} durationTotal={this.state.durationTotal}
                                     disabled={this.props.user.isAdmin ? false : this.props.user.isCashier ? false : true}
                                 />
                             </div>

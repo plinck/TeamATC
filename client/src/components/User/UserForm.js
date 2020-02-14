@@ -12,8 +12,11 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 import { withFirebase } from '../Auth/Firebase/FirebaseContext';
 import UserAPI from "./UserAPI";
+import TeamAPI from "../Team/TeamAPI";
   
 const styles = theme => ({
   container: {
@@ -62,21 +65,28 @@ function NumberFormatPhone(props) {
   );
 }
 class UserForm extends React.Component {
-  state = {
-    id: this.props.id,
-    firstName: "",
-    lastName: "",
-    photoURL: "",
-    phoneNumber: "",
-    email: "",
-    uid: "",
-    claims: "noauth",
-    isAdmin: false,
-    isCashier: false,
-    isBanker: false,
-    isUser: false,
-    message: ""
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      id: this.props.id,
+      firstName: "",
+      lastName: "",
+      photoURL: "",
+      phoneNumber: "",
+      email: "",
+      uid: "",
+      teamUid: "",
+      teamName: "",
+      claims: "noauth",
+      isAdmin: false,
+      isCashier: false,
+      isBanker: false,
+      isUser: false,
+      message: "",
+      teams: null
+    };
+  }
 
   fetchUser = (id) => {
     UserAPI.get(id)
@@ -87,6 +97,8 @@ class UserForm extends React.Component {
         photoURL: user.photoURL || "",
         phoneNumber: user.phoneNumber || "",
         uid: user.uid,
+        teamUid: user.teamUid || "",
+        teamName: user.teamName || "",    
         claims: user.claims,
         isAdmin: user.isAdmin,
         isCashier: user.isCashier,
@@ -103,8 +115,28 @@ class UserForm extends React.Component {
     });
   };
 
+  // get available teams for select list
+  fetchTeams() {
+    TeamAPI.getTeams()
+    .then(teams => {
+      this.setState({
+        teams: teams
+      });
+      // Dont need to get custom claims since they are passed in props from context
+      // and can not be changed here
+    })
+    .catch(err => {
+      console.error(`Error getting teams ${err}`);
+      this.setState({error: `Error getting teams ${err}`});
+    });
+
+  }
+
   componentDidMount() {
     console.log(`id: ${this.state.id}`);
+    this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
+
+    // only get user if its an update, otherwise assume new
     if (this.state.id) {
       this.fetchUser(this.state.id);
     } else {
@@ -255,7 +287,10 @@ class UserForm extends React.Component {
       phoneNumber,
       email,
       claims,
-      message
+      message,
+      teamUid,
+      teamName,    
+      teams
       } = this.state;
 
     let buttonText, emailEnabled;
@@ -271,6 +306,15 @@ class UserForm extends React.Component {
       firstName !== "" &&
       lastName !== "" &&
       phoneNumber !== "";
+
+    if (typeof this.state.teams === 'undefined') {
+        console.error("Fatal Error")
+        return (<div> <p>FATAL ERROR Gettng teams, something goofy going on ...</p> </div>)
+    }
+    if (this.state.teams === null) {
+        console.log("No teams yet")
+        return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
+    }
 
     return ( 
       <div className="container">
@@ -291,6 +335,19 @@ class UserForm extends React.Component {
               autoComplete="email"
               margin="normal"
               value={email}
+              onChange={this.onChange}
+              />
+
+              <TextField
+              id="teamName"
+              name="teamName"
+              label="Team Name"
+              multiline
+              value={teamName}
+              placeholder="teamname"
+              className={classes.textField}
+              type="text"
+              margin="normal"
               onChange={this.onChange}
               />
 
