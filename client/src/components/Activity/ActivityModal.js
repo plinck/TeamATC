@@ -6,8 +6,8 @@ const Modal = props => {
         <div>
             <div id="modal1" className="modal">
                 <div className="modal-content">
-                    <h4>Deposit Successful!</h4>
-                    <h5>Amount: ${props.amount}</h5>
+                    <h4>Activity Update Successful!</h4>
+                    <h5>distance: {props.distance}</h5>
                 </div>
                 <div className="modal-footer">
                     <Link to="/dashboard" className="modal-close waves-effect waves-green btn-flat">Accept</Link>

@@ -10,14 +10,14 @@ class DepositByAll extends React.Component {
 
 
     plotDeposits = () => {
-        let combinedData = this.props.deposits.concat(this.props.depositsArchive);
+        let combinedData = this.props.activities.concat(this.props.depositsArchive);
         
-        let ones = combinedData.map(deposit => deposit.ones).reduce((total, currentValue) => total + currentValue, 0);
-        let fives = combinedData.map(deposit => deposit.fives).reduce((total, currentValue) => total + currentValue, 0);
-        let tens = combinedData.map(deposit => deposit.tens).reduce((total, currentValue) => total + currentValue, 0);
-        let twenties = combinedData.map(deposit => deposit.twenties).reduce((total, currentValue) => total + currentValue, 0);
-        let fifties = combinedData.map(deposit => deposit.fifties).reduce((total, currentValue) => total + currentValue, 0);
-        let hundreds = combinedData.map(deposit => deposit.hundreds).reduce((total, currentValue) => total + currentValue, 0);
+        let ones = combinedData.map(activity => activity.ones).reduce((total, currentValue) => total + currentValue, 0);
+        let fives = combinedData.map(activity => activity.fives).reduce((total, currentValue) => total + currentValue, 0);
+        let tens = combinedData.map(activity => activity.tens).reduce((total, currentValue) => total + currentValue, 0);
+        let twenties = combinedData.map(activity => activity.twenties).reduce((total, currentValue) => total + currentValue, 0);
+        let fifties = combinedData.map(activity => activity.fifties).reduce((total, currentValue) => total + currentValue, 0);
+        let hundreds = combinedData.map(activity => activity.hundreds).reduce((total, currentValue) => total + currentValue, 0);
 
         // delays props and solves errors
         if (!ones) {
@@ -33,7 +33,7 @@ class DepositByAll extends React.Component {
                         "hoverinfo": "label+value",
                         "marker": { "size": 8, color: 'rgb(13, 71, 161)' },
                         type: 'pie',
-                        name: 'Deposits By Denomination',
+                        name: 'Activities By Denomination',
                         values: [ones, fives, tens, twenties, fifties, hundreds],
                         labels: ["$1", "$5", "$10", "$20", "$50", "$100"],
                         "textfont": {
@@ -65,7 +65,7 @@ class DepositByAll extends React.Component {
     // go to details
     viewDetails = () => {
         this.props.history.push({
-            pathname: '/depositlist'
+            pathname: '/activitieslist'
         });
     }
 

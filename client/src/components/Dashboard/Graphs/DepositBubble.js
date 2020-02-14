@@ -51,21 +51,21 @@ class DepositByAll extends React.Component {
 
 
 
-        let combiedData = this.props.deposits.concat(this.props.depositsArchive);
+        let combiedData = this.props.activities.concat(this.props.depositsArchive);
 
-        let xData = combiedData.map(deposit => new Date(deposit.time));
+        let xData = combiedData.map(activity => new Date(activity.time));
 
-        let yData = combiedData.map(deposit => {
+        let yData = combiedData.map(activity => {
             let bills = 0;
-            bills = deposit.ones + deposit.fives + deposit.tens + deposit.twenties + deposit.fifties + deposit.hundreds;
+            bills = activity.ones + activity.fives + activity.tens + activity.twenties + activity.fifties + activity.hundreds;
             return bills;
         });
 
-        let size = combiedData.map(deposit => deposit.amount);
+        let size = combiedData.map(activity => activity.amount);
 
         let hover = size.map(amount => "$" + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 
-        let groups = combiedData.map(deposit => deposit.email);
+        let groups = combiedData.map(activity => activity.email);
 
         return (
             <div>
@@ -130,7 +130,7 @@ class DepositByAll extends React.Component {
     // go to details
     viewDetails = () => {
         this.props.history.push({
-            pathname: '/depositlist'
+            pathname: '/activitieslist'
         });
     }
 
