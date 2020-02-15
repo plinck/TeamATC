@@ -16,6 +16,7 @@ import ActivityByDay from "./Graphs/ActivityByDay";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import Util from '../Util/Util';
+import ActivityDB from '../Activity/ActivityDB';
 
 class Home extends React.Component {
     state = {
@@ -30,11 +31,11 @@ class Home extends React.Component {
         this._mounted = true;
         this.setState({ loadingFlag: true })
 
-        Util.apiGet("/api/activity/activities")
+        // note res,data is NOT using in local DB get since only node sends back JSON in res.data
+        ActivityDB.get()
             .then(res => {
-                console.log(res.data);
                 if (this._mounted) {
-                    this.setState({ activities: res.data })
+                    this.setState({ activities: res })
                     this.setState({ loadingFlag: false })
                 }
             })
@@ -70,9 +71,7 @@ class Home extends React.Component {
                         <Grid container justify="center">
                             <CircularProgress /> <p>Loading ...</p>
                         </Grid>
-
                         :
-
                         <div className="container">
                             <div className="row">
                                 <SummaryTotal 
@@ -81,20 +80,16 @@ class Home extends React.Component {
                                 />
                             </div>
 
-
                             <div className="row">
-                                <ActivityByDay
-                                    title={"Total Activities By Day"}
-                                    activities={this.state.activities}
-                                />
-                            </div>
-                            {/* TEST GETTING ACTIVITIES */}
-                            <div className="row">
-                                <Activities
-                                />
+                            <ActivityByDay
+                            title={"Total Activities By Day"}
+                            activities={this.state.activities}
+                            />
                             </div>
                             
+                            <Activities activityLimitBy="user" layoutType="userCard"/>
                         </div>
+
                     }
                 </div>
             );

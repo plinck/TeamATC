@@ -115,7 +115,7 @@ class ProvisionalCreditOverTime extends React.Component {
     // go to details
     viewDetails = () => {
         this.props.history.push({
-            pathname: '/activitieslist'
+            pathname: '/activities'
         });
     }
 
