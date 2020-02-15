@@ -10,7 +10,7 @@ let _distanceTotal = 0;
 let _durationTotal = 0;
 
 // Get all activities anytime it changes and attach user to each
-db.collection("activities").onSnapshot((querySnapshot) => {
+db.collection("activities").orderBy("activityDateTime", "desc").onSnapshot((querySnapshot) => {
     activities = [];
     _nbrActivities = 0;
     _distanceTotal = 0;

@@ -52,15 +52,6 @@ class Activity extends React.Component {
                         {/* <i className="material-icons green-text col s1 m1">{activityIcon}</i> */}
                     </Tooltip>
                     
-                    {/*}
-                    <h5 className="col s6 m3">Time</h5>
-                    <h5 className="col s6 m3">User</h5>
-                    <h5 className="col s6 m3 offset-m3">Team</h5>
-                    <h5 className="col s6 m3">Activity</h5>
-                    <h5 className="col s6 m3">Duration</h5>
-                    <h5 className="col s6 m3 offset-m3">Distance</h5>
-                    */}
-
                     <Typography className="col s5 m3">{dateTime} {team}</Typography>
                     <Typography className="col s6 m4">{`${firstName} ${lastName} (${email})`}</Typography>
                     <Typography
