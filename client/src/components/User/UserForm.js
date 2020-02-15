@@ -91,7 +91,8 @@ class UserForm extends React.Component {
       isBanker: false,
       isUser: false,
       message: "",
-      teams: null
+      teams: null,
+      teamLookup: null
     };
   }
 
@@ -126,9 +127,18 @@ class UserForm extends React.Component {
   fetchTeams() {
     TeamAPI.getTeams()
     .then(teams => {
-      this.setState({
-        teams: teams
+      
+      // Convert array of teams to key value unqie pairs for easy lookup on primary key
+      let teamLookup = {}
+      teams.forEach(team => {
+        teamLookup[team.id] = team.name;
       });
+      
+      this.setState({
+        teams: teams,
+        teamLookup: teamLookup
+      });
+
       // Dont need to get custom claims since they are passed in props from context
       // and can not be changed here
     })
@@ -140,7 +150,7 @@ class UserForm extends React.Component {
   }
 
   componentDidMount() {
-    console.log(`id: ${this.state.id}`);
+    // console.log(`id: ${this.state.id}`);
     this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
 
     // only get user if its an update, otherwise assume new
@@ -158,6 +168,8 @@ class UserForm extends React.Component {
   createUser = () => {  
     // eslint-disable-next-line no-unused-vars
     const user = this.state;
+    // set team name from ID
+    user.teamName = this.state.teamLookup[this.state.teamUid]
 
     // First, create the auth user in firebase
     // must be done on server for security reasons
@@ -191,6 +203,9 @@ class UserForm extends React.Component {
     console.log(`updating db with user.uid:${this.state.uid}`);
 
     const user = this.state;
+    // set team name from ID
+    user.teamName = this.state.teamLookup[this.state.teamUid]
+
     UserAPI.update(user).then (user => {
       this.setState({message: "User Updated"});
       // should we go to user list page??  Passing message??
@@ -215,9 +230,6 @@ class UserForm extends React.Component {
   };
 
   onChange = event => {
-    console.log([event.target.name]);
-    console.log(event.target.value);
-
     this.setState({
         [event.target.name]: event.target.value
     });
@@ -325,6 +337,7 @@ class UserForm extends React.Component {
         return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
     }
 
+
     return ( 
       <div className="container">
         <div className="card">
@@ -332,43 +345,48 @@ class UserForm extends React.Component {
             <span className="card-title">User (Role: {claims})</span>
 
             <form onSubmit={this.saveUser} >
-              <TextField
-              disabled={!emailEnabled}
-              id="email"
-              name="email"
-              label="Email"
-              multiline
-              placeholder="example@gmail.com"
-              className={classes.textField}
-              type="email"
-              autoComplete="email"
-              margin="normal"
-              value={email}
-              onChange={this.onChange}
-              />
+            <FormControl required className={classes.formControl}>
+              <InputLabel id="teamNameLabel">Team Name</InputLabel>
+              <Select
+                labelId="teamNameLabel"
+                id="teamUid"
+                name="teamUid"
+                multiline
+                type="text"
+                margin="normal"
+                value={teamUid}
+                onChange={this.onChange}
+                className={classes.textField}>
 
-              <FormControl required className={classes.formControl}>
-                <InputLabel id="teamNameLabel">Team Name</InputLabel>
-                <Select
-                  labelId="teamNameLabel"
-                  id="teamUid"
-                  name="teamUid"
-                  multiline
-                  type="text"
-                  margin="normal"
-                  value={teamUid}
-                  onChange={this.onChange}
-                  className={classes.textField}>
-
-                  <MenuItem value={"SePT3HTDR8EUbQgHCkf1"}>Rahuligan</MenuItem>
-                  <MenuItem value={"QwUhcThKRBQQE7nIu3ys"}>Scottie</MenuItem>
-                </Select>
-              </FormControl>
-      
-
-
-              <TextField
-              id="firstName"
+                {teams.map((team) => {
+                  return (
+                    <MenuItem value={team.id}>{team.name}</MenuItem>
+                  );
+                })} 
+                {/*}
+                <MenuItem value={"SePT3HTDR8EUbQgHCkf1"}>Rahuligan</MenuItem>
+                <MenuItem value={"QwUhcThKRBQQE7nIu3ys"}>Scottie</MenuItem>
+              */}
+              </Select>
+            </FormControl>
+    
+            <TextField
+            disabled={!emailEnabled}
+            id="email"
+            name="email"
+            label="Email"
+            multiline
+            placeholder="example@gmail.com"
+            className={classes.textField}
+            type="email"
+            autoComplete="email"
+            margin="normal"
+            value={email}
+            onChange={this.onChange}
+            />
+            
+            <TextField
+            id="firstName"
               name="firstName"
               label="First Name"
               multiline
