@@ -15,7 +15,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 // For select input field
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import Select from "@material-ui/core/Select";
 
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -336,7 +335,6 @@ class UserForm extends React.Component {
         console.log("No teams yet")
         return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
     }
-
 
     return ( 
       <div className="container">
