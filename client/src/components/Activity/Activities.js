@@ -123,7 +123,7 @@ class Activities extends React.Component {
                         <div className="card">
                             <div className="card-content pCard">
                                 <span className="card-title">
-                                    <Link to="/activity/activitieslist">Activities</Link>
+                                    <Link to="/activities">Activities</Link>
                                 </span> 
                                 <div className="row">
                                     <p className="col s12 offset-s1 m5">Activity</p>
@@ -141,7 +141,7 @@ class Activities extends React.Component {
                             </div>
                             <div className="card-action pCard">
                                 <div className="center-align">
-                                    <Link to="/activity/activitieslist" className="waves-effect waves-light dash-btn blue darken-4 btn activityBtn">More Details</Link>
+                                    <Link to="/activities" className="waves-effect waves-light dash-btn blue darken-4 btn activityBtn">More Details</Link>
                                 </div>
                             </div>
                         </div>
