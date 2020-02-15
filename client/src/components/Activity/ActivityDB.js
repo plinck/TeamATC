@@ -3,11 +3,36 @@ import Util from "../Util/Util";
 class ActivityDB {
 
     // Get all activities from firestore 
-    static get =  (collection) => {
-        return new Promise( (resolve, reject) => {
-            const db = Util.getFirestoreDB();   // active firestore db ref
+    static get =  (resultLimit, teamUid, userUid, startDate, endDate) => {
+        const db = Util.getFirestoreDB();   // active firestore db ref
+        
+        resultLimit = resultLimit || 50;
+        startDate = startDate || new Date('1900-01-01');
+        endDate = endDate|| new Date();                     // Today
+        endDate.setDate(endDate.getDate() + 1);                 // Tomorrow
+        
+        // default ref gets all
+        let ref = db.collection("activities")
+            .where("activityDateTime", ">=", startDate)
+            .where("activityDateTime", "<=", endDate)
+            .orderBy("activityDateTime", "desc").limit(resultLimit)
 
-            db.collection(collection).get().then((querySnapshot) => {
+        if (teamUid) {
+            ref = db.collection("activities").where("teamUid", "==", teamUid)
+            .where("activityDateTime", ">=", startDate)
+            .where("activityDateTime", "<=", endDate)
+            .orderBy("activityDateTime", "desc").limit(resultLimit)
+        }
+        if (userUid) {
+            ref = db.collection("activities").where("userUid", "==", userUid)
+            .where("activityDateTime", ">=", startDate)
+            .where("activityDateTime", "<=", endDate)
+            .orderBy("activityDateTime", "desc").limit(resultLimit)
+        }
+        
+        return new Promise( (resolve, reject) => {
+
+            ref.get().then((querySnapshot) => {
                 let activities = [];
                 querySnapshot.forEach (doc => {
                     let activity = {};
@@ -25,7 +50,10 @@ class ActivityDB {
     // -------------------------------------------------------------------------------------------------
     // Activities : getUserWithActivity - get all actiities with their firstName lastName
     // This isnt SUPER effecient since it gets all users even if they havent had an activity
-    static getUserWithActivity = () => {
+    static getUserWithActivity = (resultLimit) => {
+        // Default parameters , optional
+        resultLimit = resultLimit || 50;
+        
         // its a promise so return
         return new Promise((resolve, reject) => {
             const db = Util.getFirestoreDB();
@@ -35,7 +63,7 @@ class ActivityDB {
                 results.forEach((doc) => {
                     users[doc.id] = doc.data();
                 });
-                const depRef = db.collection("activities").orderBy("time", "desc");
+                const depRef = db.collection("activities").orderBy("activityDateTime", "desc").limit(resultLimit);
                 depRef.get().then((docSnaps) => {
                     docSnaps.forEach((doc) => {
                         const activity = doc.data();
@@ -110,7 +138,7 @@ class ActivityDB {
             const db = Util.getFirestoreDB();   // active firestore db ref
 
             let activities = [];
-            db.collection("activities").orderBy("time", "desc").get().then((querySnapshot) => {
+            db.collection("activities").orderBy("activityDateTime", "desc").get().then((querySnapshot) => {
                 querySnapshot.forEach (doc => {
                     let activity = {};
                     activity = doc.data();
