@@ -152,6 +152,57 @@ class ActivityDB {
         });
     }
 
+    // Add a single activity based on id
+    static create = (activity) => {
+        return new Promise((resolve, reject) => {
+            const db = Util.getFirestoreDB();   // active firestore db ref
+
+            db.collection("activities").add({
+                teamName: activity.teamName,
+                activityName: activity.activityName,
+                activityDateTime: activity.activityDateTime,
+                activityType: activity.activityType,
+                distance: activity.distance,
+                distanceUnits: activity.distanceUnits,
+                duration: activity.duration,
+                email: activity.email,
+                displayName: activity.displayName,
+                uid: activity.uid
+            }).then( () => {
+                console.log("Firestore activity successfully added");
+                return resolve();
+            }).catch( (error) => {
+                console.log("Firestore activity add failed");
+                return reject(error);
+            });
+        });
+    }
+    
+    static update = (activityId,activity) => {
+        return new Promise((resolve, reject) => {
+            const db = Util.getFirestoreDB();   // active firestore db ref
+
+            db.collection("activities").doc(activity.id).set({
+                teamName: activity.teamName,
+                activityName: activity.activityName,
+                activityDateTime: activity.activityDateTime,
+                activityType: activity.activityType,
+                distance: activity.distance,
+                distanceUnits: activity.distanceUnits,
+                duration: activity.duration,
+                email: activity.email,
+                displayName: activity.displayName,
+                uid: activity.uid
+            },{ merge: true }).then( () => {
+                console.log("Firestore activity successfully added");
+                return resolve();
+            }).catch( (error) => {
+                console.log("Firestore activity add failed");
+                return reject(error);
+            });
+        });
+    }
+
     // Delete a single activity based on id
     static delete = (id) => {
         return new Promise((resolve, reject) => {

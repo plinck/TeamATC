@@ -12,6 +12,7 @@ class ActivityCard extends React.Component {
             email,
             team,
             activityDateTime,
+            activityName, // swim, bike, run
             activityType, // swim, bike, run
             distance,
             distanceUnits,
@@ -20,7 +21,7 @@ class ActivityCard extends React.Component {
         let jsDate = new Date(activityDateTime);
         const displayDateTime = moment(jsDate).format("YYYY-MM-DD");
         let displayDistance = distance.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        let displayActivityNameAndType = `${activityType}/name`
+        let displayActivityNameAndType = `${activityType}/${activityName}`
     
         let activityIcon = "";
     
@@ -35,7 +36,7 @@ class ActivityCard extends React.Component {
         }
     
         // Truncate Nane for easy view
-        var trimmedActivityName = displayActivityNameAndType.length < 10 ? displayActivityNameAndType : `${displayActivityNameAndType.substring(0, 9)}...` ;
+        var trimmedActivityName = displayActivityNameAndType.length < 20 ? displayActivityNameAndType : `${displayActivityNameAndType.substring(0, 20)}...` ;
     
         return (
             <div className="row">
