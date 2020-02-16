@@ -7,16 +7,10 @@ class ActivityCard extends React.Component {
 
     render() {
         const {
-            firstName,
-            lastName,
-            email,
-            team,
             activityDateTime,
             activityName, // swim, bike, run
             activityType, // swim, bike, run
-            distance,
-            distanceUnits,
-            duration
+            distance
         } = this.props.activity;
         let jsDate = new Date(activityDateTime);
         const displayDateTime = moment(jsDate).format("YYYY-MM-DD");
@@ -42,7 +36,7 @@ class ActivityCard extends React.Component {
             <div className="row">
                 <div className="col s1 m1">
                     <img style={{maxHeight: '20px'}} src={activityIcon} alt={activityType} />
-                   </div>
+                </div>
                 <div className="col s11 m4">
                     <p>{trimmedActivityName}</p>
                 </div>

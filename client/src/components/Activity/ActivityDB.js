@@ -3,7 +3,7 @@ import Util from "../Util/Util";
 class ActivityDB {
 
     // Get all activities from firestore 
-    static get =  (resultLimit, teamUid, userUid, startDate, endDate) => {
+    static getAll =  (resultLimit, teamName, uid, startDate, endDate) => {
         const db = Util.getFirestoreDB();   // active firestore db ref
         
         resultLimit = resultLimit || 50;
@@ -13,21 +13,20 @@ class ActivityDB {
         
         // default ref gets all
         let ref = db.collection("activities")
-            .where("activityDateTime", ">=", startDate)
-            .where("activityDateTime", "<=", endDate)
-            .orderBy("activityDateTime", "desc").limit(resultLimit)
+            .orderBy("activityDateTime", "desc")
+            .limit(resultLimit)
 
-        if (teamUid) {
-            ref = db.collection("activities").where("teamUid", "==", teamUid)
-            .where("activityDateTime", ">=", startDate)
-            .where("activityDateTime", "<=", endDate)
-            .orderBy("activityDateTime", "desc").limit(resultLimit)
+        if (teamName) {
+            ref = db.collection("activities")
+            .where("teamName", "==", teamName)
+            .orderBy("activityDateTime", "desc")
+            .limit(resultLimit)
         }
-        if (userUid) {
-            ref = db.collection("activities").where("userUid", "==", userUid)
-            .where("activityDateTime", ">=", startDate)
-            .where("activityDateTime", "<=", endDate)
-            .orderBy("activityDateTime", "desc").limit(resultLimit)
+        if (uid) {
+            ref = db.collection("activities")
+            .where("uid", "==", uid)
+            .orderBy("activityDateTime", "desc")
+            .limit(resultLimit)
         }
         
         return new Promise( (resolve, reject) => {
@@ -38,6 +37,7 @@ class ActivityDB {
                     let activity = {};
                     activity = doc.data();
                     activity.id = doc.id;
+                    activity.activityDateTime = activity.activityDateTime.toDate();
                     activities.push(activity); 
                 });
                 return(resolve(activities));
@@ -152,6 +152,30 @@ class ActivityDB {
         });
     }
 
+    // Get single activities from firestore 
+    static get =  (id) => {
+        const db = Util.getFirestoreDB();   // active firestore db ref
+        
+        // default ref gets all
+        let docRef = db.collection("activities").doc(id);
+    
+        return new Promise( (resolve, reject) => {
+
+            docRef.get().then((doc) => {
+                if (doc.exists) {
+                    // update
+                    let activity = doc.data();
+                    activity.activityDateTime = activity.activityDateTime.toDate();
+                    return(resolve(activity));
+                }
+                console.log("Activity not found in firestore");
+                return(resolve());
+            }).catch(err => {
+                reject(`Error getting activity in ActivityDB.get ${err}`);
+            });
+        });
+    }
+    
     // Add a single activity based on id
     static create = (activity) => {
         return new Promise((resolve, reject) => {

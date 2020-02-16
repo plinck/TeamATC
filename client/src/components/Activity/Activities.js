@@ -4,6 +4,7 @@ import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Button from '@material-ui/core/Button';
 
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import Activity from './Activity';
@@ -15,6 +16,7 @@ import { withStyles } from '@material-ui/core/styles';
 // export csv functionality
 // eslint-disable-next-line no-unused-vars
 import { CSVLink, CSVDownload } from "react-csv";
+import UserAPI from "../User/UserAPI"
 
 
 const styles = theme => ({
@@ -35,15 +37,26 @@ class Activities extends React.Component {
         super(props);
 
         this.state = {
+            myTeamName: null,
             activities: null,
-            activityLimitBy: null
+            searchBy: "",
+            filterByString: null
         };
     }
 
-    getActivities = () => {
+    // Get the users info
+    fetchUser() {
+        UserAPI.getCurrentUser().then(user => {
+            this.setState({
+                myTeamName: user.teamName
+            });
+        });
+    }
+
+    getActivities = (resultLimit, teamName, userUid, startDate, endDate) => {
         // Get with security
         // comes back sorted already
-        ActivityDB.getActivityWithUser()
+        ActivityDB.getAll(resultLimit, teamName, userUid, startDate, endDate)
             .then(res => {
                 let activities = res;
                 this.setState({ activities: activities });
@@ -60,10 +73,68 @@ class Activities extends React.Component {
         if (this.props.activities) {
             this.setState({ activities: this.props.activities });   
         } else {
-            this.getActivities();
+            if (this.props.filterByString) {
+                this.setState({filterByString: this.props.filterByString});
+                this.refreshPage(this.props.filterByString);
+            } else {
+                this.refreshPage();
+            }
         }
 
     }
+
+    refreshPage(filterByString) {
+
+        if (filterByString === undefined || filterByString === null) {
+            filterByString = this.state.filterByString;
+        }
+
+        switch(filterByString) {
+            case "All":
+                this.getActivities()
+                break;
+            case "Team":                            
+                this.getActivities(50, this.state.myTeamName, undefined, undefined, undefined)
+                break;
+            case "Mine":
+                this.getActivities(50, undefined, this.props.user.uid, undefined, undefined)
+                break;
+            default:
+                if (this.props.user.uid === undefined || this.props.user.uid === null) {
+                    this.getActivities()
+                } else {
+                    this.getActivities(50, undefined, this.props.user.uid, undefined, undefined)
+                }
+            }     
+    }
+
+    filterByChange = (filterString) => {
+        this.setState({filterByString: filterString});
+        console.log(`Filter By ${filterString} activities`);
+        this.refreshPage(filterString);
+    }
+
+    // Delete this article from MongoDB
+    activityDelete = (id) => {
+        ActivityDB.delete( id )
+        .then(res => {
+            console.log("Deleted activity");
+            this.refreshPage();
+        })
+        .catch(err => {
+            alert(err);
+            console.error(err); 
+        });
+    }
+
+    onChange = event => {
+        // Set Units
+        if (event.target.name === "searchBy") {
+            this.setState({
+                [event.target.name]: event.target.value,
+            });
+        }
+    };
 
     render() {
         const { classes } = this.props;
@@ -71,6 +142,10 @@ class Activities extends React.Component {
         // Some props take time to get ready so return null when uid not avaialble
         if (this.props.user.uid === null) {
             return null;
+        }
+
+        if (this.state.myTeamName === null) {
+            this.fetchUser();
         }
 
         if (typeof this.state.activities === 'undefined') {
@@ -82,32 +157,57 @@ class Activities extends React.Component {
             return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
         } 
 
+        // Search and filter
+        let searchBy = this.state.searchBy;
+
         let activities = this.state.activities
         if (this.props.user.authUser) {
             // Conditional rendering
             let activityView = 
                 <div>
                     <br></br>
-                    <CSVLink
-                    data={activities}
-                    filename={'teamatc-transactions.csv'}
-                    className='btn blue darken-4'
-                    target="_blank">
-                    EXPORT TO CSV</CSVLink>
-                    <div className={classes.root}>
-                        <div className="row">
-                            <h5 className="col s6 m3">Time</h5>
-                            <h5 className="col s6 m3">User</h5>
-                            <h5 className="col s6 m3 offset-m3">Team</h5>
-                            <h5 className="col s6 m3">Activity</h5>
-                            <h5 className="col s6 m3">Duration</h5>
-                            <h5 className="col s6 m3 offset-m3">Distance</h5>
-                        </div>
+                    <div className="row">
+                        <p className="col s2 m2 text-bold blue-text">Activities</p>
+                        <Link to="/activityform" className="col s2 offset-s5 m2 offset-m4 btn blue darken-4">New</Link>
+                        <CSVLink
+                        data={activities}
+                        filename={'teamatc-transactions.csv'}
+                        className='col s2 offset-s1 m2 offset-m1 btn blue darken-4'
+                        target="_blank">
+                        EXPORT TO CSV</CSVLink>    
+                    </div>
 
+                    <div className="row">                        
+                        <div className="col s1 m1 green-text left-align">Filter: </div>
+                        <div className="col s1 m1">
+                            <Button className="waves-effect waves-light btn"
+                                onClick={() => this.filterByChange("All")}>All
+                            </Button>
+                        </div>
+                        <div className="col s1 m1">
+                            <Button className="waves-effect waves-light btn"
+                                onClick={() => this.filterByChange("Team")}>Team
+                            </Button>
+                        </div>
+                        <div className="col s1 m1">
+                            <Button className="waves-effect waves-light btn"
+                                onClick={() => this.filterByChange("Mine")}>Mine
+                            </Button>
+                        </div>
+                        <div className="col s3 offset-s5 m3 offset-m5 blue-text input-field inline">
+                            <input id="searchBy" name="searchBy" type="text" value={searchBy} onChange={this.onChange} />
+                            <label for="searchBy">Search</label>                            
+                            <i class="material-icons prefix">search</i>
+                        </div>
+                    </div>
+
+                    <div className={classes.root}>
                         {activities.map((activity) => {
                             return (
                                 <div key={activity.id}>
-                                    <Activity activity={activity} layoutType={this.props.layoutType}
+                                    <Activity activity={activity}
+                                        layoutType={this.props.layoutType}
+                                        activityDelete={this.activityDelete}
                                     />
                                 </div>
                             );

@@ -309,7 +309,6 @@ class UserForm extends React.Component {
       claims,
       message,
       teamUid,
-      teamName,    
       teams
       } = this.state;
 
