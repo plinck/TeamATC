@@ -42,7 +42,7 @@ class ActivityCard extends React.Component {
             <div className="row">
                 <div className="col s1 m1">
                     <img style={{maxHeight: '20px'}} src={activityIcon} alt={activityType} />
-                   </div>
+                </div>
                 <div className="col s11 m4">
                     <p>{trimmedActivityName}</p>
                 </div>

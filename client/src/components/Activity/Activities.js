@@ -11,6 +11,8 @@ import ActivityCard from './ActivityCard';
 import ActivityDB from './ActivityDB';
 
 import { withStyles } from '@material-ui/core/styles';
+import TextField from "@material-ui/core/TextField";
+
 
 // export csv functionality
 // eslint-disable-next-line no-unused-vars
@@ -36,7 +38,9 @@ class Activities extends React.Component {
 
         this.state = {
             activities: null,
-            activityLimitBy: null
+            activityLimitBy: null,
+            searchBy: "",
+            filterBy: ""
         };
     }
 
@@ -65,6 +69,15 @@ class Activities extends React.Component {
 
     }
 
+    onChange = event => {
+        // Set Units
+        if (event.target.name === "searchBy") {
+            this.setState({
+                [event.target.name]: event.target.value,
+            });
+        }
+    };
+
     render() {
         const { classes } = this.props;
 
@@ -82,26 +95,56 @@ class Activities extends React.Component {
             return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
         } 
 
+        // Search and filter
+        let searchBy = this.state.searchBy;
+        let filterBy = this.state.filterBy;
+
         let activities = this.state.activities
         if (this.props.user.authUser) {
             // Conditional rendering
             let activityView = 
                 <div>
                     <br></br>
-                    <CSVLink
-                    data={activities}
-                    filename={'teamatc-transactions.csv'}
-                    className='btn blue darken-4'
-                    target="_blank">
-                    EXPORT TO CSV</CSVLink>
+                    <div className="row">
+                        <p className="col s2 m2 text-bold blue-text">Activities</p>
+                        <Link to="/activityform" className="col s2 offset-s5 m2 offset-m4 btn blue darken-4">New</Link>
+                        <CSVLink
+                        data={activities}
+                        filename={'teamatc-transactions.csv'}
+                        className='col s2 offset-s1 m2 offset-m1 btn blue darken-4'
+                        target="_blank">
+                        EXPORT TO CSV</CSVLink>    
+                    </div>
+
+                    <div className="row">                        
+                        <div className="col s1 m1 green-text left-align">Filter: </div>
+                        <div className="col s1 m1">
+                            <img style={{maxHeight: '24px'}} src="/images/icons8-swimming-50.png" />
+                        </div>
+                        <div className="col s1 m1">
+                            <img style={{maxHeight: '24px'}} src="/images/icons8-triathlon-50.png" />
+                        </div>
+                        <div className="col s1 m1">
+                            <img style={{maxHeight: '24px'}} src="/images/icons8-running-50.png" />
+                        </div>
+                        <div className="col s3 offset-s5 m3 offset-m5 blue-text input-field inline">
+                            <input id="searchBy" name="searchBy" type="text" value={searchBy} onChange={this.onChange} />
+                            <label for="searchBy">Search</label>                            
+                            <i class="material-icons prefix">search</i>
+                        </div>
+                    </div>
+
                     <div className={classes.root}>
                         <div className="row">
-                            <h5 className="col s6 m3">Time</h5>
-                            <h5 className="col s6 m3">User</h5>
-                            <h5 className="col s6 m3 offset-m3">Team</h5>
-                            <h5 className="col s6 m3">Activity</h5>
-                            <h5 className="col s6 m3">Duration</h5>
-                            <h5 className="col s6 m3 offset-m3">Distance</h5>
+                            <p className="text-bold blue-text col s1 m1">ICON</p>
+                            <p className="text-bold blue-text col s2 m2">User</p>
+                            <p className="text-bold blue-text col s2 m2">Date</p>
+                            <p className="text-bold blue-text col s3 m3">Name</p>
+                            <p className="text-bold blue-text col s2 offset-s2 m2 offset-m2">Distance</p>
+                            <p className="text-bold blue-text col s3 m2">Time</p>
+                            <p className="text-bold blue-text col s2 m3 offset-m3">Ave Speed</p>
+                            <p className="text-bold blue-text col s2 offset-s1 m2">Power (NP)</p>
+                            <p className="text-bold blue-text col s2 offset-s2 m2">Action</p>
                         </div>
 
                         {activities.map((activity) => {
