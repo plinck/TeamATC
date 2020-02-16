@@ -3,7 +3,7 @@ import Util from "../Util/Util";
 class ActivityDB {
 
     // Get all activities from firestore 
-    static get =  (resultLimit, teamUid, userUid, startDate, endDate) => {
+    static getAll =  (resultLimit, teamUid, userUid, startDate, endDate) => {
         const db = Util.getFirestoreDB();   // active firestore db ref
         
         resultLimit = resultLimit || 50;
@@ -152,6 +152,29 @@ class ActivityDB {
         });
     }
 
+    // Get single activities from firestore 
+    static get =  (id) => {
+        const db = Util.getFirestoreDB();   // active firestore db ref
+        
+        // default ref gets all
+        let docRef = db.collection("activities").doc(id);
+    
+        return new Promise( (resolve, reject) => {
+
+            docRef.get().then((doc) => {
+                if (doc.exists) {
+                    // update
+                    let activity = doc.data();
+                    return(resolve(activity));
+                }
+                console.log("Activity not found in firestore");
+                return(resolve());
+            }).catch(err => {
+                reject(`Error getting activity in ActivityDB.get ${err}`);
+            });
+        });
+    }
+    
     // Add a single activity based on id
     static create = (activity) => {
         return new Promise((resolve, reject) => {
