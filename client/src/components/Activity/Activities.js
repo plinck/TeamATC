@@ -64,9 +64,13 @@ class Activities extends React.Component {
         if (this.props.activities) {
             this.setState({ activities: this.props.activities });   
         } else {
-            this.getActivities();
+            this.refreshPage();
         }
 
+    }
+
+    refreshPage() {
+        this.getActivities();
     }
 
     onChange = event => {
@@ -135,22 +139,10 @@ class Activities extends React.Component {
                     </div>
 
                     <div className={classes.root}>
-                        <div className="row">
-                            <p className="text-bold blue-text col s1 m1">ICON</p>
-                            <p className="text-bold blue-text col s2 m2">User</p>
-                            <p className="text-bold blue-text col s2 m2">Date</p>
-                            <p className="text-bold blue-text col s3 m3">Name</p>
-                            <p className="text-bold blue-text col s2 offset-s2 m2 offset-m2">Distance</p>
-                            <p className="text-bold blue-text col s3 m2">Time</p>
-                            <p className="text-bold blue-text col s2 m3 offset-m3">Ave Speed</p>
-                            <p className="text-bold blue-text col s2 offset-s1 m2">Power (NP)</p>
-                            <p className="text-bold blue-text col s2 offset-s2 m2">Action</p>
-                        </div>
-
                         {activities.map((activity) => {
                             return (
                                 <div key={activity.id}>
-                                    <Activity activity={activity} layoutType={this.props.layoutType}
+                                    <Activity activity={activity} layoutType={this.props.layoutType} refreshPage={this.refreshPage}
                                     />
                                 </div>
                             );

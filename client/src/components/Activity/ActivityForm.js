@@ -72,8 +72,8 @@ class ActivityForm extends React.Component {
         this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
         
         // only get activity if its an update, otherwise assume new
-        if (this.state.id) {
-          this.fetchActivity(this.state.id);
+        if (this.props.id) {
+          this.fetchActivity(this.props.id);
         } else {
         }
     
@@ -99,7 +99,7 @@ class ActivityForm extends React.Component {
                 case "Swim":
                     distanceUnits = "Yards";
                     break;
-                case "Bike":
+                case "Bike":                            
                     distanceUnits = "Miles";
                     break;
                 case "Run":
@@ -117,7 +117,6 @@ class ActivityForm extends React.Component {
                 [event.target.name]: event.target.value,
             });
         }
-
     };
 
     // validate valid float as its being typed in
@@ -144,6 +143,24 @@ class ActivityForm extends React.Component {
                 [event.target.name]: event.target.value,
             });
         }
+    }
+
+    // Get the activity info
+    fetchActivity(id) {
+        ActivityDB.get(id).then(activity => {
+            let jsDate = activity.activityDateTime;
+            const activityDateTimeString = moment(jsDate).format("MM-DD-YYYY");
+    
+            this.setState({
+                activityName: activity.activityName,
+                activityDateTimeString: activity.activityDateTimeString,
+                activityType: activity.activityType,   
+                distance: activity.distance,
+                distanceUnits: activity.distanceUnits,
+                duration: activity.duration,
+                teamName: activity.teamName
+            });
+        });
     }
 
     // Get the users info
