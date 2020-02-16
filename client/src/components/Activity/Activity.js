@@ -21,8 +21,6 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import ActivityDB from './ActivityDB';
-
-
 class Activity extends React.Component {
         // State used for Dialog box to confirm delete
     state = {
@@ -39,7 +37,7 @@ class Activity extends React.Component {
 
     handleDelete= (id) => {
         this.setState({ openConfirmDelete: false });
-        this.activityDelete(id);
+        this.props.activityDelete(id)
     };
 
     // Send to edit page
@@ -49,19 +47,6 @@ class Activity extends React.Component {
             state: {id: this.props.activity.id }
         });
     };
-
-    // Delete this article from MongoDB
-    activityDelete = (id) => {
-        ActivityDB.delete( id )
-        .then(res => {
-            console.log("Deleted user");
-            this.props.refreshPage();
-        })
-        .catch(err => {
-            alert(err);
-            console.error(err); 
-        });
-    }
 
     render() {
         // Deconstruct Props
@@ -86,7 +71,7 @@ class Activity extends React.Component {
         }
     
         let jsDate = new Date(activityDateTime);
-        const dateTime = moment(jsDate).format("YYYY-MM-DD");
+        const activityDateTimeDisplay = moment(jsDate).format("MM-DD-YY");
 
         let activityIcon = "";
 
@@ -101,8 +86,15 @@ class Activity extends React.Component {
         }
 
         // Can only edit or delete your activities
-        const editIsDisabled = (this.props.user && this.props.user.authUser && this.props.user.authUser.uid) ===  uid ? false : true;    
+        const editIsDisabled = (this.props.user.authUser && (this.props.user.authUser.uid ===  uid)) ? false : true;    
 
+        // Truncate Nane for easy view
+        let teamNameTrim = teamName.length < 12 ? teamName : `${teamName.substring(0, 9)}...` ;
+        let fullName = `${firstName} ${lastName}`;
+        let fullNameTrim = fullName.length < 20 ? fullName : `${fullName.substring(0, 17)}...` ;
+        let activityNameTrim = activityName ? activityName : `Unnamed ${activityType}`;
+        activityNameTrim = activityNameTrim.length < 20 ? activityNameTrim : `${activityNameTrim.substring(0, 17)}...` ;
+        
         return (
             <ExpansionPanel>
                 <ExpansionPanelSummary className="row" expandIcon={< ExpandMoreIcon />}>
@@ -110,56 +102,58 @@ class Activity extends React.Component {
                         <img style={{maxHeight: '24px'}} src={activityIcon} alt={activityType} />
                     </Tooltip>
                     
-                    <Typography className="col s2 m2">{`${firstName} ${lastName}/${teamName}`}</Typography>
-                    <Typography className="col s2 m2">{dateTime}</Typography>
-                    <Typography className="col s3 m3">{activityName ? activityName : ""}</Typography>
-                    <Typography className="col s2 offset-s2 m2 offset-m2">
+                    <Typography className="col s1 m1">{`${teamNameTrim}`}</Typography>
+                    <Typography className="col s2 m2">{`${fullNameTrim}`}</Typography>
+                    <Typography className="col s1 m1">{activityDateTimeDisplay}</Typography>
+                    <Typography className="col s3 m3">{activityNameTrim}</Typography>
+                    <Typography className="col s1 m1">
+                        {duration.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {"hrs"}
+                    </Typography>
+                    <Typography className="col s2 offset-s1 m2 offset-m1">
                         {distance.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {distanceUnits}
-                        </Typography>
+                    </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails className="row">
-                    <Typography className="col s2 offset-s4 m2 offset-m4">
-                        {duration.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} hours
-                    </Typography>
-                    <Typography className="col s2 m2">AveS</Typography>
+                    <Typography className="col s2 offset-s6 m2 offset-m6">AveS</Typography>
                     <Typography className="col s2 m2">(NP)</Typography>
-                    <Typography className="col s2 m2">
-                        <Tooltip title="Edit">
-                        <i style={{cursor: 'pointer'}}
-                            disabled={editIsDisabled}
-                            className="material-icons left indigo-text text-darken-4"
-                            onClick={() => this.activityEdit(id)}>edit
-                        </i>
-                        </Tooltip>
-                        <Tooltip title="Delete">
+                    {editIsDisabled ? null : 
+                        <Typography className="col s2 m2">
+                            <Tooltip title="Edit">
                             <i style={{cursor: 'pointer'}}
                                 disabled={editIsDisabled}
                                 className="material-icons left indigo-text text-darken-4"
-                                onClick={this.handleClickOpen}>delete
+                                onClick={() => this.activityEdit(id)}>edit
                             </i>
-                        </Tooltip>
-                        <Dialog
-                            open={this.state.openConfirmDelete}
-                            onClose={this.handleClose}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description">
-                            <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText id="alert-dialog-description">
-                                    Are you sure you want to delete?
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={this.handleClose} variant="contained" color="primary">
-                                    Cancel
-                                </Button>
-                                <Button onClick={() => this.handleDelete(id)} variant="contained" color="primary" autoFocus>
-                                    Yes
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
-
-                    </Typography>
+                            </Tooltip>
+                            <Tooltip title="Delete">
+                                <i style={{cursor: 'pointer'}}
+                                    disabled={editIsDisabled}
+                                    className="material-icons left indigo-text text-darken-4"
+                                    onClick={this.handleClickOpen}>delete
+                                </i>
+                            </Tooltip>
+                            <Dialog
+                                open={this.state.openConfirmDelete}
+                                onClose={this.handleClose}
+                                aria-labelledby="alert-dialog-title"
+                                aria-describedby="alert-dialog-description">
+                                <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+                                <DialogContent>
+                                    <DialogContentText id="alert-dialog-description">
+                                        Are you sure you want to delete?
+                                    </DialogContentText>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={this.handleClose} variant="contained" color="primary">
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={() => this.handleDelete(id)} variant="contained" color="primary" autoFocus>
+                                        Yes
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
+                        </Typography>
+                    }
                 </ExpansionPanelDetails>
             </ExpansionPanel>
         ); // return
