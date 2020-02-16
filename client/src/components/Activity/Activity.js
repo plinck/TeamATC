@@ -86,7 +86,12 @@ class Activity extends React.Component {
         }
 
         // Can only edit or delete your activities
-        const editIsDisabled = (this.props.user.authUser && (this.props.user.authUser.uid ===  uid)) ? false : true;    
+        let editIsDisabled = (this.props.user.authUser && (this.props.user.authUser.uid ===  uid)) ? false : true; 
+
+        // Allow Admin to edit all records (later allow team moderator (cashier) to edit their own teams workouts) 
+        if (this.props.user.isAdmin) {
+            editIsDisabled = false
+        }
 
         // Truncate Nane for easy view
         let teamNameTrim = teamName.length < 12 ? teamName : `${teamName.substring(0, 9)}...` ;
