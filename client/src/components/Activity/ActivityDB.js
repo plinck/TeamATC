@@ -3,7 +3,7 @@ import Util from "../Util/Util";
 class ActivityDB {
 
     // Get all activities from firestore 
-    static getAll =  (resultLimit, teamUid, userUid, startDate, endDate) => {
+    static getAll =  (resultLimit, teamName, uid, startDate, endDate) => {
         const db = Util.getFirestoreDB();   // active firestore db ref
         
         resultLimit = resultLimit || 50;
@@ -13,21 +13,20 @@ class ActivityDB {
         
         // default ref gets all
         let ref = db.collection("activities")
-            .where("activityDateTime", ">=", startDate)
-            .where("activityDateTime", "<=", endDate)
-            .orderBy("activityDateTime", "desc").limit(resultLimit)
+            .orderBy("activityDateTime", "desc")
+            .limit(resultLimit)
 
-        if (teamUid) {
-            ref = db.collection("activities").where("teamUid", "==", teamUid)
-            .where("activityDateTime", ">=", startDate)
-            .where("activityDateTime", "<=", endDate)
-            .orderBy("activityDateTime", "desc").limit(resultLimit)
+        if (teamName) {
+            ref = db.collection("activities")
+            .where("teamName", "==", teamName)
+            .orderBy("activityDateTime", "desc")
+            .limit(resultLimit)
         }
-        if (userUid) {
-            ref = db.collection("activities").where("userUid", "==", userUid)
-            .where("activityDateTime", ">=", startDate)
-            .where("activityDateTime", "<=", endDate)
-            .orderBy("activityDateTime", "desc").limit(resultLimit)
+        if (uid) {
+            ref = db.collection("activities")
+            .where("uid", "==", uid)
+            .orderBy("activityDateTime", "desc")
+            .limit(resultLimit)
         }
         
         return new Promise( (resolve, reject) => {
@@ -38,6 +37,7 @@ class ActivityDB {
                     let activity = {};
                     activity = doc.data();
                     activity.id = doc.id;
+                    activity.activityDateTime = activity.activityDateTime.toDate();
                     activities.push(activity); 
                 });
                 return(resolve(activities));

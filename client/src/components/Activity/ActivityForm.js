@@ -3,7 +3,6 @@ import M from "materialize-css/dist/js/materialize.min.js";
 import Modal from "./ActivityModal";
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Redirect } from "react-router";
-import NumberFormat from "react-number-format";
 import TextField from "@material-ui/core/TextField";
 import { withStyles } from "@material-ui/core/styles";
 
@@ -333,10 +332,6 @@ class ActivityForm extends React.Component {
             duration,
             teamName,
             message
-        } = this.state;
-
-        var {
-            teams
         } = this.state;
     
         if (this.props.user.authUser) {

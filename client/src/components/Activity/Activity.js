@@ -20,7 +20,6 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import ActivityDB from './ActivityDB';
 class Activity extends React.Component {
         // State used for Dialog box to confirm delete
     state = {
@@ -52,9 +51,7 @@ class Activity extends React.Component {
         // Deconstruct Props
         const {
             id,
-            firstName,
-            lastName,
-            email,
+            displayName,
             teamName,
             activityDateTime,
             activityName,
@@ -96,7 +93,7 @@ class Activity extends React.Component {
 
         // Truncate Nane for easy view
         let teamNameTrim = teamName.length < 12 ? teamName : `${teamName.substring(0, 9)}...` ;
-        let fullName = `${firstName} ${lastName}`;
+        let fullName = `${displayName}`;
         let fullNameTrim = fullName.length < 20 ? fullName : `${fullName.substring(0, 17)}...` ;
         let activityNameTrim = activityName ? activityName : `Unnamed ${activityType}`;
         activityNameTrim = activityNameTrim.length < 20 ? activityNameTrim : `${activityNameTrim.substring(0, 17)}...` ;

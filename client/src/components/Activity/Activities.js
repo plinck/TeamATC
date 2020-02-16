@@ -4,6 +4,7 @@ import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Button from '@material-ui/core/Button';
 
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import Activity from './Activity';
@@ -11,12 +12,11 @@ import ActivityCard from './ActivityCard';
 import ActivityDB from './ActivityDB';
 
 import { withStyles } from '@material-ui/core/styles';
-import TextField from "@material-ui/core/TextField";
-
 
 // export csv functionality
 // eslint-disable-next-line no-unused-vars
 import { CSVLink, CSVDownload } from "react-csv";
+import UserAPI from "../User/UserAPI"
 
 
 const styles = theme => ({
@@ -37,6 +37,7 @@ class Activities extends React.Component {
         super(props);
 
         this.state = {
+            myTeamName: null,
             activities: null,
             activityLimitBy: null,
             searchBy: "",
@@ -44,10 +45,19 @@ class Activities extends React.Component {
         };
     }
 
-    getActivities = () => {
+    // Get the users info
+    fetchUser() {
+        UserAPI.getCurrentUser().then(user => {
+            this.setState({
+                myTeamName: user.teamName
+            });
+        });
+    }
+
+    getActivities = (resultLimit, teamName, userUid, startDate, endDate) => {
         // Get with security
         // comes back sorted already
-        ActivityDB.getActivityWithUser()
+        ActivityDB.getAll(resultLimit, teamName, userUid, startDate, endDate)
             .then(res => {
                 let activities = res;
                 this.setState({ activities: activities });
@@ -69,8 +79,31 @@ class Activities extends React.Component {
 
     }
 
-    refreshPage() {
-        this.getActivities();
+    refreshPage(filterByString) {
+
+        if (filterByString === undefined) {
+            filterByString = this.state.filterBy;
+        }
+
+        switch(filterByString) {
+            case "All":
+                this.getActivities()
+                break;
+            case "Team":                            
+                this.getActivities(50, this.state.myTeamName, undefined, undefined, undefined)
+                break;
+            case "Mine":
+                this.getActivities(50, undefined, this.props.user.uid, undefined, undefined)
+                break;
+            default:
+                this.getActivities()
+            }     
+    }
+
+    filterBy = (filterString) => {
+        this.setState({filterBy: filterString});
+        console.log(`Filter By ${filterString} activities`);
+        this.refreshPage(filterString);
     }
 
     // Delete this article from MongoDB
@@ -103,6 +136,10 @@ class Activities extends React.Component {
             return null;
         }
 
+        if (this.state.myTeamName === null) {
+            this.fetchUser();
+        }
+
         if (typeof this.state.activities === 'undefined') {
             console.error("Fatal Error")
             return (<div> <p>FATAL ERROR Gettng activities ...</p> </div>)
@@ -114,7 +151,6 @@ class Activities extends React.Component {
 
         // Search and filter
         let searchBy = this.state.searchBy;
-        let filterBy = this.state.filterBy;
 
         let activities = this.state.activities
         if (this.props.user.authUser) {
@@ -136,13 +172,19 @@ class Activities extends React.Component {
                     <div className="row">                        
                         <div className="col s1 m1 green-text left-align">Filter: </div>
                         <div className="col s1 m1">
-                            <img style={{maxHeight: '24px'}} src="/images/icons8-swimming-50.png" />
+                            <Button className="waves-effect waves-light btn"
+                                onClick={() => this.filterBy("All")}>All
+                            </Button>
                         </div>
                         <div className="col s1 m1">
-                            <img style={{maxHeight: '24px'}} src="/images/icons8-triathlon-50.png" />
+                            <Button className="waves-effect waves-light btn"
+                                onClick={() => this.filterBy("Team")}>Team
+                            </Button>
                         </div>
                         <div className="col s1 m1">
-                            <img style={{maxHeight: '24px'}} src="/images/icons8-running-50.png" />
+                            <Button className="waves-effect waves-light btn"
+                                onClick={() => this.filterBy("Mine")}>Mine
+                            </Button>
                         </div>
                         <div className="col s3 offset-s5 m3 offset-m5 blue-text input-field inline">
                             <input id="searchBy" name="searchBy" type="text" value={searchBy} onChange={this.onChange} />
