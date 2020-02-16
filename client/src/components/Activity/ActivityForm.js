@@ -3,7 +3,6 @@ import M from "materialize-css/dist/js/materialize.min.js";
 import Modal from "./ActivityModal";
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Redirect } from "react-router";
-import NumberFormat from "react-number-format";
 import TextField from "@material-ui/core/TextField";
 import { withStyles } from "@material-ui/core/styles";
 
@@ -56,6 +55,7 @@ class ActivityForm extends React.Component {
         this._isMounted = false;
     
         this.state = { ...INITIAL_STATE };
+        this.state.id = this.props.id;
 
         //set the date field to be current date by default
         let jsDate = new Date();
@@ -99,7 +99,7 @@ class ActivityForm extends React.Component {
                 case "Swim":
                     distanceUnits = "Yards";
                     break;
-                case "Bike":
+                case "Bike":                            
                     distanceUnits = "Miles";
                     break;
                 case "Run":
@@ -117,7 +117,6 @@ class ActivityForm extends React.Component {
                 [event.target.name]: event.target.value,
             });
         }
-
     };
 
     // validate valid float as its being typed in
@@ -144,6 +143,24 @@ class ActivityForm extends React.Component {
                 [event.target.name]: event.target.value,
             });
         }
+    }
+
+    // Get the activity info
+    fetchActivity(id) {
+        ActivityDB.get(id).then(activity => {
+            let jsDate = new Date(activity.activityDateTime);
+            const dateTimeString = moment(jsDate).format("YYYY-MM-DD");
+        
+            this.setState({
+                activityName: activity.activityName,
+                activityDateTimeString: dateTimeString,
+                activityType: activity.activityType,   
+                distance: activity.distance,
+                distanceUnits: activity.distanceUnits,
+                duration: activity.duration,
+                teamName: activity.teamName
+            });
+        });
     }
 
     // Get the users info
@@ -233,14 +250,31 @@ class ActivityForm extends React.Component {
         } 
         activity.duration = Number(activity.duration);
 
-        // If all good, add it to firestore
-        this.addActivity(activity);
+        // If all good, update or it to firestore
+        if (this.state.id) {
+            this.updateActivity(activity);
+        } else {
+            this.createActivity(activity);
+        }
+  
 
         return true;
     }
     
-    addActivity = (activity) => {
+    updateActivity = (activity) => {
+        // console.log(`Activity Info:${JSON.stringify(activity, null, 2)}`)
+        ActivityDB.update(activity).then(res => {
+            this.setState({ message: `Activity Successfully Updated` });
+            // Redirect to dashboard
+            this.props.history.push({
+                pathname: '/dashboard'
+            });
+        }).catch(err => {
+            this.setState({ message: `Error updating activity ${err}` });
+        });  
+    }
 
+    createActivity = (activity) => {
         // console.log(`Activity Info:${JSON.stringify(activity, null, 2)}`)
         ActivityDB.create(activity).then(res => {
             this.setState({ message: `Activity Successfully Created` });
@@ -298,10 +332,6 @@ class ActivityForm extends React.Component {
             duration,
             teamName,
             message
-        } = this.state;
-
-        var {
-            teams
         } = this.state;
     
         if (this.props.user.authUser) {
@@ -429,7 +459,7 @@ class ActivityForm extends React.Component {
                             <div className="card-action pCard">
                                 <div className="center-align ">
                                     <button className="btn waves-effect waves-light blue darken-4 modal-trigger"
-                                        type="submit" href="#modal1" onClick={this.onSubmitHandler} name="action">Submit
+                                        type="submit" href="#modal1" onClick={this.onSubmitHandler} name="action">{this.state.id ? "Update" : "Create"}
                                     </button>
                                 </div>
                             </div>
