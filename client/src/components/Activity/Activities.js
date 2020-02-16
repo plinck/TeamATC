@@ -100,7 +100,7 @@ class Activities extends React.Component {
                 this.getActivities(50, undefined, this.props.user.uid, undefined, undefined)
                 break;
             default:
-                if (filterByString === undefined || filterByString === null) {
+                if (this.props.user.uid === undefined || this.props.user.uid === null) {
                     this.getActivities()
                 } else {
                     this.getActivities(50, undefined, this.props.user.uid, undefined, undefined)
