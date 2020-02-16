@@ -22,15 +22,16 @@ class Activity extends React.Component {
             firstName,
             lastName,
             email,
-            team,
+            teamName,
             activityDateTime,
+            activityName,
             activityType, // swim, bike, run
             distance,
             distanceUnits,
             duration,
         } = this.props.activity;
         let jsDate = new Date(activityDateTime);
-        const dateTime = moment(jsDate).format("YYYY-MM-DD HH:mm:ss");
+        const dateTime = moment(jsDate).format("YYYY-MM-DD");
 
         let activityIcon = "";
 
@@ -44,25 +45,41 @@ class Activity extends React.Component {
             activityIcon = "/images/icons8-triathlon-50.png";      // unknown
         }
 
+        {/*
+                                    <div className="row">
+                            <p className="text-bold blue-text col s1 m1">ICON</p>
+                            <p className="text-bold blue-text col s2 m2">User</p>
+                            <p className="text-bold blue-text col s2 m2">Date</p>
+                            <p className="text-bold blue-text col s3 m3">Name</p>
+                            <p className="text-bold blue-text col s2 offset-s2 m2 offset-m2">Distance</p>
+                            <p className="text-bold blue-text col s3 m2">Time</p>
+                            <p className="text-bold blue-text col s2 m3 offset-m3">Ave Speed</p>
+                            <p className="text-bold blue-text col s2 offset-s1 m2">Power (NP)</p>
+                            <p className="text-bold blue-text col s2 offset-s2 m2">Action</p>
+                        </div>
+
+        */}
         return (
             <ExpansionPanel>
                 <ExpansionPanelSummary className="row" expandIcon={< ExpandMoreIcon />}>
                     <Tooltip title={activityType}>
                         <img style={{maxHeight: '24px'}} src={activityIcon} alt={activityType} />
-                        {/* <i className="material-icons green-text col s1 m1">{activityIcon}</i> */}
                     </Tooltip>
                     
-                    <Typography className="col s5 m3">{dateTime} {team}</Typography>
-                    <Typography className="col s6 m4">{`${firstName} ${lastName} (${email})`}</Typography>
-                    <Typography
-                        className="col s12 m2 offset-m2">
+                    <Typography className="col s2 m2">{`${firstName} ${lastName}/${teamName}`}</Typography>
+                    <Typography className="col s2 m2">{dateTime}</Typography>
+                    <Typography className="col s3 m3">{activityName ? activityName : ""}</Typography>
+                    <Typography className="col s2 offset-s2 m2 offset-m2">
                         {distance.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {distanceUnits}
-                    </Typography>
+                        </Typography>
                 </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                    <Typography className="row grey-text">
-                        {duration.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                <ExpansionPanelDetails className="row">
+                    <Typography className="col s2 offset-s4 m2 offset-m4">
+                        {duration.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} hours
                     </Typography>
+                    <Typography className="col s2 m2">AveS</Typography>
+                    <Typography className="col s2 m2">(NP)</Typography>
+                    <Typography className="col s2 m2">Action</Typography>
                 </ExpansionPanelDetails>
             </ExpansionPanel>
         ); // return
