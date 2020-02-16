@@ -39,9 +39,8 @@ class Activities extends React.Component {
         this.state = {
             myTeamName: null,
             activities: null,
-            activityLimitBy: null,
             searchBy: "",
-            filterBy: ""
+            filterByString: null
         };
     }
 
@@ -74,15 +73,20 @@ class Activities extends React.Component {
         if (this.props.activities) {
             this.setState({ activities: this.props.activities });   
         } else {
-            this.refreshPage();
+            if (this.props.filterByString) {
+                this.setState({filterByString: this.props.filterByString});
+                this.refreshPage(this.props.filterByString);
+            } else {
+                this.refreshPage();
+            }
         }
 
     }
 
     refreshPage(filterByString) {
 
-        if (filterByString === undefined) {
-            filterByString = this.state.filterBy;
+        if (filterByString === undefined || filterByString === null) {
+            filterByString = this.state.filterByString;
         }
 
         switch(filterByString) {
@@ -96,12 +100,16 @@ class Activities extends React.Component {
                 this.getActivities(50, undefined, this.props.user.uid, undefined, undefined)
                 break;
             default:
-                this.getActivities()
+                if (filterByString === undefined || filterByString === null) {
+                    this.getActivities()
+                } else {
+                    this.getActivities(50, undefined, this.props.user.uid, undefined, undefined)
+                }
             }     
     }
 
-    filterBy = (filterString) => {
-        this.setState({filterBy: filterString});
+    filterByChange = (filterString) => {
+        this.setState({filterByString: filterString});
         console.log(`Filter By ${filterString} activities`);
         this.refreshPage(filterString);
     }
@@ -173,17 +181,17 @@ class Activities extends React.Component {
                         <div className="col s1 m1 green-text left-align">Filter: </div>
                         <div className="col s1 m1">
                             <Button className="waves-effect waves-light btn"
-                                onClick={() => this.filterBy("All")}>All
+                                onClick={() => this.filterByChange("All")}>All
                             </Button>
                         </div>
                         <div className="col s1 m1">
                             <Button className="waves-effect waves-light btn"
-                                onClick={() => this.filterBy("Team")}>Team
+                                onClick={() => this.filterByChange("Team")}>Team
                             </Button>
                         </div>
                         <div className="col s1 m1">
                             <Button className="waves-effect waves-light btn"
-                                onClick={() => this.filterBy("Mine")}>Mine
+                                onClick={() => this.filterByChange("Mine")}>Mine
                             </Button>
                         </div>
                         <div className="col s3 offset-s5 m3 offset-m5 blue-text input-field inline">

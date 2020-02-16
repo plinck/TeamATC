@@ -87,7 +87,7 @@ class Home extends React.Component {
                             />
                             </div>
                             
-                            <Activities activityLimitBy="user" layoutType="userCard"/>
+                            <Activities filterByString="Mine" layoutType="userCard"/>
                         </div>
 
                     }
