@@ -32,7 +32,7 @@ class Home extends React.Component {
         this.setState({ loadingFlag: true })
 
         // note res,data is NOT using in local DB get since only node sends back JSON in res.data
-        ActivityDB.get()
+        ActivityDB.getAll()
             .then(res => {
                 if (this._mounted) {
                     this.setState({ activities: res })

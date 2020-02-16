@@ -73,6 +73,19 @@ class Activities extends React.Component {
         this.getActivities();
     }
 
+    // Delete this article from MongoDB
+    activityDelete = (id) => {
+        ActivityDB.delete( id )
+        .then(res => {
+            console.log("Deleted activity");
+            this.refreshPage();
+        })
+        .catch(err => {
+            alert(err);
+            console.error(err); 
+        });
+    }
+
     onChange = event => {
         // Set Units
         if (event.target.name === "searchBy") {
@@ -142,7 +155,9 @@ class Activities extends React.Component {
                         {activities.map((activity) => {
                             return (
                                 <div key={activity.id}>
-                                    <Activity activity={activity} layoutType={this.props.layoutType} refreshPage={this.refreshPage}
+                                    <Activity activity={activity}
+                                        layoutType={this.props.layoutType}
+                                        activityDelete={this.activityDelete}
                                     />
                                 </div>
                             );
