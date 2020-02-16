@@ -87,10 +87,11 @@ class Activity extends React.Component {
 
         // Can only edit or delete your activities
         let editIsDisabled = (this.props.user.authUser && (this.props.user.authUser.uid ===  uid)) ? false : true; 
+        let deleteIsDisabled = (this.props.user.authUser && (this.props.user.authUser.uid ===  uid)) ? false : true; 
 
         // Allow Admin to edit all records (later allow team moderator (cashier) to edit their own teams workouts) 
         if (this.props.user.isAdmin) {
-            editIsDisabled = false
+            deleteIsDisabled = false
         }
 
         // Truncate Nane for easy view
@@ -121,15 +122,17 @@ class Activity extends React.Component {
                 <ExpansionPanelDetails className="row">
                     <Typography className="col s2 offset-s6 m2 offset-m6">AveS</Typography>
                     <Typography className="col s2 m2">(NP)</Typography>
-                    {editIsDisabled ? null : 
+                    {deleteIsDisabled ? null : 
                         <Typography className="col s2 m2">
-                            <Tooltip title="Edit">
-                            <i style={{cursor: 'pointer'}}
-                                disabled={editIsDisabled}
-                                className="material-icons left indigo-text text-darken-4"
-                                onClick={() => this.activityEdit(id)}>edit
-                            </i>
-                            </Tooltip>
+                            {editIsDisabled ? null :
+                                <Tooltip title="Edit">
+                                    <i style={{cursor: 'pointer'}}
+                                        disabled={editIsDisabled}
+                                        className="material-icons left indigo-text text-darken-4"
+                                        onClick={() => this.activityEdit(id)}>edit
+                                    </i>
+                                </Tooltip>
+                            }
                             <Tooltip title="Delete">
                                 <i style={{cursor: 'pointer'}}
                                     disabled={editIsDisabled}
