@@ -165,6 +165,7 @@ class ActivityDB {
                 if (doc.exists) {
                     // update
                     let activity = doc.data();
+                    activity.activityDateTime = activity.activityDateTime.toDate();
                     return(resolve(activity));
                 }
                 console.log("Activity not found in firestore");

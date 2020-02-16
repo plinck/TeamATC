@@ -56,6 +56,7 @@ class ActivityForm extends React.Component {
         this._isMounted = false;
     
         this.state = { ...INITIAL_STATE };
+        this.state.id = this.props.id;
 
         //set the date field to be current date by default
         let jsDate = new Date();
@@ -72,8 +73,8 @@ class ActivityForm extends React.Component {
         this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
         
         // only get activity if its an update, otherwise assume new
-        if (this.props.id) {
-          this.fetchActivity(this.props.id);
+        if (this.state.id) {
+          this.fetchActivity(this.state.id);
         } else {
         }
     
@@ -148,12 +149,12 @@ class ActivityForm extends React.Component {
     // Get the activity info
     fetchActivity(id) {
         ActivityDB.get(id).then(activity => {
-            let jsDate = activity.activityDateTime;
-            const activityDateTimeString = moment(jsDate).format("MM-DD-YYYY");
-    
+            let jsDate = new Date(activity.activityDateTime);
+            const dateTimeString = moment(jsDate).format("YYYY-MM-DD");
+        
             this.setState({
                 activityName: activity.activityName,
-                activityDateTimeString: activity.activityDateTimeString,
+                activityDateTimeString: dateTimeString,
                 activityType: activity.activityType,   
                 distance: activity.distance,
                 distanceUnits: activity.distanceUnits,
@@ -250,14 +251,31 @@ class ActivityForm extends React.Component {
         } 
         activity.duration = Number(activity.duration);
 
-        // If all good, add it to firestore
-        this.addActivity(activity);
+        // If all good, update or it to firestore
+        if (this.state.id) {
+            this.updateActivity(activity);
+        } else {
+            this.createActivity(activity);
+        }
+  
 
         return true;
     }
     
-    addActivity = (activity) => {
+    updateActivity = (activity) => {
+        // console.log(`Activity Info:${JSON.stringify(activity, null, 2)}`)
+        ActivityDB.update(activity).then(res => {
+            this.setState({ message: `Activity Successfully Updated` });
+            // Redirect to dashboard
+            this.props.history.push({
+                pathname: '/dashboard'
+            });
+        }).catch(err => {
+            this.setState({ message: `Error updating activity ${err}` });
+        });  
+    }
 
+    createActivity = (activity) => {
         // console.log(`Activity Info:${JSON.stringify(activity, null, 2)}`)
         ActivityDB.create(activity).then(res => {
             this.setState({ message: `Activity Successfully Created` });
@@ -446,7 +464,7 @@ class ActivityForm extends React.Component {
                             <div className="card-action pCard">
                                 <div className="center-align ">
                                     <button className="btn waves-effect waves-light blue darken-4 modal-trigger"
-                                        type="submit" href="#modal1" onClick={this.onSubmitHandler} name="action">Submit
+                                        type="submit" href="#modal1" onClick={this.onSubmitHandler} name="action">{this.state.id ? "Update" : "Create"}
                                     </button>
                                 </div>
                             </div>
