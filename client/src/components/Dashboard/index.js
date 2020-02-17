@@ -66,6 +66,42 @@ class Home extends React.Component {
                     })    
                 }
                 if (change.type === "modified") {
+                    console.log(`Changed Activity: ${change.doc.id}`);
+                    activity = change.doc.data();
+                    activity.id = change.doc.id;
+                    activity.activityDateTime = activity.activityDateTime.toDate();
+                    
+                    // Delete activity from array and update totals
+                    let oldActivityAndIndex = this.searchForActivity(activity.id, "id", activities);
+                    if (oldActivityAndIndex) {
+                        // replace current activity in array with new one
+                        activities[oldActivityAndIndex.index] = activity;
+                        let oldActivity = oldActivityAndIndex.activity; // extract object from returned object 
+
+                        // Subtract old and add new distance
+                        let oldDistanceInMiles =  (oldActivity.distanceUnits && oldActivity.distanceUnits === "Yards")
+                            ? (oldActivity.distance) / 1760
+                            : (oldActivity.distance);
+                        let newDistanceInMiles =  (activity.distanceUnits && activity.distanceUnits === "Yards")
+                            ? (activity.distance) / 1760
+                            : (activity.distance);
+                        distanceTotal = distanceTotal - oldDistanceInMiles + newDistanceInMiles;
+
+                        // Subtract old and add new duration
+                        let oldDurationInHours =  (oldActivity.durationUnits && oldActivity.durationUnits === "Minutes")
+                            ? (oldActivity.duration) / 60
+                            : (oldActivity.duration);
+                        let newDurationInHours =  (activity.durationUnits && activity.durationUnits === "Minutes")
+                            ? (activity.duration) / 60
+                            : (activity.duration);
+                        durationTotal = durationTotal - oldDurationInHours + newDurationInHours;
+
+                        this.setState({
+                            nbrActivities: nbrActivities,
+                            distanceTotal: distanceTotal,
+                            durationTotal: durationTotal
+                        })   
+                    }
                 }
                 if (change.type === "removed") {
                     console.log(`Removed Activity: ${change.doc.id}`);
@@ -74,10 +110,10 @@ class Home extends React.Component {
                     activity.activityDateTime = activity.activityDateTime.toDate();
                     
                     // Delete activity from array and update totals
-                    let oldActivity = this.searchForActivity(activity.id, "id", activities);
-                    if (oldActivity) {
+                    let oldActivityAndIndex = this.searchForActivity(activity.id, "id", activities);
+                    if (oldActivityAndIndex) {
                         // remove it
-                        activities.splice(oldActivity.index, 1);  
+                        activities.splice(oldActivityAndIndex.index, 1);  
 
                         nbrActivities -= 1;
                         if (activity.distanceUnits && activity.distanceUnits === "Yards") {
