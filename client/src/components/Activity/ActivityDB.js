@@ -13,19 +13,19 @@ class ActivityDB {
         // default ref gets all
         let ref = db.collection("activities")
             .orderBy("activityDateTime", "desc")
-            .limit(resultLimit)
+            .limit(resultLimit);
 
         if (teamName) {
             ref = db.collection("activities")
             .where("teamName", "==", teamName)
             .orderBy("activityDateTime", "desc")
-            .limit(resultLimit)
+            .limit(resultLimit);
         }
         if (uid) {
             ref = db.collection("activities")
             .where("uid", "==", uid)
             .orderBy("activityDateTime", "desc")
-            .limit(resultLimit)
+            .limit(resultLimit);
         }
         
         return new Promise( (resolve, reject) => {
@@ -53,8 +53,9 @@ class ActivityDB {
         
         // default ref gets all
         let ref = db.collection("activities")
-            .orderBy("activityDateTime", "desc")
-
+            .orderBy("activityDateTime", "desc");
+        
+        // How can you send back promise and listener?
         return new Promise( (resolve, reject) => {
 
             ref.onSnapshot.then((querySnapshot) => {
