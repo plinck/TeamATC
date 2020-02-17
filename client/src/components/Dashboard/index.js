@@ -40,11 +40,10 @@ class Home extends React.Component {
             let nbrActivities = this.state.nbrActivities;
             let distanceTotal = this.state.distanceTotal;
             let durationTotal = this.state.durationTotal;
-
+            
+            let activity = {};
             querySnapshot.docChanges().forEach( change => {               
                 if (change.type === "added") {
-                    console.log(`New Activity `);
-                    let activity = {};
                     activity = change.doc.data();
                     activity.id = change.doc.id;
                     activity.activityDateTime = activity.activityDateTime.toDate();
@@ -67,19 +66,52 @@ class Home extends React.Component {
                     })    
                 }
                 if (change.type === "modified") {
-                    console.log(`Modified Activity: ${change.doc.id}`);
                 }
                 if (change.type === "removed") {
                     console.log(`Removed Activity: ${change.doc.id}`);
+                    activity = change.doc.data();
+                    activity.id = change.doc.id;
+                    activity.activityDateTime = activity.activityDateTime.toDate();
+                    
+                    // Delete activity from array and update totals
+                    let oldActivity = this.searchForActivity(activity.id, "id", activities);
+                    if (oldActivity) {
+                        // remove it
+                        activities.splice(oldActivity.index, 1);  
+
+                        nbrActivities -= 1;
+                        if (activity.distanceUnits && activity.distanceUnits === "Yards") {
+                            distanceTotal -= activity.distance / 1760;
+                        } else {
+                            distanceTotal -= activity.distance;
+                        }
+                        if (activity.durationUnits && activity.durationUnits === "Minutes") {
+                            durationTotal -= activity.duration / 60;
+                        } else {
+                            durationTotal -= activity.duration;    
+                        }
+                        this.setState({
+                            nbrActivities: nbrActivities,
+                            distanceTotal: distanceTotal,
+                            durationTotal: durationTotal
+                        })   
+                    }
                 }
             });
-            if (this._mounted) {
-                this.setState({ activities: activities })
-                this.setState({ loadingFlag: false })
-            }
+            this.setState({ activities: activities })
+            this.setState({ loadingFlag: false })
         }, (error) => {
             console.error(`Error attaching listener: ${error}`)
         });
+    }
+    // Search for object in array based on key using uniqure ID
+    searchForActivity(keyValue, keyName, searchArray) {
+        for (var i=0; i < searchArray.length; i++) {
+            if (searchArray[i][keyName] === keyValue) {
+                return ({activity: searchArray[i], index: i});
+            }
+        }
+        return undefined;
     }
 
     componentWillUnmount() {
