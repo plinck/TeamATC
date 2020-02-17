@@ -1,7 +1,6 @@
 import Util from "../Util/Util";
 
 class ActivityDB {
-
     // Get all activities from firestore 
     static getAll =  (resultLimit, teamName, uid, startDate, endDate) => {
         const db = Util.getFirestoreDB();   // active firestore db ref
@@ -32,6 +31,33 @@ class ActivityDB {
         return new Promise( (resolve, reject) => {
 
             ref.get().then((querySnapshot) => {
+                let activities = [];
+                querySnapshot.forEach (doc => {
+                    let activity = {};
+                    activity = doc.data();
+                    activity.id = doc.id;
+                    activity.activityDateTime = activity.activityDateTime.toDate();
+                    activities.push(activity); 
+                });
+                return(resolve(activities));
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    }
+    
+
+    // Listener for all activities from firestore 
+    static listenAll =  () => {
+        const db = Util.getFirestoreDB();   // active firestore db ref
+        
+        // default ref gets all
+        let ref = db.collection("activities")
+            .orderBy("activityDateTime", "desc")
+
+        return new Promise( (resolve, reject) => {
+
+            ref.onSnapshot.then((querySnapshot) => {
                 let activities = [];
                 querySnapshot.forEach (doc => {
                     let activity = {};
