@@ -58,7 +58,7 @@ class ActivityDB {
         // How can you send back promise and listener?
         return new Promise( (resolve, reject) => {
 
-            ref.onSnapshot.then((querySnapshot) => {
+            let activeListener = ref.onSnapshot.then((querySnapshot) => {
                 let activities = [];
                 querySnapshot.forEach (doc => {
                     let activity = {};
@@ -67,7 +67,7 @@ class ActivityDB {
                     activity.activityDateTime = activity.activityDateTime.toDate();
                     activities.push(activity); 
                 });
-                return(resolve(activities));
+                return(resolve({activities: activities, activeListener: activeListener}));
             }).catch(err => {
                 reject(err);
             });
