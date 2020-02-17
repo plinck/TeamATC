@@ -26,20 +26,43 @@ class Home extends React.Component {
         durationTotal: 0,
         loadingFlag: false
     }
+    activeListener = undefined;
 
     componentDidMount() {
         this._mounted = true;
         this.setState({ loadingFlag: true })
+        const db = Util.getFirestoreDB();   // active firestore db ref
+
+        let ref = db.collection("activities")
+            .orderBy("activityDateTime", "desc");
+        this.activeListener = ref.onSnapshot((querySnapshot) => {
+            let activities = [];
+            querySnapshot.forEach (doc => {
+                let activity = {};
+                activity = doc.data();
+                activity.id = doc.id;
+                activity.activityDateTime = activity.activityDateTime.toDate();
+                activities.push(activity); 
+            });
+            if (this._mounted) {
+                this.setState({ activities: activities })
+                this.setState({ loadingFlag: false })
+            }
+        }, (error) => {
+            console.error(`Error attaching listener: ${error}`)
+        });
 
         // note res,data is NOT using in local DB get since only node sends back JSON in res.data
-        ActivityDB.getAll()
+        /*
+        ActivityDB.listenAll()
             .then(res => {
                 if (this._mounted) {
-                    this.setState({ activities: res })
+                    this.setState({ activities: res.activities })
                     this.setState({ loadingFlag: false })
                 }
             })
             .catch(err => console.error(err));
+        */
 
         Util.apiGet("/api/activity/activityTotals")
         .then(res => {
@@ -56,6 +79,13 @@ class Home extends React.Component {
 
     componentWillUnmount() {
         this._mounted = false;
+        
+        // kill the listener
+        if (this.activeListener) {
+            this.activeListener();
+            console.log(`Detached listener`)
+
+        }
     }
 
     render() {

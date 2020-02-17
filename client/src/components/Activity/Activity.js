@@ -92,7 +92,7 @@ class Activity extends React.Component {
         }
 
         // Truncate Nane for easy view
-        let teamNameTrim = teamName.length < 12 ? teamName : `${teamName.substring(0, 9)}...` ;
+        let teamNameTrim = teamName.length < 9 ? teamName : `${teamName.substring(0, 6)}...` ;
         let fullName = `${displayName}`;
         let fullNameTrim = fullName.length < 20 ? fullName : `${fullName.substring(0, 17)}...` ;
         let activityNameTrim = activityName ? activityName : `Unnamed ${activityType}`;
@@ -107,7 +107,7 @@ class Activity extends React.Component {
                     
                     <Typography className="col s1 m1">{`${teamNameTrim}`}</Typography>
                     <Typography className="col s2 m2">{`${fullNameTrim}`}</Typography>
-                    <Typography className="col s1 m1">{activityDateTimeDisplay}</Typography>
+                    <Typography className="col s2 m2">{activityDateTimeDisplay}</Typography>
                     <Typography className="col s3 m3">{activityNameTrim}</Typography>
                     <Typography className="col s1 m1">
                         {duration.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {"hrs"}
