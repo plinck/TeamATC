@@ -20,7 +20,7 @@ import ActivityDB from '../Activity/ActivityDB';
 
 class Home extends React.Component {
     state = {
-        activities: null,
+        activities: [],
         nbrActivities: 0,
         distanceTotal: 0,
         durationTotal: 0,
@@ -36,13 +36,42 @@ class Home extends React.Component {
         let ref = db.collection("activities")
             .orderBy("activityDateTime", "desc");
         this.activeListener = ref.onSnapshot((querySnapshot) => {
-            let activities = [];
-            querySnapshot.forEach (doc => {
-                let activity = {};
-                activity = doc.data();
-                activity.id = doc.id;
-                activity.activityDateTime = activity.activityDateTime.toDate();
-                activities.push(activity); 
+            let activities = this.state.activities;
+            let nbrActivities = this.state.nbrActivities;
+            let distanceTotal = this.state.distanceTotal;
+            let durationTotal = this.state.durationTotal;
+
+            querySnapshot.docChanges().forEach( change => {               
+                if (change.type === "added") {
+                    console.log(`New Activity `);
+                    let activity = {};
+                    activity = change.doc.data();
+                    activity.id = change.doc.id;
+                    activity.activityDateTime = activity.activityDateTime.toDate();
+                    activities.push(activity); 
+                    nbrActivities += 1;
+                    if (activity.distanceUnits && activity.distanceUnits === "Yards") {
+                        distanceTotal += activity.distance / 1760;
+                    } else {
+                        distanceTotal += activity.distance;
+                    }
+                    if (activity.durationUnits && activity.durationUnits === "Minutes") {
+                        durationTotal += activity.duration / 60;
+                    } else {
+                        durationTotal += activity.duration;    
+                    }
+                    this.setState({
+                        nbrActivities: nbrActivities,
+                        distanceTotal: distanceTotal,
+                        durationTotal: durationTotal
+                    })    
+                }
+                if (change.type === "modified") {
+                    console.log(`Modified Activity: ${change.doc.id}`);
+                }
+                if (change.type === "removed") {
+                    console.log(`Removed Activity: ${change.doc.id}`);
+                }
             });
             if (this._mounted) {
                 this.setState({ activities: activities })
@@ -51,30 +80,6 @@ class Home extends React.Component {
         }, (error) => {
             console.error(`Error attaching listener: ${error}`)
         });
-
-        // note res,data is NOT using in local DB get since only node sends back JSON in res.data
-        /*
-        ActivityDB.listenAll()
-            .then(res => {
-                if (this._mounted) {
-                    this.setState({ activities: res.activities })
-                    this.setState({ loadingFlag: false })
-                }
-            })
-            .catch(err => console.error(err));
-        */
-
-        Util.apiGet("/api/activity/activityTotals")
-        .then(res => {
-            if (this._mounted) {
-                this.setState({
-                    nbrActivities: res.data.nbrActivities ? res.data.nbrActivities : 0,
-                    distanceTotal: res.data.distanceTotal ? res.data.distanceTotal : 0,
-                    durationTotal: res.data.durationTotal ? res.data.durationTotal : 0
-                })
-            }
-        })
-        .catch(err => console.error(err));
     }
 
     componentWillUnmount() {
@@ -84,7 +89,6 @@ class Home extends React.Component {
         if (this.activeListener) {
             this.activeListener();
             console.log(`Detached listener`)
-
         }
     }
 
