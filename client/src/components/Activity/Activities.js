@@ -153,7 +153,6 @@ class Activities extends React.Component {
             return (<div> <p>FATAL ERROR Gettng activities ...</p> </div>)
         }
         if (this.state.activities === null) {
-            console.log("No Activities yet")
             return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
         } 
 
