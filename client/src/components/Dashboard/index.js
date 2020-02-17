@@ -20,42 +20,144 @@ import ActivityDB from '../Activity/ActivityDB';
 
 class Home extends React.Component {
     state = {
-        activities: null,
+        activities: [],
         nbrActivities: 0,
         distanceTotal: 0,
         durationTotal: 0,
         loadingFlag: false
     }
+    activeListener = undefined;
 
     componentDidMount() {
         this._mounted = true;
         this.setState({ loadingFlag: true })
+        const db = Util.getFirestoreDB();   // active firestore db ref
 
-        // note res,data is NOT using in local DB get since only node sends back JSON in res.data
-        ActivityDB.getAll()
-            .then(res => {
-                if (this._mounted) {
-                    this.setState({ activities: res })
-                    this.setState({ loadingFlag: false })
+        let ref = db.collection("activities")
+            .orderBy("activityDateTime", "desc");
+        this.activeListener = ref.onSnapshot((querySnapshot) => {
+            let activities = this.state.activities;
+            let nbrActivities = this.state.nbrActivities;
+            let distanceTotal = this.state.distanceTotal;
+            let durationTotal = this.state.durationTotal;
+            
+            let activity = {};
+            querySnapshot.docChanges().forEach( change => {               
+                if (change.type === "added") {
+                    activity = change.doc.data();
+                    activity.id = change.doc.id;
+                    activity.activityDateTime = activity.activityDateTime.toDate();
+                    activities.push(activity); 
+                    nbrActivities += 1;
+                    if (activity.distanceUnits && activity.distanceUnits === "Yards") {
+                        distanceTotal += activity.distance / 1760;
+                    } else {
+                        distanceTotal += activity.distance;
+                    }
+                    if (activity.durationUnits && activity.durationUnits === "Minutes") {
+                        durationTotal += activity.duration / 60;
+                    } else {
+                        durationTotal += activity.duration;    
+                    }
+                    this.setState({
+                        nbrActivities: nbrActivities,
+                        distanceTotal: distanceTotal,
+                        durationTotal: durationTotal
+                    })    
                 }
-            })
-            .catch(err => console.error(err));
+                if (change.type === "modified") {
+                    console.log(`Changed Activity: ${change.doc.id}`);
+                    activity = change.doc.data();
+                    activity.id = change.doc.id;
+                    activity.activityDateTime = activity.activityDateTime.toDate();
+                    
+                    // Delete activity from array and update totals
+                    let oldActivityAndIndex = this.searchForActivity(activity.id, "id", activities);
+                    if (oldActivityAndIndex) {
+                        // replace current activity in array with new one
+                        activities[oldActivityAndIndex.index] = activity;
+                        let oldActivity = oldActivityAndIndex.activity; // extract object from returned object 
 
-        Util.apiGet("/api/activity/activityTotals")
-        .then(res => {
-            if (this._mounted) {
-                this.setState({
-                    nbrActivities: res.data.nbrActivities ? res.data.nbrActivities : 0,
-                    distanceTotal: res.data.distanceTotal ? res.data.distanceTotal : 0,
-                    durationTotal: res.data.durationTotal ? res.data.durationTotal : 0
-                })
+                        // Subtract old and add new distance
+                        let oldDistanceInMiles =  (oldActivity.distanceUnits && oldActivity.distanceUnits === "Yards")
+                            ? (oldActivity.distance) / 1760
+                            : (oldActivity.distance);
+                        let newDistanceInMiles =  (activity.distanceUnits && activity.distanceUnits === "Yards")
+                            ? (activity.distance) / 1760
+                            : (activity.distance);
+                        distanceTotal = distanceTotal - oldDistanceInMiles + newDistanceInMiles;
+
+                        // Subtract old and add new duration
+                        let oldDurationInHours =  (oldActivity.durationUnits && oldActivity.durationUnits === "Minutes")
+                            ? (oldActivity.duration) / 60
+                            : (oldActivity.duration);
+                        let newDurationInHours =  (activity.durationUnits && activity.durationUnits === "Minutes")
+                            ? (activity.duration) / 60
+                            : (activity.duration);
+                        durationTotal = durationTotal - oldDurationInHours + newDurationInHours;
+
+                        this.setState({
+                            nbrActivities: nbrActivities,
+                            distanceTotal: distanceTotal,
+                            durationTotal: durationTotal
+                        })   
+                    }
+                }
+                if (change.type === "removed") {
+                    console.log(`Removed Activity: ${change.doc.id}`);
+                    activity = change.doc.data();
+                    activity.id = change.doc.id;
+                    activity.activityDateTime = activity.activityDateTime.toDate();
+                    
+                    // Delete activity from array and update totals
+                    let oldActivityAndIndex = this.searchForActivity(activity.id, "id", activities);
+                    if (oldActivityAndIndex) {
+                        // remove it
+                        activities.splice(oldActivityAndIndex.index, 1);  
+
+                        nbrActivities -= 1;
+                        if (activity.distanceUnits && activity.distanceUnits === "Yards") {
+                            distanceTotal -= activity.distance / 1760;
+                        } else {
+                            distanceTotal -= activity.distance;
+                        }
+                        if (activity.durationUnits && activity.durationUnits === "Minutes") {
+                            durationTotal -= activity.duration / 60;
+                        } else {
+                            durationTotal -= activity.duration;    
+                        }
+                        this.setState({
+                            nbrActivities: nbrActivities,
+                            distanceTotal: distanceTotal,
+                            durationTotal: durationTotal
+                        })   
+                    }
+                }
+            });
+            this.setState({ activities: activities })
+            this.setState({ loadingFlag: false })
+        }, (error) => {
+            console.error(`Error attaching listener: ${error}`)
+        });
+    }
+    // Search for object in array based on key using uniqure ID
+    searchForActivity(keyValue, keyName, searchArray) {
+        for (var i=0; i < searchArray.length; i++) {
+            if (searchArray[i][keyName] === keyValue) {
+                return ({activity: searchArray[i], index: i});
             }
-        })
-        .catch(err => console.error(err));
+        }
+        return undefined;
     }
 
     componentWillUnmount() {
         this._mounted = false;
+        
+        // kill the listener
+        if (this.activeListener) {
+            this.activeListener();
+            console.log(`Detached listener`)
+        }
     }
 
     render() {
