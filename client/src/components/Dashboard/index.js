@@ -61,7 +61,7 @@ class Dashboard extends React.Component {
                     "displayName" : user.displayName
                 }
             });
-        }).catch((error) => {
+        }).catch((err) => {
             alert(`Error: ${err}, trying to get current user: ${this.props.user ? this.props.user.uid : "unknown"}`);
         });
     }
