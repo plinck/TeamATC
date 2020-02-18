@@ -21,20 +21,34 @@ import ActivityDB from '../Activity/ActivityDB';
 class Dashboard extends React.Component {
     state = {
         loadingFlag: false,
+        activitiesUpdated: false,
         activities: [],
         nbrActivities: 0,
         distanceTotal: 0,
         durationTotal: 0,
-        currentUser: undefined,
-        teamTotals: [
-            {
-                teamUid: null,
-                teamName: "",
-                nbrActivities : 0,
-                distanceTotal : 0,
-                durationTotal : 0
-            } 
-        ]
+        currentUser: null,
+
+        currentAllTotals: {
+            nbrActivities : 0,
+            distanceTotal : 0,
+            durationTotal : 0
+        },
+        
+        currentTeamTotals: {
+            teamUid: null,
+            teamName: null,
+            nbrActivities : 0,
+            distanceTotal : 0,
+            durationTotal : 0
+        },
+
+        currenUserTotals: {
+            uid: null,
+            displayName: "",
+            nbrActivities : 0,
+            distanceTotal : 0,
+            durationTotal : 0
+        }
     }
     activeListener = undefined;
 
@@ -42,14 +56,19 @@ class Dashboard extends React.Component {
     fetchCurrentUser() {
         UserAPI.getCurrentUser().then(user => {
             this.setState({
-                currentUser: user
+                currentUser: {"teamName" : user.teamName,
+                    "uid" : user.uid,
+                    "displayName" : user.displayName
+                }
             });
+        }).catch((error) => {
+            alert(`Error: ${err}, trying to get current user: ${this.props.user ? this.props.user.uid : "unknown"}`);
         });
     }
 
     componentDidMount() {
         this._mounted = true;
-        this.setState({ loadingFlag: true })
+        this.setState({ activitiesUpdated: false, loadingFlag: true });
         const db = Util.getFirestoreDB();   // active firestore db ref
 
         let ref = db.collection("activities")
@@ -78,11 +97,6 @@ class Dashboard extends React.Component {
                     } else {
                         durationTotal += activity.duration;    
                     }
-                    this.setState({
-                        nbrActivities: nbrActivities,
-                        distanceTotal: distanceTotal,
-                        durationTotal: durationTotal
-                    })    
                 }
                 if (change.type === "modified") {
                     console.log(`Changed Activity: ${change.doc.id}`);
@@ -114,12 +128,6 @@ class Dashboard extends React.Component {
                             ? (activity.duration) / 60
                             : (activity.duration);
                         durationTotal = durationTotal - oldDurationInHours + newDurationInHours;
-
-                        this.setState({
-                            nbrActivities: nbrActivities,
-                            distanceTotal: distanceTotal,
-                            durationTotal: durationTotal
-                        })   
                     }
                 }
                 if (change.type === "removed") {
@@ -145,18 +153,15 @@ class Dashboard extends React.Component {
                         } else {
                             durationTotal -= activity.duration;    
                         }
-                        this.setState({
-                            nbrActivities: nbrActivities,
-                            distanceTotal: distanceTotal,
-                            durationTotal: durationTotal
-                        })   
                     }
                 }
             });
-            this.setState({ activities: activities })
-            this.setState({ loadingFlag: false })
+            this.setState({ activities: activities,
+                loadingFlag: false, activitiesUpdated: true,
+                nbrActivities: nbrActivities, distanceTotal: distanceTotal,  durationTotal: durationTotal
+            });
         }, (error) => {
-            console.error(`Error attaching listener: ${error}`)
+            console.error(`Error attaching listener: ${error}`);
         });
     }
     // Search for object in array based on key using uniqure ID
@@ -175,84 +180,65 @@ class Dashboard extends React.Component {
         // kill the listener
         if (this.activeListener) {
             this.activeListener();
-            console.log(`Detached listener`)
+            console.log(`Detached listener`);
         }
     }
 
     // Set the totals for a team calculated from activity listener, based on team name
     // need to check about switching to teamUid since better
-    // maynbe keep the totals in the team database and listen on that
-    setTotalsForTeam (teamInfo) {
-        let myTeam = this.state.teamTotals;
-        let newTeamTotals = {};
-
-        // get by teamName if exists
-        if (teamInfo.teamName) {
-            let arrayIndex = myTeam.findIndex( team => {
-                return (teamInfo.teamName === teamTotals.name);
-            });
-            // if existing, add to current totals and replace state with new
-            if (arrayIndex > -1) {
-                let currentTeamTotals = myTeam[arrayIndex];
-
-                let newTeamTotals = {};
-                newTeamTotals.teamUid = teamInfo.teamUid;
-                newTeamTotals.teamName = teamInfo.teamName;
-                newTeamTotals.nbrActivities += teamInfo.nbrActivities;
-                newTeamTotals.distanceTotal += teamInfo.distanceTotal;
-                newTeamTotals.durationTotal += teamInfo.durationTotal;
-
-                myTeam[arrayIndex] = newTeamTotals;
-                this.setState(myTeam);
-                
-            } else { // if doesnt exist, just push to end of state array
-                let newTeamTotals = {};
-                newTeamTotals.teamUid = teamInfo.teamUid;
-                newTeamTotals.teamName = teamInfo.teamName;
-                newTeamTotals.nbrActivities = teamInfo.nbrActivities;
-                newTeamTotals.distanceTotal = teamInfo.distanceTotal;
-                newTeamTotals.durationTotal = teamInfo.durationTotal;
-
-                myTeam.push(newTeamTotals);
-                this.setState(myTeam);
-            }
-
-            // existing data
-            if (arrayIndex > -1) {
-                newTeamTotals.teamUid = null;
-                newTeamTotals.teamName = selectedData.teamName;
-                newTeamTotals.nbrActivities = selectedData.nbrActivities;
-                newTeamTotals.distanceTotal = selectedData.distanceTotal;
-                newTeamTotals.durationTotal = selectedData.durationTotal;
-            
-                console.log(newTeamTotals);
-                return true;
-            }
-        }
-        // none found
-        return false;
-    }
-
-    // Get the totals rom teams calculated from activity listener
-    getTotalsByTeam (teamUid, teamName) {
-        let currentTeamTotals = {};
-        let myTeam = this.state.teamTotals;
+    //for now, this gets triggered on all listener changes in activity which is ineffient as heck
+    // but all I got for now
+    // I will get it working and then optimize
+    calculateTotalsForTeamAndUser () {
+        let newTeamTotals = {
+            teamUid: null,
+            teamName: null,
+            nbrActivities : 0,
+            distanceTotal : 0,
+            durationTotal : 0
+        };
         
-        // get by teamName if exists
-        if (teamName) {
-            let selectedData = myTeam[myTeam.map( (item) => { return item.Id; }).indexOf(teamName)];
-            if (selectedData && selectedData != null) {
-                currentTeamTotals.teamName = selectedData.teamName;
-                currentTeamTotals.nbrActivities = selectedData.nbrActivities;
-                currentTeamTotals.distanceTotal = selectedData.distanceTotal;
-                currentTeamTotals.durationTotal = selectedData.durationTotal;
-            
-                console.log(currentTeamTotals);
-                return currentTeamTotals;
+        let newUserTotals = {
+            uid: null,
+            displayName: "",
+            nbrActivities : 0,
+            distanceTotal : 0,
+            durationTotal : 0
+        };
+
+        if (this.state.currentUser === null) {
+            return;
+        }
+
+        let activities = this.state.activities;
+        let currentTeamName = this.state.currentUser.teamName;
+        let currentUserUid = this.state.currentUser.uid;
+        let currentUserDisplayName = this.state.currentUser.displayName;
+        
+        // loop through array counting by team
+        for (let i = 0; i < activities.length; i++) {
+            // only add for this team
+            console.log(`Found activity: ${activities[0]}
+                team: ${activities[i].teamName} uid:activities[i].uid  in calcTotals`);
+            if (currentTeamName && currentTeamName === activities[i].teamName) {
+                newTeamTotals.teamUid = activities[i].teamUid ? activities[i].teamUid : null;
+                newTeamTotals.teamName = activities[i].currentTeamName;
+                newTeamTotals.nbrActivities += 1;
+                newTeamTotals.distanceTotal += activities[i].distance;
+                newTeamTotals.durationTotal += activities[i].duration;
+            }
+            if (currentUserUid && currentUserUid === activities[i].uid) {
+                newUserTotals.uid = currentUserUid;
+                newUserTotals.displayName = currentUserDisplayName;
+                newUserTotals.nbrActivities += 1;
+                newUserTotals.distanceTotal += activities[i].distance;
+                newUserTotals.durationTotal += activities[i].duration;
             }
         }
+        console.log(newTeamTotals);
+        console.log(newUserTotals);
+        this.setState({currentTeamTotals: newTeamTotals}, {currentUserTotals: newUserTotals}, {activitiesUpdated : false});
         // none found
-        return undefined;
     }
 
     render() {
@@ -261,8 +247,12 @@ class Dashboard extends React.Component {
             return null;
         }
 
-        if (!this.state.currentUser) {
+        if (!this.state.currentUser || this.state.currentUser === null) {
             this.fetchCurrentUser();
+        }
+        
+        if (this.state.activitiesUpdated) {
+            this.calculateTotalsForTeamAndUser();
         }
         
         if (this.props.user.authUser) {
@@ -275,27 +265,17 @@ class Dashboard extends React.Component {
                         :
                         <div className="container">
                             <div className="row">
-                                <SummaryTotal>
-                                    {/*<-- All -->*/}
+                                <SummaryTotal
                                     nbrActivities={this.state.nbrActivities}
                                     distanceTotal={this.state.distanceTotal}
                                     durationTotal={this.state.durationTotal}
                                     disabled={this.props.user.isAdmin ? false : this.props.user.isCashier ? false : true}
                                     
-                                    {/* Curent Team Totals */}
-                                    let totals = getTotalsByTeam(undefined, this.state.currentUser.teamName)
-                                    nbrActivities={this.state.teamTotals.nbrActivities}
-                                    distanceTotal={this.state.teamTotals.distanceTotal}
-                                    durationTotal={this.state.teamTotals.durationTotal}
-                                    disabled={this.props.user.isAdmin ? false : this.props.user.isCashier ? false : true}
+                                    currentTeamTotals={this.state.currentTeamTotals}
                                 
-                                    {/* Curent User Totals */}
-                                    nbrActivities={this.state.nbrActivities}
-                                    distanceTotal={this.state.distanceTotal}
-                                    durationTotal={this.state.durationTotal}
-                                    disabled={this.props.user.isAdmin ? false : this.props.user.isCashier ? false : true}
+                                    currentUserTotals={this.state.currenUserTotals}
                                 
-                                </SummaryTotal>
+                                />
                             </div>
 
                             <div className="row">
