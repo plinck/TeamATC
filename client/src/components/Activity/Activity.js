@@ -68,7 +68,7 @@ class Activity extends React.Component {
         }
     
         let jsDate = new Date(activityDateTime);
-        const activityDateTimeDisplay = moment(jsDate).format("MM-DD-YY");
+        const activityDateTimeDisplay = moment(jsDate).format("MM-DD-YY HH:MM");
 
         let activityIcon = "";
 
@@ -92,12 +92,14 @@ class Activity extends React.Component {
         }
 
         // Truncate Nane for easy view
-        let teamNameTrim = teamName.length < 9 ? teamName : `${teamName.substring(0, 6)}...` ;
         let fullName = `${displayName}`;
-        let fullNameTrim = fullName.length < 20 ? fullName : `${fullName.substring(0, 17)}...` ;
-        let activityNameTrim = activityName ? activityName : `Unnamed ${activityType}`;
-        activityNameTrim = activityNameTrim.length < 20 ? activityNameTrim : `${activityNameTrim.substring(0, 17)}...` ;
-        
+        let activityNameAndType = activityName ? activityName : `Unnamed ${activityType}`;
+
+        let distanceDecimalPlaces = 1;
+        if (activityType === "Swim") {
+            distanceDecimalPlaces = 0;
+        }
+
         return (
             <ExpansionPanel>
                 <ExpansionPanelSummary className="row" expandIcon={< ExpandMoreIcon />}>
@@ -105,20 +107,20 @@ class Activity extends React.Component {
                         <img style={{maxHeight: '24px'}} src={activityIcon} alt={activityType} />
                     </Tooltip>
                     
-                    <Typography className="col s1 m1">{`${teamNameTrim}`}</Typography>
-                    <Typography className="col s2 m2">{`${fullNameTrim}`}</Typography>
-                    <Typography className="col s2 m2">{activityDateTimeDisplay}</Typography>
-                    <Typography className="col s3 m3">{activityNameTrim}</Typography>
-                    <Typography className="col s1 m1">
+                    <Typography className="col s1 m1 truncate">{`${teamName}`}</Typography>
+                    <Typography className="col s2 m2 truncate">{`${fullName}`}</Typography>
+                    <Typography className="col s2 m2 truncate">{activityDateTimeDisplay}</Typography>
+                    <Typography className="col s3 m3 truncate">{activityNameAndType}</Typography>
+                    <Typography className="col s1 m1 truncate">
                         {duration.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {"hrs"}
                     </Typography>
-                    <Typography className="col s2 offset-s1 m2 offset-m1">
-                        {distance.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {distanceUnits}
+                    <Typography className="col s2 offset-s1 m2 offset-m1 truncate">
+                        {distance.toFixed(distanceDecimalPlaces).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {distanceUnits}
                     </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails className="row">
-                    <Typography className="col s2 offset-s6 m2 offset-m6">AveS</Typography>
-                    <Typography className="col s2 m2">(NP)</Typography>
+                    <Typography className="col s2 offset-s6 m2 offset-m6 truncate">AveS</Typography>
+                    <Typography className="col s2 m2 truncate">(NP)</Typography>
                     {deleteIsDisabled ? null : 
                         <Typography className="col s2 m2">
                             {editIsDisabled ? null :

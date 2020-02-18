@@ -51,7 +51,6 @@ class Navigation extends React.Component {
 
     const navigationAdminMobile =
       <ul>
-        <li><NavLink onClick={this.forceCloseSideNav} to="/">Landing</NavLink></li>
         <li><NavLink onClick={this.forceCloseSideNav} to="/dashboard">Home</NavLink></li>
         <li><NavLink onClick={this.forceCloseSideNav} to="/activities">Activities</NavLink></li>
         <li><NavLink onClick={this.forceCloseSideNav} to="/account">Account</NavLink></li>
@@ -63,7 +62,6 @@ class Navigation extends React.Component {
         
         const navigationAdmin =
         <ul>
-        <li><Link to="/">Landing</Link></li>
         <li><NavLink to="/dashboard">Home</NavLink></li>
         <li><NavLink to="/activities">Activity</NavLink></li>
         <li><AccountMenu /></li>
@@ -73,7 +71,6 @@ class Navigation extends React.Component {
         
         const navigationAuthMobile =
         <ul>
-        <li><NavLink onClick={this.forceCloseSideNav} to="/">Landing</NavLink></li>
         <li><NavLink onClick={this.forceCloseSideNav} to="/dashboard">Home</NavLink></li>
         <li><NavLink onClick={this.forceCloseSideNav} to="/activities">Activities</NavLink></li>
         <li><NavLink onClick={this.forceCloseSideNav} to="/account">Account</NavLink></li>
@@ -83,7 +80,6 @@ class Navigation extends React.Component {
         
         const navigationAuth =
         <ul>
-        <li><Link to="/">Landing</Link></li>
         <li><NavLink to="/dashboard">Home</NavLink></li>
         <li><NavLink to="/activities">Activity</NavLink></li>
         <li><AccountMenu /></li>
