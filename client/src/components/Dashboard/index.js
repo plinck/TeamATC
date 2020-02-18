@@ -2,11 +2,10 @@ import React from 'react';
 import './dashboard.css';
 import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
 import { Redirect } from 'react-router';
+
 import SummaryTotal from './SummaryTotal/SummaryTotal';
 import Activities from "../Activity/Activities";
-
 import ActivityByDay from "./Graphs/ActivityByDay";
-
 
 // import ActivityByUser from "./Graphs/ActivityByUser";
 // import DepositBubble from "./Graphs/DepositBubble";
@@ -16,17 +15,37 @@ import ActivityByDay from "./Graphs/ActivityByDay";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import Util from '../Util/Util';
+import UserAPI from "../User/UserAPI";
 import ActivityDB from '../Activity/ActivityDB';
 
 class Dashboard extends React.Component {
     state = {
+        loadingFlag: false,
         activities: [],
         nbrActivities: 0,
         distanceTotal: 0,
         durationTotal: 0,
-        loadingFlag: false
+        currentUser: undefined,
+        teamTotals: [
+            {
+                teamUid: null,
+                teamName: "",
+                nbrActivities : 0,
+                distanceTotal : 0,
+                durationTotal : 0
+            } 
+        ]
     }
     activeListener = undefined;
+
+    // Get the users info
+    fetchCurrentUser() {
+        UserAPI.getCurrentUser().then(user => {
+            this.setState({
+                currentUser: user
+            });
+        });
+    }
 
     componentDidMount() {
         this._mounted = true;
@@ -160,10 +179,90 @@ class Dashboard extends React.Component {
         }
     }
 
+    // Set the totals for a team calculated from activity listener, based on team name
+    // need to check about switching to teamUid since better
+    // maynbe keep the totals in the team database and listen on that
+    setTotalsForTeam (teamInfo) {
+        let myTeam = this.state.teamTotals;
+        let newTeamTotals = {};
+
+        // get by teamName if exists
+        if (teamInfo.teamName) {
+            let arrayIndex = myTeam.findIndex( team => {
+                return (teamInfo.teamName === teamTotals.name);
+            });
+            // if existing, add to current totals and replace state with new
+            if (arrayIndex > -1) {
+                let currentTeamTotals = myTeam[arrayIndex];
+
+                let newTeamTotals = {};
+                newTeamTotals.teamUid = teamInfo.teamUid;
+                newTeamTotals.teamName = teamInfo.teamName;
+                newTeamTotals.nbrActivities += teamInfo.nbrActivities;
+                newTeamTotals.distanceTotal += teamInfo.distanceTotal;
+                newTeamTotals.durationTotal += teamInfo.durationTotal;
+
+                myTeam[arrayIndex] = newTeamTotals;
+                this.setState(myTeam);
+                
+            } else { // if doesnt exist, just push to end of state array
+                let newTeamTotals = {};
+                newTeamTotals.teamUid = teamInfo.teamUid;
+                newTeamTotals.teamName = teamInfo.teamName;
+                newTeamTotals.nbrActivities = teamInfo.nbrActivities;
+                newTeamTotals.distanceTotal = teamInfo.distanceTotal;
+                newTeamTotals.durationTotal = teamInfo.durationTotal;
+
+                myTeam.push(newTeamTotals);
+                this.setState(myTeam);
+            }
+
+            // existing data
+            if (arrayIndex > -1) {
+                newTeamTotals.teamUid = null;
+                newTeamTotals.teamName = selectedData.teamName;
+                newTeamTotals.nbrActivities = selectedData.nbrActivities;
+                newTeamTotals.distanceTotal = selectedData.distanceTotal;
+                newTeamTotals.durationTotal = selectedData.durationTotal;
+            
+                console.log(newTeamTotals);
+                return true;
+            }
+        }
+        // none found
+        return false;
+    }
+
+    // Get the totals rom teams calculated from activity listener
+    getTotalsByTeam (teamUid, teamName) {
+        let currentTeamTotals = {};
+        let myTeam = this.state.teamTotals;
+        
+        // get by teamName if exists
+        if (teamName) {
+            let selectedData = myTeam[myTeam.map( (item) => { return item.Id; }).indexOf(teamName)];
+            if (selectedData && selectedData != null) {
+                currentTeamTotals.teamName = selectedData.teamName;
+                currentTeamTotals.nbrActivities = selectedData.nbrActivities;
+                currentTeamTotals.distanceTotal = selectedData.distanceTotal;
+                currentTeamTotals.durationTotal = selectedData.durationTotal;
+            
+                console.log(currentTeamTotals);
+                return currentTeamTotals;
+            }
+        }
+        // none found
+        return undefined;
+    }
+
     render() {
         // Some props take time to get ready so return null when uid not avaialble
         if (this.props.user.uid === null) {
             return null;
+        }
+
+        if (!this.state.currentUser) {
+            this.fetchCurrentUser();
         }
         
         if (this.props.user.authUser) {
@@ -176,13 +275,27 @@ class Dashboard extends React.Component {
                         :
                         <div className="container">
                             <div className="row">
-                                <SummaryTotal 
-                                    title={"All Activities"}
+                                <SummaryTotal>
+                                    {/*<-- All -->*/}
                                     nbrActivities={this.state.nbrActivities}
                                     distanceTotal={this.state.distanceTotal}
                                     durationTotal={this.state.durationTotal}
                                     disabled={this.props.user.isAdmin ? false : this.props.user.isCashier ? false : true}
-                                />
+                                    
+                                    {/* Curent Team Totals */}
+                                    let totals = getTotalsByTeam(undefined, this.state.currentUser.teamName)
+                                    nbrActivities={this.state.teamTotals.nbrActivities}
+                                    distanceTotal={this.state.teamTotals.distanceTotal}
+                                    durationTotal={this.state.teamTotals.durationTotal}
+                                    disabled={this.props.user.isAdmin ? false : this.props.user.isCashier ? false : true}
+                                
+                                    {/* Curent User Totals */}
+                                    nbrActivities={this.state.nbrActivities}
+                                    distanceTotal={this.state.distanceTotal}
+                                    durationTotal={this.state.durationTotal}
+                                    disabled={this.props.user.isAdmin ? false : this.props.user.isCashier ? false : true}
+                                
+                                </SummaryTotal>
                             </div>
 
                             <div className="row">
