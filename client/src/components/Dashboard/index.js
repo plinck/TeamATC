@@ -177,15 +177,18 @@ class Home extends React.Component {
                         <div className="container">
                             <div className="row">
                                 <SummaryTotal 
-                                    nbrActivities={this.state.nbrActivities} distanceTotal={this.state.distanceTotal} durationTotal={this.state.durationTotal}
+                                    title={"All Activities"}
+                                    nbrActivities={this.state.nbrActivities}
+                                    distanceTotal={this.state.distanceTotal}
+                                    durationTotal={this.state.durationTotal}
                                     disabled={this.props.user.isAdmin ? false : this.props.user.isCashier ? false : true}
                                 />
                             </div>
 
                             <div className="row">
                             <ActivityByDay
-                            title={"Total Activities By Day"}
-                            activities={this.state.activities}
+                                title={"Total Activities By Day"}
+                                activities={this.state.activities}
                             />
                             </div>
                             
