@@ -26,7 +26,7 @@ class UserAPI {
                         resolve(user);
                     } else {
                         console.log("User not found in firestore");
-                        resolve();
+                        reject(`User not found in firestore UserAPI.getCurrentUser`);
                     }
                 }).catch(err => {
                     reject(`Error getting user in UserAPI.getCurrentUser ${err}`);
