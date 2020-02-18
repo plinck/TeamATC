@@ -160,16 +160,18 @@ class Activities extends React.Component {
         let searchBy = this.state.searchBy;
         let filterByString = this.state.filterByString;
 
-        let activities = this.state.activities
+        let activities = this.state.activities;
         if (this.props.user.authUser) {
             // Conditional rendering
             let activityView = 
                 <div>
                     <br></br>
                     <div className="row">
-                        <div className="col s2 m2 text-bold blue-text">Activities ({filterByString ? filterByString : 'All'})</div>
-
+                        <div className="col s2 m2 text-bold blue-text">
+                            Activities ({filterByString ? filterByString : 'All'})
+                        </div>
                         <Link to="/activityform" className="col s2 offset-s5 m2 offset-m4 btn blue darken-4">New</Link>
+
                         <CSVLink
                         data={activities}
                         filename={'teamatc-transactions.csv'}
@@ -225,7 +227,8 @@ class Activities extends React.Component {
                             <div className="card-content pCard">
                                 <span className="card-title">
                                     <Link to="/activities">Activities ({this.state.filterByString ? this.state.filterByString : 'All'})</Link>
-                                </span> 
+                                </span>
+                                
                                 {activities.map((activity) => {
                                     return (
                                         <div key={activity.id}>
