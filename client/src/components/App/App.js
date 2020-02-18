@@ -6,7 +6,7 @@ import {
 
 import Navigation from '../Navigation/Navigation';
 import LandingPage from '../Landing';
-import HomePage from '../Dashboard';
+import Dashboard from '../Dashboard';
 import Account from '../Account/Account';
 import Admin from '../Admin/Admin';
 import Activities from '../Activity/Activities';
@@ -35,7 +35,7 @@ class App extends React.Component {
           <Route exact path="/signup" component={SignUpForm} />
           <Route exact path="/signin" component={SignInForm} />
           <Route exact path="/pw-forget" component={PasswordForgetPage} />
-          <Route exact path="/dashboard" component={HomePage} />
+          <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/account" component={Account} />
           <Route exact path="/admin" component={Admin} />
           <Route exact path="/activities" component={Activities} />

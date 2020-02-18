@@ -18,7 +18,7 @@ import Grid from '@material-ui/core/Grid';
 import Util from '../Util/Util';
 import ActivityDB from '../Activity/ActivityDB';
 
-class Home extends React.Component {
+class Dashboard extends React.Component {
     state = {
         activities: [],
         nbrActivities: 0,
@@ -207,4 +207,4 @@ class Home extends React.Component {
     }
 }
 
-export default withAuthUserContext(Home);
+export default withAuthUserContext(Dashboard);
