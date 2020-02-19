@@ -4,6 +4,12 @@ import { Link } from 'react-router-dom';
 import './SummaryTotal.css'
 
 const SummaryTotal =(props) => {
+    if (!this.props.currentUserTotals) {
+        return(null);
+    }
+    if (!this.props.currentTeamTotals) {
+        return(null);
+    }
     return (
         <div>
             <div className="row">

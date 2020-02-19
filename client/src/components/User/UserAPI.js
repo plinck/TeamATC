@@ -25,8 +25,8 @@ class UserAPI {
                         let user = doc.data();
                         resolve(user);
                     } else {
-                        console.log("User not found in firestore");
-                        reject(`User not found in firestore UserAPI.getCurrentUser`);
+                        console.error("User not found in firestore");
+                        resolve();
                     }
                 }).catch(err => {
                     reject(`Error getting user in UserAPI.getCurrentUser ${err}`);
@@ -233,12 +233,12 @@ class UserAPI {
                     return(resolve(user));
                 }
                 console.log("User not found in firestore");
-                return(resolve());
+                return(resolve({}));
             }).catch(err => {
-                reject(`Error getting user in UserAPI.get ${err}`);
+                reject(`Error getting user in UserAPI ${err}`);
             });
         });
-    }
+    };
 
     // delete later - MUST be done on server in secure admin/auth environment
     static delete = (uid) => {
