@@ -1,10 +1,10 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import Plot from 'react-plotly.js';
+import React from "react";
+import { Link } from "react-router-dom";
+import Plot from "react-plotly.js";
 import _ from "underscore";
 import moment from "moment";
-import { Redirect } from 'react-router';
-import { withRouter } from 'react-router-dom';
+import { Redirect } from "react-router";
+import { withRouter } from "react-router-dom";
 
 import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
 
@@ -13,32 +13,32 @@ class ActivityByDay extends React.Component {
         const selectorOptions = {
             buttons: [
                 {
-                    step: 'day',
-                    stepmode: 'backward',
+                    step: "day",
+                    stepmode: "backward",
                     count: 7,
-                    label: '1w'
+                    label: "1w"
                 }, {
-                    step: 'month',
-                    stepmode: 'backward',
+                    step: "month",
+                    stepmode: "backward",
                     count: 1,
-                    label: '1m'
+                    label: "1m"
                 }, {
-                    step: 'month',
-                    stepmode: 'backward',
+                    step: "month",
+                    stepmode: "backward",
                     count: 6,
-                    label: '6m'
+                    label: "6m"
                 }, {
-                    step: 'year',
-                    stepmode: 'todate',
+                    step: "year",
+                    stepmode: "todate",
                     count: 1,
-                    label: 'YTD'
+                    label: "YTD"
                 }, {
-                    step: 'year',
-                    stepmode: 'backward',
+                    step: "year",
+                    stepmode: "backward",
                     count: 1,
-                    label: '1y'
+                    label: "1y"
                 }, {
-                    step: 'all',
+                    step: "all",
                 }]
         };
 
@@ -51,7 +51,7 @@ class ActivityByDay extends React.Component {
         // split activities by day into object with all activities for each day
         let groups = _.groupBy(sortedByDate, (activity) => {
             let jsDate = new Date(activity.activityDateTime);
-            return moment(jsDate).startOf('day').format();
+            return moment(jsDate).startOf("day").format();
         });
 
         // turn complex object into array by day with total for the day and each days activities (for stacking later)
@@ -72,14 +72,14 @@ class ActivityByDay extends React.Component {
         const days = dayActivities.map((activity) => {
             let jsDate = new Date(activity.day);
             // Convert to just day without time
-            let month = '' + (jsDate.getMonth() + 1);
-            let day = '' + jsDate.getDate();
+            let month = "" + (jsDate.getMonth() + 1);
+            let day = "" + jsDate.getDate();
             let year = jsDate.getFullYear();
 
-            if (month.length < 2) month = '0' + month;
-            if (day.length < 2) day = '0' + day;
+            if (month.length < 2) month = "0" + month;
+            if (day.length < 2) day = "0" + day;
 
-            return [year, month, day].join('-');
+            return [year, month, day].join("-");
         });
 
         const earliestDate = days.length > 0 ? days[0] : new Date();
@@ -97,12 +97,12 @@ class ActivityByDay extends React.Component {
             <Plot
                 data={[
                     {
-                        type: 'bar',
-                        mode: 'stack',
-                        name: 'Activities by Day',
+                        type: "bar",
+                        mode: "stack",
+                        name: "Activities by Day",
                         x: days,
                         y: distances,
-                        marker: { color: 'rgb(13, 71, 161)' },
+                        marker: { color: "rgb(13, 71, 161)" },
                         "hoverinfo": "text",
                         "line": { "width": 0.5 },
                         text: formattedDistance,
@@ -111,7 +111,7 @@ class ActivityByDay extends React.Component {
                 layout={
                     {
                         autosize: true,
-                        /* title: 'Activities By User' */
+                        /* title: "Activities By User" */
                         xaxis: {
                             autorange: true,
                             range: [earliestDate, latestDate],
@@ -142,7 +142,7 @@ class ActivityByDay extends React.Component {
     // go to details
     viewDetails = () => {
         this.props.history.push({
-            pathname: '/activities'
+            pathname: "/activities"
         });
     }
 
@@ -158,7 +158,7 @@ class ActivityByDay extends React.Component {
                     <div className="col s12 l6">
                         <div className="card">
                             <div className="card-content pCard">
-                                <span className="card-title">{this.props.title ? this.props.title : 'ActivityByDay'}</span>
+                                <span className="card-title">{this.props.title ? this.props.title : "ActivityByDay"}</span>
                             </div>
                             <div className="card-action pCard">
                                 <div className="center-align">
@@ -172,7 +172,7 @@ class ActivityByDay extends React.Component {
                     <div className="col s12 l6">
                         <div className="card">
                             <div className="card-content pCard">
-                                <span className="card-title">{this.props.title ? this.props.title : 'ActivityByDay'}</span>
+                                <span className="card-title">{this.props.title ? this.props.title : "ActivityByDay"}</span>
                                 {this.plotActivities()}
                             </div>
                             <div className="card-action pCard">
