@@ -326,6 +326,32 @@ class Dashboard extends React.Component {
             }
         }
 
+        // Sort the team and user results based on total points DESC          
+        newUserResults.sort((a,b) => {
+            const totalA = a.pointsTotal;
+            const totalB = b.pointsTotal;
+
+            let comparison = 0;
+            if (totalA > totalB) {
+            comparison = 1;
+            } else if (totalA < totalB) {
+            comparison = -1;
+            }
+            return comparison * -1;  // Invert so it will sort in descending order
+        });
+        newTeamResults.sort((a,b) => {
+            const totalA = a.pointsTotal;
+            const totalB = b.pointsTotal;
+
+            let comparison = 0;
+            if (totalA > totalB) {
+            comparison = 1;
+            } else if (totalA < totalB) {
+            comparison = -1;
+            }
+            return comparison * -1;  // Invert so it will sort in descending order
+        });
+
         let totalsAndResults = {all: newTotals, team : newTeamTotals, user : newUserTotals, userR : newUserResults, teamR : newTeamResults};
         // console.log(`User Results User: ${JSON.stringify(newUserResults, null, 2)}`);
         // console.log(`Team Results Team: ${JSON.stringify(newTeamResults, null, 2)}`);
