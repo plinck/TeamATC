@@ -183,8 +183,8 @@ class Activities extends React.Component {
                         </div>
                         <div className="col s3 offset-s5 m3 offset-m5 blue-text input-field inline">
                             <input id="searchBy" name="searchBy" type="text" value={searchBy} onChange={this.onChange} />
-                            <label for="searchBy">Search</label>                            
-                            <i class="material-icons prefix">search</i>
+                            <label htmlFor="searchBy">Search</label>                            
+                            <i className="material-icons prefix">search</i>
                         </div>
                     </div>
 
