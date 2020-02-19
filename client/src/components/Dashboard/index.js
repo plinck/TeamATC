@@ -17,6 +17,8 @@ import ActivityByDay from "./Graphs/ActivityByDay";
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+
 import Util from '../Util/Util';
 import UserAPI from "../User/UserAPI";
 
@@ -600,13 +602,13 @@ class Dashboard extends React.Component {
 
         // header row for results
         const headerRow = 
-            <div className="row" fontWeight="fontWeightBold">
+            <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1}>
                 <div className="col s1 m1">
                 </div>
                 <div className="col s3 m3 truncate">
                     Name
                 </div>
-                <div className="black-text col m2 m2 truncate" fontStyle="oblique" fontWeight="fontWeightBold">
+                <div className="black-text col m2 m2 truncate">
                     Total
                 </div>
                 <div className="blue-text col m2 m2 truncate">
@@ -618,7 +620,7 @@ class Dashboard extends React.Component {
                 <div className="green-text col m2 m2 truncate">
                     Run
                 </div>
-            </div>
+            </Box>
         
         if (this.props.user.authUser) {
             return (
