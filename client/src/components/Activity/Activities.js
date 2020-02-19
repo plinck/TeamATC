@@ -16,8 +16,6 @@ import { withStyles } from '@material-ui/core/styles';
 // export csv functionality
 // eslint-disable-next-line no-unused-vars
 import { CSVLink, CSVDownload } from "react-csv";
-import UserAPI from "../User/UserAPI"
-
 
 const styles = theme => ({
     root: {
@@ -37,20 +35,10 @@ class Activities extends React.Component {
         super(props);
 
         this.state = {
-            myTeamName: null,
             activities: null,
             searchBy: "",
             filterByString: null
         };
-    }
-
-    // Get the users info
-    fetchUser() {
-        UserAPI.getCurrentUser().then(user => {
-            this.setState({
-                myTeamName: user.teamName
-            });
-        });
     }
 
     getActivities = (resultLimit, teamName, userUid, startDate, endDate) => {
@@ -94,7 +82,7 @@ class Activities extends React.Component {
                 this.getActivities()
                 break;
             case "Team":                            
-                this.getActivities(50, this.state.myTeamName, undefined, undefined, undefined)
+                this.getActivities(50, this.props.user.teamName, undefined, undefined, undefined)
                 break;
             case "Mine":
                 this.getActivities(50, undefined, this.props.user.uid, undefined, undefined)
@@ -140,12 +128,8 @@ class Activities extends React.Component {
         const { classes } = this.props;
 
         // Some props take time to get ready so return null when uid not avaialble
-        if (this.props.user.uid === null) {
+        if (this.props.user.uid === null || this.props.user.teamName === null) {
             return null;
-        }
-
-        if (this.state.myTeamName === null) {
-            this.fetchUser();
         }
 
         if (typeof this.state.activities === 'undefined') {
@@ -158,16 +142,20 @@ class Activities extends React.Component {
 
         // Search and filter
         let searchBy = this.state.searchBy;
+        let filterByString = this.state.filterByString;
 
-        let activities = this.state.activities
+        let activities = this.state.activities;
         if (this.props.user.authUser) {
             // Conditional rendering
             let activityView = 
                 <div>
                     <br></br>
                     <div className="row">
-                        <p className="col s2 m2 text-bold blue-text">Activities</p>
+                        <div className="col s2 m2 text-bold blue-text">
+                            Activities ({filterByString ? filterByString : 'All'})
+                        </div>
                         <Link to="/activityform" className="col s2 offset-s5 m2 offset-m4 btn blue darken-4">New</Link>
+
                         <CSVLink
                         data={activities}
                         filename={'teamatc-transactions.csv'}
@@ -213,7 +201,7 @@ class Activities extends React.Component {
                         })} 
                     </div>
                 </div>
-                
+
             if ((this.props.layoutType) && (this.props.layoutType === "userCard")){
                 // card?
                 activityView = 
@@ -222,17 +210,14 @@ class Activities extends React.Component {
                         <div className="card">
                             <div className="card-content pCard">
                                 <span className="card-title">
-                                    <Link to="/activities">Activities</Link>
-                                </span> 
-                                <div className="row">
-                                    <p className="col s12 offset-s1 m5">Activity</p>
-                                    <p className="col s7 offset-s1 m4">Date</p>
-                                    <p className="col s2 offset-s2 m2 offset-m1">Distance</p>
-                                </div> 
+                                    <Link to="/activities">Activities ({this.state.filterByString ? this.state.filterByString : 'All'})</Link>
+                                </span>
+                                
                                 {activities.map((activity) => {
                                     return (
                                         <div key={activity.id}>
-                                            <ActivityCard activity={activity} layoutType={this.props.layoutType}
+                                            <ActivityCard 
+                                                activity={activity} layoutType={this.props.layoutType}
                                             />
                                         </div>
                                     );

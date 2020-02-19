@@ -26,6 +26,10 @@ const provideAuthUserContext = Component => {
                 isCashier: false,
                 isBanker: false,
                 isUser: false,
+                firstName: null,
+                lastName: null,
+                teamUid: null,
+                teamName: null
             };
         }
 
@@ -52,18 +56,20 @@ const provideAuthUserContext = Component => {
         // Also the the the firebase app object is passed from the index.js component
         // above the app component so it can be used here.  
         componentDidMount() {
+            // Auth Listener
             this.listener = this.props.firebase.auth.onAuthStateChanged(
                 authUser => {
-                    if (authUser) {
-                        const newState = {
-                            authUser: authUser,
-                            uid: authUser.uid,
-                            displayName: authUser.displayName,
-                            phoneNumber: authUser.phoneNumber,
-                            email: authUser.email
-                        };
-        
-                        this.setState({...newState});
+                    if (authUser) {        
+                        // try to get userListener going
+                        this.setupUserListener(authUser.uid);
+
+                        this.setState({
+                                authUser: authUser, 
+                                uid: authUser.uid,
+                                displayName: authUser.displayName,
+                                phoneNumber: authUser.phoneNumber,
+                                email: authUser.email    
+                            });
                         this.refreshToken();
                     } else {
                         this.setState({
@@ -73,13 +79,37 @@ const provideAuthUserContext = Component => {
                         });
                     }
                 },
-            );
+            );        
+        }
+
+        setupUserListener(uid) {
+            // kill if listening to someone else
+            if (this.userListener) {
+                this.userListener();
+            }
+
+            // User listener
+            let ref = this.props.firebase.db.collection("users").doc(uid);
+            this.userListener = ref.onSnapshot((doc) => {
+                const user = doc.data();
+                this.setState({
+                    displayName: user.displayName,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    phoneNumber: user.phoneNumber,
+                    teamUid: user.teamUid,
+                    teamName: user.teamName
+                 });
+            });         
         }
 
         // This deletes listener to clean things up and prevent mem leaks
         componentWillUnmount() {
             this.listener();
-            console.log("unmounting");
+
+            if (this.userListener) {
+                this.userListener();
+            }
         }
 
         // Remember - this provideAuthUserContext pattern automatically wraps a compoennt
@@ -95,6 +125,7 @@ const provideAuthUserContext = Component => {
         }
     }
 
+    // this gives us firebae db stuff and then auth context uses it to provide more
     return withFirebase(ProvideAuthUserContext);
 };
 

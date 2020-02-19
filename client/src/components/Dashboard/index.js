@@ -2,11 +2,10 @@ import React from 'react';
 import './dashboard.css';
 import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
 import { Redirect } from 'react-router';
+
 import SummaryTotal from './SummaryTotal/SummaryTotal';
 import Activities from "../Activity/Activities";
-
 import ActivityByDay from "./Graphs/ActivityByDay";
-
 
 // import ActivityByUser from "./Graphs/ActivityByUser";
 // import DepositBubble from "./Graphs/DepositBubble";
@@ -16,21 +15,41 @@ import ActivityByDay from "./Graphs/ActivityByDay";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import Util from '../Util/Util';
-import ActivityDB from '../Activity/ActivityDB';
+import UserAPI from "../User/UserAPI";
 
-class Home extends React.Component {
+class Dashboard extends React.Component {
     state = {
+        loadingFlag: false,
         activities: [],
         nbrActivities: 0,
         distanceTotal: 0,
-        durationTotal: 0,
-        loadingFlag: false
+        durationTotal: 0
     }
+
     activeListener = undefined;
+    totals = {};
+    activitiesUpdated = false;
+
+    // Get the users info
+    fetchCurrentUser() {
+        if (!this._mounted) {
+            return;
+        }
+
+        UserAPI.getCurrentUser().then(user => {
+            this.setState({
+                currentUser: {"teamName" : user.teamName,
+                    "displayName" : user.displayName
+                }
+            });
+        }).catch((err) => {
+            alert(`Error: ${err}, trying to get current user: ${this.props.user ? this.props.user.uid : "unknown"}`);
+        });
+    }
 
     componentDidMount() {
         this._mounted = true;
-        this.setState({ loadingFlag: true })
+        this.setState({loadingFlag: true });
         const db = Util.getFirestoreDB();   // active firestore db ref
 
         let ref = db.collection("activities")
@@ -59,11 +78,6 @@ class Home extends React.Component {
                     } else {
                         durationTotal += activity.duration;    
                     }
-                    this.setState({
-                        nbrActivities: nbrActivities,
-                        distanceTotal: distanceTotal,
-                        durationTotal: durationTotal
-                    })    
                 }
                 if (change.type === "modified") {
                     console.log(`Changed Activity: ${change.doc.id}`);
@@ -95,12 +109,6 @@ class Home extends React.Component {
                             ? (activity.duration) / 60
                             : (activity.duration);
                         durationTotal = durationTotal - oldDurationInHours + newDurationInHours;
-
-                        this.setState({
-                            nbrActivities: nbrActivities,
-                            distanceTotal: distanceTotal,
-                            durationTotal: durationTotal
-                        })   
                     }
                 }
                 if (change.type === "removed") {
@@ -126,18 +134,17 @@ class Home extends React.Component {
                         } else {
                             durationTotal -= activity.duration;    
                         }
-                        this.setState({
-                            nbrActivities: nbrActivities,
-                            distanceTotal: distanceTotal,
-                            durationTotal: durationTotal
-                        })   
                     }
                 }
             });
-            this.setState({ activities: activities })
-            this.setState({ loadingFlag: false })
+            this.activitiesUpdated = true;
+            this.setState({ loadingFlag: false,
+                nbrActivities: nbrActivities,
+                distanceTotal: distanceTotal,
+                durationTotal: durationTotal
+            });
         }, (error) => {
-            console.error(`Error attaching listener: ${error}`)
+            console.error(`Error attaching listener: ${error}`);
         });
     }
     // Search for object in array based on key using uniqure ID
@@ -156,14 +163,64 @@ class Home extends React.Component {
         // kill the listener
         if (this.activeListener) {
             this.activeListener();
-            console.log(`Detached listener`)
+            console.log(`Detached listener`);
         }
+    }
+
+    // Set the totals for a team calculated from activity listener, based on team name
+    // need to check about switching to teamUid since better
+    //for now, this gets triggered on all listener changes in activity which is ineffient as heck
+    // but all I got for now
+    // I will get it working and then optimize
+    calculateTotalsForTeamAndUser () {
+        let newTeamTotals = {
+            teamUid: this.props.user.teamUid,
+            teamName: this.props.user.teamName,
+            nbrActivities : 0,
+            distanceTotal : 0,
+            durationTotal : 0
+        };
+        
+        let newUserTotals = {
+            uid: this.props.user.uid,
+            displayName: this.props.user.displayName,
+            nbrActivities : 0,
+            distanceTotal : 0,
+            durationTotal : 0
+        };
+
+        let activities = this.state.activities;
+        
+        // loop through array counting by team
+        for (let i = 0; i < activities.length; i++) {
+            // only add for this team
+            if (this.props.user.teamName === activities[i].teamName) {
+                newTeamTotals.nbrActivities += 1;
+                newTeamTotals.distanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
+                newTeamTotals.durationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+            }
+            if (this.props.user.uid === activities[i].uid) {
+                newUserTotals.nbrActivities += 1;
+                newUserTotals.distanceTotal += activities[i].distance === "Yards" ? activities[i].distance / 1760 : activities[i].distance;;
+                newUserTotals.durationTotal += activities[i].duration === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+            }
+        }
+        let totals = {team : newTeamTotals, user : newUserTotals}
+        // console.log(`totals: ${JSON.stringify(totals, null, 2)}`);
+
+        return(totals);
     }
 
     render() {
         // Some props take time to get ready so return null when uid not avaialble
-        if (this.props.user.uid === null) {
+        if (this.props.user.uid === null || this.props.user.teamName === null) {
             return null;
+        }
+        
+        // if the listener updated the state
+        if (this.activitiesUpdated) {
+            this.totals = this.calculateTotalsForTeamAndUser();
+            this.activitiesUpdated = false;
         }
         
         if (this.props.user.authUser) {
@@ -176,16 +233,23 @@ class Home extends React.Component {
                         :
                         <div className="container">
                             <div className="row">
-                                <SummaryTotal 
-                                    nbrActivities={this.state.nbrActivities} distanceTotal={this.state.distanceTotal} durationTotal={this.state.durationTotal}
+                                <SummaryTotal
+                                    nbrActivities={this.state.nbrActivities}
+                                    distanceTotal={this.state.distanceTotal}
+                                    durationTotal={this.state.durationTotal}
                                     disabled={this.props.user.isAdmin ? false : this.props.user.isCashier ? false : true}
+                                    
+                                    currentTeamTotals={this.totals.team}
+                                
+                                    currentUserTotals={this.totals.user}
+                                
                                 />
                             </div>
 
                             <div className="row">
                             <ActivityByDay
-                            title={"Total Activities By Day"}
-                            activities={this.state.activities}
+                                title={"Total Activities By Day"}
+                                activities={this.state.activities}
                             />
                             </div>
                             
@@ -204,4 +268,4 @@ class Home extends React.Component {
     }
 }
 
-export default withAuthUserContext(Home);
+export default withAuthUserContext(Dashboard);
