@@ -178,7 +178,16 @@ class Dashboard extends React.Component {
             teamName: this.props.user.teamName,
             nbrActivities : 0,
             distanceTotal : 0,
-            durationTotal : 0
+            durationTotal : 0,
+            swimNbrActivities : 0,
+            swimDistanceTotal : 0,
+            swimDurationTotal : 0,
+            bikeNbrActivities : 0,
+            bikeDistanceTotal : 0,
+            bikeDurationTotal : 0,
+            runNbrActivities : 0,
+            runDistanceTotal : 0,
+            runDurationTotal : 0
         };
         
         let newUserTotals = {
@@ -186,7 +195,16 @@ class Dashboard extends React.Component {
             displayName: this.props.user.displayName,
             nbrActivities : 0,
             distanceTotal : 0,
-            durationTotal : 0
+            durationTotal : 0,
+            swimNbrActivities : 0,
+            swimDistanceTotal : 0,
+            swimDurationTotal : 0,
+            bikeNbrActivities : 0,
+            bikeDistanceTotal : 0,
+            bikeDurationTotal : 0,
+            runNbrActivities : 0,
+            runDistanceTotal : 0,
+            runDurationTotal : 0
         };
 
         let activities = this.state.activities;
@@ -198,11 +216,49 @@ class Dashboard extends React.Component {
                 newTeamTotals.nbrActivities += 1;
                 newTeamTotals.distanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
                 newTeamTotals.durationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                switch(activities[i].activityType) {
+                    case "Swim":
+                        newTeamTotals.swimNbrActivities += 1;
+                        newTeamTotals.swimDistanceTotal += activities[i].distanceUnits === "Miles" ? activities[i].distance * 1760 : activities[i].distance;
+                        newTeamTotals.swimDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                        break;
+                    case "Bike":                            
+                        newTeamTotals.bikeNbrActivities += 1;
+                        newTeamTotals.bikeDistanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
+                        newTeamTotals.bikeDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                        break;
+                    case "Run":
+                        newTeamTotals.bikeNbrActivities += 1;
+                        newTeamTotals.bikeDistanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
+                        newTeamTotals.bikeDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                        break;
+                    default:
+                        // NADA
+                }     
             }
             if (this.props.user.uid === activities[i].uid) {
                 newUserTotals.nbrActivities += 1;
-                newUserTotals.distanceTotal += activities[i].distance === "Yards" ? activities[i].distance / 1760 : activities[i].distance;;
-                newUserTotals.durationTotal += activities[i].duration === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                newUserTotals.distanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;;
+                newUserTotals.durationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                switch(activities[i].activityType) {
+                    case "Swim":
+                        newUserTotals.swimNbrActivities += 1;
+                        newUserTotals.swimDistanceTotal += activities[i].distanceUnits === "Miles" ? activities[i].distance * 1760 : activities[i].distance;
+                        newUserTotals.swimDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                        break;
+                    case "Bike":                            
+                        newUserTotals.bikeNbrActivities += 1;
+                        newUserTotals.bikeDistanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
+                        newUserTotals.bikeDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                        break;
+                    case "Run":
+                        newUserTotals.bikeNbrActivities += 1;
+                        newUserTotals.bikeDistanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
+                        newUserTotals.bikeDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                        break;
+                    default:
+                        // NADA
+                }     
             }
         }
         let totals = {team : newTeamTotals, user : newUserTotals}
