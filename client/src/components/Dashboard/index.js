@@ -54,6 +54,7 @@ class Dashboard extends React.Component {
 
     // Get the users info
     fetchCurrentUser() {
+        console.log(`state,currentUser:${this.state.currentUser}ç`);
         UserAPI.getCurrentUser().then(user => {
             this.setState({
                 currentUser: {"teamName" : user.teamName,
@@ -247,7 +248,7 @@ class Dashboard extends React.Component {
             return null;
         }
 
-        if (!this.state.currentUser || this.state.currentUser === null) {
+        if (!this.state.currentUser) {
             this.fetchCurrentUser();
         }
         
