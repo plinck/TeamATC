@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import './SummaryTotal.css'
 
-const SummaryTotal =(props) => {
+const SummaryTotal = (props) => {
     // wait for props
     if (!props.currentUserTotals || !props.currentTeamTotals) {
         return(null);
@@ -33,19 +33,19 @@ const SummaryTotal =(props) => {
                             <h6>
                                 <span className="blue-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-swimming-50.png"} alt={"Swim"} />{"Swim: "} 
-                                    {props.currentUserTotals.nbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    {props.currentUserTotals.swimNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                 </span>
                             </h6>
                             <h6>
                                 <span className="red-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-triathlon-50.png"} alt={"Bike"} />{"Bike: "} 
-                                    {props.currentUserTotals.nbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    {props.currentUserTotals.bikeNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                 </span>
                             </h6>
                             <h6>
                                 <span className="green-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "} 
-                                    {props.currentUserTotals.nbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    {props.currentUserTotals.runNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                 </span>
                             </h6>
                             {/* End Nbr */}
@@ -60,19 +60,19 @@ const SummaryTotal =(props) => {
                             <h6>
                                 <span className="blue-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-swimming-50.png"} alt={"Swim"} />{"Swim: "} 
-                                    {props.currentUserTotals.distanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Yards
+                                    {props.currentUserTotals.swimDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Yards
                                 </span>
                             </h6>
                             <h6>
                                 <span className="red-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-triathlon-50.png"} alt={"Bike"} />{"Bike: "} 
-                                    {props.currentUserTotals.distanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
+                                    {props.currentUserTotals.bikeDistanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
                                 </span>
                             </h6>
                             <h6>
                                 <span className="green-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "} 
-                                    {props.currentUserTotals.distanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
+                                    {props.currentUserTotals.runDistanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
                                 </span>
                             </h6>
                             {/* End Distance */}
@@ -87,19 +87,19 @@ const SummaryTotal =(props) => {
                             <h6>
                                 <span className="blue-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-swimming-50.png"} alt={"Swim"} />{"Swim: "} 
-                                    {props.currentUserTotals.durationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
+                                    {props.currentUserTotals.swimDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
                                 </span>
                             </h6>
                             <h6>
                                 <span className="red-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-triathlon-50.png"} alt={"Bike"} />{"Bike: "} 
-                                    {props.currentUserTotals.durationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
+                                    {props.currentUserTotals.bikeDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
                                 </span>
                             </h6>
                             <h6>
                                 <span className="green-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "} 
-                                    {props.currentUserTotals.durationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
+                                    {props.currentUserTotals.runDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
                                 </span>
                             </h6>
                             {/* End Distance */}
@@ -127,19 +127,19 @@ const SummaryTotal =(props) => {
                             <h6>
                                 <span className="blue-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-swimming-50.png"} alt={"Swim"} />{"Swim: "} 
-                                    {props.currentTeamTotals.nbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    {props.currentTeamTotals.swimNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                 </span>
                             </h6>
                             <h6>
                                 <span className="red-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-triathlon-50.png"} alt={"Bike"} />{"Bike: "} 
-                                    {props.currentTeamTotals.nbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    {props.currentTeamTotals.bikeNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                 </span>
                             </h6>
                             <h6>
                                 <span className="green-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "} 
-                                    {props.currentTeamTotals.nbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    {props.currentTeamTotals.runNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                 </span>
                             </h6>
                             {/* End Nbr */}
@@ -154,19 +154,19 @@ const SummaryTotal =(props) => {
                             <h6>
                                 <span className="blue-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-swimming-50.png"} alt={"Swim"} />{"Swim: "} 
-                                    {props.currentTeamTotals.distanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Yards
+                                    {props.currentTeamTotals.swimDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Yards
                                 </span>
                             </h6>
                             <h6>
                                 <span className="red-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-triathlon-50.png"} alt={"Bike"} />{"Bike: "} 
-                                    {props.currentTeamTotals.distanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
+                                    {props.currentTeamTotals.bikeDistanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
                                 </span>
                             </h6>
                             <h6>
                                 <span className="green-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "} 
-                                    {props.currentTeamTotals.distanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
+                                    {props.currentTeamTotals.runDistanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
                                 </span>
                             </h6>
                             {/* End Distance */}
@@ -181,19 +181,19 @@ const SummaryTotal =(props) => {
                             <h6>
                                 <span className="blue-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-swimming-50.png"} alt={"Swim"} />{"Swim: "} 
-                                    {props.currentTeamTotals.durationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
+                                    {props.currentTeamTotals.swimDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
                                 </span>
                             </h6>
                             <h6>
                                 <span className="red-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-triathlon-50.png"} alt={"Bike"} />{"Bike: "} 
-                                    {props.currentTeamTotals.durationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
+                                    {props.currentTeamTotals.bikeDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
                                 </span>
                             </h6>
                             <h6>
                                 <span className="green-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "} 
-                                    {props.currentTeamTotals.durationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
+                                    {props.currentTeamTotals.runDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
                                 </span>
                             </h6>
                             {/* End Distance */}
@@ -215,25 +215,25 @@ const SummaryTotal =(props) => {
                             <h5>
                                 <span className="black-text truncate"> 
                                     {"Activities: "}
-                                    {props.nbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    {props.currentAllTotals.nbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                 </span>
                             </h5>
                             <h6>
                                 <span className="blue-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-swimming-50.png"} alt={"Swim"} />{"Swim: "} 
-                                    {props.nbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    {props.currentAllTotals.swimNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                 </span>
                             </h6>
                             <h6>
                                 <span className="red-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-triathlon-50.png"} alt={"Bike"} />{"Bike: "} 
-                                    {props.nbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    {props.currentAllTotals.bikeNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                 </span>
                             </h6>
                             <h6>
                                 <span className="green-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "} 
-                                    {props.nbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    {props.currentAllTotals.runNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                 </span>
                             </h6>
                             {/* End Nbr */}
@@ -242,25 +242,25 @@ const SummaryTotal =(props) => {
                             <h5>
                                 <span className="black-text truncate"> 
                                     {"Distance: "}
-                                    {props.distanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
+                                    {props.currentAllTotals.distanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
                                 </span>
                             </h5>
                             <h6>
                                 <span className="blue-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-swimming-50.png"} alt={"Swim"} />{"Swim: "} 
-                                    {props.distanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Yards
+                                    {props.currentAllTotals.swimDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Yards
                                 </span>
                             </h6>
                             <h6>
                                 <span className="red-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-triathlon-50.png"} alt={"Bike"} />{"Bike: "} 
-                                    {props.distanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
+                                    {props.currentAllTotals.bikeDistanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
                                 </span>
                             </h6>
                             <h6>
                                 <span className="green-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "} 
-                                    {props.distanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
+                                    {props.currentAllTotals.runDistanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
                                 </span>
                             </h6>
                             {/* End Distance */}
@@ -269,25 +269,25 @@ const SummaryTotal =(props) => {
                             <h5>
                                 <span className="black-text truncate"> 
                                     {"Duration: "}
-                                    {props.durationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
+                                    {props.currentAllTotals.durationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
                                 </span>
                             </h5>
                             <h6>
                                 <span className="blue-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-swimming-50.png"} alt={"Swim"} />{"Swim: "} 
-                                    {props.durationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
+                                    {props.currentAllTotals.swimDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
                                 </span>
                             </h6>
                             <h6>
                                 <span className="red-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-triathlon-50.png"} alt={"Bike"} />{"Bike: "} 
-                                    {props.durationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
+                                    {props.currentAllTotals.bikeDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
                                 </span>
                             </h6>
                             <h6>
                                 <span className="green-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "} 
-                                    {props.durationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
+                                    {props.currentAllTotals.runDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
                                 </span>
                             </h6>
                             {/* End Distance */}
