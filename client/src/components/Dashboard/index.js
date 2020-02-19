@@ -173,6 +173,21 @@ class Dashboard extends React.Component {
     // but all I got for now
     // I will get it working and then optimize
     calculateTotalsForTeamAndUser () {
+        let newTotals = {
+            nbrActivities : 0,
+            distanceTotal : 0,
+            durationTotal : 0,
+            swimNbrActivities : 0,
+            swimDistanceTotal : 0,
+            swimDurationTotal : 0,
+            bikeNbrActivities : 0,
+            bikeDistanceTotal : 0,
+            bikeDurationTotal : 0,
+            runNbrActivities : 0,
+            runDistanceTotal : 0,
+            runDurationTotal : 0
+        };
+        
         let newTeamTotals = {
             teamUid: this.props.user.teamUid,
             teamName: this.props.user.teamName,
@@ -211,6 +226,30 @@ class Dashboard extends React.Component {
         
         // loop through array counting by team
         for (let i = 0; i < activities.length; i++) {
+            // Add everything for totals
+            newTotals.nbrActivities += 1;
+            newTotals.distanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
+            newTotals.durationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+            switch(activities[i].activityType) {
+                case "Swim":
+                    newTotals.swimNbrActivities += 1;
+                    newTotals.swimDistanceTotal += activities[i].distanceUnits === "Miles" ? activities[i].distance * 1760 : activities[i].distance;
+                    newTotals.swimDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                    break;
+                case "Bike":                            
+                    newTotals.bikeNbrActivities += 1;
+                    newTotals.bikeDistanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
+                    newTotals.bikeDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                    break;
+                case "Run":
+                    newTotals.bikeNbrActivities += 1;
+                    newTotals.bikeDistanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
+                    newTotals.bikeDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                    break;
+                default:
+                    // NADA
+            }
+
             // only add for this team
             if (this.props.user.teamName === activities[i].teamName) {
                 newTeamTotals.nbrActivities += 1;
@@ -261,7 +300,7 @@ class Dashboard extends React.Component {
                 }     
             }
         }
-        let totals = {team : newTeamTotals, user : newUserTotals}
+        let totals = {all: newTotals, team : newTeamTotals, user : newUserTotals}
         // console.log(`totals: ${JSON.stringify(totals, null, 2)}`);
 
         return(totals);
@@ -295,10 +334,9 @@ class Dashboard extends React.Component {
                                     durationTotal={this.state.durationTotal}
                                     disabled={this.props.user.isAdmin ? false : this.props.user.isCashier ? false : true}
                                     
+                                    currentAllTotals={this.totals.all}
                                     currentTeamTotals={this.totals.team}
-                                
                                     currentUserTotals={this.totals.user}
-                                
                                 />
                             </div>
 
