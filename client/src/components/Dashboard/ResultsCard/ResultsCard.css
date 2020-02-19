@@ -1,0 +1,11 @@
+.displayTotal {
+    color: red;
+    text-align: center;
+    font-weight: 500;
+    font-size: 200%;
+    margin-top: 0px;
+}
+
+.activityBtn {
+    margin-top: 25px;
+}

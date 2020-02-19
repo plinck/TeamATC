@@ -4,6 +4,7 @@ import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
 import { Redirect } from 'react-router';
 
 import SummaryTotal from './SummaryTotal/SummaryTotal';
+import ResultsCard from './ResultsCard/ResultsCard';
 import Activities from "../Activity/Activities";
 import ActivityByDay from "./Graphs/ActivityByDay";
 
@@ -157,6 +158,16 @@ class Dashboard extends React.Component {
         return undefined;
     }
 
+    // Search for object in array based on key using uniqure ID
+    searchForIndex(keyValue, keyName, searchArray) {
+        for (var i=0; i < searchArray.length; i++) {
+            if (searchArray[i][keyName] === keyValue) {
+                return ({itemFound: searchArray[i], index: i});
+            }
+        }
+        return undefined;
+    }
+
     componentWillUnmount() {
         this._mounted = false;
         
@@ -222,10 +233,19 @@ class Dashboard extends React.Component {
             runDurationTotal : 0
         };
 
+        let newResults = [];
+
+        let userResults = [];
+
+        let teamResults = [];
+
         let activities = this.state.activities;
         
         // loop through array counting by team
         for (let i = 0; i < activities.length; i++) {
+            // get resulsts
+            newResults = this.calulateResults(userResults, teamResults, activities[i]);
+
             // Add everything for totals
             newTotals.nbrActivities += 1;
             newTotals.distanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
@@ -300,10 +320,165 @@ class Dashboard extends React.Component {
                 }     
             }
         }
-        let totals = {all: newTotals, team : newTeamTotals, user : newUserTotals}
-        // console.log(`totals: ${JSON.stringify(totals, null, 2)}`);
 
-        return(totals);
+        let totalsAndResults = {all: newTotals, team : newTeamTotals, user : newUserTotals, userR : newResults.user, teamR : newResults.user}
+        console.log(`Results User: ${JSON.stringify(newResults.user, null, 2)}`);
+
+        return(totalsAndResults);
+    }
+
+    calulateResults(userResults, teamResults, activity) {
+
+        let newUserResult =
+        {
+            uid: null,
+            displayName: "",
+            isThisMe: false,
+            distanceTotal : 0,
+            pointsTotal : 0,
+            swimDistanceTotal : 0,
+            swimPointsTotal : 0,
+            bikeDistanceTotal : 0,
+            bikePointsTotal : 0,
+            runDistanceTotal : 0,
+            runPointsTotal : 0,
+            durationTotal: 0,
+            bikeNbrActivities: 0,
+            bikeDurationTotal: 0,
+            swimNbrActivities: 0,
+            swimDurationTotal: 0,
+            runNbrActivities: 0,
+            runDurationTotal: 0
+        }
+        let newTeamResults =
+        {
+            teamUid: null,
+            teamName: "",
+            isThisMe: false,
+            distanceTotal : 0,
+            pointsTotal : 0,
+            swimDistanceTotal : 0,
+            swimPointsTotal : 0,
+            bikeDistanceTotal : 0,
+            bikePointsTotal : 0,
+            runDistanceTotal : 0,
+            runPointsTotal : 0,
+            durationTotal: 0,
+            bikeNbrActivities: 0,
+            bikeDurationTotal: 0,
+            swimNbrActivities: 0,
+            swimDurationTotal: 0,
+            runNbrActivities: 0,
+            runDurationTotal: 0
+        }        
+
+        // let oldActivityAndIndex = this.searchForActivity(activity.id, "id", activities);
+        // if (oldActivityAndIndex) {
+        //     // replace current activity in array with new one
+        //     activities[oldActivityAndIndex.index] = activity;
+        //     let oldActivity = oldActivityAndIndex.activity; // extract object from returned object 
+
+
+        let oldUserResult = this.searchForIndex(activity.uid, "uid", userResults);
+
+        // let idx = userResults.findIndex( (uResult) => { 
+        //     const isFound = uResult.uid === activity.uid;
+        //     console.log(`Searching for uResult.uid: ${JSON.stringify(uResult,null,2)}, in activity.uid: ${activity.uid}, found=${isFound}`);
+        //     return isFound;
+        // });
+
+        let idx = oldUserResult ? oldUserResult.index : -1;
+
+        if (idx > -1) {       // Found, results for this oone so add to it
+            console.log(`found user: ${userResults[idx].uid} at idx: ${idx}`)
+            newUserResult = userResults[idx];
+
+            newUserResult.isthisMe = activity.uid === this.props.user.uid ? true : false;
+
+            const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
+            newUserResult.distanceTotal +=  distanceInMiles;
+            newUserResult.durationTotal += activity.duration === "Minutes" ? activity.duration / 60 : activity.duration ;  
+            
+            switch(activity.activityType) {
+                case "Swim":
+                    newUserResult.pointsTotal +=  distanceInMiles * 10;
+                    
+                    newUserResult.swimNbrActivities += 1;
+                    newUserResult.swimDistanceTotal += activity.distanceUnits === "Miles" ? activity.distance * 1760 : activity.distance;
+                    newUserResult.swimDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+
+                    newUserResult.swimPointsTotal +=  distanceInMiles * 10;
+                    break;
+                case "Bike":                            
+                    newUserResult.pointsTotal +=  distanceInMiles;
+                    
+                    newUserResult.bikeNbrActivities += 1;
+                    newUserResult.bikeDistanceTotal += activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
+                    newUserResult.bikeDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+                    
+                    newUserResult.bikePointsTotal +=  distanceInMiles;
+                    break;
+                case "Run":
+                    newUserResult.pointsTotal +=  distanceInMiles *3;
+                    
+                    newUserResult.runNbrActivities += 1;
+                    newUserResult.runDistanceTotal += activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
+                    newUserResult.runDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+
+                    newUserResult.runPointsTotal +=  distanceInMiles *3;
+                    break;
+                default:
+                    // NADA
+            }
+            userResults[idx] = newUserResult;
+
+        } else {              // Didnt find results for this oone so push it
+            console.log(`new user: ${activity.uid}`)
+
+            newUserResult.isthisMe = activity.uid === this.props.user.uid ? true : false;
+            newUserResult.uid = activity.uid;
+            newUserResult.displayName = activity.displayName;
+
+            const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
+            newUserResult.distanceTotal +=  distanceInMiles;
+            newUserResult.durationTotal += activity.duration === "Minutes" ? activity.duration / 60 : activity.duration ;  
+            
+            switch(activity.activityType) {
+                case "Swim":
+                    newUserResult.pointsTotal +=  distanceInMiles * 10;
+                    
+                    newUserResult.swimNbrActivities += 1;
+                    newUserResult.swimDistanceTotal += activity.distanceUnits === "Miles" ? activity.distance * 1760 : activity.distance;
+                    newUserResult.swimDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+
+                    newUserResult.swimPointsTotal +=  distanceInMiles * 10;
+                    break;
+                case "Bike":                            
+                    newUserResult.pointsTotal +=  distanceInMiles;
+                    
+                    newUserResult.bikeNbrActivities += 1;
+                    newUserResult.bikeDistanceTotal += activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
+                    newUserResult.bikeDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+                    
+                    newUserResult.bikePointsTotal +=  distanceInMiles;
+                    break;
+                case "Run":
+                    newUserResult.pointsTotal +=  distanceInMiles *3;
+                    
+                    newUserResult.runNbrActivities += 1;
+                    newUserResult.runDistanceTotal += activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
+                    newUserResult.runDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+
+                    newUserResult.runPointsTotal +=  distanceInMiles *3;
+                    break;
+                default:
+                    // NADA
+            }
+            userResults.push(newUserResult);
+        }
+
+        let newResults = {user: userResults, team : teamResults }
+        return(newResults);
     }
 
     render() {
@@ -328,17 +503,29 @@ class Dashboard extends React.Component {
                         :
                         <div className="container">
                             <div className="row">
+                            {/* change fornow to chck compile
+                                    teamResults={this.totals.teamR}
+                                    userResults={this.totals.userR}
+                            */}
+                                <ResultsCard
+                                    teamResults={this.totals.team}
+                                    userResults={this.totals.user}
+                                />
+                            </div>
+                            
+                            <div className="row">
                                 <SummaryTotal
                                     nbrActivities={this.state.nbrActivities}
                                     distanceTotal={this.state.distanceTotal}
                                     durationTotal={this.state.durationTotal}
-                                    disabled={this.props.user.isAdmin ? false : this.props.user.isCashier ? false : true}
                                     
                                     currentAllTotals={this.totals.all}
                                     currentTeamTotals={this.totals.team}
                                     currentUserTotals={this.totals.user}
                                 />
                             </div>
+                            
+                            <Activities filterByString="Mine" layoutType="userCard"/>
 
                             <div className="row">
                             <ActivityByDay
@@ -346,8 +533,6 @@ class Dashboard extends React.Component {
                                 activities={this.state.activities}
                             />
                             </div>
-                            
-                            <Activities filterByString="Mine" layoutType="userCard"/>
                         </div>
 
                     }
