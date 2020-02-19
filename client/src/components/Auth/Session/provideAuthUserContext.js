@@ -92,14 +92,16 @@ const provideAuthUserContext = Component => {
             let ref = this.props.firebase.db.collection("users").doc(uid);
             this.userListener = ref.onSnapshot((doc) => {
                 const user = doc.data();
-                this.setState({
-                    displayName: user.displayName,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    phoneNumber: user.phoneNumber,
-                    teamUid: user.teamUid,
-                    teamName: user.teamName
-                 });
+                if (user) {
+                    this.setState({
+                        displayName: user.displayName,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        phoneNumber: user.phoneNumber,
+                        teamUid: user.teamUid,
+                        teamName: user.teamName
+                    });
+                }
             });         
         }
 
