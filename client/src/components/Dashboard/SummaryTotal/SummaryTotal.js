@@ -4,12 +4,11 @@ import { Link } from 'react-router-dom';
 import './SummaryTotal.css'
 
 const SummaryTotal =(props) => {
-    if (!props.currentUserTotals) {
+    // wait for props
+    if (!props.currentUserTotals || !props.currentTeamTotals) {
         return(null);
     }
-    if (!props.currentTeamTotals) {
-        return(null);
-    }
+
     return (
         <div>
             <div className="row">
