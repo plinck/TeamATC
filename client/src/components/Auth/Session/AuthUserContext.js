@@ -4,7 +4,7 @@ const AuthUserContext = React.createContext(null);
 
 const withAuthUserContext = Component => props => (
   <AuthUserContext.Consumer>
-    {authUser => <Component {...props} user={authUser} />}
+    {user => <Component {...props} user={user} />}
   </AuthUserContext.Consumer>
 );
 

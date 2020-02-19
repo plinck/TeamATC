@@ -16,8 +16,6 @@ import { withStyles } from '@material-ui/core/styles';
 // export csv functionality
 // eslint-disable-next-line no-unused-vars
 import { CSVLink, CSVDownload } from "react-csv";
-import UserAPI from "../User/UserAPI"
-
 
 const styles = theme => ({
     root: {
@@ -37,20 +35,10 @@ class Activities extends React.Component {
         super(props);
 
         this.state = {
-            myTeamName: null,
             activities: null,
             searchBy: "",
             filterByString: null
         };
-    }
-
-    // Get the users info
-    fetchUser() {
-        UserAPI.getCurrentUser().then(user => {
-            this.setState({
-                myTeamName: user.teamName
-            });
-        });
     }
 
     getActivities = (resultLimit, teamName, userUid, startDate, endDate) => {
@@ -94,7 +82,7 @@ class Activities extends React.Component {
                 this.getActivities()
                 break;
             case "Team":                            
-                this.getActivities(50, this.state.myTeamName, undefined, undefined, undefined)
+                this.getActivities(50, this.props.user.teamName, undefined, undefined, undefined)
                 break;
             case "Mine":
                 this.getActivities(50, undefined, this.props.user.uid, undefined, undefined)
@@ -140,12 +128,8 @@ class Activities extends React.Component {
         const { classes } = this.props;
 
         // Some props take time to get ready so return null when uid not avaialble
-        if (this.props.user.uid === null) {
+        if (this.props.user.uid === null || this.props.user.teamName === null) {
             return null;
-        }
-
-        if (this.state.myTeamName === null) {
-            this.fetchUser();
         }
 
         if (typeof this.state.activities === 'undefined') {
