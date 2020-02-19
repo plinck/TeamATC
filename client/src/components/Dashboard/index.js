@@ -343,10 +343,11 @@ class Dashboard extends React.Component {
             runDistanceTotal : 0,
             runPointsTotal : 0,
             durationTotal: 0,
-            bikeNbrActivities: 0,
-            bikeDurationTotal: 0,
+            nbrActivities: 0,
             swimNbrActivities: 0,
             swimDurationTotal: 0,
+            bikeNbrActivities: 0,
+            bikeDurationTotal: 0,
             runNbrActivities: 0,
             runDurationTotal: 0
         }
@@ -364,30 +365,22 @@ class Dashboard extends React.Component {
             runDistanceTotal : 0,
             runPointsTotal : 0,
             durationTotal: 0,
-            bikeNbrActivities: 0,
-            bikeDurationTotal: 0,
+            nbrActivities: 0,
             swimNbrActivities: 0,
             swimDurationTotal: 0,
+            bikeNbrActivities: 0,
+            bikeDurationTotal: 0,
             runNbrActivities: 0,
             runDurationTotal: 0
         }        
 
-        // let oldActivityAndIndex = this.searchForActivity(activity.id, "id", activities);
-        // if (oldActivityAndIndex) {
-        //     // replace current activity in array with new one
-        //     activities[oldActivityAndIndex.index] = activity;
-        //     let oldActivity = oldActivityAndIndex.activity; // extract object from returned object 
+        // let oldUserResult = this.searchForIndex(activity.uid, "uid", userResults);
+        // let idx = oldUserResult ? oldUserResult.index : -1;
 
-
-        let oldUserResult = this.searchForIndex(activity.uid, "uid", userResults);
-
-        // let idx = userResults.findIndex( (uResult) => { 
-        //     const isFound = uResult.uid === activity.uid;
-        //     console.log(`Searching for uResult.uid: ${JSON.stringify(uResult,null,2)}, in activity.uid: ${activity.uid}, found=${isFound}`);
-        //     return isFound;
-        // });
-
-        let idx = oldUserResult ? oldUserResult.index : -1;
+        let idx = userResults.findIndex( (uResult) => { 
+            const isFound = uResult.uid === activity.uid;
+            return isFound;
+        });
 
         if (idx > -1) {       // Found, results for this oone so add to it
             console.log(`found user: ${userResults[idx].uid} at idx: ${idx}`)
@@ -397,7 +390,7 @@ class Dashboard extends React.Component {
 
             const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
             newUserResult.distanceTotal +=  distanceInMiles;
-            newUserResult.durationTotal += activity.duration === "Minutes" ? activity.duration / 60 : activity.duration ;  
+            newUserResult.durationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration ;  
             
             switch(activity.activityType) {
                 case "Swim":
@@ -441,7 +434,7 @@ class Dashboard extends React.Component {
 
             const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
             newUserResult.distanceTotal +=  distanceInMiles;
-            newUserResult.durationTotal += activity.duration === "Minutes" ? activity.duration / 60 : activity.duration ;  
+            newUserResult.durationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration ;  
             
             switch(activity.activityType) {
                 case "Swim":
