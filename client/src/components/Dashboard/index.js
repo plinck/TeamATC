@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 import './dashboard.css';
 import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
 import { Redirect } from 'react-router';
@@ -584,6 +586,14 @@ class Dashboard extends React.Component {
             this.totals = this.calculateTotalsForTeamAndUser();
             this.activitiesUpdated = false;
         }
+
+        // Totals needs to catch up for some reason - I had to refresh browser after going to activities page
+        if (!this.totals) {
+            return null;
+        }
+        if (!this.totals.userR) {
+            return null;
+        }
         
         if (this.props.user.authUser) {
             return (
@@ -595,14 +605,25 @@ class Dashboard extends React.Component {
                         :
                         <div className="container">
                             <div className="row">
-                            {/* change fornow to chck compile
-                                    teamResults={this.totals.teamR}
-                                    userResults={this.totals.userR}
-                            */}
-                                <ResultsCard
-                                    teamResults={this.totals.team}
-                                    userResults={this.totals.user}
-                                />
+                                <div className="col s12 m6">
+                                    <div className="card">
+                                        <div className="card-content pCard">
+                                            <span className="card-title blue-text left-align">
+                                                <Link to="/activities">
+                                                    User Leaderboard
+                                                </Link>
+                                            </span>
+                                            {this.totals.userR.map((userResult) => {
+                                                return (
+                                                    <div key={userResult.uid}>
+                                                        <ResultsCard result={userResult}
+                                                        />
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             
                             <div className="row">
