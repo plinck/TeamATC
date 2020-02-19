@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import M from "materialize-css/dist/js/materialize.min.js";
 import SignOutButton from '../Auth/SignOut/SignOut';
 import { withAuthUserContext } from '../Auth/Session/AuthUserContext';

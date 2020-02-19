@@ -16,49 +16,29 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import Util from '../Util/Util';
 import UserAPI from "../User/UserAPI";
-import ActivityDB from '../Activity/ActivityDB';
 
 class Dashboard extends React.Component {
     state = {
         loadingFlag: false,
-        activitiesUpdated: false,
         activities: [],
         nbrActivities: 0,
         distanceTotal: 0,
-        durationTotal: 0,
-        currentUser: null,
-
-        currentAllTotals: {
-            nbrActivities : 0,
-            distanceTotal : 0,
-            durationTotal : 0
-        },
-        
-        currentTeamTotals: {
-            teamUid: null,
-            teamName: null,
-            nbrActivities : 0,
-            distanceTotal : 0,
-            durationTotal : 0
-        },
-
-        currenUserTotals: {
-            uid: null,
-            displayName: "",
-            nbrActivities : 0,
-            distanceTotal : 0,
-            durationTotal : 0
-        }
+        durationTotal: 0
     }
+
     activeListener = undefined;
+    totals = {};
+    activitiesUpdated = false;
 
     // Get the users info
     fetchCurrentUser() {
-        console.log(`state,currentUser:${this.state.currentUser}ç`);
+        if (!this._mounted) {
+            return;
+        }
+
         UserAPI.getCurrentUser().then(user => {
             this.setState({
                 currentUser: {"teamName" : user.teamName,
-                    "uid" : user.uid,
                     "displayName" : user.displayName
                 }
             });
@@ -69,7 +49,7 @@ class Dashboard extends React.Component {
 
     componentDidMount() {
         this._mounted = true;
-        this.setState({ activitiesUpdated: false, loadingFlag: true });
+        this.setState({loadingFlag: true });
         const db = Util.getFirestoreDB();   // active firestore db ref
 
         let ref = db.collection("activities")
@@ -157,9 +137,11 @@ class Dashboard extends React.Component {
                     }
                 }
             });
-            this.setState({ activities: activities,
-                loadingFlag: false, activitiesUpdated: true,
-                nbrActivities: nbrActivities, distanceTotal: distanceTotal,  durationTotal: durationTotal
+            this.activitiesUpdated = true;
+            this.setState({ loadingFlag: false,
+                nbrActivities: nbrActivities,
+                distanceTotal: distanceTotal,
+                durationTotal: durationTotal
             });
         }, (error) => {
             console.error(`Error attaching listener: ${error}`);
@@ -192,68 +174,53 @@ class Dashboard extends React.Component {
     // I will get it working and then optimize
     calculateTotalsForTeamAndUser () {
         let newTeamTotals = {
-            teamUid: null,
-            teamName: null,
+            teamUid: this.props.user.teamUid,
+            teamName: this.props.user.teamName,
             nbrActivities : 0,
             distanceTotal : 0,
             durationTotal : 0
         };
         
         let newUserTotals = {
-            uid: null,
-            displayName: "",
+            uid: this.props.user.uid,
+            displayName: this.props.user.displayName,
             nbrActivities : 0,
             distanceTotal : 0,
             durationTotal : 0
         };
 
-        if (this.state.currentUser === null) {
-            return;
-        }
-
         let activities = this.state.activities;
-        let currentTeamName = this.state.currentUser.teamName;
-        let currentUserUid = this.state.currentUser.uid;
-        let currentUserDisplayName = this.state.currentUser.displayName;
         
         // loop through array counting by team
         for (let i = 0; i < activities.length; i++) {
             // only add for this team
-            console.log(`Found activity: ${activities[0]}
-                team: ${activities[i].teamName} uid:activities[i].uid  in calcTotals`);
-            if (currentTeamName && currentTeamName === activities[i].teamName) {
-                newTeamTotals.teamUid = activities[i].teamUid ? activities[i].teamUid : null;
-                newTeamTotals.teamName = activities[i].currentTeamName;
+            if (this.props.user.teamName === activities[i].teamName) {
                 newTeamTotals.nbrActivities += 1;
                 newTeamTotals.distanceTotal += activities[i].distance;
                 newTeamTotals.durationTotal += activities[i].duration;
             }
-            if (currentUserUid && currentUserUid === activities[i].uid) {
-                newUserTotals.uid = currentUserUid;
-                newUserTotals.displayName = currentUserDisplayName;
+            if (this.props.user.uid === activities[i].uid) {
                 newUserTotals.nbrActivities += 1;
                 newUserTotals.distanceTotal += activities[i].distance;
                 newUserTotals.durationTotal += activities[i].duration;
             }
         }
-        console.log(newTeamTotals);
-        console.log(newUserTotals);
-        this.setState({currentTeamTotals: newTeamTotals}, {currentUserTotals: newUserTotals}, {activitiesUpdated : false});
-        // none found
+        let totals = {team : newTeamTotals, user : newUserTotals}
+        console.log(`totals: ${JSON.stringify(totals, null, 2)}`);
+
+        return(totals);
     }
 
     render() {
         // Some props take time to get ready so return null when uid not avaialble
-        if (this.props.user.uid === null) {
+        if (this.props.user.uid === null || this.props.user.teamName === null) {
             return null;
         }
-
-        if (!this.state.currentUser) {
-            this.fetchCurrentUser();
-        }
         
-        if (this.state.activitiesUpdated) {
+        // if the listener updated the state
+        if (this.activitiesUpdated) {
             this.calculateTotalsForTeamAndUser();
+            this.activitiesUpdated = false;
         }
         
         if (this.props.user.authUser) {
