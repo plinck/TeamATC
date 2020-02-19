@@ -196,17 +196,17 @@ class Dashboard extends React.Component {
             // only add for this team
             if (this.props.user.teamName === activities[i].teamName) {
                 newTeamTotals.nbrActivities += 1;
-                newTeamTotals.distanceTotal += activities[i].distance;
-                newTeamTotals.durationTotal += activities[i].duration;
+                newTeamTotals.distanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
+                newTeamTotals.durationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
             }
             if (this.props.user.uid === activities[i].uid) {
                 newUserTotals.nbrActivities += 1;
-                newUserTotals.distanceTotal += activities[i].distance;
-                newUserTotals.durationTotal += activities[i].duration;
+                newUserTotals.distanceTotal += activities[i].distance === "Yards" ? activities[i].distance / 1760 : activities[i].distance;;
+                newUserTotals.durationTotal += activities[i].duration === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
             }
         }
         let totals = {team : newTeamTotals, user : newUserTotals}
-        console.log(`totals: ${JSON.stringify(totals, null, 2)}`);
+        // console.log(`totals: ${JSON.stringify(totals, null, 2)}`);
 
         return(totals);
     }
@@ -219,7 +219,7 @@ class Dashboard extends React.Component {
         
         // if the listener updated the state
         if (this.activitiesUpdated) {
-            this.calculateTotalsForTeamAndUser();
+            this.totals = this.calculateTotalsForTeamAndUser();
             this.activitiesUpdated = false;
         }
         
@@ -239,9 +239,9 @@ class Dashboard extends React.Component {
                                     durationTotal={this.state.durationTotal}
                                     disabled={this.props.user.isAdmin ? false : this.props.user.isCashier ? false : true}
                                     
-                                    currentTeamTotals={this.state.currentTeamTotals}
+                                    currentTeamTotals={this.totals.team}
                                 
-                                    currentUserTotals={this.state.currenUserTotals}
+                                    currentUserTotals={this.totals.user}
                                 
                                 />
                             </div>
