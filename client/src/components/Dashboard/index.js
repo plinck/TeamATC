@@ -597,6 +597,28 @@ class Dashboard extends React.Component {
         if (!this.totals.teamR) {
             return null;
         }
+
+        // header row for results
+        const headerRow = 
+            <div className="row" fontWeight="fontWeightBold">
+                <div className="col s1 m1">
+                </div>
+                <div className="col s3 m3 truncate">
+                    Name
+                </div>
+                <div className="black-text col m2 m2 truncate" fontStyle="oblique" fontWeight="fontWeightBold">
+                    Total
+                </div>
+                <div className="blue-text col m2 m2 truncate">
+                    Swim
+                </div>
+                <div className="red-text col m2 m2 truncate">
+                    Bike
+                </div>
+                <div className="green-text col m2 m2 truncate">
+                    Run
+                </div>
+            </div>
         
         if (this.props.user.authUser) {
             return (
@@ -614,9 +636,10 @@ class Dashboard extends React.Component {
                                         <div className="card-content pCard">
                                             <span className="card-title blue-text left-align">
                                                 <Link to="/activities">
-                                                    User Leaderboard
+                                                    User Leaderboard - Total (Adjusted Miles)
                                                 </Link>
                                             </span>
+                                            {headerRow}
                                             {this.totals.userR.map((userResult, index) => {
                                                 return (
                                                     <div key={index}>
@@ -639,6 +662,7 @@ class Dashboard extends React.Component {
                                                     Team Leaderboard
                                                 </Link>
                                             </span>
+                                            {headerRow}
                                             {this.totals.teamR.map((teamResult, index) => {
                                                 return (
                                                     <div key={index}>
