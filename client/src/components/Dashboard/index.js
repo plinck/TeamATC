@@ -594,6 +594,9 @@ class Dashboard extends React.Component {
         if (!this.totals.userR) {
             return null;
         }
+        if (!this.totals.teamR) {
+            return null;
+        }
         
         if (this.props.user.authUser) {
             return (
@@ -605,6 +608,7 @@ class Dashboard extends React.Component {
                         :
                         <div className="container">
                             <div className="row">
+                                {/* User standings/results card */}
                                 <div className="col s12 m6">
                                     <div className="card">
                                         <div className="card-content pCard">
@@ -624,6 +628,30 @@ class Dashboard extends React.Component {
                                         </div>
                                     </div>
                                 </div>
+                                {/* End User standings/results card */}
+
+                                {/* Team standings/results card */}
+                                <div className="col s12 m6">
+                                    <div className="card">
+                                        <div className="card-content pCard">
+                                            <span className="card-title blue-text left-align">
+                                                <Link to="/activities">
+                                                    Team Leaderboard
+                                                </Link>
+                                            </span>
+                                            {this.totals.teamR.map((teamResult, index) => {
+                                                return (
+                                                    <div key={index}>
+                                                        <ResultsCard result={teamResult}
+                                                        />
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* End Team standings/results card */}
+
                             </div>
                             
                             <div className="row">
