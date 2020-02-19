@@ -335,9 +335,9 @@ class Dashboard extends React.Component {
     calulateUserResults(userResults, activity) {
         let newUserResult =
         {
-            uid: null,
-            displayName: "",
-            isThisMe: false,
+            userOrTeamUid: null,
+            userOrTeamName: "",
+            isThisMine: false,
             distanceTotal : 0,
             pointsTotal : 0,
             swimDistanceTotal : 0,
@@ -357,14 +357,14 @@ class Dashboard extends React.Component {
         }
 
         let idx = userResults.findIndex( (uResult) => { 
-            const isFound = uResult.uid === activity.uid;
+            const isFound = uResult.userOrTeamUid === activity.uid;
             return isFound;
         });
 
         if (idx > -1) {       // Found, results for this oone so add to it
             newUserResult = userResults[idx];
 
-            newUserResult.isThisMe = activity.uid === this.props.user.uid ? true : false;
+            newUserResult.isThisMine = activity.uid === this.props.user.uid ? true : false;
 
             const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
             newUserResult.distanceTotal +=  distanceInMiles;
@@ -404,9 +404,9 @@ class Dashboard extends React.Component {
             userResults[idx] = newUserResult;
 
         } else {              // Didnt find results for this oone so push it
-            newUserResult.isThisMe = activity.uid === this.props.user.uid ? true : false;
-            newUserResult.uid = activity.uid;
-            newUserResult.displayName = activity.displayName;
+            newUserResult.isThisMine = activity.uid === this.props.user.uid ? true : false;
+            newUserResult.userOrTeamUid = activity.uid;
+            newUserResult.userOrTeamName = activity.displayName;
 
             const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
             newUserResult.distanceTotal +=  distanceInMiles;
@@ -455,9 +455,9 @@ class Dashboard extends React.Component {
     calulateTeamResults(teamResults, activity) {
         let newTeamResult =
         {
-            teamUid: null,
-            teamName: "",
-            isThisMyTeam: false,
+            userOrTeamUid: null,
+            userOrTeamName: "",
+            isThisMine: false,
             distanceTotal : 0,
             pointsTotal : 0,
             swimDistanceTotal : 0,
@@ -477,16 +477,16 @@ class Dashboard extends React.Component {
         }        
 
         let idx = teamResults.findIndex( (uResult) => { 
-            const isFound = uResult.teamName === activity.teamName;
-            // console.log(`Looking for uResult.teamName: ${JSON.stringify(uResult, null, 2)} for activity.teamName: ${activity.teamName}, found = ${isFound}`);
+            const isFound = uResult.userOrTeamName === activity.teamName;
+            // console.log(`Looking for uResult.userOrTeamName: ${JSON.stringify(uResult, null, 2)} for activity.teamName: ${activity.teamName}, found = ${isFound}`);
             return isFound;
         });
 
         if (idx > -1) {       // Found, results for this oone so add to it
-            // console.log(`found team: ${teamResults[idx].teamName} at idx: ${idx}`)
+            // console.log(`found team: ${teamResults[idx].userOrTeamName} at idx: ${idx}`)
             newTeamResult = teamResults[idx];
 
-            newTeamResult.isThisMyTeam = activity.teamName === this.props.user.teamName ? true : false;
+            newTeamResult.isThisMine = activity.teamName === this.props.user.teamName ? true : false;
 
             const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
             newTeamResult.distanceTotal +=  distanceInMiles;
@@ -528,9 +528,9 @@ class Dashboard extends React.Component {
         } else {              // Didnt find results for this oone so push it
             // console.log(`didnt find team: ${activity.teamName}, creating`);
 
-            newTeamResult.isThisMyTeam = activity.uid === this.props.user.uid ? true : false;
-            newTeamResult.teamUid = activity.teamUid;
-            newTeamResult.teamName = activity.teamName;
+            newTeamResult.isThisMine = activity.teamName === this.props.user.teamName ? true : false;
+            newTeamResult.userOrTeamUid = activity.teamUid;
+            newTeamResult.userOrTeamName = activity.teamName;
 
             const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
             newTeamResult.distanceTotal +=  distanceInMiles;
@@ -613,9 +613,9 @@ class Dashboard extends React.Component {
                                                     User Leaderboard
                                                 </Link>
                                             </span>
-                                            {this.totals.userR.map((userResult) => {
+                                            {this.totals.userR.map((userResult, index) => {
                                                 return (
-                                                    <div key={userResult.uid}>
+                                                    <div key={index}>
                                                         <ResultsCard result={userResult}
                                                         />
                                                     </div>

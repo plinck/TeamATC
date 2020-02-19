@@ -8,13 +8,15 @@ const ResultsCard = (props) => {
         return(null);
     }
 
+    console.log(`${JSON.stringify(props.result)}`);
+
     return (
         <div>
             {/*<-- Leaderboad -->*/}
             {/*
-                            uid: null,
-                            displayName: "",
-                            isThisMe: false,
+                            userOrTeamUid: null,
+                            userOrTeamName: "",
+                            isThisMine: false,
                             distanceTotal : 0,
                             pointsTotal : 0,
                             swimDistanceTotal : 0,
@@ -36,10 +38,13 @@ const ResultsCard = (props) => {
             {/* One Row for each result in leaderboard */}
             <div className="row">
                 <div className="col s1 m1">
-                    <img style={{maxHeight: '20px'}} src={"/images/me.png"} alt={"me"} />
+                    { props.result.isThisMine ?
+                        <img style={{maxHeight: '20px'}} src={"/images/me.png"} alt={"me"} />
+                        :  props.result.isThisMine
+                    }
                 </div>
                 <div className="col s3 m3 truncate">
-                    {props.result.displayName}
+                    {props.result.userOrTeamName}
                 </div>
                 <div className="black-text col m2 m2 truncate">
                     {props.result.pointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Points
