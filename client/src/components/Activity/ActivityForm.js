@@ -15,11 +15,16 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Button from '@material-ui/core/Button';
 import moment from "moment";
 
 import TeamAPI from "../Team/TeamAPI"
 import ActivityDB from "./ActivityDB"
 import UserAPI from "../User/UserAPI"
+
+// For upload fit file
+import EasyFit from "easy-fit";
+
 
 const INITIAL_STATE = {
     uid: "",
@@ -62,6 +67,9 @@ class ActivityForm extends React.Component {
         this.state = { ...INITIAL_STATE };
         this.state.id = this.props.id;
 
+        this.state.fitFileToUpload = null;
+        this.state.fitFileLoaded = false;
+
         //set the date field to be current date by default
         let jsDate = new Date();
         const dateTimeString = moment(jsDate).format("MM-DD-YYYY");
@@ -85,7 +93,6 @@ class ActivityForm extends React.Component {
         let elem = document.querySelector(".modal");
         M.Modal.init(elem);
     }
-
 
     handleChange = name => event => {
         if (event.target.value) {
@@ -147,6 +154,143 @@ class ActivityForm extends React.Component {
             this.setState({
                 [event.target.name]: event.target.value,
             });
+        }
+    }
+
+    saveFITFileToState(jsonData) {
+        let activity = {
+            uid: this.props.user.authUser.uid,
+            email: this.props.user.authUser.email,
+            displayName: this.props.user.displayName,
+            teamName: this.props.user.teamName,
+            teamUid: this.props.user.teamUid,
+
+            activityName: "",
+            activityDateTime: null,
+            activityDateTimeString: "",
+            activityType: "",   
+            distance: 0,
+            distanceUnits: "Miles",
+            duration: 0
+        }
+
+        var activityDateEST = new Date(jsonData.activity.timestamp).toLocaleString("en-US", {timeZone: "America/New_York"});
+        activityDateEST = new Date(activityDateEST); 
+        activity.activityDateTime = activityDateEST;
+        activity.activityDateTimeString = moment(activityDateEST).format("MM-DD-YYYY");
+
+        const sport = jsonData.sport.sport;
+
+        activity.activityType = "Other";
+        if (sport.toLowerCase() === "cycling") {
+            activity.activityType ="Bike";
+        } else if (sport.toLowerCase() === "running") {
+            activity.activityType = "Run";
+        } else if (sport.toLowerCase() === "swimming") {
+            activity.activityType = "Swim";
+        }
+        // No name on Fit File???
+        activity.activityName = `${activity.activityType} on ${activity.activityDateTimeString}`;
+
+        const sub_sport = jsonData.sport["sub_sport"];
+        
+        const total_distance = jsonData.activity.sessions[0].total_distance;
+        activity.distance = Number(total_distance).toFixed(2);
+        activity.distanceUnits = "Miles";
+        
+        const total_timer_time = jsonData.activity.total_timer_time;
+        activity.duration = (Number(total_timer_time) / 3600).toFixed(2);
+       
+        const total_calories = jsonData.activity.sessions[0].total_calories;
+        const avg_speed = jsonData.activity.sessions[0].avg_speed;
+        const avg_power = jsonData.activity.sessions[0].avg_power;
+        const normalized_power = jsonData.activity.sessions[0].normalized_power;
+        const training_stress_score = jsonData.activity.sessions[0].training_stress_score;
+        const intensity_factor = jsonData.activity.sessions[0].intensity_factor;
+        const avg_heart_rate = jsonData.activity.sessions[0].avg_heart_rate;
+        const max_heart_rate = jsonData.activity.sessions[0].max_heart_rate;
+        const avg_cadence = jsonData.activity.sessions[0].avg_cadence;
+        const max_cadence = jsonData.activity.sessions[0].max_cadence;
+      
+        console.log(`Ready to upload activity: ${JSON.stringify(activity, null, 4)}`);
+        this.setState({
+            uid: activity.uid,
+            email: activity.email,
+            displayName: activity.displayName,
+            teamName: activity.teamName,
+            teamUid: activity.teamUid,
+
+            activityName: activity.activityName,
+            activityDateTime: activity.activityDateTime,
+            activityDateTimeString: activity.activityDateTimeString,
+            activityType:activity.activityType,   
+            distance: activity.distance,
+            distanceUnits: activity.distanceUnits,
+            duration: activity.duration,
+            message: `Uploaded FIT file, hit <CREATE> to save`
+        })
+
+        // for now, set the state so user cn name it and fix errors
+        // this.createActivity(activity);
+    }
+
+    readFitFile(fileToUpload) {
+        //let fileToUpload = this.state.fitFileToUpload;
+        if (fileToUpload) {
+            let reader = new FileReader();
+            reader.readAsArrayBuffer(fileToUpload, "UTF-8");
+            reader.onload = (evt) => {
+                console.log("OK reading file");
+                let content = evt.target.result;
+
+                var easyFit = new EasyFit({
+                    force: true,
+                    speedUnit: 'mph',
+                    lengthUnit: 'mi',
+                    temperatureUnit: 'farhenheit',
+                    elapsedRecordField: true,
+                    mode: 'cascade',
+                  });
+                  
+                  // Parse your file
+                  easyFit.parse(content,  (error, data) => {
+                    // Handle result of parse method
+                    if (error) {
+                      console.log(error);
+                    } else {
+                      // console.log(JSON.stringify(data));
+                      this.saveFITFileToState(data);
+                    }
+                  });
+            }
+            reader.onerror = function (evt) {
+                console.error(`error reading file ${evt.error}`);
+            }
+        }
+    }
+    
+    fitFileChange = (event) => {
+        event.preventDefault();
+
+        if (event.target.files.length > 0) {
+            console.log(event.target.files[0]);
+
+            this.setState({
+                fitFileToUpload: event.target.files[0],
+                fitFileLoaded: false
+            });
+        }
+    }
+       
+    uploadFitFile = (event) => {
+        event.preventDefault();
+        // Here is where we grab and parse the file and upload it
+        // Send a spinner while its happening
+
+        if (this.state.fitFileToUpload && this.state.fitFileToUpload !== null) {
+            let fileToUpload = this.state.fitFileToUpload;
+            console.log(`Uploading file ${fileToUpload.name}... `);
+            this.readFitFile(fileToUpload);  // use direct for now
         }
     }
 
@@ -505,12 +649,23 @@ class ActivityForm extends React.Component {
                                     </div>
                                 </div>
                             </div>
-                            <div className="card-action pCard">
-                                <div className="center-align ">
-                                    <button className="btn waves-effect waves-light blue darken-4 modal-trigger"
+                            <div className="card-action pCard row">
+                                <div className="col s2 m2">
+                                    <button className="btn waves-effect waves-light blue darken-4 modal-trigger m2"
                                         type="submit" href="#modal1" onClick={this.onSubmitHandler} name="action">{this.state.id ? "Update" : "Create"}
                                     </button>
                                 </div>
+
+                                {/* UPLOAD FILE */}
+                                <div className="col s5 offset-s2 m5 offset-m2">
+                                    <input type="file" name="file" onChange={this.fitFileChange}/>
+                                </div>
+                                <div className="col s3 m3">
+                                    <button className="btn waves-effect waves-light blue darken-4 modal-trigger m2"
+                                        onClick={this.uploadFitFile}>Upload Fit 
+                                    </button>
+                                </div>
+                                {/* UPLOAD FILE*/}
                             </div>
                         </div>
                     </div>
