@@ -53,6 +53,7 @@ class Navigation extends React.Component {
       <ul>
         <li><NavLink onClick={this.forceCloseSideNav} to="/dashboard">Home</NavLink></li>
         <li><NavLink onClick={this.forceCloseSideNav} to="/activities">Activities</NavLink></li>
+        <li><NavLink onClick={this.forceCloseSideNav} to="/activitypage" className="waves-effect waves-light btn">New Workut</NavLink></li>
         <li><NavLink onClick={this.forceCloseSideNav} to="/account">Account</NavLink></li>
         <li><NavLink onClick={this.forceCloseSideNav} to="/admin">Admin</NavLink></li>
         {/* this.props.user.isBanker ? <li><NavLink onClick={this.forceCloseSideNav} to="/banker">Banker</NavLink></li> : "" */}
@@ -63,7 +64,8 @@ class Navigation extends React.Component {
         const navigationAdmin =
         <ul>
         <li><NavLink to="/dashboard">Home</NavLink></li>
-        <li><NavLink to="/activities">Activity</NavLink></li>
+        <li><NavLink to="/activities">Activities</NavLink></li>
+        <li><NavLink to="/activitypage" className="waves-effect waves-light btn">New Workut</NavLink></li>
         <li><AccountMenu /></li>
         <li><NavLink to="/admin">Admin</NavLink></li>
         </ul>
@@ -73,6 +75,7 @@ class Navigation extends React.Component {
         <ul>
         <li><NavLink onClick={this.forceCloseSideNav} to="/dashboard">Home</NavLink></li>
         <li><NavLink onClick={this.forceCloseSideNav} to="/activities">Activities</NavLink></li>
+        <li><NavLink onClick={this.forceCloseSideNav} to="/activitypage" className="waves-effect waves-light btn">New Workut</NavLink></li>
         <li><NavLink onClick={this.forceCloseSideNav} to="/account">Account</NavLink></li>
         <li onClick={this.forceCloseSideNav}> <SignOutButton /></li>
         </ul>
@@ -81,7 +84,8 @@ class Navigation extends React.Component {
         const navigationAuth =
         <ul>
         <li><NavLink to="/dashboard">Home</NavLink></li>
-        <li><NavLink to="/activities">Activity</NavLink></li>
+        <li><NavLink to="/activities">Activities</NavLink></li>
+        <li><NavLink to="/activitypage" className="waves-effect waves-light btn">New Workut</NavLink></li>
         <li><AccountMenu /></li>
         </ul>
       ;

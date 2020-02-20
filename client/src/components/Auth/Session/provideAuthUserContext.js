@@ -61,16 +61,8 @@ const provideAuthUserContext = Component => {
                 authUser => {
                     if (authUser) {        
                         // try to get userListener going
-                        this.setupUserListener(authUser.uid);
+                        this.setupUserListener(authUser);
 
-                        this.setState({
-                                authUser: authUser, 
-                                uid: authUser.uid,
-                                displayName: authUser.displayName,
-                                phoneNumber: authUser.phoneNumber,
-                                email: authUser.email    
-                            });
-                        this.refreshToken();
                     } else {
                         this.setState({
                             authUser: null,
@@ -82,26 +74,40 @@ const provideAuthUserContext = Component => {
             );        
         }
 
-        setupUserListener(uid) {
+        setupUserListener(authUser) {
             // kill if listening to someone else
             if (this.userListener) {
                 this.userListener();
             }
 
             // User listener
-            let ref = this.props.firebase.db.collection("users").doc(uid);
+            // Try to set state together
+            let ref = this.props.firebase.db.collection("users").doc(authUser.uid);
             this.userListener = ref.onSnapshot((doc) => {
                 const user = doc.data();
                 if (user) {
                     this.setState({
+                        authUser: authUser, 
+                        uid: authUser.uid,
+                        email: authUser.email,
+
                         displayName: user.displayName,
+                        phoneNumber: user.phoneNumber,
                         firstName: user.firstName,
                         lastName: user.lastName,
-                        phoneNumber: user.phoneNumber,
                         teamUid: user.teamUid,
                         teamName: user.teamName
                     });
+                } else {            // If cant find *user* you still need to set authUser
+                    this.setState({
+                        authUser: authUser, 
+                        uid: authUser.uid,
+                        displayName: authUser.displayName,
+                        phoneNumber: authUser.phoneNumber,
+                        email: authUser.email    
+                    });
                 }
+                this.refreshToken();
             });         
         }
 
