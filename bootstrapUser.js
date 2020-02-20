@@ -1,5 +1,23 @@
 "use strict";
-const admin = require("../middleware/authServerCommon");
+const inquirer = require('inquirer');
+
+const admin = require("./middleware/authServerCommon");
+
+// Global Variables
+let user = {
+    uid: null,
+    email: "paull@linck.net",
+    password: "123456",
+    firstName: "Paul",
+    lastName: "LinckNET",
+    phoneNumber: "404-687-1115",
+    photoURL: "",
+    disabled: false
+};
+
+function exitProgram() {
+    console.log("BYE!");
+}
 
 // Set csutom claim without overrding other claim
 function setAuthClaims(uid, customClaims) {
@@ -111,14 +129,6 @@ function createUserBootstrap(user) {
 
 // Route for Creating a new user with email and password
 function createAuthUserBootstrap(user) {
-  // Generate random password
-  let user = {
-    email: "paull@linck.net",
-    password: "123456",
-    firstName: "Paul",
-    lastName: "LinckNET",
-    disabled: false
-  };
 
   try {
     // Create auth user
@@ -144,19 +154,74 @@ function createAuthUserBootstrap(user) {
   }
 };
 
-// Main
-// let user = {
-//     uid: null,
-//     email: "paull@linck.net",
-//     password: "123456",
-//     firstName: "Paul",
-//     lastName: "LinckNET",
-//     phoneNumber: "404-687-1115",
-//     photoURL: ""
-//     disabled: false
-// };
+async function showUsers() {
+
+    console.log(`user: ${JSON.stringify(user)}`)
 
 // let authUser = createAuthUserBootstrap(user);
 // user.uid = authUser.uid;
 // createUserBootstrap(user);
 // setAuthAndFBClaims(authUser.uid, user);
+}
+
+async function seedDatabase() {
+
+    const question = [{
+            name: 'email',
+            message: '\nEmail Address?',
+            validate: value => (value !== "")
+        },
+        {
+            name: 'password',
+            message: '\Pssword?',
+            validate: value => (value !== "" && value.length >= 6 )
+        },
+        {
+            name: 'firstName',
+            message: '\nFirst Name?',
+            validate: value => (value !== "")
+        },
+        {
+            name: 'lastName',
+            message: '\Last Name?',
+            validate: value => (value !== "" )
+        }
+    ];
+
+    let answer = await inquirer.prompt(question);
+
+    user.email = answer.email;
+    user.password = answer.password;
+    user.firstName = answer.firstName;
+    user.lastName = answer.lastName;
+
+    console.log(`user: ${JSON.stringify(user, null, 4)}`)
+
+// let authUser = createAuthUserBootstrap(user);
+// user.uid = authUser.uid;
+// createUserBootstrap(user);
+// setAuthAndFBClaims(authUser.uid, user);
+}
+
+// Main menu
+function mainMenu() {
+  const menuItems = {
+      "seed": seedDatabase,
+      "displayUsers": showUsers,
+      "QUIT": exitProgram
+  };
+
+  const question = {
+      type: 'list',
+      name: 'mainMenu',
+      message: '\n\nWhat view do you want?',
+      choices: Object.keys(menuItems)
+  };
+
+  inquirer.prompt(question).then(answer => {
+      menuItems[answer.mainMenu]();
+  });
+}
+
+//
+mainMenu();
