@@ -10,7 +10,14 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
+// For select input field
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 import UserAPI from "../User/UserAPI";
+import TeamAPI from "../Team/TeamAPI";
 
 const styles = theme => ({
     container: {
@@ -60,22 +67,29 @@ const styles = theme => ({
 }
 
 class AccountForm extends React.Component {
+    constructor(props) {
+        super(props);
 
-    state = {
-        id: this.props.uid,
-        uid: this.props.uid,
-        firstName: "",
-        lastName: "",
-        photoURL: "",
-        phoneNumber: "",
-        email: "",
-        claims: "",
-        isAdmin: false,
-        isCashier: false,
-        isBanker: false,
-        isUser: false,    
-        message: ""
-    };
+        this.state = {
+            id: this.props.uid,
+            uid: this.props.uid,
+            teamUid: "",
+            teamName: "", 
+            firstName: "",
+            lastName: "",
+            photoURL: "",
+            phoneNumber: "",
+            email: "",
+            claims: "",
+            isAdmin: false,
+            isCashier: false,
+            isBanker: false,
+            isUser: false,    
+            message: "",
+            teams: null,
+            teamLookup: null
+        };
+    }
 
     fetchUser = (uid) => {
         UserAPI
@@ -87,12 +101,14 @@ class AccountForm extends React.Component {
                     photoURL: user.photoURL || "",
                     phoneNumber: user.phoneNumber || "",
                     uid: user.uid,
-                    claims: user.claims || "user",
+                    teamUid: user.teamUid || "",
+                    teamName: user.teamName || "",    
+                    claims: user.claims,
                     isAdmin: user.isAdmin,
                     isCashier: user.isCashier,
                     isBanker: user.isBanker,
-                    isUser: user.isUser,                
-                    email: user.email
+                    isUser: user.isUser,
+                    email: user.email            
                 });
                 // Dont need to get custom claims since they are passed in props from context
                 // and can not be changed here
@@ -103,7 +119,34 @@ class AccountForm extends React.Component {
             });
     };
 
+    // get available teams for select list
+    fetchTeams() {
+        TeamAPI.getTeams()
+        .then(teams => {
+        
+        // Convert array of teams to key value unqie pairs for easy lookup on primary key
+        let teamLookup = {}
+        teams.forEach(team => {
+            teamLookup[team.id] = team.name;
+        });
+        
+        this.setState({
+            teams: teams,
+            teamLookup: teamLookup
+        });
+
+        // Dont need to get custom claims since they are passed in props from context
+        // and can not be changed here
+        })
+        .catch(err => {
+        console.error(`Error getting teams ${err}`);
+        this.setState({error: `Error getting teams ${err}`});
+        });
+    }
+
     componentDidMount() {
+        this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
+
         // since t hey are auth, uid == id
         console.log(`authUser.uid: ${this.state.uid}`);
         this.fetchUser(this.state.uid);
@@ -114,6 +157,9 @@ class AccountForm extends React.Component {
         // Update current user in firestore (and auth for some fields)
         console.log(`updating db with user.uid:${this.state.uid}`);
         const user = this.state;
+        // set team name from ID
+        user.teamName = this.state.teamLookup[this.state.teamUid]
+    
         UserAPI
             .updateCurrent(user)
             .then(user => {
@@ -150,7 +196,9 @@ class AccountForm extends React.Component {
             isCashier,
             isBanker,
             isUser,        
-            message
+            message,      
+            teamUid,
+            teams
         } = this.state;
 
         const isValid = firstName !== "" && lastName !== "" && phoneNumber !== "";
@@ -162,12 +210,46 @@ class AccountForm extends React.Component {
         //     isRoleEditEnabled = true;
         // }
 
+        if (typeof this.state.teams === 'undefined') {
+            console.error("Fatal Error")
+            return (<div> <p>FATAL ERROR Gettng teams, something goofy going on ...</p> </div>)
+        }
+        if (this.state.teams === null) {
+            console.log("No teams yet")
+            return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
+        }    
+
         return ( 
             <div className="container">
             <div className="card">
                 <div className="card-content">
                     <span className="card-title">User Profile (Role: {claims})</span>
                     <form className={classes.container} onSubmit={this.updateUser} >
+                        <FormControl required className={classes.formControl}>
+                            <InputLabel id="teamNameLabel">Team Name</InputLabel>
+                            <Select
+                            labelId="teamNameLabel"
+                            id="teamUid"
+                            name="teamUid"
+                            multiline
+                            type="text"
+                            margin="normal"
+                            value={teamUid}
+                            onChange={this.onChange}
+                            className={classes.textField}>
+            
+                            {teams.map((team) => {
+                                return (
+                                <MenuItem value={team.id}>{team.name}</MenuItem>
+                                );
+                            })} 
+                            {/*}
+                            <MenuItem value={"SePT3HTDR8EUbQgHCkf1"}>Rahuligan</MenuItem>
+                            <MenuItem value={"QwUhcThKRBQQE7nIu3ys"}>Scottie</MenuItem>
+                            */}
+                            </Select>
+                        </FormControl>
+      
                         <TextField disabled={true}
                         id="email"
                         name="email"
