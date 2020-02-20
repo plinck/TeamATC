@@ -108,8 +108,7 @@ class AccountForm extends React.Component {
                     isCashier: user.isCashier,
                     isBanker: user.isBanker,
                     isUser: user.isUser,
-                    email: user.email
-            
+                    email: user.email            
                 });
                 // Dont need to get custom claims since they are passed in props from context
                 // and can not be changed here
@@ -158,6 +157,9 @@ class AccountForm extends React.Component {
         // Update current user in firestore (and auth for some fields)
         console.log(`updating db with user.uid:${this.state.uid}`);
         const user = this.state;
+        // set team name from ID
+        user.teamName = this.state.teamLookup[this.state.teamUid]
+    
         UserAPI
             .updateCurrent(user)
             .then(user => {
