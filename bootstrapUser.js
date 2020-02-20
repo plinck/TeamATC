@@ -1,58 +1,19 @@
 "use strict";
 const inquirer = require('inquirer');
 
-const admin = require("./middleware/authServerCommon");
+require("dotenv");
+const path = require("path");
 
-// Global Variables
-let user = {
-    uid: null,
-    email: "paull@linck.net",
-    password: "123456",
-    firstName: "Paul",
-    lastName: "LinckNET",
-    phoneNumber: "404-687-1115",
-    photoURL: "",
-    disabled: false
-};
+// Need to use firebase admin to get at firebase stuff in node
+const admin = require("firebase-admin");
+const storageBucket = "teamatc-challenge.appspot.com";
+const databaseURL = "https://teamatc-challenge.firebaseio.com";
 
 function exitProgram() {
-    console.log("BYE!");
+  console.log("BYE!");
 }
 
-// Set csutom claim without overrding other claim
-function setAuthClaims(uid, customClaims) {
-  return new Promise(async (resolve, reject) => {
-    // get current stat of all claims
-    let updatedClaims = await getClaims(uid);
-
-    // Only update claims passed keeping existing claims
-    if (customClaims && customClaims.admin != null) updatedClaims.admin = customClaims.admin;
-    if (customClaims && customClaims.cashier != null) updatedClaims.cashier = customClaims.cashier;
-    if (customClaims && customClaims.banker != null) updatedClaims.banker = customClaims.banker;
-    if (customClaims && customClaims.user != null) updatedClaims.user = customClaims.user;
-
-    // The name is the *primary* role as someone can be admin and banker for example
-    if (updatedClaims.admin) {
-      updatedClaims.name = "admin";
-    } else if (updatedClaims.cashier) {
-      updatedClaims.name = "cashier";
-    } else if (updatedClaims.banker) {
-      updatedClaims.name = "banker";
-    } else if (updatedClaims.user) {
-      updatedClaims.name = "user";
-    } else {
-      updatedClaims.name = "noclaims";
-    }
-
-    admin.auth().setCustomUserClaims(uid, updatedClaims).then(() => {
-      resolve(updatedClaims);
-    }).catch(err => {
-      console.error("Error updating claims in AuthUserAPI", err);
-      resolve(updatedClaims);
-    });
-  }); // promise
-}
-
+// update claims from auth into FB
 function updateClaimsInFirebase(uid, claims, authClaims) {
   return new Promise(async (resolve, reject) => {
     const db = admin.firestore();
@@ -79,8 +40,34 @@ function updateClaimsInFirebase(uid, claims, authClaims) {
   });
 }
 
-function setAuthAndFBClaims(uid) {
-  try {
+// Set csutom claim without overrding other claim
+function setAuthClaims(uid, customClaims) {
+  return new Promise(async (resolve, reject) => {
+
+    // The name is the *primary* role as someone can be admin and banker for example
+    if (customClaims.admin) {
+      customClaims.name = "admin";
+    } else if (customClaims.cashier) {
+      customClaims.name = "cashier";
+    } else if (customClaims.banker) {
+      customClaims.name = "banker";
+    } else if (customClaims.user) {
+      customClaims.name = "user";
+    } else {
+      v.name = "noclaims";
+    }
+
+    admin.auth().setCustomUserClaims(uid, customClaims).then(() => {
+      resolve(customClaims);
+    }).catch(err => {
+      console.error("Error updating claims in AuthUserAPI", err);
+      resolve(customClaims);
+    });
+  }); // promise
+}
+
+async function setAuthAndFBClaims(uid) {
+  return new Promise(async (resolve, reject) => {
     // Now, set custom claims
     setAuthClaims(uid, {
       admin: true,
@@ -88,20 +75,17 @@ function setAuthAndFBClaims(uid) {
       banker: true,
       user: true
     }).then(async (newClaims) => {
-      try {
-        await updateClaimsInFirebase(uid, newClaims.name, newClaims);
-        console.log(uid);
-      } catch (err) {
-        console.error(`Error caught in "await updateClaimsInFirebase" ${err}`);
-      }
+      await updateClaimsInFirebase(uid, newClaims.name, newClaims);
+      resolve();
+    }).catch((err) => {
+      // catch all error
+      console.error(`Error caught in route app.post("/api/auth/setCashier..." ${err}`);
+      reject(err);
     });
-  } catch (err) {
-    // catch all error
-    console.error(`Error caught in route app.post("/api/auth/setCashier..." ${err}`);
-  }
-}; // Route
+  });
+}
 
-function createUserBootstrap(user) {
+async function createUserBootstrap(user) {
   console.log(`trying to update user in fb: ${user}`);
   return new Promise(async (resolve, reject) => {
     const db = admin.firestore();;
@@ -117,9 +101,9 @@ function createUserBootstrap(user) {
       photoURL: user.photoURL ? user.photoURL : ""
     }, {
       merge: true
-    }).then(() => {
-      console.log("completed");
-      resolve();
+    }).then((user) => {
+      console.log(`Updated user to: ${JSON.stringify(user)}`);
+      resolve(user);
     }).catch(err => {
       console.error(`error updating user: ${err}`);
       reject(err);
@@ -129,8 +113,8 @@ function createUserBootstrap(user) {
 
 // Route for Creating a new user with email and password
 function createAuthUserBootstrap(user) {
-
-  try {
+  console.log(`trying to createAuthUserBootstrap: ${JSON.stringify(user, null, 2)}`);
+  return new Promise(async (resolve, reject) => {
     // Create auth user
     admin.auth().createUser({
         email: user.email,
@@ -141,87 +125,102 @@ function createAuthUserBootstrap(user) {
       })
       .then((authUser) => {
         console.log('Successfully added auth user');
-        return authUser;
+        resolve(authUser);
       })
       .catch((err) => {
         console.error('Error creating auth user:', err);
-        return;
+        reject(err);
       });
-  } catch (err) {
-    // catch all error
-    console.error(`Error caught in route app.post("/api/auth/createUser..." ${err.errors[0].message}`);
-    return;
-  }
+  });
 };
 
 async function showUsers() {
 
-    console.log(`user: ${JSON.stringify(user)}`)
-
-// let authUser = createAuthUserBootstrap(user);
-// user.uid = authUser.uid;
-// createUserBootstrap(user);
-// setAuthAndFBClaims(authUser.uid, user);
+  console.log(`user: ${JSON.stringify(user, null, 4)}`)
 }
 
 async function seedDatabase() {
+  let user = {
+    uid: null,
+    email: "paull@linck.net",
+    password: "123456",
+    firstName: "Paul",
+    lastName: "LinckNET",
+    phoneNumber: "404-687-1115",
+    photoURL: "",
+    disabled: false
+  };
 
-    const question = [{
-            name: 'email',
-            message: '\nEmail Address?',
-            validate: value => (value !== "")
-        },
-        {
-            name: 'password',
-            message: '\Pssword?',
-            validate: value => (value !== "" && value.length >= 6 )
-        },
-        {
-            name: 'firstName',
-            message: '\nFirst Name?',
-            validate: value => (value !== "")
-        },
-        {
-            name: 'lastName',
-            message: '\Last Name?',
-            validate: value => (value !== "" )
-        }
-    ];
+  const question = [{
+      name: 'email',
+      message: '\nEmail Address?',
+      validate: value => (value !== "")
+    },
+    {
+      name: 'password',
+      message: '\Pssword?',
+      validate: value => (value !== "" && value.length >= 6)
+    },
+    {
+      name: 'firstName',
+      message: '\nFirst Name?',
+      validate: value => (value !== "")
+    },
+    {
+      name: 'lastName',
+      message: '\Last Name?',
+      validate: value => (value !== "")
+    }
+  ];
 
-    let answer = await inquirer.prompt(question);
 
-    user.email = answer.email;
-    user.password = answer.password;
-    user.firstName = answer.firstName;
-    user.lastName = answer.lastName;
+  let answer = await inquirer.prompt(question);
 
-    console.log(`user: ${JSON.stringify(user, null, 4)}`)
+  user.email = answer.email;
+  user.password = answer.password;
+  user.firstName = answer.firstName;
+  user.lastName = answer.lastName;
 
-// let authUser = createAuthUserBootstrap(user);
-// user.uid = authUser.uid;
-// createUserBootstrap(user);
-// setAuthAndFBClaims(authUser.uid, user);
+  console.log(`user: ${JSON.stringify(user, null, 4)}`)
+
+  let authUser = await createAuthUserBootstrap(user);
+  console.log(`Created authUser: ${JSON.stringify(authUser, null, 4)}`)
+
+  user.uid = authUser.uid;
+  let newUser = await createUserBootstrap(user);
+
+  await setAuthAndFBClaims(authUser.uid, user);
+
+  exitProgram();
+  return;
 }
 
 // Main menu
 function mainMenu() {
   const menuItems = {
-      "seed": seedDatabase,
-      "displayUsers": showUsers,
-      "QUIT": exitProgram
+    "seed": seedDatabase,
+    "displayUsers": showUsers,
+    "QUIT": exitProgram
   };
 
   const question = {
-      type: 'list',
-      name: 'mainMenu',
-      message: '\n\nWhat view do you want?',
-      choices: Object.keys(menuItems)
+    type: 'list',
+    name: 'mainMenu',
+    message: '\n\nWhat view do you want?',
+    choices: Object.keys(menuItems)
   };
 
   inquirer.prompt(question).then(answer => {
-      menuItems[answer.mainMenu]();
+    menuItems[answer.mainMenu]();
   });
 }
 
-//
+// START
+const serviceAccount = require(path.join(__dirname, "./.serviceAccountKeyBootstrap.json"));
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: databaseURL,
+  storageBucket: storageBucket
+});
+
 mainMenu();
