@@ -23,7 +23,8 @@
 
 # GCP
 app.yaml
-.serviceAccountKey.json
+**.serviceAccountKey.json
+**.serviceAccountKey*.json
 
 npm-debug.log*
 yarn-debug.log*
