@@ -201,7 +201,7 @@ class ActivityDB {
                     activity.activityDateTime = activity.activityDateTime.toDate();
                     return(resolve(activity));
                 }
-                console.log("Activity not found in firestore");
+                console.error("Activity not found in firestore");
                 return(resolve());
             }).catch(err => {
                 reject(`Error getting activity in ActivityDB.get ${err}`);
@@ -230,13 +230,13 @@ class ActivityDB {
                 console.log("Firestore activity successfully added");
                 return resolve();
             }).catch( (error) => {
-                console.log("Firestore activity add failed");
+                console.error("Firestore activity add failed");
                 return reject(error);
             });
         });
     }
     
-    static update = (activityId,activity) => {
+    static update = (activity) => {
         return new Promise((resolve, reject) => {
             const db = Util.getFirestoreDB();   // active firestore db ref
 
@@ -253,10 +253,10 @@ class ActivityDB {
                 displayName: activity.displayName,
                 uid: activity.uid
             },{ merge: true }).then( () => {
-                console.log("Firestore activity successfully added");
+                console.log("Firestore activity successfully updated");
                 return resolve();
             }).catch( (error) => {
-                console.log("Firestore activity add failed");
+                console.error("Firestore activity add failed");
                 return reject(error);
             });
         });

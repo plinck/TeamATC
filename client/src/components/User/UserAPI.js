@@ -60,7 +60,9 @@ class UserAPI {
                     displayName: `${user.firstName} ${user.lastName}`,
                     phoneNumber: user.phoneNumber,
                     email: user.email.toLowerCase(),
-                    photoURL: user.photoURL ? user.photoURL : ""    
+                    photoURL: user.photoURL ? user.photoURL : "",
+                    teamName: user.teamName,
+                    teamUid: user.teamUid
                 },{ merge: true }).then(() => {
                     console.log("completed");
                     resolve();
@@ -98,7 +100,9 @@ class UserAPI {
                 phoneNumber: userInfo.phoneNumber,
                 uid: authUser.user.uid,
                 email: userInfo.email.toLowerCase(),
-                photoURL: userInfo.photoURL
+                photoURL: userInfo.photoURL,
+                teamName: user.teamName,
+                teamUid: user.teamUid
             };
         } else {
             user = {
@@ -108,7 +112,9 @@ class UserAPI {
                 phoneNumber: authUser.user.phoneNumber ? authUser.user.phoneNumber : "",
                 uid: authUser.user.uid,
                 email: authUser.user.email.toLowerCase(),
-                photoURL: authUser.user.photoURL ? authUser.user.photoURL : ""
+                photoURL: authUser.user.photoURL ? authUser.user.photoURL : "",
+                teamName: user.teamName,
+                teamUid: user.teamUid
             };
         }
 
@@ -126,7 +132,9 @@ class UserAPI {
                         phoneNumber: user.phoneNumber,
                         uid: user.uid,
                         email: user.email,
-                        photoURL: user.photoURL
+                        photoURL: user.photoURL,
+                        teamName: user.teamName,
+                        teamUid: user.teamUid    
                     },{ merge: true }).then((doc) => {
                         console.log("Document updated with ID: ", doc.id);
                         resolve(doc.id);
@@ -143,7 +151,10 @@ class UserAPI {
                         phoneNumber: user.phoneNumber,
                         uid: user.uid,
                         email: user.email,
-                        photoURL: user.photoURL
+                        photoURL: user.photoURL,
+                        teamName: user.teamName,
+                        teamUid: user.teamUid
+
                     }).then(() => {
                         console.log("Document added with ID: ", authUser.user.uid);
                         resolve(authUser.user.uid);

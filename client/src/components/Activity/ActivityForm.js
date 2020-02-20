@@ -1,4 +1,6 @@
 import React from "react";
+import { withRouter } from 'react-router';
+
 import M from "materialize-css/dist/js/materialize.min.js";
 import Modal from "./ActivityModal";
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
@@ -20,7 +22,11 @@ import ActivityDB from "./ActivityDB"
 import UserAPI from "../User/UserAPI"
 
 const INITIAL_STATE = {
+    uid: "",
+    email: "",
     displayName: "",
+    teamUid: "",
+    teamName: "",
     activityName: "",
     activityDateTime: "",
     activityDateTimeString: "",
@@ -28,7 +34,6 @@ const INITIAL_STATE = {
     distance: "",
     distanceUnits: "",
     duration: "",
-    teamName: "",
 
     teams: null,
     teamLookup: null,
@@ -158,6 +163,10 @@ class ActivityForm extends React.Component {
                 distance: activity.distance,
                 distanceUnits: activity.distanceUnits,
                 duration: activity.duration,
+                uid: activity.uid,
+                displayName: activity.displayName,
+                email: activity.email,
+                teamUid: activity.teamUid,
                 teamName: activity.teamName
             });
         });
@@ -212,22 +221,51 @@ class ActivityForm extends React.Component {
         const jsDate = new Date(jsDateArray[2], jsDateArray[0], jsDateArray[1]);
         
         let activity = this.state;
-        activity.email = this.props.user.authUser.email;
-        activity.displayName = this.props.user.displayName;
-        activity.uid = this.props.user.authUser.uid;
         activity.activityDateTime = jsDate;
-        activity.teamName = this.props.user.teamName;
-        activity.teamUid = this.props.user.teamUid;
         
+        // If NEW activity, set the info to the current users info, if not use what is there so admiin can update
+        if (!this.state.id) {
+            activity.email = this.props.user.authUser.email;
+            activity.displayName = this.props.user.displayName;
+            activity.uid = this.props.user.authUser.uid;
+            activity.teamName = this.props.user.teamName;
+            activity.teamUid = this.props.user.teamUid;
+        }
+        
+        if (!activity.uid || activity.uid.length < 1) {
+            this.setState({ message: `User info missing - Maybe User Profile Needs Repair`});
+            return false;
+        } 
+
+        if (!activity.email || activity.email.length < 1) {
+            this.setState({ message: `Email missing - Maybe User Profile Needs Repair`});
+            return false;
+        }     
+        
+        if (!activity.displayName || activity.displayName.length < 1) {
+            this.setState({ message: `User name missing - Maybe User Profile Needs Repair`});
+            return false;
+        }     
+
+        if (!activity.uid || activity.uid.length < 1) {
+            this.setState({ message: `User info missing - User Profile Needs Repair`});
+            return false;
+        } 
+
+        if (!activity.teamName || activity.teamName.length < 1) {
+            this.setState({ message: `Team Name missing - Join team before adding activity`});
+            return false;
+        } 
+
+        if (!activity.teamUid || activity.teamUid.length < 1) {
+            this.setState({ message: `Team Uid missing - Join team before adding activity`});
+            return false;
+        } 
+
         if (activity.activityName.length < 1) {
             this.setState({ message: `Activity Name must not be blank`});
             return false;
-        }
-
-        if (activity.teamName.length < 1) {
-            this.setState({ message: `Team Name must not be blank`});
-            return false;
-        } 
+        }    
 
         if (activity.activityType.length < 1) {
             this.setState({ message: `Activity Type must not be blank`});
@@ -313,15 +351,14 @@ class ActivityForm extends React.Component {
             return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
         }
 
-        // Set prop info for user
-        let displayName = "";
-        let teamName = "";
-        if (this.props.user.authUser) { 
-            displayName = this.props.user.displayName
-            teamName = this.props.user.teamName;
-        }
-
+        // Commented out the state vars that dont get mutated on this screen
+        // these may be needed if a admin is editting
         var {
+            uid,
+            email,
+            displayName,
+            teamUid,
+            teamName,
             activityName,
             activityDateTimeString,
             activityType,           // swim, bike, run
@@ -330,6 +367,21 @@ class ActivityForm extends React.Component {
             duration,
             message
         } = this.state;
+
+        // Dont use props to set the team and user for activity unless its NEW, if exissts use from state / current record
+        if (!this.state.id) {
+            // console.log(`using current users session info for activity add`);
+            if (this.props.user.authUser) { 
+                uid = this.props.user.uid ? this.props.user.uid : "";
+                email = this.props.user.email ? this.props.user.email : "";
+                displayName = this.props.user.displayName ? this.props.user.displayName : "";
+                teamUid = this.props.user.teamUid ? this.props.user.teamUid : "";
+                teamName = this.props.user.teamName ? this.props.user.teamName : "";
+            }
+        } else {
+            // console.log(`using current activity info for activity updates`);
+            console.log(`user/team info is uid: ${uid}, email: ${email}, displayName: ${displayName}, teamUid: ${teamUid}, teamName: ${teamName}, `);
+        }
     
         if (this.props.user.authUser) {
             return (
@@ -473,4 +525,4 @@ class ActivityForm extends React.Component {
     }
 };
 
-export default withStyles(styles)(withAuthUserContext(ActivityForm));
+export default withStyles(styles)(withAuthUserContext(withRouter(ActivityForm)));
