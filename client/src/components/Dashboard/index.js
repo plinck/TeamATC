@@ -671,7 +671,7 @@ class Dashboard extends React.Component {
                                             {this.totals.userR.map((userResult, index) => {
                                                 return (
                                                     <div key={index}>
-                                                        <ResultsCard result={userResult}
+                                                        <ResultsCard result={userResult} index={index}
                                                         />
                                                     </div>
                                                 );
@@ -694,7 +694,7 @@ class Dashboard extends React.Component {
                                             {this.totals.teamR.map((teamResult, index) => {
                                                 return (
                                                     <div key={index}>
-                                                        <ResultsCard result={teamResult}
+                                                        <ResultsCard result={teamResult} index={index}
                                                         />
                                                     </div>
                                                 );
