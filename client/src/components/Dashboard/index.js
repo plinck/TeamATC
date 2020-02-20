@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 import './dashboard.css';
 import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
 import { Redirect } from 'react-router';
@@ -15,6 +17,8 @@ import ActivityByDay from "./Graphs/ActivityByDay";
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+
 import Util from '../Util/Util';
 import UserAPI from "../User/UserAPI";
 
@@ -81,7 +85,7 @@ class Dashboard extends React.Component {
                     }
                 }
                 if (change.type === "modified") {
-                    console.log(`Changed Activity: ${change.doc.id}`);
+                    // console.log(`Changed Activity: ${change.doc.id}`);
                     activity = change.doc.data();
                     activity.id = change.doc.id;
                     activity.activityDateTime = activity.activityDateTime.toDate();
@@ -113,7 +117,7 @@ class Dashboard extends React.Component {
                     }
                 }
                 if (change.type === "removed") {
-                    console.log(`Removed Activity: ${change.doc.id}`);
+                    // console.log(`Removed Activity: ${change.doc.id}`);
                     activity = change.doc.data();
                     activity.id = change.doc.id;
                     activity.activityDateTime = activity.activityDateTime.toDate();
@@ -174,7 +178,7 @@ class Dashboard extends React.Component {
         // kill the listener
         if (this.activeListener) {
             this.activeListener();
-            console.log(`Detached listener`);
+            // console.log(`Detached listener`);
         }
     }
 
@@ -233,10 +237,10 @@ class Dashboard extends React.Component {
             runDurationTotal : 0
         };
 
-        let newResults = [];
+        let newUserResults = [];
+        let newTeamResults = [];
 
         let userResults = [];
-
         let teamResults = [];
 
         let activities = this.state.activities;
@@ -244,7 +248,8 @@ class Dashboard extends React.Component {
         // loop through array counting by team
         for (let i = 0; i < activities.length; i++) {
             // get resulsts
-            newResults = this.calulateResults(userResults, teamResults, activities[i]);
+            newUserResults = this.calulateUserResults(userResults, activities[i]);
+            newTeamResults = this.calulateTeamResults(teamResults, activities[i]);
 
             // Add everything for totals
             newTotals.nbrActivities += 1;
@@ -321,19 +326,46 @@ class Dashboard extends React.Component {
             }
         }
 
-        let totalsAndResults = {all: newTotals, team : newTeamTotals, user : newUserTotals, userR : newResults.user, teamR : newResults.user}
-        console.log(`Results User: ${JSON.stringify(newResults.user, null, 2)}`);
+        // Sort the team and user results based on total points DESC          
+        newUserResults.sort((a,b) => {
+            const totalA = a.pointsTotal;
+            const totalB = b.pointsTotal;
+
+            let comparison = 0;
+            if (totalA > totalB) {
+            comparison = 1;
+            } else if (totalA < totalB) {
+            comparison = -1;
+            }
+            return comparison * -1;  // Invert so it will sort in descending order
+        });
+        newTeamResults.sort((a,b) => {
+            const totalA = a.pointsTotal;
+            const totalB = b.pointsTotal;
+
+            let comparison = 0;
+            if (totalA > totalB) {
+            comparison = 1;
+            } else if (totalA < totalB) {
+            comparison = -1;
+            }
+            return comparison * -1;  // Invert so it will sort in descending order
+        });
+
+        let totalsAndResults = {all: newTotals, team : newTeamTotals, user : newUserTotals, userR : newUserResults, teamR : newTeamResults};
+        // console.log(`User Results User: ${JSON.stringify(newUserResults, null, 2)}`);
+        // console.log(`Team Results Team: ${JSON.stringify(newTeamResults, null, 2)}`);
 
         return(totalsAndResults);
     }
 
-    calulateResults(userResults, teamResults, activity) {
-
+    // Calculate Current results/standings for each user
+    calulateUserResults(userResults, activity) {
         let newUserResult =
         {
-            uid: null,
-            displayName: "",
-            isThisMe: false,
+            userOrTeamUid: null,
+            userOrTeamName: "",
+            isThisMine: false,
             distanceTotal : 0,
             pointsTotal : 0,
             swimDistanceTotal : 0,
@@ -351,42 +383,16 @@ class Dashboard extends React.Component {
             runNbrActivities: 0,
             runDurationTotal: 0
         }
-        let newTeamResults =
-        {
-            teamUid: null,
-            teamName: "",
-            isThisMe: false,
-            distanceTotal : 0,
-            pointsTotal : 0,
-            swimDistanceTotal : 0,
-            swimPointsTotal : 0,
-            bikeDistanceTotal : 0,
-            bikePointsTotal : 0,
-            runDistanceTotal : 0,
-            runPointsTotal : 0,
-            durationTotal: 0,
-            nbrActivities: 0,
-            swimNbrActivities: 0,
-            swimDurationTotal: 0,
-            bikeNbrActivities: 0,
-            bikeDurationTotal: 0,
-            runNbrActivities: 0,
-            runDurationTotal: 0
-        }        
-
-        // let oldUserResult = this.searchForIndex(activity.uid, "uid", userResults);
-        // let idx = oldUserResult ? oldUserResult.index : -1;
 
         let idx = userResults.findIndex( (uResult) => { 
-            const isFound = uResult.uid === activity.uid;
+            const isFound = uResult.userOrTeamUid === activity.uid;
             return isFound;
         });
 
         if (idx > -1) {       // Found, results for this oone so add to it
-            console.log(`found user: ${userResults[idx].uid} at idx: ${idx}`)
             newUserResult = userResults[idx];
 
-            newUserResult.isthisMe = activity.uid === this.props.user.uid ? true : false;
+            newUserResult.isThisMine = activity.uid === this.props.user.uid ? true : false;
 
             const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
             newUserResult.distanceTotal +=  distanceInMiles;
@@ -426,11 +432,9 @@ class Dashboard extends React.Component {
             userResults[idx] = newUserResult;
 
         } else {              // Didnt find results for this oone so push it
-            console.log(`new user: ${activity.uid}`)
-
-            newUserResult.isthisMe = activity.uid === this.props.user.uid ? true : false;
-            newUserResult.uid = activity.uid;
-            newUserResult.displayName = activity.displayName;
+            newUserResult.isThisMine = activity.uid === this.props.user.uid ? true : false;
+            newUserResult.userOrTeamUid = activity.uid;
+            newUserResult.userOrTeamName = activity.displayName;
 
             const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
             newUserResult.distanceTotal +=  distanceInMiles;
@@ -470,9 +474,134 @@ class Dashboard extends React.Component {
             userResults.push(newUserResult);
         }
 
-        let newResults = {user: userResults, team : teamResults }
+        let newResults = userResults;
         return(newResults);
     }
+    // End calulateUserResults
+    
+    // Calculate Current results/standings for each team
+    calulateTeamResults(teamResults, activity) {
+        let newTeamResult =
+        {
+            userOrTeamUid: null,
+            userOrTeamName: "",
+            isThisMine: false,
+            distanceTotal : 0,
+            pointsTotal : 0,
+            swimDistanceTotal : 0,
+            swimPointsTotal : 0,
+            bikeDistanceTotal : 0,
+            bikePointsTotal : 0,
+            runDistanceTotal : 0,
+            runPointsTotal : 0,
+            durationTotal: 0,
+            nbrActivities: 0,
+            swimNbrActivities: 0,
+            swimDurationTotal: 0,
+            bikeNbrActivities: 0,
+            bikeDurationTotal: 0,
+            runNbrActivities: 0,
+            runDurationTotal: 0
+        }        
+
+        let idx = teamResults.findIndex( (uResult) => { 
+            const isFound = uResult.userOrTeamName === activity.teamName;
+            // console.log(`Looking for uResult.userOrTeamName: ${JSON.stringify(uResult, null, 2)} for activity.teamName: ${activity.teamName}, found = ${isFound}`);
+            return isFound;
+        });
+
+        if (idx > -1) {       // Found, results for this oone so add to it
+            // console.log(`found team: ${teamResults[idx].userOrTeamName} at idx: ${idx}`)
+            newTeamResult = teamResults[idx];
+
+            newTeamResult.isThisMine = activity.teamName === this.props.user.teamName ? true : false;
+
+            const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
+            newTeamResult.distanceTotal +=  distanceInMiles;
+            newTeamResult.durationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration ;  
+            
+            switch(activity.activityType) {
+                case "Swim":
+                    newTeamResult.pointsTotal +=  distanceInMiles * 10;
+                    
+                    newTeamResult.swimNbrActivities += 1;
+                    newTeamResult.swimDistanceTotal += activity.distanceUnits === "Miles" ? activity.distance * 1760 : activity.distance;
+                    newTeamResult.swimDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+
+                    newTeamResult.swimPointsTotal +=  distanceInMiles * 10;
+                    break;
+                case "Bike":                            
+                    newTeamResult.pointsTotal +=  distanceInMiles;
+                    
+                    newTeamResult.bikeNbrActivities += 1;
+                    newTeamResult.bikeDistanceTotal += activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
+                    newTeamResult.bikeDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+                    
+                    newTeamResult.bikePointsTotal +=  distanceInMiles;
+                    break;
+                case "Run":
+                    newTeamResult.pointsTotal +=  distanceInMiles *3;
+                    
+                    newTeamResult.runNbrActivities += 1;
+                    newTeamResult.runDistanceTotal += activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
+                    newTeamResult.runDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+
+                    newTeamResult.runPointsTotal +=  distanceInMiles *3;
+                    break;
+                default:
+                    // NADA
+            }
+            teamResults[idx] = newTeamResult;
+
+        } else {              // Didnt find results for this oone so push it
+            // console.log(`didnt find team: ${activity.teamName}, creating`);
+
+            newTeamResult.isThisMine = activity.teamName === this.props.user.teamName ? true : false;
+            newTeamResult.userOrTeamUid = activity.teamUid;
+            newTeamResult.userOrTeamName = activity.teamName;
+
+            const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
+            newTeamResult.distanceTotal +=  distanceInMiles;
+            newTeamResult.durationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration ;  
+            
+            switch(activity.activityType) {
+                case "Swim":
+                    newTeamResult.pointsTotal +=  distanceInMiles * 10;
+                    
+                    newTeamResult.swimNbrActivities += 1;
+                    newTeamResult.swimDistanceTotal += activity.distanceUnits === "Miles" ? activity.distance * 1760 : activity.distance;
+                    newTeamResult.swimDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+
+                    newTeamResult.swimPointsTotal +=  distanceInMiles * 10;
+                    break;
+                case "Bike":                            
+                    newTeamResult.pointsTotal +=  distanceInMiles;
+                    
+                    newTeamResult.bikeNbrActivities += 1;
+                    newTeamResult.bikeDistanceTotal += activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
+                    newTeamResult.bikeDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+                    
+                    newTeamResult.bikePointsTotal +=  distanceInMiles;
+                    break;
+                case "Run":
+                    newTeamResult.pointsTotal +=  distanceInMiles *3;
+                    
+                    newTeamResult.runNbrActivities += 1;
+                    newTeamResult.runDistanceTotal += activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
+                    newTeamResult.runDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+
+                    newTeamResult.runPointsTotal +=  distanceInMiles *3;
+                    break;
+                default:
+                    // NADA
+            }
+            teamResults.push(newTeamResult);
+        }
+
+        let newResults = teamResults;
+        return(newResults);
+    }
+    // End calulateTeamResults
 
     render() {
         // Some props take time to get ready so return null when uid not avaialble
@@ -485,6 +614,39 @@ class Dashboard extends React.Component {
             this.totals = this.calculateTotalsForTeamAndUser();
             this.activitiesUpdated = false;
         }
+
+        // Totals needs to catch up for some reason - I had to refresh browser after going to activities page
+        if (!this.totals) {
+            return null;
+        }
+        if (!this.totals.userR) {
+            return null;
+        }
+        if (!this.totals.teamR) {
+            return null;
+        }
+
+        // header row for results
+        const headerRow = 
+            <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1}>
+                <div className="col s1 m1">
+                </div>
+                <div className="col s3 m3 truncate">
+                    Name
+                </div>
+                <div className="black-text col m2 m2 truncate">
+                    Total
+                </div>
+                <div className="blue-text col m2 m2 truncate">
+                    Swim
+                </div>
+                <div className="red-text col m2 m2 truncate">
+                    Bike
+                </div>
+                <div className="green-text col m2 m2 truncate">
+                    Run
+                </div>
+            </Box>
         
         if (this.props.user.authUser) {
             return (
@@ -496,14 +658,52 @@ class Dashboard extends React.Component {
                         :
                         <div className="container">
                             <div className="row">
-                            {/* change fornow to chck compile
-                                    teamResults={this.totals.teamR}
-                                    userResults={this.totals.userR}
-                            */}
-                                <ResultsCard
-                                    teamResults={this.totals.team}
-                                    userResults={this.totals.user}
-                                />
+                                {/* User standings/results card */}
+                                <div className="col s12 m6">
+                                    <div className="card">
+                                        <div className="card-content pCard">
+                                            <span className="card-title blue-text left-align">
+                                                <Link to="/activities">
+                                                    User Leaderboard - Total (Adjusted Miles)
+                                                </Link>
+                                            </span>
+                                            {headerRow}
+                                            {this.totals.userR.map((userResult, index) => {
+                                                return (
+                                                    <div key={index}>
+                                                        <ResultsCard result={userResult} index={index}
+                                                        />
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* End User standings/results card */}
+
+                                {/* Team standings/results card */}
+                                <div className="col s12 m6">
+                                    <div className="card">
+                                        <div className="card-content pCard">
+                                            <span className="card-title blue-text left-align">
+                                                <Link to="/activities">
+                                                    Team Leaderboard
+                                                </Link>
+                                            </span>
+                                            {headerRow}
+                                            {this.totals.teamR.map((teamResult, index) => {
+                                                return (
+                                                    <div key={index}>
+                                                        <ResultsCard result={teamResult} index={index}
+                                                        />
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* End Team standings/results card */}
+
                             </div>
                             
                             <div className="row">
