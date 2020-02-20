@@ -2,7 +2,7 @@ import Util from "../Util/Util";
 
 class ActivityDB {
     // Get all activities from firestore 
-    static getAll =  (resultLimit, teamName, uid, startDate, endDate) => {
+    static getAll =  (resultLimit, teamName, teamUid, uid, startDate, endDate) => {
         const db = Util.getFirestoreDB();   // active firestore db ref
         
         resultLimit = resultLimit || 50;
@@ -18,6 +18,12 @@ class ActivityDB {
         if (teamName) {
             ref = db.collection("activities")
             .where("teamName", "==", teamName)
+            .orderBy("activityDateTime", "desc")
+            .limit(resultLimit);
+        }
+        if (teamUid) {
+            ref = db.collection("activities")
+            .where("teamUid", "==", teamUid)
             .orderBy("activityDateTime", "desc")
             .limit(resultLimit);
         }
@@ -210,6 +216,7 @@ class ActivityDB {
 
             db.collection("activities").add({
                 teamName: activity.teamName,
+                teamUid: activity.teamUid ? activity.teamUid : null,
                 activityName: activity.activityName,
                 activityDateTime: activity.activityDateTime,
                 activityType: activity.activityType,
@@ -235,6 +242,7 @@ class ActivityDB {
 
             db.collection("activities").doc(activity.id).set({
                 teamName: activity.teamName,
+                teamUid: activity.teamUid ? activity.teamUid : null,
                 activityName: activity.activityName,
                 activityDateTime: activity.activityDateTime,
                 activityType: activity.activityType,

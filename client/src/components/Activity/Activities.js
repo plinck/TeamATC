@@ -41,10 +41,10 @@ class Activities extends React.Component {
         };
     }
 
-    getActivities = (resultLimit, teamName, userUid, startDate, endDate) => {
+    getActivities = (resultLimit, teamName, teamUid, userUid, startDate, endDate) => {
         // Get with security
         // comes back sorted already
-        ActivityDB.getAll(resultLimit, teamName, userUid, startDate, endDate)
+        ActivityDB.getAll(resultLimit, teamName, teamUid, userUid, startDate, endDate)
             .then(res => {
                 let activities = res;
                 this.setState({ activities: activities });
@@ -82,23 +82,23 @@ class Activities extends React.Component {
                 this.getActivities()
                 break;
             case "Team":                            
-                this.getActivities(50, this.props.user.teamName, undefined, undefined, undefined)
+                this.getActivities(50, undefined, this.props.user.teamUid, undefined, undefined, undefined)
                 break;
             case "Mine":
-                this.getActivities(50, undefined, this.props.user.uid, undefined, undefined)
+                this.getActivities(50, undefined, undefined, this.props.user.uid, undefined, undefined)
                 break;
             default:
                 if (this.props.user.uid === undefined || this.props.user.uid === null) {
                     this.getActivities()
                 } else {
-                    this.getActivities(50, undefined, this.props.user.uid, undefined, undefined)
+                    this.getActivities(50, undefined, undefined, this.props.user.uid, undefined, undefined)
                 }
             }     
     }
 
     filterByChange = (filterString) => {
         this.setState({filterByString: filterString});
-        console.log(`Filter By ${filterString} activities`);
+        // console.log(`Filter By ${filterString} activities`);
         this.refreshPage(filterString);
     }
 
@@ -128,7 +128,7 @@ class Activities extends React.Component {
         const { classes } = this.props;
 
         // Some props take time to get ready so return null when uid not avaialble
-        if (this.props.user.uid === null || this.props.user.teamName === null) {
+        if (this.props.user.uid === null) {
             return null;
         }
 
@@ -210,7 +210,7 @@ class Activities extends React.Component {
                         <div className="card">
                             <div className="card-content pCard">
                                 <span className="card-title">
-                                    <Link to="/activities">Activities ({this.state.filterByString ? this.state.filterByString : 'All'})</Link>
+                                    <Link to="/activities">Activities ({filterByString})</Link>
                                 </span>
                                 
                                 {activities.map((activity) => {

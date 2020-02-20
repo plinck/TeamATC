@@ -28,7 +28,7 @@ const INITIAL_STATE = {
     distance: "",
     distanceUnits: "",
     duration: "",
-    teamName: null,
+    teamName: "",
 
     teams: null,
     teamLookup: null,
@@ -213,10 +213,11 @@ class ActivityForm extends React.Component {
         
         let activity = this.state;
         activity.email = this.props.user.authUser.email;
-        activity.displayName = this.props.user.authUser.displayName;
+        activity.displayName = this.props.user.displayName;
         activity.uid = this.props.user.authUser.uid;
         activity.activityDateTime = jsDate;
-        activity.teamName = this.state.teamName;
+        activity.teamName = this.props.user.teamName;
+        activity.teamUid = this.props.user.teamUid;
         
         if (activity.activityName.length < 1) {
             this.setState({ message: `Activity Name must not be blank`});
@@ -314,13 +315,10 @@ class ActivityForm extends React.Component {
 
         // Set prop info for user
         let displayName = "";
+        let teamName = "";
         if (this.props.user.authUser) { 
-            displayName = this.props.user.authUser.displayName
-
-            // Get the user tea if we dont already have it
-            if (this.state.teamName === null) {
-                this.fetchUser();
-            }
+            displayName = this.props.user.displayName
+            teamName = this.props.user.teamName;
         }
 
         var {
@@ -330,7 +328,6 @@ class ActivityForm extends React.Component {
             distance,
             distanceUnits,
             duration,
-            teamName,
             message
         } = this.state;
     

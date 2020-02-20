@@ -20,7 +20,6 @@ import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 
 import Util from '../Util/Util';
-import UserAPI from "../User/UserAPI";
 
 class Dashboard extends React.Component {
     state = {
@@ -34,23 +33,6 @@ class Dashboard extends React.Component {
     activeListener = undefined;
     totals = {};
     activitiesUpdated = false;
-
-    // Get the users info
-    fetchCurrentUser() {
-        if (!this._mounted) {
-            return;
-        }
-
-        UserAPI.getCurrentUser().then(user => {
-            this.setState({
-                currentUser: {"teamName" : user.teamName,
-                    "displayName" : user.displayName
-                }
-            });
-        }).catch((err) => {
-            alert(`Error: ${err}, trying to get current user: ${this.props.user ? this.props.user.uid : "unknown"}`);
-        });
-    }
 
     componentDidMount() {
         this._mounted = true;
@@ -276,7 +258,7 @@ class Dashboard extends React.Component {
             }
 
             // only add for this team
-            if (this.props.user.teamName === activities[i].teamName) {
+            if (this.props.user.teamUid === activities[i].teamUid) {
                 newTeamTotals.nbrActivities += 1;
                 newTeamTotals.distanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
                 newTeamTotals.durationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
@@ -505,8 +487,7 @@ class Dashboard extends React.Component {
         }        
 
         let idx = teamResults.findIndex( (uResult) => { 
-            const isFound = uResult.userOrTeamName === activity.teamName;
-            // console.log(`Looking for uResult.userOrTeamName: ${JSON.stringify(uResult, null, 2)} for activity.teamName: ${activity.teamName}, found = ${isFound}`);
+            const isFound = uResult.userOrTeamUid === activity.teamUid;
             return isFound;
         });
 
@@ -514,7 +495,7 @@ class Dashboard extends React.Component {
             // console.log(`found team: ${teamResults[idx].userOrTeamName} at idx: ${idx}`)
             newTeamResult = teamResults[idx];
 
-            newTeamResult.isThisMine = activity.teamName === this.props.user.teamName ? true : false;
+            newTeamResult.isThisMine = activity.teamUid === this.props.user.teamUid ? true : false;
 
             const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
             newTeamResult.distanceTotal +=  distanceInMiles;
@@ -554,9 +535,8 @@ class Dashboard extends React.Component {
             teamResults[idx] = newTeamResult;
 
         } else {              // Didnt find results for this oone so push it
-            // console.log(`didnt find team: ${activity.teamName}, creating`);
 
-            newTeamResult.isThisMine = activity.teamName === this.props.user.teamName ? true : false;
+            newTeamResult.isThisMine = activity.teamUid === this.props.user.teamUid ? true : false;
             newTeamResult.userOrTeamUid = activity.teamUid;
             newTeamResult.userOrTeamName = activity.teamName;
 
@@ -605,7 +585,7 @@ class Dashboard extends React.Component {
 
     render() {
         // Some props take time to get ready so return null when uid not avaialble
-        if (this.props.user.uid === null || this.props.user.teamName === null) {
+        if (this.props.user.uid === null || this.props.user.teamUid === null) {
             return null;
         }
         
@@ -615,14 +595,8 @@ class Dashboard extends React.Component {
             this.activitiesUpdated = false;
         }
 
-        // Totals needs to catch up for some reason - I had to refresh browser after going to activities page
-        if (!this.totals) {
-            return null;
-        }
-        if (!this.totals.userR) {
-            return null;
-        }
-        if (!this.totals.teamR) {
+        // Some need to catch up for some reason - I had to refresh browser after going to activities page
+        if (!this.totals || !this.totals.userR || !this.totals.teamR) {
             return null;
         }
 
