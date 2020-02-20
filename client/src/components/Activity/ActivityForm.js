@@ -157,7 +157,7 @@ class ActivityForm extends React.Component {
         }
     }
 
-    saveFitJSONToFB(jsonData) {
+    saveFITFileToState(jsonData) {
         let activity = {
             uid: this.props.user.authUser.uid,
             email: this.props.user.authUser.email,
@@ -165,20 +165,23 @@ class ActivityForm extends React.Component {
             teamName: this.props.user.teamName,
             teamUid: this.props.user.teamUid,
 
-            activityName: `${sport} on ${activityDateEST}`,
-            activityDateTime: activityDateEST,
-            activityDateTimeString: dateTimeString,
-            activityType: activity.activityType,   
-            distance: activity.distance,
-            distanceUnits: activity.distanceUnits,
-            duration: activity.duration,
+            activityName: "",
+            activityDateTime: null,
+            activityDateTimeString: "",
+            activityType: "",   
+            distance: 0,
+            distanceUnits: "Miles",
+            duration: 0
         }
 
         var activityDateEST = new Date(jsonData.activity.timestamp).toLocaleString("en-US", {timeZone: "America/New_York"});
         activityDateEST = new Date(activityDateEST); 
-        const activity.activityDateTimeString = moment(activityDateEST).format("MM-DD-YYYY");
+        activity.activityDateTime = activityDateEST;
+        activity.activityDateTimeString = moment(activityDateEST).format("MM-DD-YYYY");
 
-        const sport = jsonData.sport.sport
+        const sport = jsonData.sport.sport;
+
+        activity.activityType = "Other";
         if (sport.toLowerCase() === "cycling") {
             activity.activityType ="Bike";
         } else if (sport.toLowerCase() === "running") {
@@ -186,22 +189,32 @@ class ActivityForm extends React.Component {
         } else if (sport.toLowerCase() === "swimming") {
             activity.activityType = "Swim";
         }
+        // No name on Fit File???
+        activity.activityName = `${activity.activityType} on ${activity.activityDateTimeString}`;
 
-        const sub_sport = jsonData.sport["sub_sport"]
-        const total_timer_time = jsonData.activity.total_timer_time
-        const total_distance = jsonData.activity.sessions[0].total_distance
-        const total_calories = jsonData.activity.sessions[0].total_calories
-        const avg_speed = jsonData.activity.sessions[0].avg_speed
-        const avg_power = jsonData.activity.sessions[0].avg_power
-        const normalized_power = jsonData.activity.sessions[0].normalized_power
-        const training_stress_score = jsonData.activity.sessions[0].training_stress_score
-        const intensity_factor = jsonData.activity.sessions[0].intensity_factor
-        const avg_heart_rate = jsonData.activity.sessions[0].avg_heart_rate
-        const max_heart_rate = jsonData.activity.sessions[0].max_heart_rate
-        const avg_cadence = jsonData.activity.sessions[0].avg_cadence
-        const max_cadence = jsonData.activity.sessions[0].max_cadence
+        const sub_sport = jsonData.sport["sub_sport"];
+        
+        const total_distance = jsonData.activity.sessions[0].total_distance;
+        activity.distance = Number(total_distance);
+        activity.distanceUnits = "Miles";
+        
+        const total_timer_time = jsonData.activity.total_timer_time;
+        activity.duration = Number(total_timer_time) / 3600;
+       
+        const total_calories = jsonData.activity.sessions[0].total_calories;
+        const avg_speed = jsonData.activity.sessions[0].avg_speed;
+        const avg_power = jsonData.activity.sessions[0].avg_power;
+        const normalized_power = jsonData.activity.sessions[0].normalized_power;
+        const training_stress_score = jsonData.activity.sessions[0].training_stress_score;
+        const intensity_factor = jsonData.activity.sessions[0].intensity_factor;
+        const avg_heart_rate = jsonData.activity.sessions[0].avg_heart_rate;
+        const max_heart_rate = jsonData.activity.sessions[0].max_heart_rate;
+        const avg_cadence = jsonData.activity.sessions[0].avg_cadence;
+        const max_cadence = jsonData.activity.sessions[0].max_cadence;
       
+        console.log(`Ready to upload activity: ${JSON.stringify(activity, null, 4)}`);
 
+        // for now, set the state so user cn name it and fix errors
         // this.createActivity(activity);
     }
 
@@ -229,7 +242,8 @@ class ActivityForm extends React.Component {
                     if (error) {
                       console.log(error);
                     } else {
-                      console.log(JSON.stringify(data));
+                      // console.log(JSON.stringify(data));
+                      this.saveFITFileToState(data);
                     }
                   });
             }
