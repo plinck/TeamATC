@@ -213,6 +213,21 @@ class ActivityForm extends React.Component {
         const max_cadence = jsonData.activity.sessions[0].max_cadence;
       
         console.log(`Ready to upload activity: ${JSON.stringify(activity, null, 4)}`);
+        this.setState({
+            uid: activity.uid,
+            email: activity.email,
+            displayName: activity.displayName,
+            teamName: activity.teamName,
+            teamUid: activity.teamUid,
+
+            activityName: activity.activityName,
+            activityDateTime: activity.activityDateTime,
+            activityDateTimeString: activity.activityDateTimeString,
+            activityType:activity.activityType,   
+            distance: activity.distance,
+            distanceUnits: activity.distanceUnits,
+            duration: activity.duration
+        })
 
         // for now, set the state so user cn name it and fix errors
         // this.createActivity(activity);
