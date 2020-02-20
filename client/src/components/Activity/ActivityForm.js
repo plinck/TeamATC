@@ -195,11 +195,11 @@ class ActivityForm extends React.Component {
         const sub_sport = jsonData.sport["sub_sport"];
         
         const total_distance = jsonData.activity.sessions[0].total_distance;
-        activity.distance = Number(total_distance);
+        activity.distance = Number(total_distance).toFixed(2);
         activity.distanceUnits = "Miles";
         
         const total_timer_time = jsonData.activity.total_timer_time;
-        activity.duration = Number(total_timer_time) / 3600;
+        activity.duration = (Number(total_timer_time) / 3600).toFixed(2);
        
         const total_calories = jsonData.activity.sessions[0].total_calories;
         const avg_speed = jsonData.activity.sessions[0].avg_speed;
@@ -226,7 +226,8 @@ class ActivityForm extends React.Component {
             activityType:activity.activityType,   
             distance: activity.distance,
             distanceUnits: activity.distanceUnits,
-            duration: activity.duration
+            duration: activity.duration,
+            message: `Uploaded FIT file, hit <CREATE> to save`
         })
 
         // for now, set the state so user cn name it and fix errors
