@@ -249,9 +249,9 @@ class Dashboard extends React.Component {
                     newTotals.bikeDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
                     break;
                 case "Run":
-                    newTotals.bikeNbrActivities += 1;
-                    newTotals.bikeDistanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
-                    newTotals.bikeDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                    newTotals.runNbrActivities += 1;
+                    newTotals.runDistanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
+                    newTotals.runDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
                     break;
                 default:
                     // NADA
@@ -274,9 +274,9 @@ class Dashboard extends React.Component {
                         newTeamTotals.bikeDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
                         break;
                     case "Run":
-                        newTeamTotals.bikeNbrActivities += 1;
-                        newTeamTotals.bikeDistanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
-                        newTeamTotals.bikeDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                        newTeamTotals.runNbrActivities += 1;
+                        newTeamTotals.runDistanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
+                        newTeamTotals.runDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
                         break;
                     default:
                         // NADA
@@ -298,9 +298,9 @@ class Dashboard extends React.Component {
                         newUserTotals.bikeDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
                         break;
                     case "Run":
-                        newUserTotals.bikeNbrActivities += 1;
-                        newUserTotals.bikeDistanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
-                        newUserTotals.bikeDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                        newUserTotals.runNbrActivities += 1;
+                        newUserTotals.runDistanceTotal += activities[i].distanceUnits === "Yards" ? activities[i].distance / 1760 : activities[i].distance;
+                        newUserTotals.runDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
                         break;
                     default:
                         // NADA
@@ -684,20 +684,20 @@ class Dashboard extends React.Component {
                                 {/* All User Totals */}
                                 <div className="col s12 m4">
                                     <ActivityTotalsGraphs
-                                    title={`Totals for ${this.props.user.displayName}`}
-                                    activities={this.state.activities}
+                                        title={`Totals for ${this.props.user.displayName}`}
+                                        currentTotalsShare={this.totals.user} graphType="User"
                                     />
                                 </div>                            
                                 <div className="col s12 m4">
                                     <ActivityTotalsGraphs
-                                    title={`Totals for team ${this.props.user.teamName}`}
-                                    activities={this.state.activities}
+                                        title={`Totals for team ${this.props.user.teamName}`}
+                                        currentTotalsShare={this.totals.team}  graphType="Team"
                                     />
                                 </div>                            
                                 <div className="col s12 m4">
                                     <ActivityTotalsGraphs
-                                    title={`Totals for all athletes`}
-                                    activities={this.state.activities}
+                                        title={`Totals for all athletes`}
+                                        currentTotalsShare={this.totals.all}  graphType="All"
                                     />
                                 </div>                            
                             </div>
@@ -720,17 +720,19 @@ class Dashboard extends React.Component {
 
                             <Activities filterByString="Mine" layoutType="userCard"/>
                             
+                            {/*
                             <div className="row">                          
                                 <SummaryTotal
                                     nbrActivities={this.state.nbrActivities}
                                     distanceTotal={this.state.distanceTotal}
                                     durationTotal={this.state.durationTotal}
-                                    
+
                                     currentAllTotals={this.totals.all}
                                     currentTeamTotals={this.totals.team}
                                     currentUserTotals={this.totals.user}
                                 />
                             </div>
+                            */}
                         </div>
                     }
                 </div>
