@@ -16,7 +16,7 @@ class ActivityBubble extends React.Component {
     }
 
 
-    plotDeposits = () => {
+    plotActivities = () => {
         const selectorOptions = {
             buttons: [
                 {
@@ -157,17 +157,10 @@ class ActivityBubble extends React.Component {
         if (this.props.user.authUser) {
             return (
                 <div>
-                    <div className="col s12 l12">
-                        <div className="card">
-                            <div className="card-content pCard">
-                                <span className="card-title">{this.props.title ? this.props.title : 'ActivityBubble'}</span>
-                                {this.plotDeposits()}
-                            </div>
-                            <div className="card-action pCard">
-                                <div className="center-align">
-                                    <button onClick={this.viewDetails} className="waves-effect waves-light dash-btn blue darken-4 btn">More Details</button>
-                                </div>
-                            </div>
+                    <div className="card">
+                        <div className="card-content pCard">
+                            <span className="card-title">{this.props.title ? this.props.title : 'Activity Heat Map'}</span>
+                            {this.plotActivities()}
                         </div>
                     </div>
                 </div>

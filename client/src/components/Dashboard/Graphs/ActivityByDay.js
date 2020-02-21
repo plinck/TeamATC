@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import Plot from "react-plotly.js";
 import _ from "underscore";
 import moment from "moment";
@@ -174,12 +173,10 @@ class ActivityByDay extends React.Component {
         if (this.props.user.authUser) {
             return (
                 <div>                    
-                    <div className="col s12 l6">
-                        <div className="card">
-                            <div className="card-content pCard">
-                                <span className="card-title">{this.props.title ? this.props.title : "ActivityByDay"}</span>
-                                {this.plotActivities()}
-                            </div>
+                    <div className="card">
+                        <div className="card-content pCard">
+                            <span className="card-title">{this.props.title ? this.props.title : "ActivityByDay"}</span>
+                            {this.plotActivities()}
                         </div>
                     </div>
                 </div>

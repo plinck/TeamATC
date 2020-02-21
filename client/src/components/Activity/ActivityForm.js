@@ -298,7 +298,7 @@ class ActivityForm extends React.Component {
     fetchActivity(id) {
         ActivityDB.get(id).then(activity => {
             let jsDate = new Date(activity.activityDateTime);
-            const dateTimeString = moment(jsDate).format("YYYY-MM-DD");
+            const dateTimeString = moment(jsDate).format("MM-DD-YYYY");
         
             this.setState({
                 activityName: activity.activityName,
@@ -361,8 +361,9 @@ class ActivityForm extends React.Component {
             this.setState({ message: `Bad Date - Activity Update Failed: ${this.state.activityDateTimeString}`});
             return false;
         }
-        
-        const jsDate = new Date(jsDateArray[2], jsDateArray[0], jsDateArray[1]);
+        let dateString = this.state.activityDateTimeString;
+        let momentObj = moment(dateString, 'MM-DD-YYYY');
+        let jsDate = new Date(momentObj);
         
         let activity = this.state;
         activity.activityDateTime = jsDate;
@@ -576,8 +577,8 @@ class ActivityForm extends React.Component {
                                             placeholder="MM-DD-YYYY"
                                             multiline
                                             className={classes.textField}
-                                            type="text"
-                                            autoComplete="text"
+                                            type="date"
+                                            autoComplete="date"
                                             margin="normal"
                                             value={activityDateTimeString}
                                             onChange={this.dateNumberOnChange}

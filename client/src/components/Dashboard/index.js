@@ -12,11 +12,7 @@ import ResultsCard from './ResultsCard/ResultsCard';
 import Activities from "../Activity/Activities";
 import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
-
-// import ActivityByUser from "./Graphs/ActivityByUser";
-// import DepositBubble from "./Graphs/DepositBubble";
-// import DepositByDenomination from "./Graphs/DepositByDenomination";
-// import ProvisionalCreditOverTime from "./Graphs/ProvisionalCreditOverTime"
+import ActivityTotalsGraphs from "./Graphs/ActivityTotalsGraphs";
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
@@ -684,17 +680,47 @@ class Dashboard extends React.Component {
 
                             </div>
 
-                            <Activities filterByString="Mine" layoutType="userCard"/>
-                            
                             <div className="row">
-                                {/* All User Bubble */}
-                                <div className="col s12 m3">
+                                {/* All User Totals */}
+                                <div className="col s12 m4">
+                                    <ActivityTotalsGraphs
+                                    title={`Totals for ${this.props.user.displayName}`}
+                                    activities={this.state.activities}
+                                    />
+                                </div>                            
+                                <div className="col s12 m4">
+                                    <ActivityTotalsGraphs
+                                    title={`Totals for team ${this.props.user.teamName}`}
+                                    activities={this.state.activities}
+                                    />
+                                </div>                            
+                                <div className="col s12 m4">
+                                    <ActivityTotalsGraphs
+                                    title={`Totals for all athletes`}
+                                    activities={this.state.activities}
+                                    />
+                                </div>                            
+                            </div>
+
+                            <div className="row">
+                            {/* All User Bubble */}
+                                <div className="col s12 m6">
+                                    <ActivityByDay
+                                    title={"Activity By Day"}
+                                    activities={this.state.activities}
+                                    />
+                                </div>                            
+                                <div className="col s12 m6">
                                     <ActivityBubble
-                                        title={"Activity Bubble - All Users"}
+                                        title={"Activity Heatmap - All Users"}
                                         activities={this.state.activities}
                                     />
                                 </div>
+                            </div>
 
+                            <Activities filterByString="Mine" layoutType="userCard"/>
+                            
+                            <div className="row">                          
                                 <SummaryTotal
                                     nbrActivities={this.state.nbrActivities}
                                     distanceTotal={this.state.distanceTotal}
@@ -705,18 +731,7 @@ class Dashboard extends React.Component {
                                     currentUserTotals={this.totals.user}
                                 />
                             </div>
-
-                            <div classsName="row">
-                                <div className="col s12 m4">
-                                    <ActivityByDay
-                                        title={"Activity By Day"}
-                                        activities={this.state.activities}
-                                    />
-                                </div>
-                            </div>
-                            
                         </div>
-
                     }
                 </div>
             );
