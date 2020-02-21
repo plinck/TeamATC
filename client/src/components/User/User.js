@@ -110,11 +110,11 @@ class User extends React.Component {
                                     </i>
                                 </Tooltip>
 
-                                <Tooltip title="Disable (i.e. make user)">
+                                <Tooltip title="Athlete Only">
                                     <i style={{cursor: 'pointer'}}
                                         disabled={editIsDisabled}
                                         className="material-icons left indigo-text text-darken-4"
-                                        onClick={() => userMakeUser(id)}>lock
+                                        onClick={() => userMakeUser(id)}>motorcycle
                                     </i>
                                 </Tooltip>
 

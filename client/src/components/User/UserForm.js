@@ -241,8 +241,6 @@ class UserForm extends React.Component {
   // Make Admin
   userMakeAdmin = (id) => {
 
-    console.log(`Trying to make User ${id} Admin`);
-
     UserAPI.makeAdmin( id )
     .then(res => {
         console.log(`Made User ${id} Admin`);
@@ -260,7 +258,7 @@ class UserForm extends React.Component {
       UserAPI.makeTeamLead( id )
       .then(res => {
           console.log(`Made User ${id} TeamLead`);
-          this.setState({message: `Made User TeamLead`});
+          this.setState({message: `Made user a TeamLead`});
           this.fetchUser(id);
       })
       .catch(err => {
@@ -273,8 +271,8 @@ class UserForm extends React.Component {
   userMakeUser = (id) => {
       UserAPI.makeUser( id )
       .then(res => {
-          console.log(`Made User ${id} User`);
-          this.setState({message: `Disabled User (i.e. made them a user)`});
+          console.log(`Made User ${id} Athlete`);
+          this.setState({message: `Made user an Athlete`});
           this.fetchUser(id);
       })
       .catch(err => {
@@ -288,7 +286,7 @@ class UserForm extends React.Component {
       UserAPI.makeModerator( id )
       .then(res => {
           console.log(`Made User ${id} Moderator`);
-          this.setState({message: `Made User Moderator`});
+          this.setState({message: `Made user a Moderator`});
           this.fetchUser(id);
       })
       .catch(err => {
@@ -470,7 +468,7 @@ class UserForm extends React.Component {
                     control={
                       <Checkbox checked={this.state.isUser} onClick={() => this.userMakeUser(this.state.id)}/>
                     }
-                    label="User"
+                    label="Athlete"
                   />
                 </FormGroup>
               </FormControl>
