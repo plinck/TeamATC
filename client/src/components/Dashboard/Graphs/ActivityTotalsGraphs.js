@@ -17,12 +17,12 @@ class ActivityTotalsGraphs extends React.Component {
         // Grab props
         let distanceTotal  = this.props.currentTotalsShare.distanceTotal;
         let pointsTotal  = this.props.currentTotalsShare.pointsTotal;
-        let swimDistanceTotal  = this.props.currentTotalsShare.swimDistanceTotal;
-        let swimPointsTotal  = this.props.currentTotalsShare.swimDistanceTotal  / 1760 * 10;
+        let swimDistanceTotal  = this.props.currentTotalsShare.swimDistanceTotal / 1760;
+        let swimPointsTotal  = swimDistanceTotal * 10;
         let bikeDistanceTotal  = this.props.currentTotalsShare.bikeDistanceTotal;
-        let bikePointsTotal  = this.props.currentTotalsShare.bikeDistanceTotal;
+        let bikePointsTotal  = bikeDistanceTotal;
         let runDistanceTotal  = this.props.currentTotalsShare.runDistanceTotal;
-        let runPointsTotal  = this.props.currentTotalsShare.runDistanceTotal * 3;
+        let runPointsTotal  = runDistanceTotal * 3;
         let durationTotal = this.props.currentTotalsShare.durationTotal;
         let nbrActivities = this.props.currentTotalsShare.nbrActivities;
         let swimNbrActivities = this.props.currentTotalsShare.swimNbrActivities;
@@ -33,22 +33,22 @@ class ActivityTotalsGraphs extends React.Component {
         let runDurationTotal = this.props.currentTotalsShare.runDurationTotal
 
         let trace1 = {
-            x: ['Activities', 'Distance', 'Duration'],
-            y: [swimNbrActivities, swimPointsTotal, swimDurationTotal],
+            x: ['Activities', 'Distance', 'Duration', 'ActualDist'],
+            y: [swimNbrActivities, swimPointsTotal, swimDurationTotal, swimDistanceTotal],
             name: 'Swim',
             type: 'bar'
         };
         
         let trace2 = {
             x: ['Activities', 'Distance', 'Duration'],
-            y: [bikeNbrActivities, bikePointsTotal, bikeDurationTotal],
+            y: [bikeNbrActivities, bikePointsTotal, bikeDurationTotal, bikeDistanceTotal],
             name: 'Bike',
             type: 'bar'
         };
         
         let trace3 = {
             x: ['Activities', 'Distance', 'Duration'],
-            y: [runNbrActivities, runPointsTotal, runDurationTotal],
+            y: [runNbrActivities, runPointsTotal, runDurationTotal, runDistanceTotal],
             name: 'Run',
             type: 'bar'
         };
