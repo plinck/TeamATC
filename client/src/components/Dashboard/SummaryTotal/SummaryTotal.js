@@ -14,7 +14,7 @@ const SummaryTotal = (props) => {
             <div className="row">
 
                 {/*<-- Mine -->*/}
-                <div className="col s12 m4">
+                <div className="col s12 m3">
                     <div className="card">
                         <div className="card-content pCard">
                             <span className="card-title blue-text left-align">
@@ -108,7 +108,7 @@ const SummaryTotal = (props) => {
                 </div>
 
                 {/*<-- Team -->*/}
-                <div className="col s12 m4">
+                <div className="col s12 m3">
                     <div className="card">
                         <div className="card-content pCard">
                             <span className="card-title blue-text left-align">
@@ -202,7 +202,7 @@ const SummaryTotal = (props) => {
                 </div>
 
                 {/*<-- All -->*/}
-                <div className="col s12 m4">
+                <div className="col s12 m3">
                     <div className="card">
                         <div className="card-content pCard">
                             <span className="card-title blue-text left-align">
