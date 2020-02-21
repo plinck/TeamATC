@@ -1,3 +1,5 @@
+import GLOBAL_ENV from "../Environment/Environment";
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -39,7 +41,8 @@ class Dashboard extends React.Component {
         this.setState({loadingFlag: true });
         const db = Util.getFirestoreDB();   // active firestore db ref
 
-        let ref = db.collection("activities")
+        const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
+        let ref = dbActivityRef
             .orderBy("activityDateTime", "desc");
         this.activeListener = ref.onSnapshot((querySnapshot) => {
             let activities = this.state.activities;

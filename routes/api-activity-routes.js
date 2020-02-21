@@ -11,7 +11,8 @@ let _distanceTotal = 0;
 let _durationTotal = 0;
 
 // Get all activities anytime it changes and attach user to each
-db.collection("activities").orderBy("activityDateTime", "desc").onSnapshot((querySnapshot) => {
+const dbActivityRef = db.collection(ORG).doc(ENV).collection("activities");
+dbActivityRef.orderBy("activityDateTime", "desc").onSnapshot((querySnapshot) => {
     activities = [];
     _nbrActivities = 0;
     _distanceTotal = 0;
@@ -33,8 +34,8 @@ db.collection("activities").orderBy("activityDateTime", "desc").onSnapshot((quer
             console.error(`Invalid Date: ${activity.activityDateTime} in record: ${activity.id}`)         
         }
 
-        console.log(`api-activity-routes DB : ${ORG}/${ENV}/${USERS_DB}`);
-        const dbUserRef = db.collection("ATC").doc("dev").collection("users");
+        // console.log(`api-activity-routes DB : ${ORG}/${ENV}/${USERS_DB}`);
+        const dbUserRef = db.collection(ORG).doc(ENV).collection(USERS_DB);
         const userRef = dbUserRef.doc(activity.uid);
         const userQuery = userRef.get()
         .then ( user => {
