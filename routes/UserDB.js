@@ -1,6 +1,6 @@
 "use strict";
 const admin = require("../middleware/authServerCommon");
-const GLOBAL_ENV = "../ServerEnvironment";
+const {ORG, ENV, USERS_DB} = require("../ServerEnvironment");
 
 // Backend functions for user DB in firestore and auth
 class UserDB {
@@ -17,7 +17,8 @@ class UserDB {
             if (authClaims && authClaims.user != null) updateFields.isUser = authClaims.user;
 
             // update claims
-            const dbUserRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+            console.log(`UserDB using ${ORG}/${ENV}/${USERS_DB}`)
+            const dbUserRef = db.collection(`${ORG}`).doc(`${ENV}`).collection(`${USERS_DB}`)
             dbUserRef.doc(uid).set(updateFields,
                 { merge: true }
             ).then(() => {
@@ -36,7 +37,8 @@ class UserDB {
 
             // update
             console.log("User updated, user=", user);
-            const dbUserRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+            console.log(`UserDB using ${ORG}/${ENV}/${USERS_DB}`)
+            const dbUserRef = db.collection(`${ORG}`).doc(`${ENV}`).collection(`${USERS_DB}`)
             dbUserRef.doc(user.uid).set({
                 firstName: user.firstName,
                 lastName: user.lastName,
