@@ -33,6 +33,7 @@ db.collection("activities").orderBy("activityDateTime", "desc").onSnapshot((quer
             console.error(`Invalid Date: ${activity.activityDateTime} in record: ${activity.id}`)         
         }
 
+        console.log(`api-activity-routes DB : ${ORG}/${ENV}/${USERS_DB}`);
         const dbUserRef = db.collection(`${ORG}`).doc(`${ENV}`).collection(`${USERS_DB}`)
         const userRef = dbUserRef.doc(activity.uid);
         const userQuery = userRef.get()
