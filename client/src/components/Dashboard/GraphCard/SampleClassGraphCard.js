@@ -7,48 +7,26 @@ import { withRouter } from 'react-router-dom';
 
 import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
 
-class ActivityTotalsGraphs extends React.Component {
-    constructor(props) {
-        super(props);
-
-    }
-    
+class SampleClassGraphCard extends React.Component {
+            
     plotGraph() {
-        // Grab props
-        let distanceTotal  = this.props.currentTotalsShare.distanceTotal;
-        let pointsTotal  = this.props.currentTotalsShare.pointsTotal;
-        let swimDistanceTotal  = this.props.currentTotalsShare.swimDistanceTotal;
-        let swimPointsTotal  = this.props.currentTotalsShare.swimDistanceTotal  / 1760 * 10;
-        let bikeDistanceTotal  = this.props.currentTotalsShare.bikeDistanceTotal;
-        let bikePointsTotal  = this.props.currentTotalsShare.bikeDistanceTotal;
-        let runDistanceTotal  = this.props.currentTotalsShare.runDistanceTotal;
-        let runPointsTotal  = this.props.currentTotalsShare.runDistanceTotal * 3;
-        let durationTotal = this.props.currentTotalsShare.durationTotal;
-        let nbrActivities = this.props.currentTotalsShare.nbrActivities;
-        let swimNbrActivities = this.props.currentTotalsShare.swimNbrActivities;
-        let swimDurationTotal = this.props.currentTotalsShare.swimDurationTotal;
-        let bikeNbrActivities = this.props.currentTotalsShare.bikeNbrActivities;
-        let bikeDurationTotal = this.props.currentTotalsShare.bikeDurationTotal;
-        let runNbrActivities = this.props.currentTotalsShare.runNbrActivities;
-        let runDurationTotal = this.props.currentTotalsShare.runDurationTotal
-
         let trace1 = {
             x: ['Activities', 'Distance', 'Duration'],
-            y: [swimNbrActivities, swimPointsTotal, swimDurationTotal],
+            y: [20, 14, 23],
             name: 'Swim',
             type: 'bar'
         };
         
         let trace2 = {
             x: ['Activities', 'Distance', 'Duration'],
-            y: [bikeNbrActivities, bikePointsTotal, bikeDurationTotal],
+            y: [12, 18, 29],
             name: 'Bike',
             type: 'bar'
         };
         
         let trace3 = {
             x: ['Activities', 'Distance', 'Duration'],
-            y: [runNbrActivities, runPointsTotal, runDurationTotal],
+            y: [6, 42, 17],
             name: 'Run',
             type: 'bar'
         };
@@ -94,4 +72,4 @@ class ActivityTotalsGraphs extends React.Component {
     }
 }
 
-export default withRouter(withAuthUserContext(ActivityTotalsGraphs));
+export default withRouter(withAuthUserContext(SampleClassGraphCard));
