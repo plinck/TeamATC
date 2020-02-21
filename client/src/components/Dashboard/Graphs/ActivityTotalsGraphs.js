@@ -17,12 +17,12 @@ class ActivityTotalsGraphs extends React.Component {
         // Grab props
         let distanceTotal  = this.props.currentTotalsShare.distanceTotal;
         let pointsTotal  = this.props.currentTotalsShare.pointsTotal;
-        let swimDistanceTotal  = this.props.currentTotalsShare.swimDistanceTotal / 1760;
-        let swimPointsTotal  = swimDistanceTotal * 10;
+        let swimDistanceTotal  = this.props.currentTotalsShare.swimDistanceTotal;
+        let swimPointsTotal  = this.props.currentTotalsShare.swimPointsTotal;
         let bikeDistanceTotal  = this.props.currentTotalsShare.bikeDistanceTotal;
-        let bikePointsTotal  = bikeDistanceTotal;
+        let bikePointsTotal  = this.props.currentTotalsShare.bikePointsTotal;
         let runDistanceTotal  = this.props.currentTotalsShare.runDistanceTotal;
-        let runPointsTotal  = runDistanceTotal * 3;
+        let runPointsTotal  = this.props.currentTotalsShare.runPointsTotal;
         let durationTotal = this.props.currentTotalsShare.durationTotal;
         let nbrActivities = this.props.currentTotalsShare.nbrActivities;
         let swimNbrActivities = this.props.currentTotalsShare.swimNbrActivities;
