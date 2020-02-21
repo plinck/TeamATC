@@ -726,7 +726,6 @@ class Dashboard extends React.Component {
 
                             <Activities filterByString="Mine" layoutType="userCard"/>
                             
-                            {/*
                             <div className="row">                          
                                 <SummaryTotal
                                     nbrActivities={this.state.nbrActivities}
@@ -738,7 +737,6 @@ class Dashboard extends React.Component {
                                     currentUserTotals={this.totals.user}
                                 />
                             </div>
-                            */}
                         </div>
                     }
                 </div>
