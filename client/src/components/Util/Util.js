@@ -50,16 +50,16 @@ class Util {
     return userIsAdmin;
   }
 
-  static isUserBanker = async () => {
+  static isUserModerator = async () => {
     const firebase = new Firebase();
-    const userIsBanker = await firebase.auth.doIsUserBanker();
-    return userIsBanker;
+    const userIsModerator = await firebase.auth.doIsUserModerator();
+    return userIsModerator;
   }
 
-  static isUserCashier = async () => {
+  static isUserTeamLead = async () => {
     const firebase = new Firebase();
-    const userIsCashier = await firebase.auth.doIsUserCashier();
-    return userIsCashier;
+    const userIsTeamLead = await firebase.auth.doIsUserTeamLead();
+    return userIsTeamLead;
   }
 
   static getFirestoreDB = () => {

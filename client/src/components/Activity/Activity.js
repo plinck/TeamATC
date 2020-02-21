@@ -86,7 +86,7 @@ class Activity extends React.Component {
         let editIsDisabled = (this.props.user.authUser && (this.props.user.authUser.uid ===  uid)) ? false : true; 
         let deleteIsDisabled = (this.props.user.authUser && (this.props.user.authUser.uid ===  uid)) ? false : true; 
 
-        // Allow Admin to edit all records (later allow team moderator (cashier) to edit their own teams workouts) 
+        // Allow Admin to edit all records (later allow team moderator (teamLead) to edit their own teams workouts) 
         if (this.props.user.isAdmin) {
             deleteIsDisabled = false
         }

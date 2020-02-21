@@ -82,8 +82,8 @@ class AccountForm extends React.Component {
             email: "",
             claims: "",
             isAdmin: false,
-            isCashier: false,
-            isBanker: false,
+            isTeamLead: false,
+            isModerator: false,
             isUser: false,    
             message: "",
             teams: null,
@@ -105,8 +105,8 @@ class AccountForm extends React.Component {
                     teamName: user.teamName || "",    
                     claims: user.claims,
                     isAdmin: user.isAdmin,
-                    isCashier: user.isCashier,
-                    isBanker: user.isBanker,
+                    isTeamLead: user.isTeamLead,
+                    isModerator: user.isModerator,
                     isUser: user.isUser,
                     email: user.email            
                 });
@@ -193,8 +193,8 @@ class AccountForm extends React.Component {
             email,
             claims,
             isAdmin,
-            isCashier,
-            isBanker,
+            isTeamLead,
+            isModerator,
             isUser,        
             message,      
             teamUid,
@@ -328,8 +328,8 @@ class AccountForm extends React.Component {
                         <FormGroup row >
                             <FormControlLabel 
                                 disabled={!isRoleEditEnabled}
-                                control={<Checkbox checked={isCashier}/>}
-                            label="Cashier"
+                                control={<Checkbox checked={isTeamLead}/>}
+                            label="TeamLead"
                             /> 
                             <FormControlLabel
                                 disabled={!isRoleEditEnabled}
@@ -341,9 +341,9 @@ class AccountForm extends React.Component {
                             <FormControlLabel
                                 disabled={!isRoleEditEnabled}
                                 control={
-                                <Checkbox checked={isBanker}/>
+                                <Checkbox checked={isModerator}/>
                                 }
-                                label="Banker"
+                                label="Moderator"
                             />
                             <FormControlLabel
                                 disabled={!isRoleEditEnabled}

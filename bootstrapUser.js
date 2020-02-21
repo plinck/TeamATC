@@ -78,10 +78,10 @@ function updateClaimsInFirebase(uid, claims, authClaims) {
         // Only *set* claims passed
         if (authClaims && authClaims.admin != null)
             updateFields.isAdmin = authClaims.admin;
-        if (authClaims && authClaims.cashier != null)
-            updateFields.isCashier = authClaims.cashier;
-        if (authClaims && authClaims.banker != null)
-            updateFields.isBanker = authClaims.banker;
+        if (authClaims && authClaims.teamLead != null)
+            updateFields.isTeamLead = authClaims.teamLead;
+        if (authClaims && authClaims.moderator != null)
+            updateFields.isModerator = authClaims.moderator;
         if (authClaims && authClaims.user != null)
             updateFields.isUser = authClaims.user;
 
@@ -104,13 +104,13 @@ function updateClaimsInFirebase(uid, claims, authClaims) {
 // Set csutom claim without overrding other claim
 function setAuthClaims(uid, customClaims) {
     return new Promise(async (resolve, reject) => {
-        // The name is the *primary* role as someone can be admin and banker for example
+        // The name is the *primary* role as someone can be admin and moderator for example
         if (customClaims.admin) {
             customClaims.name = "admin";
-        } else if (customClaims.cashier) {
-            customClaims.name = "cashier";
-        } else if (customClaims.banker) {
-            customClaims.name = "banker";
+        } else if (customClaims.teamLead) {
+            customClaims.name = "teamLead";
+        } else if (customClaims.moderator) {
+            customClaims.name = "moderator";
         } else if (customClaims.user) {
             customClaims.name = "user";
         } else {
@@ -135,8 +135,8 @@ async function setAuthAndFBClaims(uid) {
         // Now, set custom claims
         setAuthClaims(uid, {
             admin: true,
-            cashier: true,
-            banker: true,
+            teamLead: true,
+            moderator: true,
             user: true
         })
             .then(async newClaims => {
@@ -146,7 +146,7 @@ async function setAuthAndFBClaims(uid) {
             .catch(err => {
                 // catch all error
                 console.error(
-                    `Error caught in route app.post("/api/auth/setCashier..." ${err}`
+                    `Error caught in route app.post("/api/auth/setTeamLead..." ${err}`
                 );
                 reject(err);
             });

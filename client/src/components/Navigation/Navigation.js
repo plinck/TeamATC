@@ -56,7 +56,7 @@ class Navigation extends React.Component {
         <li><NavLink onClick={this.forceCloseSideNav} to="/activitypage" className="waves-effect waves-light btn">New Workut</NavLink></li>
         <li><NavLink onClick={this.forceCloseSideNav} to="/account">Account</NavLink></li>
         <li><NavLink onClick={this.forceCloseSideNav} to="/admin">Admin</NavLink></li>
-        {/* this.props.user.isBanker ? <li><NavLink onClick={this.forceCloseSideNav} to="/banker">Banker</NavLink></li> : "" */}
+        {/* this.props.user.isModerator ? <li><NavLink onClick={this.forceCloseSideNav} to="/moderator">Moderator</NavLink></li> : "" */}
         <li onClick={this.forceCloseSideNav}><SignOutButton /></li>
         </ul>
         ;

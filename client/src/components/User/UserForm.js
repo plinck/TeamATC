@@ -86,8 +86,8 @@ class UserForm extends React.Component {
       teamName: "",
       claims: "noauth",
       isAdmin: false,
-      isCashier: false,
-      isBanker: false,
+      isTeamLead: false,
+      isModerator: false,
       isUser: false,
       message: "",
       teams: null,
@@ -108,8 +108,8 @@ class UserForm extends React.Component {
         teamName: user.teamName || "",    
         claims: user.claims,
         isAdmin: user.isAdmin,
-        isCashier: user.isCashier,
-        isBanker: user.isBanker,
+        isTeamLead: user.isTeamLead,
+        isModerator: user.isModerator,
         isUser: user.isUser,
         email: user.email
       });
@@ -255,12 +255,12 @@ class UserForm extends React.Component {
     });
   }        
   
-  // Make Cashier
-  userMakeCashier = (id) => {
-      UserAPI.makeCashier( id )
+  // Make TeamLead
+  userMakeTeamLead = (id) => {
+      UserAPI.makeTeamLead( id )
       .then(res => {
-          console.log(`Made User ${id} Cashier`);
-          this.setState({message: `Made User Cashier`});
+          console.log(`Made User ${id} TeamLead`);
+          this.setState({message: `Made User TeamLead`});
           this.fetchUser(id);
       })
       .catch(err => {
@@ -283,12 +283,12 @@ class UserForm extends React.Component {
       });
   }       
 
-  // Make Banker
-  userMakeBanker = (id) => {
-      UserAPI.makeBanker( id )
+  // Make Moderator
+  userMakeModerator = (id) => {
+      UserAPI.makeModerator( id )
       .then(res => {
-          console.log(`Made User ${id} Banker`);
-          this.setState({message: `Made User Banker`});
+          console.log(`Made User ${id} Moderator`);
+          this.setState({message: `Made User Moderator`});
           this.fetchUser(id);
       })
       .catch(err => {
@@ -446,11 +446,11 @@ class UserForm extends React.Component {
                 <FormLabel component="legend">Current Roles</FormLabel>
                 <FormGroup row>
                   <FormControlLabel
-                    disabled={this.state.isCashier}
+                    disabled={this.state.isTeamLead}
                     control={
-                      <Checkbox checked={this.state.isCashier} onClick={() => this.userMakeCashier(this.state.id)}/>
+                      <Checkbox checked={this.state.isTeamLead} onClick={() => this.userMakeTeamLead(this.state.id)}/>
                     }
-                    label="Cashier"
+                    label="TeamLead"
                   />
                   <FormControlLabel
                     disabled={this.state.isAdmin}
@@ -460,11 +460,11 @@ class UserForm extends React.Component {
                     label="Admin"
                   />
                   <FormControlLabel
-                    disabled={this.state.isBanker}
+                    disabled={this.state.isModerator}
                     control={
-                      <Checkbox checked={this.state.isBanker} onClick={() => this.userMakeBanker(this.state.id)}/>
+                      <Checkbox checked={this.state.isModerator} onClick={() => this.userMakeModerator(this.state.id)}/>
                     }
-                    label="Banker"
+                    label="Moderator"
                   />
                   <FormControlLabel
                     control={
