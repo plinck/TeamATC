@@ -16,7 +16,7 @@ class ActivityCard extends React.Component {
             distanceUnits
         } = this.props.activity;
         let jsDate = new Date(activityDateTime);
-        const displayDateTime = moment(jsDate).format("MM-DD-YY");
+        const displayDateTime = moment(jsDate).format("MM-DD-YYYY");
 
         let distanceDecimalPlaces = 1;
         if (activityType.toLowerCase() === "swim") {

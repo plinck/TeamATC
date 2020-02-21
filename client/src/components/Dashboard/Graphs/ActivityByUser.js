@@ -8,7 +8,7 @@ import { withRouter } from 'react-router-dom';
 import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
 
 class ActivityByUser extends React.Component {
-    plotDeposits = (uid) => {
+    plotActivities = (uid) => {
         const selectorOptions = {
             buttons: [
                 {
@@ -168,7 +168,7 @@ class ActivityByUser extends React.Component {
                         <div className="card">
                             <div className="card-content pCard">
                                 <span className="card-title">{this.props.title ? this.props.title : 'ActivityByUser'} : {displayName}</span>
-                                {this.plotDeposits(this.props.user.authUser.uid)}
+                                {this.plotActivities(this.props.user.authUser.uid)}
                             </div>
                             <div className="card-action pCard">
                                 <div className="center-align">
