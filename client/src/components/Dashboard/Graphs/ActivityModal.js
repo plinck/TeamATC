@@ -6,7 +6,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-class DepositModal extends React.Component {
+class ActitityModal extends React.Component {
 
     state = {
         open: false
@@ -35,12 +35,12 @@ class DepositModal extends React.Component {
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">{"Activitie Details"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{"Activity Details"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Activitie Date: {this.props.date}
+                            Activity Date: {this.props.date}
                             <br></br>
-                            Amount: {this.props.amount}
+                            Distance: {this.props.amount}
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -54,4 +54,4 @@ class DepositModal extends React.Component {
     }
 }
 
-export default DepositModal;
+export default ActitityModal;

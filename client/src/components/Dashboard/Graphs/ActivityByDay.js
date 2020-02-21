@@ -42,9 +42,29 @@ class ActivityByDay extends React.Component {
                 }]
         };
 
-        let combiedData = this.props.activities;
+        let activities = this.props.activities;
+        let adjustedActivites = activities.map(activity => {
+            let distance = activity.distance;
+            if (activity.distanceUnits === "Yards") {
+                distance = activity.distance / 1760;
+            }
+            switch (activity.activityType) {
+                case "Swim":
+                    distance *= 10;
+                    break;
+                case "Run":
+                    distance *= 3;
+                    break;
+                default:
+                    break;
+            }
+            return {
+                distance : distance,
+                activityDateTime : activity.activityDateTime
+            };
+        })
 
-        const sortedByDate = combiedData.sort((a, b) => {
+        const sortedByDate = adjustedActivites.sort((a, b) => {
             return (a.activityDateTime > b.activityDateTime) ? 1 : -1;
         });
 
@@ -82,14 +102,14 @@ class ActivityByDay extends React.Component {
             return [year, month, day].join("-");
         });
 
-        const earliestDate = days.length > 0 ? days[0] : new Date();
-        const latestDate = days.length > 0 ? days[days.length - 1] : new Date();
+        const latestDate = new Date();
+        const earliestDate = latestDate.setDate(latestDate.getDate()- 30);
 
         const distances = dayActivities.map((activity) => {
             return (activity.total);
         });
 
-        const formattedDistance = distances.map(distance => distances.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        const formattedDistance = distances.map(distance => distance.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 
         // STILL NEED To stack all activities for that day
 
@@ -113,14 +133,13 @@ class ActivityByDay extends React.Component {
                         autosize: true,
                         /* title: "Activities By User" */
                         xaxis: {
-                            autorange: true,
+                            autorange: false,
                             range: [earliestDate, latestDate],
                             rangeselector: selectorOptions,
                             rangeslider: { earliestDate, latestDate },
                         },
                         yaxis: {
-                            tickprefix: "$",
-                            separatethousands: true
+                            separatethousands: false
                         },
                         margin: {
                             l: 60,
@@ -154,35 +173,15 @@ class ActivityByDay extends React.Component {
 
         if (this.props.user.authUser) {
             return (
-                <div>
-                    <div className="col s12 l6">
-                        <div className="card">
-                            <div className="card-content pCard">
-                                <span className="card-title">{this.props.title ? this.props.title : "ActivityByDay"}</span>
-                            </div>
-                            <div className="card-action pCard">
-                                <div className="center-align">
-                                    <Link to="/activities" className="waves-effect waves-light dash-btn blue darken-4 btn activityBtn">More Details</Link>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {/*}
+                <div>                    
                     <div className="col s12 l6">
                         <div className="card">
                             <div className="card-content pCard">
                                 <span className="card-title">{this.props.title ? this.props.title : "ActivityByDay"}</span>
                                 {this.plotActivities()}
                             </div>
-                            <div className="card-action pCard">
-                                <div className="center-align">
-                                    <button onClick={this.viewDetails} className="waves-effect waves-light dash-btn blue darken-4 btn">More Details</button>
-                                </div>
-                            </div>
                         </div>
                     </div>
-                    */}
                 </div>
             );
         } else {

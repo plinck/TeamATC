@@ -10,6 +10,7 @@ import { Redirect } from 'react-router';
 import SummaryTotal from './SummaryTotal/SummaryTotal';
 import ResultsCard from './ResultsCard/ResultsCard';
 import Activities from "../Activity/Activities";
+import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
 
 // import ActivityByUser from "./Graphs/ActivityByUser";
@@ -634,7 +635,7 @@ class Dashboard extends React.Component {
                         </Grid>
                         :
                         <div className="container">
-                            <div className="row">
+                            <div className="row">  
                                 {/* User standings/results card */}
                                 <div className="col s12 m6">
                                     <div className="card">
@@ -682,8 +683,18 @@ class Dashboard extends React.Component {
                                 {/* End Team standings/results card */}
 
                             </div>
+
+                            <Activities filterByString="Mine" layoutType="userCard"/>
                             
                             <div className="row">
+                                {/* All User Bubble */}
+                                <div className="col s12 m3">
+                                    <ActivityBubble
+                                        title={"Activity Bubble - All Users"}
+                                        activities={this.state.activities}
+                                    />
+                                </div>
+
                                 <SummaryTotal
                                     nbrActivities={this.state.nbrActivities}
                                     distanceTotal={this.state.distanceTotal}
@@ -694,15 +705,16 @@ class Dashboard extends React.Component {
                                     currentUserTotals={this.totals.user}
                                 />
                             </div>
-                            
-                            <Activities filterByString="Mine" layoutType="userCard"/>
 
-                            <div className="row">
-                            <ActivityByDay
-                                title={"Total Activities By Day"}
-                                activities={this.state.activities}
-                            />
+                            <div classsName="row">
+                                <div className="col s12 m4">
+                                    <ActivityByDay
+                                        title={"Activity By Day"}
+                                        activities={this.state.activities}
+                                    />
+                                </div>
                             </div>
+                            
                         </div>
 
                     }
