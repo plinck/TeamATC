@@ -23,6 +23,9 @@
 
 # GCP
 app.yaml
+app-dev.yaml
+app-stag.yaml
+app-prod.yaml
 **.serviceAccountKey.json
 **.serviceAccountKey*.json
 
