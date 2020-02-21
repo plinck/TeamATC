@@ -90,7 +90,7 @@ class User extends React.Component {
                                     <i style={{cursor: 'pointer'}}
                                         disabled={editIsDisabled}
                                         className="material-icons left indigo-text text-darken-4"
-                                        onClick={() => userMakeTeamLead(id)}>account_balance
+                                        onClick={() => userMakeTeamLead(id)}>card_membership
                                     </i>
                                 </Tooltip>
 
@@ -106,7 +106,7 @@ class User extends React.Component {
                                     <i style={{cursor: 'pointer'}}
                                         disabled={editIsDisabled}
                                         className="material-icons left indigo-text text-darken-4"
-                                        onClick={() => userMakeModerator(id)}>next_week
+                                        onClick={() => userMakeModerator(id)}>gavel
                                     </i>
                                 </Tooltip>
 
