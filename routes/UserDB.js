@@ -17,7 +17,6 @@ class UserDB {
             if (authClaims && authClaims.user != null) updateFields.isUser = authClaims.user;
 
             // update claims
-            console.log(`UserDB using ${ORG}/${ENV}/${USERS_DB}`)
             const dbUserRef = db.collection(`${ORG}`).doc(`${ENV}`).collection(`${USERS_DB}`)
             dbUserRef.doc(uid).set(updateFields,
                 { merge: true }

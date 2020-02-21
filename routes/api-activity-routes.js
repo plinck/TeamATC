@@ -32,7 +32,8 @@ db.collection("activities").orderBy("activityDateTime", "desc").onSnapshot((quer
             console.error(`Invalid Date: ${activity.activityDateTime} in record: ${activity.id}`)         
         }
 
-        const userRef = db.collection("users").doc(activity.uid);
+        const dbUserRef = db.collection(`${ORG}`).doc(`${ENV}`).collection(`${USERS_DB}`)
+        const userRef = dbUserRef.doc(activity.uid);
         const userQuery = userRef.get()
         .then ( user => {
             if (user.exists) {
