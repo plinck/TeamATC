@@ -70,8 +70,8 @@ class Firebase {
         .then((idTokenResult) => {
           if (idTokenResult.claims.admin) {
             resolve("admin");
-          } else if (idTokenResult.claims.cashier) {
-            resolve("cashier");
+          } else if (idTokenResult.claims.teamLead) {
+            resolve("teamLead");
           } else {
             resolve("user");
           }
@@ -89,20 +89,20 @@ class Firebase {
         .then((idTokenResult) => {
           let claims = {
             isAdmin: idTokenResult.claims ? idTokenResult.claims.admin : false,
-            isCashier: idTokenResult.claims ? idTokenResult.claims.cashier : false,
-            isBanker: idTokenResult.claims ? idTokenResult.claims.banker : false,
+            isTeamLead: idTokenResult.claims ? idTokenResult.claims.teamLead : false,
+            isModerator: idTokenResult.claims ? idTokenResult.claims.moderator : false,
             isUser: idTokenResult.claims ? idTokenResult.claims.user : false
           };
 
-          // The name is the *primary* role as someone can be admin and banker for example
+          // The name is the *primary* role as someone can be admin and moderator for example
           if (idTokenResult.claims.admin) {
             claims.name = "admin";
             resolve(claims);
-          } else if (idTokenResult.claims.cashier) {
-            claims.name = "cashier";
+          } else if (idTokenResult.claims.teamLead) {
+            claims.name = "teamLead";
             resolve(claims);
-          } else if (idTokenResult.claims.banker) {
-            claims.name = "banker";
+          } else if (idTokenResult.claims.moderator) {
+            claims.name = "moderator";
             resolve(claims);
           } else {
             claims.name = "user";
@@ -137,13 +137,13 @@ class Firebase {
   }// method
 
   // get custom claims
-  doIsUserBanker = () => {
+  doIsUserModerator = () => {
     return new Promise((resolve, reject) => {
       this.auth.currentUser.getIdTokenResult()
         .then((idTokenResult) => {
           // Confirm the user is an Admin.
           // Note double bangs is used to convert truthy/falsy to true/fale
-          if (!!idTokenResult.claims.banker) {
+          if (!!idTokenResult.claims.moderator) {
             resolve(true);
           } else {
             resolve(false);
@@ -157,12 +157,12 @@ class Firebase {
   }// method
 
 
-  doIsUserCashier = () => {
+  doIsUserTeamLead = () => {
     return new Promise((resolve, reject) => {
       this.auth.currentUser.getIdTokenResult()
         .then((idTokenResult) => {
           // Confirm the user is an Admin.
-          if (!!idTokenResult.claims.cashier) {
+          if (!!idTokenResult.claims.teamLead) {
             resolve(true);
           } else {
             resolve(false);

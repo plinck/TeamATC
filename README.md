@@ -40,7 +40,7 @@ NOTE: We also deployed to Herkou since GCP was charging fees given the services 
 
 ### Security
 
-Using firebase auth and google admin auth services for authentication and aiuthorization including custom user roles using firebase custom claims.  Custom claims can only be updated on the server side inside an authorized context of the app to keep this process secure - goodle does not allow these to be set in the client since it is not secure.  The app uses these custom claimns for role base security at 4 primary levels.  Currently we have 4 roles with different authorization with the app - admin, banker, cashier and user.
+Using firebase auth and google admin auth services for authentication and aiuthorization including custom user roles using firebase custom claims.  Custom claims can only be updated on the server side inside an authorized context of the app to keep this process secure - goodle does not allow these to be set in the client since it is not secure.  The app uses these custom claimns for role base security at 4 primary levels.  Currently we have 4 roles with different authorization with the app - admin, moderator, teamLead and user.
 
 1. User can only see links and other UI objects that they are allowed to see for their role
 

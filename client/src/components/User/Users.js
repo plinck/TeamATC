@@ -71,12 +71,12 @@ class Users extends React.Component {
         });
     }        
     
-    // Make Cashier
-    userMakeCashier = (id) => {
-        UserAPI.makeCashier( id )
+    // Make TeamLead
+    userMakeTeamLead = (id) => {
+        UserAPI.makeTeamLead( id )
         .then(res => {
-            console.log(`Made User ${id} Cashier`);
-            this.setState({message: `Made User Cashier`});
+            console.log(`Made User ${id} TeamLead`);
+            this.setState({message: `Made User TeamLead`});
             this.refreshPage();
         })
         .catch(err => {
@@ -99,12 +99,12 @@ class Users extends React.Component {
         });
     }       
 
-    // Make Banker
-    userMakeBanker = (id) => {
-        UserAPI.makeBanker( id )
+    // Make Moderator
+    userMakeModerator = (id) => {
+        UserAPI.makeModerator( id )
         .then(res => {
-            console.log(`Made User ${id} Banker`);
-            this.setState({message: `Made User Banker`});
+            console.log(`Made User ${id} Moderator`);
+            this.setState({message: `Made User Moderator`});
             this.refreshPage();
         })
         .catch(err => {
@@ -129,8 +129,8 @@ class Users extends React.Component {
                             <User 
                             userDelete={this.userDelete}
                             userMakeAdmin={this.userMakeAdmin}
-                            userMakeCashier={this.userMakeCashier}
-                            userMakeBanker={this.userMakeBanker}
+                            userMakeTeamLead={this.userMakeTeamLead}
+                            userMakeModerator={this.userMakeModerator}
                             userMakeUser={this.userMakeUser}
                             userInfo={user}
                             />

@@ -295,7 +295,7 @@ class UserAPI {
         return new Promise(async (resolve, reject) => {
 
             // we always want uid = id to keep auth and firestore in sync
-            // Do NOT update isAdmin, isCashier etc.  or claims i- only change claims through auth
+            // Do NOT update isAdmin, isTeamLead etc.  or claims i- only change claims through auth
             // (unless using just user or noAuth since those are not *secure*)
             dbUserRef.doc(user.id).set({
                 firstName: user.firstName,
@@ -323,20 +323,20 @@ class UserAPI {
     }
 
     // Make user an Admin user - returns a promise 
-    static makeBanker = (uid) => {
-        return (Util.apiPost(`/api/auth/setBanker/${uid}`, {
+    static makeModerator = (uid) => {
+        return (Util.apiPost(`/api/auth/setModerator/${uid}`, {
             id: uid
         }));
     }
     
-    // Make user a cashier - returns a promise 
-    static makeCashier = (uid) => {
-        return (Util.apiPost(`/api/auth/setCashier/${uid}`, {
+    // Make user a teamLead - returns a promise 
+    static makeTeamLead = (uid) => {
+        return (Util.apiPost(`/api/auth/setTeamLead/${uid}`, {
             id: uid
         }));
     }
 
-    // Make user a plain ole user - essential disables admin or cashier or other functionality 
+    // Make user a plain ole user - essential disables admin or teamLead or other functionality 
     static makeUser = (uid) => {
         return (Util.apiPost(`/api/auth/setUser/${uid}`, {
             id: uid

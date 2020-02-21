@@ -24,8 +24,8 @@ const provideAuthUserContext = Component => {
                 token: null,
                 claims: null,
                 isAdmin: false,
-                isCashier: false,
-                isBanker: false,
+                isTeamLead: false,
+                isModerator: false,
                 isUser: false,
                 firstName: null,
                 lastName: null,
@@ -42,8 +42,8 @@ const provideAuthUserContext = Component => {
                     token: token,
                     claims: claims.name,
                     isAdmin: claims.isAdmin,
-                    isCashier: claims.isCashier,
-                    isBanker: claims.isBanker,
+                    isTeamLead: claims.isTeamLead,
+                    isModerator: claims.isModerator,
                     isUser: claims.isUser
                  });
             } catch {

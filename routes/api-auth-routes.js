@@ -64,7 +64,7 @@ module.exports = function (app) {
         }
     }); // Route
 
-    app.post("/api/auth/setCashier/:uid", requiresLogin, (req, res) => {
+    app.post("/api/auth/setTeamLead/:uid", requiresLogin, (req, res) => {
         let uid = req.params.uid;
         try {
             // Authorize the current user
@@ -72,7 +72,7 @@ module.exports = function (app) {
             if (true) {
                     // Now, set custom claims
                 AuthUserAPI.setClaims(uid, {
-                    cashier: true
+                    teamLead: true
                 }).then(async (newClaims) => {
                     try {
                         await UserDB.updateClaims(uid, newClaims.name, newClaims);
@@ -82,16 +82,16 @@ module.exports = function (app) {
                     }
                 });
             } else {
-                res.status(401).json(`Must be admin to make someone cashier..."`);
+                res.status(401).json(`Must be admin to make someone teamLead..."`);
             }
 
         } catch (err) {
             // catch all error
-            res.status(500).json(`Error caught in route app.post("/api/auth/setCashier..." ${err}`);
+            res.status(500).json(`Error caught in route app.post("/api/auth/setTeamLead..." ${err}`);
         }
     }); // Route
 
-    app.post("/api/auth/setBanker/:uid", requiresLogin, (req, res) => {
+    app.post("/api/auth/setModerator/:uid", requiresLogin, (req, res) => {
         let uid = req.params.uid;
         try {
             // Authorize the current user
@@ -100,7 +100,7 @@ module.exports = function (app) {
                     // set the claim for the user who's uid is passed
                 // Note, this is the uid of the user to make admin (NOT the auth users uid)
                 AuthUserAPI.setClaims(uid, {
-                    banker: true
+                    moderator: true
                 }).then(async (newClaims) => {
                     try {
                         await UserDB.updateClaims(uid, newClaims.name, newClaims);
@@ -110,11 +110,11 @@ module.exports = function (app) {
                     }
                 });
             } else {
-                res.status(401).json(`Must be admin to make someone banker..."`);
+                res.status(401).json(`Must be admin to make someone moderator..."`);
             }
         } catch (err) {
             // catch all error
-            res.status(500).json(`Error caught in route app.post("//api/auth/setBanker/:uid..." ${err}`);
+            res.status(500).json(`Error caught in route app.post("//api/auth/setModerator/:uid..." ${err}`);
         }
     }); // Route
 
@@ -128,8 +128,8 @@ module.exports = function (app) {
                 // Note, this is the uid of the user to update (NOT the auth users uid)
                 AuthUserAPI.setClaims(uid, {
                     admin: false,
-                    cashier: false,
-                    banker: false,
+                    teamLead: false,
+                    moderator: false,
                     user: true
                 }).then(async (newClaims) => {
                     try {
