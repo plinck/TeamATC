@@ -1,3 +1,4 @@
+import GLOBAL_ENV from "../Environment/Environment";
 import Util from "../Util/Util";
 
 class TeamAPI {
@@ -96,8 +97,13 @@ class TeamAPI {
                     let teamUid = doc.id;
                     let userArray = []
 
-                    const ref = db.collection("users").orderBy("lastName", "desc");
-                    ref.get().then((docSnaps) => {
+                    let dbUserRef = db.collection("users");
+                    if (GLOBAL_ENV.ORG && GLOBAL_ENV.ENV && GLOBAL_ENV.USERS_DB) {
+                        dbUserRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+                    }
+                
+                    const docRef = dbUserRef.orderBy("lastName", "desc");
+                    docRef.get().then((docSnaps) => {
                         docSnaps.forEach((doc) => {
                             const user = doc.data();
                             user.id = doc.id;

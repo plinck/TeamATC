@@ -4,6 +4,7 @@ import 'firebase/firestore';
 import 'firebase/functions';
 
 // For the life of me I cant get REACT (when in client/) to read ENV vars and google isnt helping me ...
+// NOTE: GOT WORKING FEB 2020 -- Must have .env in client root dir (not public) and all must start with REACT_APP_
 // firebaseConfig using react env
 // const firebaseConfig = {
 //   apiKey: process.env.REACT_APP_API_KEY,
@@ -45,6 +46,8 @@ class Firebase {
     this.auth = firebase.auth();
     this.db = firebase.firestore();
     this.functions = firebase.functions();
+    console.log(`using ORG: ${process.env.REACT_APP_FIREBASE_ORG}`);
+    console.log(`using ENV: ${process.env.REACT_APP_FIREBASE_ENVIRONMENT}`);
   }
 
   doRefreshToken = () => {
