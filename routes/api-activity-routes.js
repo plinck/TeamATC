@@ -34,7 +34,11 @@ db.collection("activities").orderBy("activityDateTime", "desc").onSnapshot((quer
         }
 
         console.log(`api-activity-routes DB : ${ORG}/${ENV}/${USERS_DB}`);
-        const dbUserRef = db.collection(`${ORG}`).doc(`${ENV}`).collection(`${USERS_DB}`)
+        if (ORG || ENV || USERS_DB) {
+            const dbUserRef = db.collection(ORG).doc(ENV).collection(USERS_DB);
+        } else {
+            const dbUserRef = db.collection("ATC").doc("dev").collection("users");
+        }
         const userRef = dbUserRef.doc(activity.uid);
         const userQuery = userRef.get()
         .then ( user => {
