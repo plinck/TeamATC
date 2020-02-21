@@ -1,3 +1,4 @@
+import GLOBAL_ENV from "../Environment/Environment";
 import Util from "../Util/Util";
 
 class UserAPI {
@@ -17,8 +18,10 @@ class UserAPI {
 
             Util.getCurrentAuthUser().then(autUser => {
                 const uid = autUser.uid;
+
+                const dbUserRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
                 // then get from firestore
-                let docRef = db.collection("users").doc(uid);
+                let docRef = dbUserRef.doc(uid);
                 docRef.get().then((doc) => {
                     if (doc.exists) {
                         // update
@@ -52,9 +55,10 @@ class UserAPI {
             })
             .then(() => {
                 console.log("Auth Profile for User successfully updated!");
+                const dbUserRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
                 // update
                 // Note: DO NOT update claims since that can only be done by admin
-                db.collection('users').doc(user.id).set({
+                dbUserRef.doc(user.id).set({
                     firstName: user.firstName,
                     lastName: user.lastName,
                     displayName: `${user.firstName} ${user.lastName}`,
@@ -121,11 +125,12 @@ class UserAPI {
         return new Promise((resolve, reject) => {
             const db = Util.getFirestoreDB();
 
-            let docRef = db.collection("users").doc(authUser.user.uid);
+            const dbUserRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+            let docRef = dbUserRef.doc(authUser.user.uid);
             docRef.get().then((doc) => {
                 if (doc.exists) {
                     // update
-                    db.collection('users').doc(authUser.user.uid).update({
+                    dbUserRef.doc(authUser.user.uid).update({
                         displayName: user.displayName,
                         firstName: user.firstName,
                         lastName: user.lastName,
@@ -144,7 +149,7 @@ class UserAPI {
                     });
                 } else {
                     // cretae if not existing
-                    db.collection('users').doc(authUser.user.uid).set({
+                    dbUserRef.doc(authUser.user.uid).set({
                         displayName: user.displayName,
                         firstName: user.firstName,
                         lastName: user.lastName,
@@ -180,7 +185,8 @@ class UserAPI {
         return new Promise((resolve, reject) => {
             const db = Util.getFirestoreDB();
 
-            db.collection("users").get().then((querySnapshot) => {
+            const dbUserRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+            dbUserRef.get().then((querySnapshot) => {
                 let users = [];
                 querySnapshot.forEach(doc => {
                     let user = {};
@@ -206,7 +212,9 @@ class UserAPI {
             // then get from firestore
             let user = {};
             let foundUser = false;
-            let docRef = db.collection("users").where("email", "==", email.toLowerCase()).limit(1);
+
+            const dbUserRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+            let docRef = dbUserRef.where("email", "==", email.toLowerCase()).limit(1);
             docRef.get().then((querySnapshot) => {
                 querySnapshot.forEach(doc => {
                     foundUser = true;
@@ -236,7 +244,8 @@ class UserAPI {
             const db = Util.getFirestoreDB();
 
             // then get from firestore
-            let docRef = db.collection("users").doc(id);
+            const dbUserRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+            let docRef = dbUserRef.doc(id);
             docRef.get().then((doc) => {
                 if (doc.exists) {
                     // update
@@ -253,13 +262,15 @@ class UserAPI {
 
     // delete later - MUST be done on server in secure admin/auth environment
     static delete = (uid) => {
+        const db = Util.getFirestoreDB();
+        const dbUserRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB();
             Util.apiPost(`/api/auth/deleteUser/${uid}`, {
                     id: uid
                 }).then(() => {
                     console.log("Auth for User successfully deleted!");
-                    db.collection("users").doc(uid).delete().then(() => {
+                    dbUserRef.doc(uid).delete().then(() => {
                         console.log("Firestore User successfully deleted!");
                         return resolve();
                     }).catch((err) => {
@@ -277,14 +288,16 @@ class UserAPI {
     // Update Existing user
     // NOTE: - I purposely do not update uid since that is essentially the primary key
     static update =  (user) => {
+        const db = Util.getFirestoreDB();
+        const dbUserRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+
         console.log(`trying to update user in firestore: ${user}`);
         return new Promise(async (resolve, reject) => {
-            const db = Util.getFirestoreDB();
 
             // we always want uid = id to keep auth and firestore in sync
             // Do NOT update isAdmin, isCashier etc.  or claims i- only change claims through auth
             // (unless using just user or noAuth since those are not *secure*)
-            db.collection('users').doc(user.id).set({
+            dbUserRef.doc(user.id).set({
                 firstName: user.firstName,
                 lastName: user.lastName,
                 displayName: `${user.firstName} ${user.lastName}`,
