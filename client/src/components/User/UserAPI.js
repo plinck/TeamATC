@@ -101,12 +101,12 @@ class UserAPI {
                 displayName: `${userInfo.firstName} ${userInfo.firstName}`,
                 firstName: userInfo.firstName,
                 lastName: userInfo.lastName,
-                phoneNumber: userInfo.phoneNumber,
+                phoneNumber: userInfo.phoneNumber ? userInfo.phoneNumber : "",
                 uid: authUser.user.uid,
                 email: userInfo.email.toLowerCase(),
-                photoURL: userInfo.photoURL,
-                teamName: user.teamName,
-                teamUid: user.teamUid
+                photoURL: userInfo.photoURL ? userInfo.photoURL : "",
+                teamName: userInfo.teamName ? userInfo.teamName : "",
+                teamUid: userInfo.teamUid ? userInfo.teamUid : ""
             };
         } else {
             user = {
@@ -117,8 +117,8 @@ class UserAPI {
                 uid: authUser.user.uid,
                 email: authUser.user.email.toLowerCase(),
                 photoURL: authUser.user.photoURL ? authUser.user.photoURL : "",
-                teamName: user.teamName,
-                teamUid: user.teamUid
+                teamName: user.teamName ? user.teamName : "",
+                teamUid: user.teamUid ? user.teamUid : ""
             };
         }
 
