@@ -1,6 +1,7 @@
 const admin = require("../middleware/authServerCommon");
 const requiresLogin = require('../middleware/requiresLogin.js');
 const db = admin.firestore();;
+const {ORG, ENV, USERS_DB} = require("../ServerEnvironment");
 
 // Static *class* variables
 let activities = []
