@@ -213,11 +213,11 @@ class Activities extends React.Component {
                                     <Link to="/activities">Activities ({filterByString})</Link>
                                 </span>
                                 
-                                {activities.map((activity) => {
+                                {activities.map((activity, index) => {
                                     return (
                                         <div key={activity.id}>
                                             <ActivityCard 
-                                                activity={activity} layoutType={this.props.layoutType}
+                                                activity={activity} layoutType={this.props.layoutType} index={index}
                                             />
                                         </div>
                                     );
