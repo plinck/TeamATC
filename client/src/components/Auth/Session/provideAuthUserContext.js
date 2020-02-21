@@ -1,3 +1,4 @@
+import GLOBAL_ENV from "../../Environment/Environment";
 import React from 'react';
 import AuthUserContext from './AuthUserContext';
 
@@ -82,8 +83,13 @@ const provideAuthUserContext = Component => {
 
             // User listener
             // Try to set state together
-            let ref = this.props.firebase.db.collection("users").doc(authUser.uid);
-            this.userListener = ref.onSnapshot((doc) => {
+            let dbUserRef = this.props.firebase.db.collection("users");
+            if (GLOBAL_ENV.ORG && GLOBAL_ENV.ENV && GLOBAL_ENV.USERS_DB) {
+                dbUserRef = this.props.firebase.db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+            }
+
+            let docRef = dbUserRef.doc(authUser.uid);
+            this.userListener = docRef.onSnapshot((doc) => {
                 const user = doc.data();
                 if (user) {
                     this.setState({
