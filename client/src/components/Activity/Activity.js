@@ -68,7 +68,7 @@ class Activity extends React.Component {
         }
     
         let jsDate = new Date(activityDateTime);
-        const activityDateTimeDisplay = moment(jsDate).format("MM-DD-YY HH:MM");
+        const activityDateTimeDisplay = moment(jsDate).format("MM-DD-YYYY");
 
         let activityIcon = "";
 

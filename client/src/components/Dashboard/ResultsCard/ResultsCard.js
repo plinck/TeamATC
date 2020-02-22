@@ -33,16 +33,16 @@ const ResultsCard = (props) => {
                 <div className="col s3 m3 truncate">
                     {props.result.userOrTeamName}
                 </div>
-                <div className="col m2 m2 truncate">
+                <div className="col s2 m2 truncate">
                     {props.result.pointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 </div>
-                <div className="col m2 m2 truncate">
+                <div className="col s2 m2 truncate">
                     {props.result.swimPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 </div>
-                <div className="col m2 m2 truncate">
+                <div className="col s2 m2 truncate">
                     {props.result.bikePointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 </div>
-                <div className="col m2 m2 truncate">
+                <div className="col s2 m2 truncate">
                     {props.result.runPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 </div>
             </Box>

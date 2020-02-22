@@ -2,21 +2,21 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import { Redirect } from 'react-router';
 import { withRouter } from 'react-router-dom';
-import DepositModal from './DepositModal';
+import ActivityModal from './ActivityModal';
 
 
 import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
 
-class DepositByAll extends React.Component {
+class ActivityBubble extends React.Component {
 
     state = {
-        clickedAmount: 0,
+        clickedDistance: 0,
         clickedDate: 0,
         open: false
     }
 
 
-    plotDeposits = () => {
+    plotActivities = () => {
         const selectorOptions = {
             buttons: [
                 {
@@ -49,27 +49,41 @@ class DepositByAll extends React.Component {
                 }]
         };
 
+        let activities = this.props.activities;
+        let adjustedActivites = activities.map(activity => {
+            let distance = activity.distance;
+            if (activity.distanceUnits === "Yards") {
+                distance = activity.distance / 1760;
+            }
+            switch (activity.activityType) {
+                case "Swim":
+                    distance *= 10;
+                    break;
+                case "Run":
+                    distance *= 3;
+                    break;
+                default:
+                    break;
+            }
+            return distance;
+        })
 
-
-        let combiedData = this.props.activities.concat(this.props.depositsArchive);
-
-        let xData = combiedData.map(activity => new Date(activity.time));
-
-        let yData = combiedData.map(activity => {
-            let bills = 0;
-            bills = activity.ones + activity.fives + activity.tens + activity.twenties + activity.fifties + activity.hundreds;
-            return bills;
+        let xData = activities.map(activity => new Date(activity.activityDateTime));
+        let yData = adjustedActivites.map(activity => {
+            return activity;
         });
 
-        let size = combiedData.map(activity => activity.amount);
-
-        let hover = size.map(amount => "$" + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-
-        let groups = combiedData.map(activity => activity.email);
+        let size = adjustedActivites.map(distance => distance);
+        let hover = size.map(distance => distance.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        let groups = activities.map(activity => activity.email);
+        // let groups = activities.map(activity => {
+        //     const userInitials = activity.displayName.length > 1 ? activity.displayName.substring(0, 2) : "NN";
+        //     return(userInitials);
+        // });
 
         return (
             <div>
-                <DepositModal open={this.state.open} amount={this.state.clickedAmount} date={this.state.clickedDate}/>
+                <ActivityModal open={this.state.open} amount={this.state.clickedDistance} date={this.state.clickedDate}/>
                 <Plot
                     data={[
                         {
@@ -115,7 +129,7 @@ class DepositByAll extends React.Component {
                     onClick={('plotly_click', (data) => {
 
                         this.setState({
-                            clickedAmount: data.points[0].text,
+                            clickedDistance: data.points[0].text,
                             clickedDate: data.points[0].x,
                             open: true
                         });
@@ -143,17 +157,10 @@ class DepositByAll extends React.Component {
         if (this.props.user.authUser) {
             return (
                 <div>
-                    <div className="col s12 l12">
-                        <div className="card">
-                            <div className="card-content pCard">
-                                <span className="card-title">{this.props.title ? this.props.title : 'DepositByAll'}</span>
-                                {this.plotDeposits()}
-                            </div>
-                            <div className="card-action pCard">
-                                <div className="center-align">
-                                    <button onClick={this.viewDetails} className="waves-effect waves-light dash-btn blue darken-4 btn">More Details</button>
-                                </div>
-                            </div>
+                    <div className="card">
+                        <div className="card-content pCard">
+                            <span className="card-title">{this.props.title ? this.props.title : 'Activity Heat Map'}</span>
+                            {this.plotActivities()}
                         </div>
                     </div>
                 </div>
@@ -166,4 +173,4 @@ class DepositByAll extends React.Component {
     }
 }
 
-export default withRouter(withAuthUserContext(DepositByAll));
+export default withRouter(withAuthUserContext(ActivityBubble));
