@@ -645,30 +645,6 @@ class Dashboard extends React.Component {
                         </Grid>
                         :
                         <div className="container">
-                            {/* Breakdowns */}
-                            <div className="row">
-                                <div className="col s12 m4">
-                                    <ActivityTypeBreakdown
-                                        title={`Athlete - Distance/Duration`}
-                                        currentTotalsShare={this.totals.user}
-                                    />
-                                </div>                            
-                                <div className="col s12 m4">
-                                    <ActivityTypeBreakdown
-                                        title={`All Athletes - Distance/Duration`}
-                                        currentTotalsShare={this.totals.all}
-                                    />
-                                </div>   
-                                <div className="col s12 m4">
-                                    <ActivityTeamBreakdown
-                                        title={`Team Breakdown`}
-                                        currentTotalsShare={this.totals.all}
-                                    />
-                                </div>                            
-                     
-                            </div>
-                            {/* End Samples */}
-                        
                             {/*  OVERALL standings by user and TEAM */}
                             <div className="row">  
                                 {/* User standings/results card */}
@@ -720,12 +696,36 @@ class Dashboard extends React.Component {
                             </div>
                             {/*  END OVERALL standings by user and TEAM */}
 
+                            {/* Breakdowns */}
+                            <div className="row">
+                                <div className="col s12 m4">
+                                    <ActivityTypeBreakdown
+                                        title={`All Athletes - Distance/Duration`}
+                                        currentTotalsShare={this.totals.all}
+                                    />
+                                </div>                            
+                                <div className="col s12 m4">
+                                    <ActivityTypeBreakdown
+                                        title={`${this.props.user.displayName}`}
+                                        currentTotalsShare={this.totals.user}
+                                    />
+                                </div>                            
+                                <div className="col s12 m4">
+                                    <ActivityTypeBreakdown
+                                        title={`Team ${this.props.user.teamName}`}
+                                        currentTotalsShare={this.totals.team}
+                                    />
+                                </div>   
+                     
+                            </div>
+                            {/* End Samples */}
+                        
                             {/* All User Totals Cards Stack Bar Graphs - Activities etc*/}
                             <div className="row">
                                 <div className="col s12 m4">
                                     <ActivityTotalsGraphs
-                                        title={`Totals for ${this.props.user.displayName}`}
-                                        currentTotalsShare={this.totals.user} graphType="User"
+                                        title={`Totals for all athletes`}
+                                        currentTotalsShare={this.totals.all}  graphType="All"
                                     />
                                 </div>                            
                                 <div className="col s12 m4">
@@ -736,8 +736,8 @@ class Dashboard extends React.Component {
                                 </div>                            
                                 <div className="col s12 m4">
                                     <ActivityTotalsGraphs
-                                        title={`Totals for all athletes`}
-                                        currentTotalsShare={this.totals.all}  graphType="All"
+                                        title={`Totals for ${this.props.user.displayName}`}
+                                        currentTotalsShare={this.totals.user} graphType="User"
                                     />
                                 </div>                            
                             </div>
@@ -754,7 +754,7 @@ class Dashboard extends React.Component {
                                 </div>                            
                                 <div className="col s12 m6">
                                     <ActivityBubble
-                                        title={"Activity Heatmap - All Users"}
+                                        title={"Heatmap (duration)"}
                                         activities={this.state.activities}
                                     />
                                 </div>
