@@ -1,24 +1,29 @@
 import GLOBAL_ENV from "../Environment/Environment";
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
-import './dashboard.css';
-import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
-import { Redirect } from 'react-router';
+import "./dashboard.css";
+import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { Redirect } from "react-router";
 
-import SummaryTotal from './SummaryTotal/SummaryTotal';
-import ResultsCard from './ResultsCard/ResultsCard';
+import SampleClassGraphCard from "./GraphCard/SampleClassGraphCard";
+import SampleClassPieChart from "./GraphCard/SampleClassPieChart";
+
+import SummaryTotal from "./SummaryTotal/SummaryTotal";
+import ResultsCard from "./ResultsCard/ResultsCard";
 import Activities from "../Activity/Activities";
 import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
 import ActivityTotalsGraphs from "./Graphs/ActivityTotalsGraphs";
+import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
+import ActivityTeamBreakdown from "./Graphs/ActivityTeamBreakdown";
 
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
 
-import Util from '../Util/Util';
+import Util from "../Util/Util";
 
 class Dashboard extends React.Component {
     state = {
@@ -640,6 +645,31 @@ class Dashboard extends React.Component {
                         </Grid>
                         :
                         <div className="container">
+                            {/* Breakdowns */}
+                            <div className="row">
+                                <div className="col s12 m4">
+                                    <ActivityTypeBreakdown
+                                        title={`Athlete - Distance/Duration`}
+                                        currentTotalsShare={this.totals.user}
+                                    />
+                                </div>                            
+                                <div className="col s12 m4">
+                                    <ActivityTypeBreakdown
+                                        title={`All Athletes - Distance/Duration`}
+                                        currentTotalsShare={this.totals.all}
+                                    />
+                                </div>   
+                                <div className="col s12 m4">
+                                    <ActivityTeamBreakdown
+                                        title={`Team Breakdown`}
+                                        currentTotalsShare={this.totals.all}
+                                    />
+                                </div>                            
+                     
+                            </div>
+                            {/* End Samples */}
+                        
+                            {/*  OVERALL standings by user and TEAM */}
                             <div className="row">  
                                 {/* User standings/results card */}
                                 <div className="col s12 m6">
@@ -688,9 +718,10 @@ class Dashboard extends React.Component {
                                 {/* End Team standings/results card */}
 
                             </div>
+                            {/*  END OVERALL standings by user and TEAM */}
 
+                            {/* All User Totals Cards Stack Bar Graphs - Activities etc*/}
                             <div className="row">
-                                {/* All User Totals */}
                                 <div className="col s12 m4">
                                     <ActivityTotalsGraphs
                                         title={`Totals for ${this.props.user.displayName}`}
@@ -710,9 +741,11 @@ class Dashboard extends React.Component {
                                     />
                                 </div>                            
                             </div>
+                            {/* End All User Totals Cards Stack Bar Graphs - Activities etc*/}
 
+
+                            {/* Activities byt day and heatmap */}
                             <div className="row">
-                            {/* All User Bubble */}
                                 <div className="col s12 m6">
                                     <ActivityByDay
                                     title={"Activity By Day"}
@@ -726,9 +759,14 @@ class Dashboard extends React.Component {
                                     />
                                 </div>
                             </div>
+                             {/* END Activities by day and heatmap */}
 
+
+                            {/* Current User"s Activities */}
                             <Activities filterByString="Mine" layoutType="userCard"/>
-                            
+                            {/* END Current User"s Activities */}
+
+                            {/* Sumary Display */}
                             <div className="row">                          
                                 <SummaryTotal
                                     nbrActivities={this.state.nbrActivities}
@@ -740,6 +778,8 @@ class Dashboard extends React.Component {
                                     currentUserTotals={this.totals.user}
                                 />
                             </div>
+                            {/* END Sumary Display */}
+
                         </div>
                     }
                 </div>
