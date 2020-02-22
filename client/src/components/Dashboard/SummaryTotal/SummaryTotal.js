@@ -9,6 +9,10 @@ const SummaryTotal = (props) => {
         return(null);
     }
 
+    let userSwimDistanceTotalYards = props.currentUserTotals.swimDistanceTotal * 1760;
+    let teamSwimDistanceTotalYards = props.currentTeamTotals.swimDistanceTotal * 1760;
+    let allSwimDistanceTotalYards = props.currentAllTotals.swimDistanceTotal * 1760;
+
     return (
         <div>
             <div className="row">
@@ -60,7 +64,7 @@ const SummaryTotal = (props) => {
                             <h6>
                                 <span className="blue-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-swimming-50.png"} alt={"Swim"} />{"Swim: "} 
-                                    {props.currentUserTotals.swimDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Yards
+                                    {userSwimDistanceTotalYards.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Yards
                                 </span>
                             </h6>
                             <h6>
@@ -154,7 +158,7 @@ const SummaryTotal = (props) => {
                             <h6>
                                 <span className="blue-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-swimming-50.png"} alt={"Swim"} />{"Swim: "} 
-                                    {props.currentTeamTotals.swimDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Yards
+                                    {teamSwimDistanceTotalYards.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Yards
                                 </span>
                             </h6>
                             <h6>
@@ -248,7 +252,7 @@ const SummaryTotal = (props) => {
                             <h6>
                                 <span className="blue-text truncate"> 
                                     <img style={{maxHeight: '20px'}} src={"/images/icons8-swimming-50.png"} alt={"Swim"} />{"Swim: "} 
-                                    {props.currentAllTotals.swimDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Yards
+                                    {allSwimDistanceTotalYards.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Yards
                                 </span>
                             </h6>
                             <h6>
