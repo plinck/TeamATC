@@ -43,13 +43,13 @@ class ActivityTypeBreakdown extends React.Component {
             ["Swim", "Bike", "Run"],
         ]
 
+        let donutHoleSize = .3;
+
         let data = [
             {
                 values: chartValues[0],
                 labels: chartLabels[0],
-                type: 'pie',
                 hoverinfo: 'label+value',
-                name: 'Distance',
                 //mode: 'markers+text',
                 text: chartLabels[0],
                 textposition: 'inside',
@@ -59,14 +59,15 @@ class ActivityTypeBreakdown extends React.Component {
                 domain: {
                     row: 0,
                     column: 0
-                }                  
+                },      
+                name: 'Distance',
+                hole:  donutHoleSize,          
+                type: 'pie'
             },
             {
                 values: chartValues[1],
                 labels: chartLabels[0],
-                type: 'pie',
                 hoverinfo: 'label+value',
-                name: 'Duration',
                 text: chartLabels[0],
                 textposition: 'inside',
                 marker: {
@@ -75,7 +76,10 @@ class ActivityTypeBreakdown extends React.Component {
                 domain: {
                     row: 0,
                     column: 1
-                }                        
+                },                      
+                name: 'Duration',
+                hole:  donutHoleSize,          
+                type: 'pie'
             }
         ];
             
@@ -85,6 +89,26 @@ class ActivityTypeBreakdown extends React.Component {
             margin: {t: 0, b: 0, l: 0, r: 0, pad : 0},
             showlegend: false,
             grid: {rows: 1, columns: 2},
+            annotations: [
+                {
+                  font: {
+                    size: 16
+                  },
+                  showarrow: false,
+                  text: 'Miles',
+                  x: 0.17,
+                  y: 0.5
+                },
+                {
+                  font: {
+                    size: 16
+                  },
+                  showarrow: false,
+                  text: 'Hrs',
+                  x: 0.82,
+                  y: 0.5
+                }
+            ]            
         };
                 
         return (
