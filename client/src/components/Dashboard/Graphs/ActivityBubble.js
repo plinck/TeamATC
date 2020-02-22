@@ -65,16 +65,16 @@ class ActivityBubble extends React.Component {
                 default:
                     break;
             }
-            return distance;
+            return {distance: distance, duration: activity.duration};
         })
 
         let xData = activities.map(activity => new Date(activity.activityDateTime));
         let yData = adjustedActivites.map(activity => {
-            return activity;
+            return activity.duration;
         });
 
-        let size = adjustedActivites.map(distance => distance);
-        let hover = size.map(distance => distance.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        let size = adjustedActivites.map(activity => (activity.duration * 100));
+        let hover = size.map(duration => `${duration.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
         let groups = activities.map(activity => activity.email);
         // let groups = activities.map(activity => {
         //     const userInitials = activity.displayName.length > 1 ? activity.displayName.substring(0, 2) : "NN";
