@@ -646,14 +646,37 @@ class Dashboard extends React.Component {
                         :
                         <div className="container">
                             {/*  OVERALL standings by user and TEAM */}
-                            <div className="row">  
+                            <div className="row">                 
+                                {/* Team standings/results card */}
+                                <div className="col s12 m6">
+                                    <div className="card">
+                                        <div className="card-content pCard">
+                                            <span className="card-title blue-text left-align">
+                                                <Link to="/activities">
+                                                    Team Leaderboard (Adjusted Miles)
+                                                </Link>
+                                            </span>
+                                            {headerRow}
+                                            {this.totals.teamR.map((teamResult, index) => {
+                                                return (
+                                                    <div key={index}>
+                                                        <ResultsCard result={teamResult} index={index}
+                                                        />
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* End Team standings/results card */}          
+                         
                                 {/* User standings/results card */}
                                 <div className="col s12 m6">
                                     <div className="card">
                                         <div className="card-content pCard">
                                             <span className="card-title blue-text left-align">
                                                 <Link to="/activities">
-                                                    User Leaderboard - Total (Adjusted Miles)
+                                                    User Leaderboard (Adjusted Miles)
                                                 </Link>
                                             </span>
                                             {headerRow}
@@ -669,30 +692,6 @@ class Dashboard extends React.Component {
                                     </div>
                                 </div>
                                 {/* End User standings/results card */}
-
-                                {/* Team standings/results card */}
-                                <div className="col s12 m6">
-                                    <div className="card">
-                                        <div className="card-content pCard">
-                                            <span className="card-title blue-text left-align">
-                                                <Link to="/activities">
-                                                    Team Leaderboard
-                                                </Link>
-                                            </span>
-                                            {headerRow}
-                                            {this.totals.teamR.map((teamResult, index) => {
-                                                return (
-                                                    <div key={index}>
-                                                        <ResultsCard result={teamResult} index={index}
-                                                        />
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                </div>
-                                {/* End Team standings/results card */}
-
                             </div>
                             {/*  END OVERALL standings by user and TEAM */}
 
@@ -724,25 +723,24 @@ class Dashboard extends React.Component {
                             <div className="row">
                                 <div className="col s12 m4">
                                     <ActivityTotalsGraphs
-                                        title={`Totals for all athletes`}
+                                        title={`All Totals (Adjusted)`}
                                         currentTotalsShare={this.totals.all}  graphType="All"
-                                    />
+                                        />
                                 </div>                            
                                 <div className="col s12 m4">
                                     <ActivityTotalsGraphs
-                                        title={`Totals for team ${this.props.user.teamName}`}
-                                        currentTotalsShare={this.totals.team}  graphType="Team"
-                                    />
-                                </div>                            
-                                <div className="col s12 m4">
-                                    <ActivityTotalsGraphs
-                                        title={`Totals for ${this.props.user.displayName}`}
+                                        title={`${this.props.user.displayName} (Adjusted)`}
                                         currentTotalsShare={this.totals.user} graphType="User"
+                                    />
+                                </div>                            
+                                <div className="col s12 m4">
+                                    <ActivityTotalsGraphs
+                                        title={`${this.props.user.teamName} (Adjusted)`}
+                                        currentTotalsShare={this.totals.team}  graphType="Team"
                                     />
                                 </div>                            
                             </div>
                             {/* End All User Totals Cards Stack Bar Graphs - Activities etc*/}
-
 
                             {/* Activities byt day and heatmap */}
                             <div className="row">

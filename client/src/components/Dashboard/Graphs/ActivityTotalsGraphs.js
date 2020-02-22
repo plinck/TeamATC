@@ -33,28 +33,28 @@ class ActivityTotalsGraphs extends React.Component {
         let pointsTotal  = swimPointsTotal + bikePointsTotal + runPointsTotal;
 
         let trace1 = {
-            x: ['Activities', 'Distance', 'Duration', 'ActualDist'],
+            x: ['Activities', 'Points', 'Duration', 'ActualDist'],
             y: [swimNbrActivities, swimPointsTotal, swimDurationTotal, swimDistanceTotal],
             name: 'Swim',
             type: 'bar'
         };
         
         let trace2 = {
-            x: ['Activities', 'Distance', 'Duration', 'ActualDist'],
+            x: ['Activities', 'Points', 'Duration', 'ActualDist'],
             y: [bikeNbrActivities, bikePointsTotal, bikeDurationTotal, bikeDistanceTotal],
             name: 'Bike',
             type: 'bar'
         };
         
         let trace3 = {
-            x: ['Activities', 'Distance', 'Duration', 'ActualDist'],
+            x: ['Activities', 'Points', 'Duration', 'ActualDist'],
             y: [runNbrActivities, runPointsTotal, runDurationTotal, runDistanceTotal],
             name: 'Run',
             type: 'bar'
         };
         
         let trace4 = {
-            x: ['Activities', 'Distance', 'Duration', 'ActualDist'],
+            x: ['Activities', 'Points', 'Duration', 'ActualDist'],
             y: [nbrActivities, pointsTotal, durationTotal, distanceTotal],
             name: 'Total',
             type: 'bar'
