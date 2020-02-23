@@ -87,11 +87,35 @@ class UserAPI {
         return(Util.apiPost("/api/auth/createUser", authUser));
     }
 
+    // This calls the backend to allow admins to create an auth user securely abd not change login
+    static createNoTokenUser = (authUser) => {
+        return(Util.apiPostNoToken("/api/auth/createNoTokenUser", authUser));
+    }
+
+    // This calls the backend to allow admins to create an auth user securely abd not change login
+    static registerNewUser = (user) => {
+        console.log(`trying to update user in auth: ${user}`);
+        const firebase = Util.getFirebaseAuth();
+
+        return(firebase.doCreateUserWithEmailAndPassword(user.email, user.password));
+    }    
+
+    // This calls the backend to allow admins to create an auth user securely abd not change login
+    static signinNewUser = (user) => {
+        console.log(`trying to sign user in auth: ${user}`);
+        const firebase = Util.getFirebaseAuth();
+
+        return(firebase.doSignInWithEmailAndPassword(user.email, user.password));
+    }    
+
     // Adds a user that has been authroized to the firestore collection
     // If userInfo is passed, add all that, otherwise, just add info from authUser 
     static addAuthUserToFirestore = (authUser, userInfo) => {
         // get first and last name from authUser display name
-        const nameArray = authUser.user.displayName.split(" ");    
+        let nameArray = []
+        if (authUser.user && authUser.user.displayName) {
+            nameArray = authUser.user.displayName.split(" ");   
+        } 
         let user = {};
 
         // check if userInfo exists and set accordingly
