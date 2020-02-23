@@ -8,9 +8,9 @@ import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import { InputAdornment } from '@material-ui/core';
-import { RemoveRedEye } from '@material-ui/icons';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import SearchIcon from "@material-ui/icons/Search";
 
 
 const styles = theme => ({
@@ -212,62 +212,63 @@ class Register extends React.Component {
                                 value={this.state.email}
                                 onChange={this.handleChange('email')}
                             />
-                                              
+
                             <TextField
                                 id="password"
                                 label="Password"
                                 type={showPassword ? 'text' : 'password'}
-                                value={password}
-                                inputProps={
-                                    {
-                                        style: {
-                                            margin: 50,
-                                            padding: 18
-                                        }, 
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                              <AccountCircle />
-                                            </InputAdornment>
-                                          ),
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <IconButton
-                                                    aria-label="Toggle password visibility"
-                                                    onClick={this.handleClickShowPassword}>
-                                                        {showPassword ? <Visibility /> : <VisibilityOff />}
-                                                </IconButton>
-                                            </InputAdornment>
-                                        )
-                                    }
-                                }
-                                className={classes.textField}
                                 variant="outlined"
-                                type="password"
-                                name="password"
-                                autoComplete="current-password"
+                                margin="normal"
+                                className={classes.textField}
+                                InputProps={{
+                                    style: {
+                                        padding: 18
+                                    }, 
+                                    endAdornment: (
+                                        <InputAdornment position="start">
+                                            <IconButton
+                                                aria-label="Toggle password visibility"
+                                                onClick={this.handleClickShowPassword}>
+                                                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+                                }}
+                                variant="outlined"
                                 margin="normal"
                                 onChange={this.handleChange('password')}
                                 error={!!this.state.errorText}
                                 helperText={this.state.errorText}
                             />
-
+                          
                             <TextField
                                 id="confirmPassword"
                                 label="Confirm Password"
-                                inputProps={{
-                                    style: {margin: 5, padding: 18} 
-                                }}                              
-                                className={classes.textField}
+                                type={showPassword ? 'text' : 'password'}
                                 variant="outlined"
-                                type="password"
-                                name="password"
-                                autoComplete="password"
+                                margin="normal"
+                                className={classes.textField}
+                                InputProps={{
+                                    style: {
+                                        padding: 18
+                                    }, 
+                                    endAdornment: (
+                                        <InputAdornment position="start">
+                                            <IconButton
+                                                aria-label="Toggle password visibility"
+                                                onClick={this.handleClickShowPassword}>
+                                                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+                                }}
+                                variant="outlined"
                                 margin="normal"
                                 onChange={this.handlePasswordValidator}
                                 error={!!this.state.errorText}
                                 helperText={this.state.errorText}
                             />
-
+                          
                             <TextField
                                 id="phone"
                                 label="Phone Number"
