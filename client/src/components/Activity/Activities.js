@@ -145,18 +145,31 @@ class Activities extends React.Component {
         let searchBy = this.state.searchBy;
         let filterByString = this.state.filterByString;
 
-        // Activity Header Row
-        /*
-                            <Typography className="col s2 m2 truncate">{`${teamName}`}</Typography>
-                    <Typography className="col s2 m2 truncate">{`${fullName}`}</Typography>
-                    <Typography className="col s2 m2 truncate">{activityDateTimeDisplay}</Typography>
-                    <Typography className="col s2 m2 truncate">{activityNameAndType}</Typography>
-                    <Typography className="col s1 m1 truncate">
-                        {duration.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {"H"}
-                    </Typography>
-                    <Typography className="col s1 offset-s1 m1 offset-m1 truncate">
+        const sortFilterRow = 
+            <div className="row">                        
+                <div className="col s1 m1 green-text left-align">Filter: </div>
+                <div className="col s1 m1">
+                    <Button className="waves-effect waves-light btn"
+                        onClick={() => this.filterByChange("All")}>All
+                    </Button>
+                </div>
+                <div className="col s1 m1">
+                    <Button className="waves-effect waves-light btn"
+                        onClick={() => this.filterByChange("Team")}>Team
+                    </Button>
+                </div>
+                <div className="col s1 m1">
+                    <Button className="waves-effect waves-light btn"
+                        onClick={() => this.filterByChange("Mine")}>Mine
+                    </Button>
+                </div>
+                <div className="col s3 offset-s5 m3 offset-m5 blue-text input-field inline">
+                    <input id="searchBy" name="searchBy" type="text" value={searchBy} onChange={this.onChange} />
+                    <label htmlFor="searchBy">Search</label>                            
+                    <i className="material-icons prefix">search</i>
+                </div>
+            </div>
 
-        */
         const headerRow = 
         <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1} m={0}>
             <div className="col s1 m1">
@@ -202,29 +215,7 @@ class Activities extends React.Component {
                         EXPORT TO CSV</CSVLink>    
                     </div>
 
-                    <div className="row">                        
-                        <div className="col s1 m1 green-text left-align">Filter: </div>
-                        <div className="col s1 m1">
-                            <Button className="waves-effect waves-light btn"
-                                onClick={() => this.filterByChange("All")}>All
-                            </Button>
-                        </div>
-                        <div className="col s1 m1">
-                            <Button className="waves-effect waves-light btn"
-                                onClick={() => this.filterByChange("Team")}>Team
-                            </Button>
-                        </div>
-                        <div className="col s1 m1">
-                            <Button className="waves-effect waves-light btn"
-                                onClick={() => this.filterByChange("Mine")}>Mine
-                            </Button>
-                        </div>
-                        <div className="col s3 offset-s5 m3 offset-m5 blue-text input-field inline">
-                            <input id="searchBy" name="searchBy" type="text" value={searchBy} onChange={this.onChange} />
-                            <label htmlFor="searchBy">Search</label>                            
-                            <i className="material-icons prefix">search</i>
-                        </div>
-                    </div>
+                    {sortFilterRow}
                     {headerRow}
                     <div className={classes.root}>
                         {activities.map((activity, index) => {
