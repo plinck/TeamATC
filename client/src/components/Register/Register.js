@@ -1,41 +1,34 @@
 import React from 'react';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import axios from "axios";
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
 import NumberFormat from 'react-number-format';
 import locatStyles from './Register.module.css';
 import Button from '@material-ui/core/Button';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
-
-// const useStyles = makeStyles(theme => ({
-//     root: {
-//       '& .MuiTextField-root': {
-//         margin: theme.spacing(1),
-//         width: 200,
-//       },
-//     },
-//   }));
 const styles = theme => ({
     container: {
         display: 'flex',
         flexWrap: 'wrap',
     },
     inputFix: {
-        marginTop: 5
+        marginTop: 50
     },
     textField: {
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
-        marginTop: theme.spacing.unit,
-        marginBottom: theme.spacing.unit,
         width: 300,
     },
+        //style for font size
+    resize:{
+        fontSize:200
+    },
+    
+    
     menu: {
         width: 200,
     },
@@ -98,8 +91,6 @@ NumberFormatCustom.propTypes = {
     onChange: PropTypes.func.isRequired,
 };
 
-
-
 class Register extends React.Component {
     state = {
         disabled: true,
@@ -109,7 +100,8 @@ class Register extends React.Component {
         email: "",
         passwrod: "",
         phone: "",
-        errorText: ""
+        errorText: "",
+        showPassword: false
     };
 
     handleChange = name => event => {
@@ -134,6 +126,12 @@ class Register extends React.Component {
         }
     }
 
+    handleClickShowPassword = (e) => {
+        e.preventDefault();
+
+        this.setState(state => ({ showPassword: !state.showPassword }));
+    };
+
     registerUser = event => {
         // Just allow them to register as long as they arte member of the club
         // 0. check to ensure thet are not already registered
@@ -157,6 +155,7 @@ class Register extends React.Component {
 
     render() {
         const { classes } = this.props;
+        const { showPassword, password, confirmPassword } = this.state;
 
         return (
             <div className="container">
@@ -168,7 +167,9 @@ class Register extends React.Component {
                                 id="firstName"
                                 label="First Name"
                                 placeholder="John"
-                                multiline
+                                inputProps={{
+                                    style: {margin: 5, padding: 18} 
+                                }}                              
                                 className={classes.textField}
                                 variant="outlined"
                                 margin="normal"
@@ -180,7 +181,9 @@ class Register extends React.Component {
                                 id="lastName"
                                 label="Last Name"
                                 placeholder="Doe"
-                                multiline
+                                inputProps={{
+                                    style: {margin: 5, padding: 18} 
+                                }}                              
                                 className={classes.textField}
                                 variant="outlined"
                                 margin="normal"
@@ -192,7 +195,9 @@ class Register extends React.Component {
                                 id="email"
                                 label="Email"
                                 placeholder="JohnDoe@gmail.com"
-                                multiline
+                                inputProps={{
+                                    style: {margin: 5, padding: 18} 
+                                }}                              
                                 className={classes.textField}
                                 variant="outlined"
                                 type="email"
@@ -202,16 +207,18 @@ class Register extends React.Component {
                                 value={this.state.email}
                                 onChange={this.handleChange('email')}
                             />
-
+                                              
                             <TextField
                                 id="password"
                                 label="Password"
-                                multiline
+                                inputProps={{
+                                    style: {margin: 5, padding: 18} 
+                                }}                              
                                 className={classes.textField}
                                 variant="outlined"
                                 type="password"
                                 name="password"
-                                autoComplete="password"
+                                autoComplete="current-password"
                                 margin="normal"
                                 onChange={this.handleChange('password')}
                                 error={!!this.state.errorText}
@@ -221,11 +228,13 @@ class Register extends React.Component {
                             <TextField
                                 id="confirmPassword"
                                 label="Confirm Password"
-                                multiline
+                                inputProps={{
+                                    style: {margin: 5, padding: 18} 
+                                }}                              
                                 className={classes.textField}
                                 variant="outlined"
                                 type="password"
-                                name="confirmPassword"
+                                name="password"
                                 autoComplete="password"
                                 margin="normal"
                                 onChange={this.handlePasswordValidator}
@@ -236,7 +245,9 @@ class Register extends React.Component {
                             <TextField
                                 id="phone"
                                 label="Phone Number"
-                                multiline
+                                inputProps={{
+                                    style: {margin: 5, padding: 18} 
+                                }}                              
                                 className={classes.textField}
                                 variant="outlined"
                                 margin="normal"
