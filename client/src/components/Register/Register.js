@@ -139,18 +139,20 @@ class Register extends React.Component {
         // 2. Sign the up as user - Auth and user DB
         // for initial test, just sign them up.
 
-        const propspect = this.state;
-        axios.post("/api/prospect", propspect)
-            .then(res => console.log(res.data))
-            .then(alert("Thank you for registering! We will contact you shortly."))
-            .then(this.setState({
-                errorText: "",
-                firstName: "",
-                lastName: "",
-                email: "",
-                password: "",
-                phone: ""
-            }))
+        alert("Thank you for registering! Start entering workouts.");
+
+        // const propspect = this.state;
+        // axios.post("/api/prospect", propspect)
+        //     .then(res => console.log(res.data))
+        //     .then(alert("Thank you for registering! We will contact you shortly."))
+        //     .then(this.setState({
+        //         errorText: "",
+        //         firstName: "",
+        //         lastName: "",
+        //         email: "",
+        //         password: "",
+        //         phone: ""
+        //     }))
     }
 
     render() {
