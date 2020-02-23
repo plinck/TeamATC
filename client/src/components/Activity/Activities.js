@@ -6,6 +6,15 @@ import { Link } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 import Box from "@material-ui/core/Box";
+import SearchIcon from "@material-ui/icons/Search";
+import TextField from '@material-ui/core/TextField';
+import { InputAdornment } from '@material-ui/core';
+
+// For select input field
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import Activity from './Activity';
@@ -29,6 +38,26 @@ const styles = theme => ({
     progress: {
         margin: theme.spacing.unit * 2,
     },
+    container: {
+        display: 'flex',
+        flexWrap: 'wrap',
+    },
+    formControl: {
+        margin: theme.spacing.unit,
+        minWidth: 120
+      },
+    inputFix: {
+        marginTop: 50
+    },
+    textField: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: 200,
+    },
+        //style for font size
+    resize:{
+        fontSize:200
+    }
 });
 
 class Activities extends React.Component {
@@ -38,7 +67,8 @@ class Activities extends React.Component {
         this.state = {
             activities: null,
             searchBy: "",
-            filterByString: null
+            filterByString: null,
+            filterBy: "All"
         };
     }
 
@@ -97,6 +127,22 @@ class Activities extends React.Component {
             }     
     }
 
+    onChange = event => {
+        // Set Units
+        if (event.target.name === "searchBy") {
+            this.setState({
+                [event.target.name]: event.target.value,
+            });
+        } else {
+            if (event.target.name === "filterBy") {
+                this.setState({
+                    "filterByString": event.target.value,
+                });
+                this.refreshPage(event.target.value);
+            } 
+        }
+    };
+
     filterByChange = (filterString) => {
         this.setState({filterByString: filterString});
         // console.log(`Filter By ${filterString} activities`);
@@ -115,15 +161,6 @@ class Activities extends React.Component {
             console.error(err); 
         });
     }
-
-    onChange = event => {
-        // Set Units
-        if (event.target.name === "searchBy") {
-            this.setState({
-                [event.target.name]: event.target.value,
-            });
-        }
-    };
 
     render() {
         const { classes } = this.props;
@@ -144,9 +181,11 @@ class Activities extends React.Component {
         // Search and filter
         let searchBy = this.state.searchBy;
         let filterByString = this.state.filterByString;
-
+        let filterBy = this.state.filterBy;
+        
         const sortFilterRow = 
-            <div className="row">                        
+            <Box className="row"  border={1} m={0} p={0}>
+            {/*
                 <div className="col s1 m1 green-text left-align">Filter: </div>
                 <div className="col s1 m1">
                     <Button className="waves-effect waves-light btn"
@@ -163,12 +202,53 @@ class Activities extends React.Component {
                         onClick={() => this.filterByChange("Mine")}>Mine
                     </Button>
                 </div>
-                <div className="col s3 offset-s5 m3 offset-m5 blue-text input-field inline">
-                    <input id="searchBy" name="searchBy" type="text" value={searchBy} onChange={this.onChange} />
-                    <label htmlFor="searchBy">Search</label>                            
-                    <i className="material-icons prefix">search</i>
-                </div>
-            </div>
+                */}
+
+                <form className={classes.container} noValidate autoComplete="off" >
+                        <FormControl variant="outlined" required className={classes.formControl}>
+                            <InputLabel id="filterByLabel">Filter By</InputLabel>
+                            <Select
+                                labelId="filterByLabel"
+                                id="filterBy"
+                                value={filterBy}
+                                name="filterBy"
+                                type="text"
+                                margin="normal"
+                                className={classes.textField}
+                                style={{marginTop: 23, marginBottom: 16, padding: 0}}>
+                                onChange={this.onChange}
+                                <MenuItem value={"Mine"}>Mine</MenuItem>
+                                <MenuItem value={"Team"}>Team</MenuItem>
+                                <MenuItem value={"All"}>All</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                    <div className="blue-text input-field inline align-right">
+                            <TextField
+                            id="searchBy"
+                            name="searchBy"
+                            value={searchBy}
+                            label="Search"
+                            type='text'
+                            variant="outlined"
+                            margin="normal"
+                            className={classes.textField}
+                            InputProps={{
+                                style: {
+                                    margin: 0,
+                                    padding: 19
+                                }, 
+                                endAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon />
+                                    </InputAdornment>
+                                )
+                            }}
+                            onChange={this.onChange}
+                        />
+                    </div>
+                </form>
+            </Box>
 
         const headerRow = 
         <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1} m={0}>
