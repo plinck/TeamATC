@@ -12,6 +12,15 @@ import NumberFormat from 'react-number-format';
 import locatStyles from './Register.module.css';
 import Button from '@material-ui/core/Button';
 
+
+// const useStyles = makeStyles(theme => ({
+//     root: {
+//       '& .MuiTextField-root': {
+//         margin: theme.spacing(1),
+//         width: 200,
+//       },
+//     },
+//   }));
 const styles = theme => ({
     container: {
         display: 'flex',
@@ -23,6 +32,8 @@ const styles = theme => ({
     textField: {
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
+        marginTop: theme.spacing.unit,
+        marginBottom: theme.spacing.unit,
         width: 300,
     },
     menu: {
@@ -95,11 +106,8 @@ class Register extends React.Component {
         noError: false,
         firstName: "",
         lastName: "",
-        company: "",
-        revenue: "",
-        locations: "",
         email: "",
-        cash: "",
+        passwrod: "",
         phone: "",
         errorText: ""
     };
@@ -110,23 +118,29 @@ class Register extends React.Component {
     };
 
     enableButton = () => {
-        if (this.state.firstName && this.state.lastName && this.state.email && this.state.company && this.state.revenue && this.state.locations
-            && this.state.cash && this.state.phone && this.state.noError === true) {
+        if (this.state.firstName && this.state.lastName && this.state.email && this.state.password
+            && this.state.noError === true) {
             this.setState({ disabled: false });
         } else {
             this.setState({ disabled: true });
         }
     }
 
-    handleEmailValidator = event => {
-        if (event.target.value !== this.state.email) {
-            this.setState({ errorText: "Emails do not match!", noError: false }, () => this.enableButton())
+    handlePasswordValidator = event => {
+        if (event.target.value !== this.state.password) {
+            this.setState({ errorText: "Passwords do not match!", noError: false }, () => this.enableButton())
         } else {
             this.setState({ errorText: "", noError: true }, () => this.enableButton())
         }
     }
 
-    submitProspect = event => {
+    registerUser = event => {
+        // Just allow them to register as long as they arte member of the club
+        // 0. check to ensure thet are not already registered
+        // 1. Validate they are club memmber
+        // 2. Sign the up as user - Auth and user DB
+        // for initial test, just sign them up.
+
         const propspect = this.state;
         axios.post("/api/prospect", propspect)
             .then(res => console.log(res.data))
@@ -135,15 +149,11 @@ class Register extends React.Component {
                 errorText: "",
                 firstName: "",
                 lastName: "",
-                company: "",
-                revenue: "",
-                locations: "",
                 email: "",
-                cash: "",
+                password: "",
                 phone: ""
             }))
     }
-
 
     render() {
         const { classes } = this.props;
@@ -153,15 +163,14 @@ class Register extends React.Component {
                 <div className="card">
                     <div className="card-content">
                         <span className="card-title">Register Now</span>
-
-                        <h5>About You</h5>
-                        <form className={classes.container} noValidate autoComplete="off">
+              
                             <TextField
                                 id="firstName"
                                 label="First Name"
                                 placeholder="John"
                                 multiline
                                 className={classes.textField}
+                                variant="outlined"
                                 margin="normal"
                                 value={this.state.firstName}
                                 onChange={this.handleChange('firstName')}
@@ -173,6 +182,7 @@ class Register extends React.Component {
                                 placeholder="Doe"
                                 multiline
                                 className={classes.textField}
+                                variant="outlined"
                                 margin="normal"
                                 value={this.state.lastName}
                                 onChange={this.handleChange('lastName')}
@@ -184,6 +194,7 @@ class Register extends React.Component {
                                 placeholder="JohnDoe@gmail.com"
                                 multiline
                                 className={classes.textField}
+                                variant="outlined"
                                 type="email"
                                 name="email"
                                 autoComplete="email"
@@ -193,16 +204,31 @@ class Register extends React.Component {
                             />
 
                             <TextField
-                                id="confirmEmail"
-                                label="Confirm Email"
-                                placeholder="JohnDoe@gmail.com"
+                                id="password"
+                                label="Password"
                                 multiline
                                 className={classes.textField}
-                                type="email"
-                                name="email"
-                                autoComplete="email"
+                                variant="outlined"
+                                type="password"
+                                name="password"
+                                autoComplete="password"
                                 margin="normal"
-                                onChange={this.handleEmailValidator}
+                                onChange={this.handlePasswordValidator}
+                                error={!!this.state.errorText}
+                                helperText={this.state.errorText}
+                            />
+
+                            <TextField
+                                id="confirmPassword"
+                                label="Confirm Password"
+                                multiline
+                                className={classes.textField}
+                                variant="outlined"
+                                type="password"
+                                name="password"
+                                autoComplete="password"
+                                margin="normal"
+                                onChange={this.handlePasswordValidator}
                                 error={!!this.state.errorText}
                                 helperText={this.state.errorText}
                             />
@@ -212,6 +238,7 @@ class Register extends React.Component {
                                 label="Phone Number"
                                 multiline
                                 className={classes.textField}
+                                variant="outlined"
                                 margin="normal"
                                 value={this.state.phone}
                                 onChange={this.handleChange('phone')}
@@ -219,75 +246,12 @@ class Register extends React.Component {
                                     inputComponent: NumberFormatPhone,
                                 }}
                             />
-                        </form>
-                        <br></br>
-                        <h5>About Your Business</h5>
-                        <form className={classes.container} noValidate autoComplete="off">
-                            <TextField
-                                id="companyName"
-                                label="Company Name"
-                                placeholder="Company Inc."
-                                multiline
-                                className={classes.textField}
-                                margin="normal"
-                                value={this.state.company}
-                                onChange={this.handleChange('company')}
-                            />
-
-                            <TextField
-                                id="revenue"
-                                label="Annual Revenue (Approx.)"
-                                // placeholder="$1,000,000"
-                                multiline
-                                className={classes.textField}
-                                margin="normal"
-                                value={this.state.revenue}
-                                onChange={this.handleChange('revenue')}
-                                InputProps={{
-                                    inputComponent: NumberFormatCustom,
-                                }}
-                            />
-
-
-                            <FormControl margin="normal" className={classes.formControl}>
-                                <InputLabel htmlFor="locations-helper">Number of Locations</InputLabel>
-                                <Select
-                                    value={this.state.locations}
-                                    onChange={this.handleChange('locations')}
-                                    input={<Input name="locations" id="locations-helper" />}
-
-                                >
-                                    <MenuItem value={"One"}>One</MenuItem>
-                                    <MenuItem value={"Two - Ten"}>Two - Ten</MenuItem>
-                                    <MenuItem value={"Ten+"}>Ten+</MenuItem>
-                                </Select>
-                            </FormControl>
-
-                            <FormControl margin="normal" className={classes.formControl}>
-                                <InputLabel htmlFor="cash-helper">Percentage of Cash Transactions</InputLabel>
-                                <Select
-                                    value={this.state.cash}
-                                    onChange={this.handleChange('cash')}
-                                    input={<Input name="cash" id="cash-helper" />}
-
-                                >
-                                    <MenuItem value={"<10%"}> Less than 10% </MenuItem>
-                                    <MenuItem value={"10 -20"}>10% - 20% </MenuItem>
-                                    <MenuItem value={"20 -30"}>21% - 30% </MenuItem>
-                                    <MenuItem value={"30 - 40"}>31% - 40% </MenuItem>
-                                    <MenuItem value={"40 - 50"}>41% - 50% </MenuItem>
-                                    <MenuItem value={">50%"}>Greater than 50% </MenuItem>
-
-                                </Select>
-                            </FormControl>
-
-
-                        </form>
-                        <br></br>
-                        <Button disabled={this.state.disabled} onClick={this.submitProspect} id="submit" variant="contained" color="primary" className={classes.button}>
-                            Register
-                            </Button>
-
+                            <br />
+                            <div className="center-align">
+                                <Button disabled={this.state.disabled} onClick={this.registerUser} id="submit" variant="contained" color="primary" className={classes.button}>
+                                    Register
+                                </Button>
+                            </div>
                     </div>
                 </div >
             </div>
