@@ -338,53 +338,55 @@ class UserForm extends React.Component {
         <div className="card">
           <div className="card-content">
             <span className="card-title">User (Role: {claims})</span>
-
             <form onSubmit={this.saveUser} >
-            <FormControl required className={classes.formControl}>
-              <InputLabel id="teamNameLabel">Team Name</InputLabel>
-              <Select
-                labelId="teamNameLabel"
-                id="teamUid"
-                name="teamUid"
-                multiline
-                type="text"
-                margin="normal"
-                value={teamUid}
-                onChange={this.onChange}
-                className={classes.textField}>
 
-                {teams.map((team) => {
-                  return (
-                    <MenuItem value={team.id}>{team.name}</MenuItem>
-                  );
-                })} 
-                {/*}
-                <MenuItem value={"SePT3HTDR8EUbQgHCkf1"}>Rahuligan</MenuItem>
-                <MenuItem value={"QwUhcThKRBQQE7nIu3ys"}>Scottie</MenuItem>
-              */}
-              </Select>
+            <FormControl variant="outlined" required className={classes.formControl}>
+                <InputLabel id="teamNameLabel">Team Name</InputLabel>
+                <Select
+                  labelId="teamNameLabel"
+                  id="teamUid"
+                  name="teamUid"
+                  type="text"
+                  margin="normal"
+                  style={{marginTop: 16, marginBottom: 16, marginLeft: 0, marginRight: 0, padding: 0}}
+                  value={teamUid}
+                  onChange={this.onChange}
+                  className={classes.textField}>
+
+                  {teams.map((team) => {
+                      return (
+                      <MenuItem value={team.id}>{team.name}</MenuItem>
+                      );
+                  })} 
+                </Select>
             </FormControl>
-    
+
             <TextField
-            disabled={!emailEnabled}
-            id="email"
-            name="email"
-            label="Email"
-            multiline
-            placeholder="example@gmail.com"
-            className={classes.textField}
-            type="email"
-            autoComplete="email"
-            margin="normal"
-            value={email}
-            onChange={this.onChange}
+              disabled={!emailEnabled}
+              id="email"
+              name="email"
+              label="Email"
+              variant="outlined"
+              inputProps={{
+                  style: {margin: 5, padding: 18}
+              }}                              
+              placeholder="example@gmail.com"
+              className={classes.textField}
+              type="email"
+              autoComplete="email"
+              margin="normal"
+              value={email}
+              onChange={this.onChange}
             />
             
             <TextField
             id="firstName"
               name="firstName"
               label="First Name"
-              multiline
+              variant="outlined"
+              inputProps={{
+                  style: {margin: 5, padding: 18}
+              }}                              
               value={firstName}
               placeholder="John"
               className={classes.textField}
@@ -397,7 +399,10 @@ class UserForm extends React.Component {
               id="lastName"
               name="lastName"
               label="Last Name"
-              multiline
+              variant="outlined"
+              inputProps={{
+                  style: {margin: 5, padding: 18}
+              }}                              
               value={lastName}
               placeholder="Smith"
               className={classes.textField}
@@ -411,7 +416,10 @@ class UserForm extends React.Component {
               name="phoneNumber"
               value={phoneNumber}
               label="Phone Number"
-              multiline
+              variant="outlined"
+              inputProps={{
+                  style: {margin: 5, padding: 18}
+              }}                              
               className={classes.textField}
               margin="normal"
               onChange={this.handleChange('phoneNumber')}
@@ -425,7 +433,10 @@ class UserForm extends React.Component {
               name="photoURL"
               value={photoURL ? photoURL : ""}
               label="Photo URL"
-              multiline
+              variant="outlined"
+              inputProps={{
+                  style: {margin: 5, padding: 18}
+              }}                              
               placeholder="http://www.image.com/image.png"
               className={classes.textField}
               type="text"
