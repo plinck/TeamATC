@@ -213,7 +213,7 @@ class Register extends React.Component {
                                 name="password"
                                 autoComplete="password"
                                 margin="normal"
-                                onChange={this.handlePasswordValidator}
+                                onChange={this.handleChange('password')}
                                 error={!!this.state.errorText}
                                 helperText={this.state.errorText}
                             />
@@ -225,7 +225,7 @@ class Register extends React.Component {
                                 className={classes.textField}
                                 variant="outlined"
                                 type="password"
-                                name="password"
+                                name="confirmPassword"
                                 autoComplete="password"
                                 margin="normal"
                                 onChange={this.handlePasswordValidator}
