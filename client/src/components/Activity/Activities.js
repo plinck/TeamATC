@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
+import Box from "@material-ui/core/Box";
 
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import Activity from './Activity';
@@ -144,6 +145,43 @@ class Activities extends React.Component {
         let searchBy = this.state.searchBy;
         let filterByString = this.state.filterByString;
 
+        // Activity Header Row
+        /*
+                            <Typography className="col s2 m2 truncate">{`${teamName}`}</Typography>
+                    <Typography className="col s2 m2 truncate">{`${fullName}`}</Typography>
+                    <Typography className="col s2 m2 truncate">{activityDateTimeDisplay}</Typography>
+                    <Typography className="col s2 m2 truncate">{activityNameAndType}</Typography>
+                    <Typography className="col s1 m1 truncate">
+                        {duration.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {"H"}
+                    </Typography>
+                    <Typography className="col s1 offset-s1 m1 offset-m1 truncate">
+
+        */
+        const headerRow = 
+        <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1} m={0}>
+            <div className="col s1 m1">
+            </div>
+            <div className="col s4 m2 truncate">
+                Team
+            </div>
+            <div className="black-text col s4 m2 truncate">
+                Athlete
+            </div>
+            <div className="blue-text col s3 m2 truncate">
+                Date
+            </div>
+            <div className="red-text col s4 m2 truncate">
+                Name
+            </div>
+            <div className="green-text col s4 m1 truncate">
+                Hrs
+            </div>
+            <div className="green-text col s4 m1 truncate">
+                Distance
+            </div>
+        </Box>
+
+
         let activities = this.state.activities;
         if (this.props.user.authUser) {
             // Conditional rendering
@@ -187,14 +225,15 @@ class Activities extends React.Component {
                             <i className="material-icons prefix">search</i>
                         </div>
                     </div>
-
+                    {headerRow}
                     <div className={classes.root}>
-                        {activities.map((activity) => {
+                        {activities.map((activity, index) => {
                             return (
                                 <div key={activity.id}>
                                     <Activity activity={activity}
                                         layoutType={this.props.layoutType}
                                         activityDelete={this.activityDelete}
+                                        index={index}
                                     />
                                 </div>
                             );

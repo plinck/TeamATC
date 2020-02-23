@@ -12,6 +12,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+import Box from '@material-ui/core/Box';
 
 // New explansion panels
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -100,25 +101,45 @@ class Activity extends React.Component {
             distanceDecimalPlaces = 0;
         }
 
+        let isThisMine = uid === this.props.user.uid ? true : false
+        // Band odd rows for clarity
+        let rowBg = "";
+        let rowFg = ""
+        if (this.props.index % 2 !== 0) {
+            rowBg = "info.main";
+            rowFg = "white";
+        }
+
         return (
             <ExpansionPanel>
-                <ExpansionPanelSummary className="row" expandIcon={< ExpandMoreIcon />}>
-                    <Tooltip title={activityType}>
-                        <img style={{maxHeight: '24px'}} src={activityIcon} alt={activityType} />
-                    </Tooltip>
-                    
-                    <Typography className="col s1 m1 truncate">{`${teamName}`}</Typography>
-                    <Typography className="col s2 m2 truncate">{`${fullName}`}</Typography>
-                    <Typography className="col s2 m2 truncate">{activityDateTimeDisplay}</Typography>
-                    <Typography className="col s3 m3 truncate">{activityNameAndType}</Typography>
-                    <Typography className="col s1 m1 truncate">
-                        {duration.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {"hrs"}
+                <Box color={rowFg} className="row" bgcolor={rowBg} m={0}>
+                <ExpansionPanelSummary expandIcon={< ExpandMoreIcon />}>
+                    <div className="col s1 m1 left-align">
+                        { isThisMine ?
+                            <Tooltip title={"Is This Mine?"}>
+                                <img style={{maxHeight: '16px'}} src={"/images/me.png"} alt={"me"} />
+                            </Tooltip>
+                            :  ""
+                        }
+                        <Tooltip title={activityType}>
+                            <img style={{maxHeight: '16px'}} src={activityIcon} alt={activityType} />
+                        </Tooltip>
+                    </div>
+
+                    <Typography className="col s4 m2 truncate">{`${teamName}`}</Typography>
+                    <Typography className="col s4 m2 truncate">{`${fullName}`}</Typography>
+                    <Typography className="col s3 m2 truncate">{activityDateTimeDisplay}</Typography>
+                    <Typography className="col s4 m2 truncate">{activityNameAndType}</Typography>
+                    <Typography className="col s4 m1 truncate">
+                        {duration.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {"H"}
                     </Typography>
-                    <Typography className="col s2 offset-s1 m2 offset-m1 truncate">
-                        {distance.toFixed(distanceDecimalPlaces).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {distanceUnits}
+                    <Typography className="col s4 m1 offset-m1 truncate">
+                        {distance.toFixed(distanceDecimalPlaces).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {distanceUnits[0]}
                     </Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails className="row">
+                    </ExpansionPanelSummary>
+                </Box>
+                <Box color={rowFg} className="row" bgcolor={rowBg} m={0}>
+                <ExpansionPanelDetails style={{margin: '0', padding: "0"}}>
                     <Typography className="col s2 offset-s6 m2 offset-m6 truncate">AveS</Typography>
                     <Typography className="col s2 m2 truncate">(NP)</Typography>
                     {deleteIsDisabled ? null : 
@@ -162,6 +183,7 @@ class Activity extends React.Component {
                         </Typography>
                     }
                 </ExpansionPanelDetails>
+                </Box>
             </ExpansionPanel>
         ); // return
     } // render()
