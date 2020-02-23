@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import NumberFormat from 'react-number-format';
-import locatStyles from './Register.module.css';
+import localStyles from './Register.module.css';
 import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
@@ -11,8 +11,8 @@ import { InputAdornment } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import SearchIcon from "@material-ui/icons/Search";
-import UserAPI from "../User/UserAPI";
-import TeamAPI from "../Team/TeamAPI";
+import UserAPI from "../../User/UserAPI";
+import TeamAPI from "../../Team/TeamAPI";
 
 const styles = theme => ({
     container: {
@@ -52,7 +52,7 @@ function NumberFormatCustom(props) {
     return (
         <NumberFormat
             {...other}
-            className={locatStyles.input}
+            className={localStyles.input}
             getInputRef={inputRef}
             onValueChange={values => {
                 onChange({
@@ -73,7 +73,7 @@ function NumberFormatPhone(props) {
     return (
         <NumberFormat
             {...other}
-            className={locatStyles.input}
+            className={localStyles.input}
             getInputRef={inputRef}
             onValueChange={values => {
                 onChange({
