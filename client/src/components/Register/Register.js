@@ -10,6 +10,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import { InputAdornment } from '@material-ui/core';
 import { RemoveRedEye } from '@material-ui/icons';
 import IconButton from '@material-ui/core/IconButton';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 
 
 const styles = theme => ({
@@ -200,7 +201,7 @@ class Register extends React.Component {
                                 label="Email"
                                 placeholder="JohnDoe@gmail.com"
                                 inputProps={{
-                                    style: {margin: 5, padding: 18} 
+                                    style: {margin: 5, padding: 18}
                                 }}                              
                                 className={classes.textField}
                                 variant="outlined"
@@ -220,9 +221,14 @@ class Register extends React.Component {
                                 inputProps={
                                     {
                                         style: {
-                                            margin: 5,
+                                            margin: 50,
                                             padding: 18
                                         }, 
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                              <AccountCircle />
+                                            </InputAdornment>
+                                          ),
                                         endAdornment: (
                                             <InputAdornment position="end">
                                                 <IconButton
@@ -233,8 +239,7 @@ class Register extends React.Component {
                                             </InputAdornment>
                                         )
                                     }
-                                }     
-
+                                }
                                 className={classes.textField}
                                 variant="outlined"
                                 type="password"
