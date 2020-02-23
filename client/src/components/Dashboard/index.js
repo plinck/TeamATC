@@ -719,7 +719,6 @@ class Dashboard extends React.Component {
                             </div>
                             {/* End Breakdowns */}
 
-                        
                             {/* Activities by day and heatmap */}
                             <div className="row">
                                 <div className="col s12 m6">
@@ -760,7 +759,7 @@ class Dashboard extends React.Component {
                             </div>
                             {/* End All User Totals Cards Stack Bar Graphs - Activities etc*/}
 
-                            {/* Current User"s Activities */}
+                            {/* Current User's Activities */}
                             <Activities filterByString="Mine" layoutType="userCard"/>
                             {/* END Current User"s Activities */}
 
