@@ -236,7 +236,7 @@ class AccountForm extends React.Component {
                             name="teamUid"
                             type="text"
                             margin="normal"
-                            style={{marginTop: 16, marginBottom: 16, marginLeft: 0, padding: 0}}
+                            style={{marginTop: 16, marginBottom: 16, marginLeft: 0, marginRight: 0, padding: 0}}
                             value={teamUid}
                             onChange={this.onChange}
                             className={classes.textField}>
