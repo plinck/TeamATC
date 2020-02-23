@@ -14,7 +14,7 @@ import ActivityPage from '../Activity/ActivityPage';
 import ActivityForm from '../Activity/ActivityForm';
 import UserPage from '../User/UserPage';
 import UserForm from '../User/UserForm';
-import Register from '../Register/Register';
+import Register from '../Auth/Register/Register';
 
 // Auth components
 import SignInForm from '../Auth/SignIn/SignIn';
