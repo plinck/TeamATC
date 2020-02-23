@@ -204,6 +204,8 @@ class AccountForm extends React.Component {
         const isValid = firstName !== "" && lastName !== "" && phoneNumber !== "";
         var isRoleEditEnabled = false;
 
+        let teamUid1 = "";
+
         // DO NOT allow users to edit their own role even if admin as bad
         // things can happen
         // if (isAdmin) {
@@ -226,36 +228,15 @@ class AccountForm extends React.Component {
                     <span className="card-title">User Profile (Role: {claims})</span>
                     <form className={classes.container} onSubmit={this.updateUser} >
 
-                        <FormControl variant="outlined" required>
-                            <InputLabel id="teamNameLabel">Activity Type</InputLabel>
-                            <Select
-                                labelId="teamNameLabel"
-                                id="teamUid"
-                                value={teamUid}
-                                name="teamUid"
-                                type="text"
-                                margin="normal"
-                                style={{marginTop: 16, padding: 18}}
-                                className={classes.textField}>
-                                onChange={this.onChange}
-                                {teams.map((team) => {
-                                    return (
-                                    <MenuItem value={team.id}>{team.name}</MenuItem>
-                                    );
-                                })} 
-                                </Select>
-                        </FormControl>
-
-
-                        <FormControl required className={classes.formControl}>
+                        <FormControl variant="outlined" required className={classes.formControl}>
                             <InputLabel id="teamNameLabel">Team Name</InputLabel>
                             <Select
                             labelId="teamNameLabel"
                             id="teamUid"
                             name="teamUid"
-                            multiline
                             type="text"
                             margin="normal"
+                            style={{marginTop: 16, marginBottom: 16, marginLeft: 0, padding: 0}}
                             value={teamUid}
                             onChange={this.onChange}
                             className={classes.textField}>
@@ -273,70 +254,83 @@ class AccountForm extends React.Component {
                         </FormControl>
       
                         <TextField disabled={true}
-                        id="email"
-                        name="email"
-                        label="Email"
-                        multiline
-                        placeholder="example@gmail.com"
-                        className={classes.textField}
-                        type="email"
-                        autoComplete="email"
-                        margin="normal"
-                        value={email}
-                        onChange={this.onChange}
+                            id="email"
+                            name="email"
+                            label="Email"
+                            placeholder="example@gmail.com"
+                            className={classes.textField}
+                            variant="outlined"
+                            inputProps={{
+                                style: {margin: 5, padding: 18}
+                            }}                              
+                            type="email"
+                            autoComplete="email"
+                            margin="normal"
+                            value={email}
+                            onChange={this.onChange}
                         />
 
                         <TextField
-                        id="firstName"
-                        name="firstName"
-                        label="First Name"
-                        value={firstName}
-                        multiline
-                        placeholder="John"
-                        className={classes.textField}
-                        type="text"
-                        margin="normal"
-                        onChange={this.onChange}
+                            id="firstName"
+                            name="firstName"
+                            label="First Name"
+                            value={firstName}
+                            inputProps={{
+                                style: {margin: 5, padding: 18}
+                            }}   
+                            variant="outlined"                           
+                            placeholder="John"
+                            className={classes.textField}
+                            type="text"
+                            margin="normal"
+                            onChange={this.onChange}
                         />
 
                         <TextField
-                        id="lastName"
-                        name="lastName"
-                        label="Last Name"
-                        value={lastName}
-                        multiline
-                        placeholder="Smith"
-                        className={classes.textField}
-                        type="text"
-                        margin="normal"
-                        onChange={this.onChange}
+                            id="lastName"
+                            name="lastName"
+                            label="Last Name"
+                            value={lastName}
+                            inputProps={{
+                                style: {margin: 5, padding: 18}
+                            }}   
+                            variant="outlined"                           
+                            placeholder="Smith"
+                            className={classes.textField}
+                            type="text"
+                            margin="normal"
+                            onChange={this.onChange}
                         />
 
                         <TextField
-                        id="phoneNumber"
-                        name="phoneNumber"
-                        value={phoneNumber}
-                        label="Phone Number"
-                        multiline
-                        className={classes.textField}
-                        margin="normal"
-                        onChange={this.handleChange('phoneNumber')}
-                        InputProps={{
-                            inputComponent: NumberFormatPhone,
-                        }}
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            value={phoneNumber}
+                            label="Phone Number"
+                            inputProps={{
+                                style: {margin: 5, padding: 18}
+                            }}   
+                            variant="outlined"                           
+                            className={classes.textField}
+                            margin="normal"
+                            onChange={this.handleChange('phoneNumber')}
+                            InputProps={{
+                                inputComponent: NumberFormatPhone,
+                            }}
                         />
 
                         <TextField
-                        id="photoURL"
-                        name="photoURL"
-                        value={photoURL ? photoURL : ""}
-                        label="Photo URL"
-                        multiline
-                        placeholder="http://www.image.com/image.png"
-                        className={classes.textField}
-                        margin="normal"
-                        type="text"
-                        onChange={this.onChange}
+                            id="photoURL"
+                            name="photoURL"
+                            value={photoURL ? photoURL : ""}
+                            label="Photo URL"
+                            multiline
+                            variant="outlined"
+                            placeholder="http://www.image.com/image.png"
+                            className={classes.textField}
+                            margin="normal"
+                            type="text"
+                            onChange={this.onChange}
                         />
                                 
                     </form>

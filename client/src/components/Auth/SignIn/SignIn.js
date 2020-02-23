@@ -183,8 +183,8 @@ class SignInFormBase extends React.Component {
                             variant="outlined"
                             margin="normal"
                             onChange={this.onChange}
-                            // error={!!this.state.errorText}
-                            // helperText={this.state.errorText}
+                            error={!!this.state.errorText}
+                            helperText={this.state.errorText}
                         />
                     </form>
                     <div className="row">
