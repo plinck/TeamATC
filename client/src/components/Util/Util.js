@@ -68,6 +68,12 @@ class Util {
     return db;
   }
 
+  static getFirebaseAuth = () => {
+    const firebase = new Firebase();
+    return firebase;
+  }
+
+
   static getFirebaseFirestore = () => {
     const firebase = new Firebase();
     const fb = firebase.firestore;
@@ -90,6 +96,11 @@ class Util {
     const firebase = new Firebase();
     const token = await firebase.doRefreshToken(true);
     return (axios.post(api, param, { headers: { "FIREBASE_AUTH_TOKEN": token } }));
+  }
+
+  // This is to call backend when not authorixed
+  static apiPostNoToken = async (api, param) => {
+    return (axios.post(api, param));
   }
 
 } // class

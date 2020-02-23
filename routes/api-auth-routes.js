@@ -180,9 +180,13 @@ module.exports = function (app) {
 
     // Route for Creating a new user with email and random password
     app.post("/api/auth/createUser", requiresLogin, (req, res) => {
-        // Generate random password
-        let randomPassword = Math.random().toString(36).slice(-8);
         let user = req.body;
+        
+        // Generate random password if no password exists (meaning its created by someone else)
+        if (!user.password || user.password === null || user.password === "") {
+            let randomPassword = Math.random().toString(36).slice(-8);
+            user.password = randomPassword;
+        }
 
         try {
             // Authorize the current user - only admin can create
@@ -192,7 +196,7 @@ module.exports = function (app) {
                 admin.auth().createUser({
                     email: user.email,
                     emailVerified: false,
-                    password: randomPassword,
+                    password: user.password,
                     displayName: `${user.firstName} ${user.lastName}`,
                     disabled: false
                 })
@@ -213,4 +217,37 @@ module.exports = function (app) {
         }
     }); // Route    
 
+    // Route for Creating a new user with email and random password
+    app.post("/api/auth/createNoTokenUser", (req, res) => {
+        let user = req.body;
+        
+        // Generate random password if no password exists (meaning its created by someone else)
+        if (!user.password || user.password === null || user.password === "") {
+            let randomPassword = Math.random().toString(36).slice(-8);
+            user.password = randomPassword;
+        }
+
+        try {
+           // Create user
+            admin.auth().createUser({
+                email: user.email,
+                emailVerified: false,
+                password: user.password,
+                displayName: `${user.firstName} ${user.lastName}`,
+                disabled: false
+            })
+            .then((authUser) => {
+                    console.log('Successfully added auth user');
+                    res.json(authUser);
+            })
+            .catch((err) => {
+                console.error('Error creating auth user:', err);
+                res.status(404).json(`Error caught in app.post("/api/auth/createNoTokenUser}" ${err}`);
+            });
+        } catch (err) {
+            // catch all error
+            res.status(500).json(`Error caught in route app.post("/api/auth/createNoTokenUser..." ${err.errors[0].message}`);
+        }
+    }); // Route    
+    
 };

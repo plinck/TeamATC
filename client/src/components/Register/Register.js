@@ -11,7 +11,8 @@ import { InputAdornment } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import SearchIcon from "@material-ui/icons/Search";
-
+import UserAPI from "../User/UserAPI";
+import TeamAPI from "../Team/TeamAPI";
 
 const styles = theme => ({
     container: {
@@ -44,8 +45,6 @@ const styles = theme => ({
         marginTop: theme.spacing.unit * 2,
     },
 });
-
-
 
 function NumberFormatCustom(props) {
     const { inputRef, onChange, ...other } = props;
@@ -88,7 +87,6 @@ function NumberFormatPhone(props) {
         />
     );
 }
-
 NumberFormatCustom.propTypes = {
     inputRef: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
@@ -100,9 +98,14 @@ class Register extends React.Component {
         noError: false,
         firstName: "",
         lastName: "",
+        photoURL: "",
         email: "",
-        passwrod: "",
-        phone: "",
+        password: "",
+        phoneNumber: "",
+        uid: "",
+        teamUid: "",
+        teamName: "",
+        claims: "noauth",
         errorText: "",
         showPassword: false
     };
@@ -139,23 +142,27 @@ class Register extends React.Component {
         // Just allow them to register as long as they arte member of the club
         // 0. check to ensure thet are not already registered
         // 1. Validate they are club memmber
+
         // 2. Sign the up as user - Auth and user DB
-        // for initial test, just sign them up.
-
-        alert("Thank you for registering! Start entering workouts.");
-
-        // const propspect = this.state;
-        // axios.post("/api/prospect", propspect)
-        //     .then(res => console.log(res.data))
-        //     .then(alert("Thank you for registering! We will contact you shortly."))
-        //     .then(this.setState({
-        //         errorText: "",
-        //         firstName: "",
-        //         lastName: "",
-        //         email: "",
-        //         password: "",
-        //         phone: ""
-        //     }))
+        const user = this.state;
+        // set team name from ID
+       //  user.teamName = this.state.teamLookup[this.state.teamUid]
+    
+        // First, create the auth user in firebase
+        // Should actually update auth profile after this is done but not 100% needed as user stuff comes from firestore
+        UserAPI.registerNewUser(user).then(authUser => {
+            // Now Create the user in firestore
+            console.log(JSON.stringify(authUser,null,2));
+            UserAPI.addAuthUserToFirestore(authUser, user).then( (id) => {
+                this.setState({message: "New User Added. "});
+                this.props.history.push("/dashboard"); 
+            }).catch(err => {
+                this.setState({ message: err.message });
+            });    
+        }).catch(err => {
+            // try to refresh token
+            this.setState({ message: `Error adding user ${err}` });
+        });          
     }
 
     render() {
@@ -270,7 +277,7 @@ class Register extends React.Component {
                             />
                           
                             <TextField
-                                id="phone"
+                                id="phoneNumber"
                                 label="Phone Number"
                                 inputProps={{
                                     style: {margin: 5, padding: 18} 
@@ -278,8 +285,8 @@ class Register extends React.Component {
                                 className={classes.textField}
                                 variant="outlined"
                                 margin="normal"
-                                value={this.state.phone}
-                                onChange={this.handleChange('phone')}
+                                value={this.state.phoneNumber}
+                                onChange={this.handleChange('phoneNumber')}
                                 InputProps={{
                                     inputComponent: NumberFormatPhone,
                                 }}
