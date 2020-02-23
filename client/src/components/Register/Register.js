@@ -1,7 +1,5 @@
 import React from 'react';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import axios from "axios";
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import NumberFormat from 'react-number-format';
@@ -9,6 +7,10 @@ import locatStyles from './Register.module.css';
 import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import { InputAdornment } from '@material-ui/core';
+import { RemoveRedEye } from '@material-ui/icons';
+import IconButton from '@material-ui/core/IconButton';
+
 
 const styles = theme => ({
     container: {
@@ -213,9 +215,26 @@ class Register extends React.Component {
                             <TextField
                                 id="password"
                                 label="Password"
-                                inputProps={{
-                                    style: {margin: 5, padding: 18} 
-                                }}                              
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                inputProps={
+                                    {
+                                        style: {
+                                            margin: 5,
+                                            padding: 18
+                                        }, 
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="Toggle password visibility"
+                                                    onClick={this.handleClickShowPassword}>
+                                                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        )
+                                    }
+                                }     
+
                                 className={classes.textField}
                                 variant="outlined"
                                 type="password"
