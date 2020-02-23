@@ -4,6 +4,7 @@ import _ from "underscore";
 import moment from "moment";
 import { Redirect } from 'react-router';
 import { withRouter } from 'react-router-dom';
+import Grid from "@material-ui/core/Grid";
 
 import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
 
@@ -84,9 +85,19 @@ class ActivityTypeBreakdown extends React.Component {
         ];
             
         let layout = {
-            height: 350,
-            width: 350,
-            margin: {t: 0, b: 0, l: 0, r: 0, pad : 0},
+            height: 275,
+            width: 275,
+            autosize: true,
+            margin: {
+                l: 4,
+                r: 4,
+                b: 0,
+                t: 0,
+                pad: 0
+            },
+            // paper_bgcolor: '#7f7f7f',
+            // plot_bgcolor: '#c7c7c7',
+
             showlegend: false,
             grid: {rows: 1, columns: 2},
             annotations: [
@@ -116,6 +127,7 @@ class ActivityTypeBreakdown extends React.Component {
                 data={data}
                 layout={layout}
                 style={{ width: "100%", height: "100%" }}
+                useResizeHandler={true}
                 config={{ displayModeBar: false }}
             />
         );
@@ -131,14 +143,14 @@ class ActivityTypeBreakdown extends React.Component {
 
         if (this.props.user.authUser) {
             return (
-                <div>
-                    <div className="card">
+                <Grid container justify="center">
+                    <div className="card" justify="center">
                         <div className="card-content pCard">
                             <span className="card-title">{this.props.title ? this.props.title : 'Totals'}</span>
                             {this.plotGraph()}
                         </div>
                     </div>
-                </div>
+                </Grid>
             );
         } else {
             return (

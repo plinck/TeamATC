@@ -699,7 +699,7 @@ class Dashboard extends React.Component {
                             <div className="row">
                                 <div className="col s12 m4">
                                     <ActivityTypeBreakdown
-                                        title={`All Athletes - Distance/Duration`}
+                                        title={`All Athletes`}
                                         currentTotalsShare={this.totals.all}
                                     />
                                 </div>                            
@@ -717,8 +717,26 @@ class Dashboard extends React.Component {
                                 </div>   
                      
                             </div>
-                            {/* End Samples */}
+                            {/* End Breakdowns */}
+
                         
+                            {/* Activities by day and heatmap */}
+                            <div className="row">
+                                <div className="col s12 m6">
+                                    <ActivityByDay
+                                    title={"Activity By Day"}
+                                    activities={this.state.activities}
+                                    />
+                                </div>                            
+                                <div className="col s12 m6">
+                                    <ActivityBubble
+                                        title={"Heatmap (duration)"}
+                                        activities={this.state.activities}
+                                    />
+                                </div>
+                            </div>
+                             {/* END Activities by day and heatmap */}
+
                             {/* All User Totals Cards Stack Bar Graphs - Activities etc*/}
                             <div className="row">
                                 <div className="col s12 m4">
@@ -741,24 +759,6 @@ class Dashboard extends React.Component {
                                 </div>                            
                             </div>
                             {/* End All User Totals Cards Stack Bar Graphs - Activities etc*/}
-
-                            {/* Activities byt day and heatmap */}
-                            <div className="row">
-                                <div className="col s12 m6">
-                                    <ActivityByDay
-                                    title={"Activity By Day"}
-                                    activities={this.state.activities}
-                                    />
-                                </div>                            
-                                <div className="col s12 m6">
-                                    <ActivityBubble
-                                        title={"Heatmap (duration)"}
-                                        activities={this.state.activities}
-                                    />
-                                </div>
-                            </div>
-                             {/* END Activities by day and heatmap */}
-
 
                             {/* Current User"s Activities */}
                             <Activities filterByString="Mine" layoutType="userCard"/>
