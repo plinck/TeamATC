@@ -55,6 +55,11 @@ const styles = theme => ({
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
         width: 300,
+    },
+    formControl: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: 300,
     }
 });
 
@@ -546,56 +551,63 @@ class ActivityForm extends React.Component {
                                             id="displayName"
                                             name="displayName"
                                             label="Name"
-                                            placeholder="Name"
-                                            multiline
+                                            placeholder="John"
+                                            inputProps={{
+                                                style: {padding: 18} 
+                                            }}                              
                                             className={classes.textField}
-                                            type="text"
+                                            variant="outlined"
                                             autoComplete="text"
                                             margin="normal"
                                             value={displayName}
                                             onChange={this.onChange}
-                                        />
+                                        />        
                           
                                         <TextField
                                             id="activityName"
                                             name="activityName"
+                                            value={activityName}
                                             label="Activity Name"
-                                            placeholder="Activity Name"
-                                            multiline
+                                            placeholder="Silk Sheets Long Ride"
+                                            inputProps={{
+                                                style: {padding: 18} 
+                                            }}                              
                                             className={classes.textField}
-                                            type="text"
+                                            variant="outlined"
                                             autoComplete="text"
                                             margin="normal"
-                                            value={activityName}
                                             onChange={this.onChange}
-                                        />
-
+                                        />        
+                          
                                         <TextField
                                             id="activityDateTimeString"
                                             name="activityDateTimeString"
+                                            value={activityDateTimeString}
                                             label="Date"
-                                            placeholder="MM-DD-YYYY"
-                                            multiline
+                                            placeholder="12-09-2019"
+                                            inputProps={{
+                                                style: {padding: 18} 
+                                            }}                              
                                             className={classes.textField}
-                                            type="date"
+                                            variant="outlined"
                                             autoComplete="date"
                                             margin="normal"
-                                            value={activityDateTimeString}
                                             onChange={this.dateNumberOnChange}
-                                        />
+                                        />        
 
-                                        <FormControl required className={classes.formControl}>
+                                        <FormControl variant="outlined" required>
                                             <InputLabel id="activityTypeLabel">Activity Type</InputLabel>
                                             <Select
                                                 labelId="activityTypeLabel"
                                                 id="activityType"
+                                                value={activityType}
                                                 name="activityType"
                                                 multiline
                                                 type="text"
                                                 margin="normal"
-                                                value={activityType}
-                                                onChange={this.onChange}
+                                                style={{marginTop: 16, padding: 18}}
                                                 className={classes.textField}>
+                                                onChange={this.onChange}
                                                 <MenuItem value={"Swim"}>Swim</MenuItem>
                                                 <MenuItem value={"Bike"}>Bike</MenuItem>
                                                 <MenuItem value={"Run"}>Run</MenuItem>
@@ -604,47 +616,53 @@ class ActivityForm extends React.Component {
                       
                                         <TextField
                                             id="distance"
+                                            name="distance"
+                                            value={distance}
                                             label="Distance"
                                             placeholder="20.0"
-                                            multiline
+                                            inputProps={{
+                                                style: {padding: 18} 
+                                            }}                              
                                             className={classes.textField}
-                                            type="text"
-                                            name="distance"
+                                            variant="outlined"
                                             autoComplete="text"
                                             margin="normal"
-                                            value={distance}
                                             onChange={this.floatNumberOnChange}
-                                        />
-
+                                        />        
+                      
                                         <TextField
                                             disabled
                                             id="distanceUnits"
                                             name="distanceUnits"
+                                            value={distanceUnits}
                                             label="Units"
-                                            placeholder="miles"
-                                            multiline
+                                            placeholder="30.0"
+                                            inputProps={{
+                                                style: {padding: 18} 
+                                            }}                              
                                             className={classes.textField}
-                                            type="text"
+                                            variant="outlined"
                                             autoComplete="text"
                                             margin="normal"
-                                            value={distanceUnits}
                                             onChange={this.onChange}
-                                        />
-
+                                        />        
+                      
                                         <TextField
                                             id="duration"
-                                            label="Duration"
-                                            placeholder="2.5"
-                                            multiline
-                                            className={classes.textField}
-                                            type="text"
                                             name="duration"
+                                            value={duration}
+                                            label="Duration"
+                                            placeholder="1.5"
+                                            inputProps={{
+                                                style: {padding: 18} 
+                                            }}                              
+                                            className={classes.textField}
+                                            variant="outlined"
                                             autoComplete="text"
                                             margin="normal"
-                                            value={duration}
                                             onChange={this.floatNumberOnChange}
-                                        />
-
+                                        />        
+                      
                                         </form>
 
                                     </div>
