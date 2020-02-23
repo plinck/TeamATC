@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import { InputAdornment } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
@@ -139,38 +140,51 @@ class SignInFormBase extends React.Component {
                 <div className="card-content">
                     <span className="card-title">Sign In</span>
                     <form className={classes.container} onSubmit={this.signInUser} >
+
                         <TextField
                             id="email"
                             label="Email"
-                            placeholder="example@gmail.com"
-                            multiline
+                            value={email}
+                            placeholder="JohnDoe@gmail.com"
+                            inputProps={{
+                                style: {margin: 5, padding: 18}
+                            }}                              
                             className={classes.textField}
+                            variant="outlined"
                             type="email"
                             name="email"
                             autoComplete="email"
                             margin="normal"
-                            value={email}
                             onChange={this.onChange}
                         />
 
-                        <FormControl className={classes.formControl}>
-                            <InputLabel htmlFor="password">Password</InputLabel>
-                                <Input
-                                id="password"
-                                name="password"
-                                type={showPassword ? 'text' : 'password'}
-                                value={password}
-                                onChange={this.onChange}
-                                endAdornment={
-                                    <IconButton
-                                        aria-label="Toggle password visibility"
-                                        onClick={this.handleClickShowPassword}
-                                    >
-                                        {showPassword ? <Visibility /> : <VisibilityOff />}
-                                    </IconButton>
-                                }
-                                />
-                        </FormControl>
+                        <TextField
+                            id="password"
+                            label="Password"
+                            type={showPassword ? 'text' : 'password'}
+                            variant="outlined"
+                            margin="normal"
+                            className={classes.textField}
+                            InputProps={{
+                                style: {
+                                    padding: 18
+                                }, 
+                                endAdornment: (
+                                    <InputAdornment position="start">
+                                        <IconButton
+                                            aria-label="Toggle password visibility"
+                                            onClick={this.handleClickShowPassword}>
+                                                {showPassword ? <Visibility /> : <VisibilityOff />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
+                            variant="outlined"
+                            margin="normal"
+                            onChange={this.onChange}
+                            error={!!this.state.errorText}
+                            helperText={this.state.errorText}
+                        />
                     </form>
                     <div className="row">
                         <Button disabled={isInvalid} onClick={this.signInUser} variant="contained" color="primary" className={classes.button}>
@@ -183,9 +197,15 @@ class SignInFormBase extends React.Component {
                     <p>
                         <Link to="/pw-forget">Forgot Password?</Link>
                     </p>
-                
-                        {/*<p>Don't have an account? <Link to="/signup">Sign Up</Link></p>*/}
-                        {/*<button onClick={this.handleGoogleLogin} className="btn lighten-1 z-depth-0"> SignIn With Google</button>*/}  
+                    <br />
+                    <hr />
+                    <br />
+                    <p>Don't have an account? <Link to="/register">Register Now</Link></p>
+                    <br />
+                    {/* This works, but I am disabling until I can verify they are member of the club */}
+                    {/*
+                    <button onClick={this.handleGoogleLogin} className="btn lighten-1 z-depth-0"> SignIn With Google</button>
+                    */}
                 </div>
             </div>;
         }
