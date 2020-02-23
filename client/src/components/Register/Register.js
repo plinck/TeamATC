@@ -152,7 +152,6 @@ class Register extends React.Component {
         // Should actually update auth profile after this is done but not 100% needed as user stuff comes from firestore
         UserAPI.registerNewUser(user).then(authUser => {
             // Now Create the user in firestore
-            console.log(JSON.stringify(authUser,null,2));
             UserAPI.addAuthUserToFirestore(authUser, user).then( (id) => {
                 this.setState({message: "New User Added. "});
                 this.props.history.push("/dashboard"); 
