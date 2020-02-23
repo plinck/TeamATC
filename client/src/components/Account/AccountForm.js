@@ -225,6 +225,28 @@ class AccountForm extends React.Component {
                 <div className="card-content">
                     <span className="card-title">User Profile (Role: {claims})</span>
                     <form className={classes.container} onSubmit={this.updateUser} >
+
+                        <FormControl variant="outlined" required>
+                            <InputLabel id="teamNameLabel">Activity Type</InputLabel>
+                            <Select
+                                labelId="teamNameLabel"
+                                id="teamUid"
+                                value={teamUid}
+                                name="teamUid"
+                                type="text"
+                                margin="normal"
+                                style={{marginTop: 16, padding: 18}}
+                                className={classes.textField}>
+                                onChange={this.onChange}
+                                {teams.map((team) => {
+                                    return (
+                                    <MenuItem value={team.id}>{team.name}</MenuItem>
+                                    );
+                                })} 
+                                </Select>
+                        </FormControl>
+
+
                         <FormControl required className={classes.formControl}>
                             <InputLabel id="teamNameLabel">Team Name</InputLabel>
                             <Select

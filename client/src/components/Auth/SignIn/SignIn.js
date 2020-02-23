@@ -144,6 +144,7 @@ class SignInFormBase extends React.Component {
                         <TextField
                             id="email"
                             label="Email"
+                            name="email"
                             value={email}
                             placeholder="JohnDoe@gmail.com"
                             inputProps={{
@@ -152,7 +153,6 @@ class SignInFormBase extends React.Component {
                             className={classes.textField}
                             variant="outlined"
                             type="email"
-                            name="email"
                             autoComplete="email"
                             margin="normal"
                             onChange={this.onChange}
@@ -160,6 +160,7 @@ class SignInFormBase extends React.Component {
 
                         <TextField
                             id="password"
+                            name="password"
                             label="Password"
                             type={showPassword ? 'text' : 'password'}
                             variant="outlined"
@@ -182,8 +183,8 @@ class SignInFormBase extends React.Component {
                             variant="outlined"
                             margin="normal"
                             onChange={this.onChange}
-                            error={!!this.state.errorText}
-                            helperText={this.state.errorText}
+                            // error={!!this.state.errorText}
+                            // helperText={this.state.errorText}
                         />
                     </form>
                     <div className="row">
