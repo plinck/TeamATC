@@ -131,22 +131,23 @@ class Activities extends React.Component {
     onChange = event => {
         // Set Units
         switch (event.target.name) {
-            case "searchBy": 
-                this.setState({
-                    [event.target.name]: event.target.value,
-                });
-                break;
             case "filterBy":
                 this.setState({
                     "filterByString": event.target.value,
                     "filterBy": event.target.value,
                 });
-                this.refreshPage(event.target.value);
+                this.refreshPage(event.target.value, undefined, undefined);
             case "groupBy":
                 this.setState({
                     "groupBy": event.target.value
                 });
-                this.refreshPage(event.target.value);
+                this.refreshPage(undefined, event.target.value, undefined);
+            case "searchBy": 
+                this.setState({
+                    [event.target.name]: event.target.value,
+                });
+                this.refreshPage(undefined, undefined, event.target.value);
+                break;
             default:
                 break;
         }
@@ -205,49 +206,31 @@ class Activities extends React.Component {
                             type="text"
                             margin="normal"
                             className={classes.textField}
-                            style={{marginTop: 23, marginBottom: 16, padding: 0}}>
+                            style={{marginTop: 23, marginBottom: 16, padding: 0}}
                             onChange={this.onChange}
+                            >
                             <MenuItem value={"Mine"}>Mine</MenuItem>
                             <MenuItem value={"Team"}>Team</MenuItem>
                             <MenuItem value={"All"}>All</MenuItem>
                         </Select>
+
                     </FormControl>
                     <FormControl variant="filled" className={classes.formControl}>
-                    <InputLabel id="demo-simple-select-filled-label">Age</InputLabel>
+                    <InputLabel id="groupByLabel">Group By</InputLabel>
                     <Select
-                        labelId="demo-simple-select-filled-label"
-                        id="demo-simple-select-filled"
-                        value={filterBy}
+                        labelId="groupByLabel"
+                        name="groupBy"
+                        id="groupBy"
+                        value={groupBy}
                         onChange={this.onChange}
-                    >
-                        <MenuItem value="">
-                        <em>None</em>
-                        </MenuItem>
-                        <MenuItem value={10}>Ten1</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        className={classes.textField}
+                        style={{marginTop: 23, marginBottom: 16, padding: 0}}
+                        >
+                        <MenuItem value={"None"}><em>None</em></MenuItem>
+                        <MenuItem value={"Team"}>Team</MenuItem>
+                        <MenuItem value={"Type"}>Type</MenuItem>
                     </Select>
                     </FormControl>
-
-                    {/* 
-                    <FormControl variant="outlined" required className={classes.formControl}>
-                        <InputLabel id="groupByLabel">GHroup By</InputLabel>
-                        <Select
-                            labelId="groupByLabel"
-                            id="groupBy"
-                            value={filterBy}
-                            name="groupBy"
-                            type="text"
-                            margin="normal"
-                            className={classes.textField}
-                            style={{marginTop: 23, marginBottom: 16, padding: 0}}>
-                            onChange={this.onChange}
-                            <MenuItem value={"Team"}>Team</MenuItem>
-                            <MenuItem value={"Type"}>Type</MenuItem>
-                            <MenuItem value={"None"}>None</MenuItem>
-                        </Select>
-                    </FormControl>
-                    */}
 
                     <div className="blue-text input-field inline align-right">
                             <TextField
