@@ -1,1 +1,1 @@
-git filter-branch --tree-filter 'rm -f ./middleware/.serviceAccountKey.json' -- --all
+git filter-branch --tree-filter 'rm -f ./.serviceAccountKeyBootstrap.json' -- --all
