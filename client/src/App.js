@@ -4,24 +4,24 @@ import {
   Route,
 } from 'react-router-dom';
 
-import Navigation from '../Navigation/Navigation';
-import LandingPage from '../Landing';
-import Dashboard from '../Dashboard';
-import Account from '../Account/Account';
-import Admin from '../Admin/Admin';
-import Activities from '../Activity/Activities';
-import ActivityPage from '../Activity/ActivityPage';
-import ActivityForm from '../Activity/ActivityForm';
-import UserPage from '../User/UserPage';
-import UserForm from '../User/UserForm';
-import Register from '../Auth/Register/Register';
+import Navigation from './components/Navigation/Navigation';
+import LandingPage from './components/Landing/Landing';
+import Dashboard from './components/Dashboard/dashboard';
+import Account from './components/Account/Account';
+import Admin from './components/Admin/Admin';
+import Activities from './components/Activity/Activities';
+import ActivityPage from './components/Activity/ActivityPage';
+import ActivityForm from './components/Activity/ActivityForm';
+import UserPage from './components/User/UserPage';
+import UserForm from './components/User/UserForm';
+import Register from './components/Auth/Register/Register';
 
 // Auth components
-import SignInForm from '../Auth/SignIn/SignIn';
-import PasswordForgetPage from '../Auth/PasswordForget/PasswordForget';
+import SignInForm from './components/Auth/SignIn/SignIn';
+import PasswordForgetPage from './components/Auth/PasswordForget/PasswordForget';
 
 // Session/State Info for all components
-import provideAuthUserContext from '../Auth/Session/provideAuthUserContext';
+import provideAuthUserContext from './components/Auth/Session/provideAuthUserContext';
 
 class App extends React.Component {
   render() {
