@@ -1,5 +1,7 @@
 "use strict";
 const inquirer = require("inquirer");
+let fs = require('fs');
+
 
 const ORG = "ATC";
 const DEV_ENV = "dev";
@@ -56,7 +58,7 @@ async function copyUsersToDev() {
                             .catch(err => {
                                 console.error(`error updating user: ${err}`);
                                 reject(err);
-                            });
+                        });
                     });
                 });
                 return resolve();
@@ -65,6 +67,77 @@ async function copyUsersToDev() {
         });
     });
 }
+
+// Copy Users from current location to DEV
+async function deleteATCMembers() {
+    const db = admin.firestore();
+    
+    // use email address as key to overwrite duplicates
+    let dbRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection("ATCMembers");
+
+    dbRef.listDocuments().then(val => {
+        val.map((val) => {
+            val.delete()
+        })
+    })
+
+}
+
+// Copy Users from current location to DEV
+async function uploadATCMembers(fileToUpload) {
+    const db = admin.firestore();
+    
+    if (!fileToUpload) {
+        fileToUpload = "ATCMembers.csv";
+    }
+    console.log(`Uploading ATC users from ${fileToUpload}`);
+    
+    // read  the file and parse
+    let ATCMembers = [];
+
+    if (fileToUpload) {
+        fs.readFile(fileToUpload, 'utf8', (err, data) => {
+            if (err) throw err;
+            console.log(`OK reading file`);
+            
+            //remove the quotes
+            let fixedData = data.replace(/["]*/g, "");            
+            let lines = fixedData.split('\n');
+            
+            ATCMembers = lines.map( ( line ) => {
+                let memberArray = line.split(',');
+                let lastName = memberArray[0].trim().toLowerCase();
+                let firstName = memberArray[1].trim().toLowerCase();
+                let emailAddress = memberArray[2].trim();
+
+                lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
+                firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
+                          
+                let member = {lastName: lastName, firstName: firstName, emailAddress: emailAddress};
+                //console.log(`Member: ${JSON.stringify(member)}`); 
+                return (member);              
+            });
+        
+            let _ = ATCMembers.map( ( member ) => {
+                console.log(`Trying to update ${JSON.stringify(member)}`);
+
+                    // use email address as key to overwrite duplicates
+                    db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection("ATCMembers")
+                        .doc(member.emailAddress)
+                        .set(member)
+                        .then(memberId => {
+                            console.log(
+                                `Updated member ${JSON.stringify(member)} with id: ${memberId}`
+                            );
+                        })
+                        .catch(err => {
+                            console.error(`error updating user: ${err}`);
+                    });
+                });
+        }); // MAP
+    }
+}
+
 
 // update claims from auth into FB
 function updateClaimsInFirebase(uid, claims, authClaims) {
@@ -277,7 +350,8 @@ async function seedDatabase() {
 function mainMenu() {
     const menuItems = {
         seed: seedDatabase,
-        displayUsers: showUsers,
+        deleteATCMembers: deleteATCMembers,
+        uploadATCMembers: uploadATCMembers,
         copyUsersToDev: copyUsersToDev,
         QUIT: exitProgram
     };
