@@ -43,6 +43,50 @@ class ActivityDB {
         });
     }
 
+    static getOrdered = (orderObj, resultLimit) => {
+        const db = Util.getFirestoreDB(); // active firestore db ref
+
+        resultLimit = resultLimit || 1000;
+
+        // default ref gets all
+        const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
+        let ref = dbActivityRef
+            .orderBy("activityDateTime", "desc")
+            .limit(resultLimit);
+
+        if (orderObj && orderObj.orderName) {
+            ref = dbActivityRef
+                .orderBy(orderObj.orderName)
+                .limit(resultLimit);
+        } 
+        if (orderObj && orderObj.orderName && orderObj.orderValue) {
+            ref = dbActivityRef
+                .orderBy(orderObj.orderName, orderObj.orderValue)
+                .limit(resultLimit);
+        }
+
+        return new Promise((resolve, reject) => {
+            ref
+                .get()
+                .then((querySnapshot) => {
+                    let activities = [];
+                    querySnapshot.forEach(doc => {
+                        let activity = {};
+                        activity = doc.data();
+                        activity.id = doc.id;
+                        activity.activityDateTime = activity
+                            .activityDateTime
+                            .toDate();
+                        activities.push(activity);
+                    });
+                    return (resolve(activities));
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
+
     // Listener for all activities from firestore
     static listenAll = () => {
         const db = Util.getFirestoreDB(); // active firestore db ref
