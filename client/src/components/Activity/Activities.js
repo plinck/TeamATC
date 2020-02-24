@@ -73,10 +73,35 @@ class Activities extends React.Component {
         };
     }
 
-    getActivities = (resultLimit, teamName, teamUid, userUid, startDate, endDate) => {
+    getActivities = (filterByString) => {
+        if (filterByString === undefined || filterByString === null) {
+            filterByString = this.state.filterByString;
+        }
+
+        let filterObj = {
+            filterName: undefined,
+            filterValue: undefined
+        }
+
+        switch(filterByString) {
+            case "All":
+                filterObj = undefined;
+                break;
+            case "Team":                            
+                filterObj.filterName = "teamUid";
+                filterObj.filterValue = this.props.user.teamUid;
+                break;
+            case "Mine":
+                filterObj.filterName = "uid";
+                filterObj.filterValue = this.props.user.uid;
+                break;
+            default:
+                filterObj = undefined;
+            }     
+
         // Get with security
         // comes back sorted already
-        ActivityDB.getAll(resultLimit, teamName, teamUid, userUid, startDate, endDate)
+        ActivityDB.getAll(filterObj)
             .then(res => {
                 let activities = res;
                 this.setState({ activities: activities });
@@ -104,28 +129,7 @@ class Activities extends React.Component {
     }
 
     refreshPage(filterByString) {
-
-        if (filterByString === undefined || filterByString === null) {
-            filterByString = this.state.filterByString;
-        }
-
-        switch(filterByString) {
-            case "All":
-                this.getActivities()
-                break;
-            case "Team":                            
-                this.getActivities(50, undefined, this.props.user.teamUid, undefined, undefined, undefined)
-                break;
-            case "Mine":
-                this.getActivities(50, undefined, undefined, this.props.user.uid, undefined, undefined)
-                break;
-            default:
-                if (this.props.user.uid === undefined || this.props.user.uid === null) {
-                    this.getActivities()
-                } else {
-                    this.getActivities(50, undefined, undefined, this.props.user.uid, undefined, undefined)
-                }
-            }     
+        this.getActivities(filterByString);
     }
 
     onChange = event => {
@@ -136,12 +140,14 @@ class Activities extends React.Component {
                     "filterByString": event.target.value,
                     "filterBy": event.target.value,
                 });
-                this.refreshPage(event.target.value, undefined, undefined);
+                this.refreshPage(event.target.value);
+                break;
             case "groupBy":
                 this.setState({
                     "groupBy": event.target.value
                 });
                 this.refreshPage(undefined, event.target.value, undefined);
+                break;
             case "searchBy": 
                 this.setState({
                     [event.target.name]: event.target.value,

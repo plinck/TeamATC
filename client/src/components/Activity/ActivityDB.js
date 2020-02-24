@@ -3,13 +3,10 @@ import Util from "../Util/Util";
 
 class ActivityDB {
     // Get all activities from firestore
-    static getAll = (resultLimit, teamName, teamUid, uid, startDate, endDate) => {
+    static getAll = (filterObj, resultLimit) => {
         const db = Util.getFirestoreDB(); // active firestore db ref
 
-        resultLimit = resultLimit || 50;
-        startDate = startDate || new Date('1900-01-01');
-        endDate = endDate || new Date(); // Today
-        endDate.setDate(endDate.getDate() + 1); // Tomorrow
+        resultLimit = resultLimit || 1000;
 
         // default ref gets all
         const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
@@ -17,27 +14,14 @@ class ActivityDB {
             .orderBy("activityDateTime", "desc")
             .limit(resultLimit);
 
-        if (teamName) {
+        if (filterObj && filterObj.filterName) {
             ref = dbActivityRef
-                .where("teamName", "==", teamName)
-                .orderBy("activityDateTime", "desc")
-                .limit(resultLimit);
-        }
-        if (teamUid) {
-            ref = dbActivityRef
-                .where("teamUid", "==", teamUid)
-                .orderBy("activityDateTime", "desc")
-                .limit(resultLimit);
-        }
-        if (uid) {
-            ref = dbActivityRef
-                .where("uid", "==", uid)
+                .where(filterObj.filterName, "==", filterObj.filterValue)
                 .orderBy("activityDateTime", "desc")
                 .limit(resultLimit);
         }
 
         return new Promise((resolve, reject) => {
-
             ref
                 .get()
                 .then((querySnapshot) => {
