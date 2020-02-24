@@ -6,7 +6,7 @@ import {
 
 import Navigation from './components/Navigation/Navigation';
 import LandingPage from './components/Landing/Landing';
-import Dashboard from './components/Dashboard';
+import Dashboard from './components/Dashboard/dashboard';
 import Account from './components/Account/Account';
 import Admin from './components/Admin/Admin';
 import Activities from './components/Activity/Activities';
