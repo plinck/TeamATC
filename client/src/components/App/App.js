@@ -5,7 +5,7 @@ import {
 } from 'react-router-dom';
 
 import Navigation from '../Navigation/Navigation';
-import LandingPage from '../Landing';
+import LandingPage from '../Landing/Landing';
 import Dashboard from '../Dashboard';
 import Account from '../Account/Account';
 import Admin from '../Admin/Admin';
