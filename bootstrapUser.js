@@ -68,7 +68,6 @@ async function copyUsersToDev() {
     });
 }
 
-// Copy Users from current location to DEV
 async function deleteATCMembers() {
     const db = admin.firestore();
     
