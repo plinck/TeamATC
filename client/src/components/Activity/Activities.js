@@ -69,7 +69,7 @@ class Activities extends React.Component {
             searchBy: "",
             filterByString: "ALL",
             filterBy: "All",
-            groupBy: "None"
+            orderBy: "None"
         };
     }
 
@@ -111,6 +111,41 @@ class Activities extends React.Component {
             });
     };
 
+    getActivitiesOrderBy = (orderBy) => {
+        if (orderBy === undefined || orderBy === null) {
+            orderBy = this.state.orderBy;
+        }
+
+        let orderObj = {
+            orderName: undefined,
+            orderValue: undefined
+        }
+
+        switch(orderBy) {
+            case "Team":                            
+                orderObj.orderName = "teamName";
+                orderObj.orderValue = undefined;       // Ascending - "desc" is alternative
+                break;
+            case "Type":
+                orderObj.orderName = "activityType";
+                orderObj.orderValue = undefined;       // Ascending - "desc" is alternative
+                break;
+            default:
+                orderObj = undefined;
+            }     
+
+        // Get with security
+        // comes back sorted already
+        ActivityDB.getOrdered(orderObj)
+            .then(res => {
+                let activities = res;
+                this.setState({ activities: activities });
+            })
+            .catch(err => {
+                console.error(err);
+            });
+    };
+
     // get all on mount
     componentDidMount() {
         // check to see if we already have activities passed
@@ -142,11 +177,11 @@ class Activities extends React.Component {
                 });
                 this.refreshPage(event.target.value);
                 break;
-            case "groupBy":
+            case "orderBy":
                 this.setState({
-                    "groupBy": event.target.value
+                    "orderBy": event.target.value
                 });
-                this.refreshPage(undefined, event.target.value, undefined);
+                this.getActivitiesOrderBy(event.target.value);
                 break;
             case "searchBy": 
                 this.setState({
@@ -197,7 +232,7 @@ class Activities extends React.Component {
         let searchBy = this.state.searchBy;
         let filterByString = this.state.filterByString;
         let filterBy = this.state.filterBy;
-        let groupBy = this.state.groupBy;
+        let orderBy = this.state.orderBy;
         
         const sortFilterRow = 
             <Box className="row"  border={1} m={0} p={0}>
@@ -222,12 +257,12 @@ class Activities extends React.Component {
 
                     </FormControl>
                     <FormControl variant="filled" className={classes.formControl}>
-                    <InputLabel id="groupByLabel">Group By</InputLabel>
+                    <InputLabel id="orderByLabel">Order By</InputLabel>
                     <Select
-                        labelId="groupByLabel"
-                        name="groupBy"
-                        id="groupBy"
-                        value={groupBy}
+                        labelId="orderByLabel"
+                        name="orderBy"
+                        id="orderBy"
+                        value={orderBy}
                         onChange={this.onChange}
                         className={classes.textField}
                         style={{marginTop: 23, marginBottom: 16, padding: 0}}
