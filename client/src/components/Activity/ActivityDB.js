@@ -3,7 +3,7 @@ import Util from "../Util/Util";
 
 class ActivityDB {
     // Get all activities from firestore
-    static getAll = (filterObj, resultLimit) => {
+    static getFiltered = (filterObj, resultLimit) => {
         const db = Util.getFirestoreDB(); // active firestore db ref
 
         resultLimit = resultLimit || 1000;

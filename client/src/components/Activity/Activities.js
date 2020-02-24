@@ -101,7 +101,7 @@ class Activities extends React.Component {
 
         // Get with security
         // comes back sorted already
-        ActivityDB.getAll(filterObj)
+        ActivityDB.getFiltered(filterObj)
             .then(res => {
                 let activities = res;
                 this.setState({ activities: activities });
