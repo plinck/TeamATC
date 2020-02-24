@@ -606,8 +606,9 @@ class ActivityForm extends React.Component {
                                                 type="text"
                                                 margin="normal"
                                                 style={{marginTop: 16, padding: 18}}
-                                                className={classes.textField}>
+                                                className={classes.textField}
                                                 onChange={this.onChange}
+                                                >
                                                 <MenuItem value={"Swim"}>Swim</MenuItem>
                                                 <MenuItem value={"Bike"}>Bike</MenuItem>
                                                 <MenuItem value={"Run"}>Run</MenuItem>
