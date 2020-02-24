@@ -67,8 +67,9 @@ class Activities extends React.Component {
         this.state = {
             activities: null,
             searchBy: "",
-            filterByString: null,
-            filterBy: "All"
+            filterByString: "ALL",
+            filterBy: "All",
+            groupBy: "None"
         };
     }
 
@@ -129,23 +130,30 @@ class Activities extends React.Component {
 
     onChange = event => {
         // Set Units
-        if (event.target.name === "searchBy") {
-            this.setState({
-                [event.target.name]: event.target.value,
-            });
-        } else {
-            if (event.target.name === "filterBy") {
+        switch (event.target.name) {
+            case "searchBy": 
+                this.setState({
+                    [event.target.name]: event.target.value,
+                });
+                break;
+            case "filterBy":
                 this.setState({
                     "filterByString": event.target.value,
+                    "filterBy": event.target.value,
                 });
                 this.refreshPage(event.target.value);
-            } 
+            case "groupBy":
+                this.setState({
+                    "groupBy": event.target.value
+                });
+                this.refreshPage(event.target.value);
+            default:
+                break;
         }
     };
 
     filterByChange = (filterString) => {
         this.setState({filterByString: filterString});
-        // console.log(`Filter By ${filterString} activities`);
         this.refreshPage(filterString);
     }
 
@@ -182,46 +190,64 @@ class Activities extends React.Component {
         let searchBy = this.state.searchBy;
         let filterByString = this.state.filterByString;
         let filterBy = this.state.filterBy;
+        let groupBy = this.state.groupBy;
         
         const sortFilterRow = 
             <Box className="row"  border={1} m={0} p={0}>
-            {/*
-                <div className="col s1 m1 green-text left-align">Filter: </div>
-                <div className="col s1 m1">
-                    <Button className="waves-effect waves-light btn"
-                        onClick={() => this.filterByChange("All")}>All
-                    </Button>
-                </div>
-                <div className="col s1 m1">
-                    <Button className="waves-effect waves-light btn"
-                        onClick={() => this.filterByChange("Team")}>Team
-                    </Button>
-                </div>
-                <div className="col s1 m1">
-                    <Button className="waves-effect waves-light btn"
-                        onClick={() => this.filterByChange("Mine")}>Mine
-                    </Button>
-                </div>
-                */}
-
                 <form className={classes.container} noValidate autoComplete="off" >
-                        <FormControl variant="outlined" required className={classes.formControl}>
-                            <InputLabel id="filterByLabel">Filter By</InputLabel>
-                            <Select
-                                labelId="filterByLabel"
-                                id="filterBy"
-                                value={filterBy}
-                                name="filterBy"
-                                type="text"
-                                margin="normal"
-                                className={classes.textField}
-                                style={{marginTop: 23, marginBottom: 16, padding: 0}}>
-                                onChange={this.onChange}
-                                <MenuItem value={"Mine"}>Mine</MenuItem>
-                                <MenuItem value={"Team"}>Team</MenuItem>
-                                <MenuItem value={"All"}>All</MenuItem>
-                            </Select>
-                        </FormControl>
+                    <FormControl variant="filled" required className={classes.formControl}>
+                        <InputLabel id="filterByLabel">Filter By</InputLabel>
+                        <Select
+                            labelId="filterByLabel"
+                            id="filterBy"
+                            value={filterBy}
+                            name="filterBy"
+                            type="text"
+                            margin="normal"
+                            className={classes.textField}
+                            style={{marginTop: 23, marginBottom: 16, padding: 0}}>
+                            onChange={this.onChange}
+                            <MenuItem value={"Mine"}>Mine</MenuItem>
+                            <MenuItem value={"Team"}>Team</MenuItem>
+                            <MenuItem value={"All"}>All</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <FormControl variant="filled" className={classes.formControl}>
+                    <InputLabel id="demo-simple-select-filled-label">Age</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-filled-label"
+                        id="demo-simple-select-filled"
+                        value={filterBy}
+                        onChange={this.onChange}
+                    >
+                        <MenuItem value="">
+                        <em>None</em>
+                        </MenuItem>
+                        <MenuItem value={10}>Ten1</MenuItem>
+                        <MenuItem value={20}>Twenty</MenuItem>
+                        <MenuItem value={30}>Thirty</MenuItem>
+                    </Select>
+                    </FormControl>
+
+                    {/* 
+                    <FormControl variant="outlined" required className={classes.formControl}>
+                        <InputLabel id="groupByLabel">GHroup By</InputLabel>
+                        <Select
+                            labelId="groupByLabel"
+                            id="groupBy"
+                            value={filterBy}
+                            name="groupBy"
+                            type="text"
+                            margin="normal"
+                            className={classes.textField}
+                            style={{marginTop: 23, marginBottom: 16, padding: 0}}>
+                            onChange={this.onChange}
+                            <MenuItem value={"Team"}>Team</MenuItem>
+                            <MenuItem value={"Type"}>Type</MenuItem>
+                            <MenuItem value={"None"}>None</MenuItem>
+                        </Select>
+                    </FormControl>
+                    */}
 
                     <div className="blue-text input-field inline align-right">
                             <TextField
