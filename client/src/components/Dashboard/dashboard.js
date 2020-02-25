@@ -745,12 +745,27 @@ class Dashboard extends React.Component {
 
                             {/* Activities by day and heatmap */}
                             <div className="row">
-                                <div className="col s12 m6">
-                                    <ActivityByDay
-                                    title={"Activity By Day"}
-                                    activities={this.state.activities}
-                                    />
-                                </div>                            
+                                <div className="card col s12 m6">
+                                    <div className="card-content pCard">
+                                        <span className="card-title">
+                                            <Link to="/activities">Latest Activities ({"Mine"}) : {this.props.user.displayName} </Link>{"   "}
+                                        </span>
+            
+                                        {activityCardHeaderRow}
+                                        {activities.map((activity, index) => {                                         
+                                            return (
+                                                    (index > 14) ?
+                                                    ""
+                                                    :
+                                                    <div key={activity.id}>
+                                                        <ActivityCard 
+                                                            activity={activity} layoutType={this.props.layoutType} index={index}
+                                                        />
+                                                    </div> 
+                                            )                                          
+                                        })} 
+                                    </div>
+                                </div>
                                 <div className="col s12 m6">
                                     <ActivityBubble
                                         title={"Heatmap (duration)"}
@@ -785,27 +800,12 @@ class Dashboard extends React.Component {
 
                             {/* Current User's Activities */}
                             <div className="row">
-                                <div className="card col s12 m6">
-                                    <div className="card-content pCard">
-                                        <span className="card-title">
-                                            <Link to="/activities">Latest Activities ({"Mine"}) : {this.props.user.displayName} </Link>{"   "}
-                                        </span>
-               
-                                        {activityCardHeaderRow}
-                                        {activities.map((activity, index) => {                                         
-                                            return (
-                                                    (index > 10) ?
-                                                    ""
-                                                    :
-                                                    <div key={activity.id}>
-                                                        <ActivityCard 
-                                                            activity={activity} layoutType={this.props.layoutType} index={index}
-                                                        />
-                                                    </div> 
-                                            )                                          
-                                        })} 
-                                    </div>
-                                </div>
+                                <div className="col s12 m6">
+                                    <ActivityByDay
+                                    title={"Activity By Day"}
+                                    activities={this.state.activities}
+                                    />
+                                </div>                            
                             </div>
 
                             {/* END Current User"s Activities */}
