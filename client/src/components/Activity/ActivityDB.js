@@ -134,9 +134,9 @@ class ActivityDB {
             let users = {};
             let activityArray = [];
 
-            const dbUserRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(GLOBAL_ENV.USERS_DB)
+            const dbUsersRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(GLOBAL_ENV.USERS_DB)
             const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
-            dbUserRef
+            dbUsersRef
                 .get()
                 .then((results) => {
                     results.forEach((doc) => {
@@ -209,9 +209,9 @@ class ActivityDB {
                             .activityDateTime
                             .toDate();
                             
-                        const dbUserRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+                        const dbUsersRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
                         // get the user doc.data().uid;
-                        const userRef = dbUserRef
+                        const userRef = dbUsersRef
                             .doc(activity.uid);
 
                         const userQuery = userRef

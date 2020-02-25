@@ -35,8 +35,8 @@ dbActivityRef.orderBy("activityDateTime", "desc").onSnapshot((querySnapshot) => 
         }
 
         // console.log(`api-activity-routes DB : ${ORG}/${ENV}/${USERS_DB}`);
-        const dbUserRef = db.collection(ORG).doc(ENV).collection(USERS_DB);
-        const userRef = dbUserRef.doc(activity.uid);
+        const dbUsersRef = db.collection(ORG).doc(ENV).collection(USERS_DB);
+        const userRef = dbUsersRef.doc(activity.uid);
         const userQuery = userRef.get()
         .then ( user => {
             if (user.exists) {

@@ -8,8 +8,8 @@ class TeamAPI {
         return new Promise((resolve, reject) => {
             const db = Util.getFirestoreDB();
 
-            const dbTeamRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
-            dbTeamRef.orderBy("name").get().then((querySnapshot) => {
+            const dbTeamsRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
+            dbTeamsRef.orderBy("name").get().then((querySnapshot) => {
                 let teams = [];
                 querySnapshot.forEach(doc => {
                     let team = {};
@@ -35,8 +35,8 @@ class TeamAPI {
             const db = Util.getFirestoreDB();
             let teams = {} ;
             let activityArray = [];
-            const dbTeamRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
-            dbTeamRef.orderBy("name").get().then((results) => {
+            const dbTeamsRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
+            dbTeamsRef.orderBy("name").get().then((results) => {
                 results.forEach((doc) => {
                     teams[doc.id] = doc.data();
                 });
@@ -70,8 +70,8 @@ class TeamAPI {
             const db = Util.getFirestoreDB();
 
             // then get from firestore
-            const dbTeamRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
-            let docRef = dbTeamRef.doc(id);
+            const dbTeamsRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
+            let docRef = dbTeamsRef.doc(id);
             docRef.get().then((doc) => {
                 if (doc.exists) {
                     // update
@@ -93,8 +93,8 @@ class TeamAPI {
             const db = Util.getFirestoreDB();
 
             // then get from firestore
-            const dbTeamRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
-            let docRef = dbTeamRef.doc(id);
+            const dbTeamsRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
+            let docRef = dbTeamsRef.doc(id);
             docRef.get().then((doc) => {
                 if (doc.exists) {
                     // update
@@ -102,8 +102,8 @@ class TeamAPI {
                     let teamUid = doc.id;
                     let userArray = []
 
-                    const dbUserRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
-                    const docRef = dbUserRef.orderBy("lastName", "desc");
+                    const dbUsersRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+                    const docRef = dbUsersRef.orderBy("lastName", "desc");
                     docRef.get().then((docSnaps) => {
                         docSnaps.forEach((doc) => {
                             const user = doc.data();
@@ -135,8 +135,8 @@ class TeamAPI {
     static delete = (uid) => {
         return new Promise((resolve, reject) => {
             const db = Util.getFirestoreDB();
-            const dbTeamRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
-            dbTeamRef.doc(uid).delete().then(() => {
+            const dbTeamsRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
+            dbTeamsRef.doc(uid).delete().then(() => {
                 console.log("Firestore Team successfully deleted!");
                 return resolve();
             }).catch((err) => {
@@ -156,8 +156,8 @@ class TeamAPI {
             const db = Util.getFirestoreDB();
 
             // we always want uid = id to keep auth and firestore in sync
-            const dbTeamRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
-            dbTeamRef.doc(team.uid).set({
+            const dbTeamsRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
+            dbTeamsRef.doc(team.uid).set({
                 name: team.name ? team.name : "No Name",
                 description: team.description ? team.description : ""
             },{ merge: true }).then(() => {

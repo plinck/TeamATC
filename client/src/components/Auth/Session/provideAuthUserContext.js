@@ -21,15 +21,15 @@ const provideAuthUserContext = Component => {
 
             // These should probably be in a "subcollections" under a document ("race" or "challenge")
             const dbActivitiesRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`activities`);
-            const dbTeamRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`teams`);
-            const dbATCMemberRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`ATCMembers`);
+            const dbTeamsRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`teams`);
+            const dbATCMembersRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`ATCMembers`);
             const dbATCChallengeMemberRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`atcchallengemembers`);        
 
             this.state = {
                 dbUsersRef: dbUsersRef,
                 dbActivitiesRef: dbActivitiesRef,
-                dbTeamRef: dbTeamRef,
-                dbATCMemberRef: dbATCMemberRef,
+                dbTeamsRef: dbTeamsRef,
+                dbATCMembersRef: dbATCMembersRef,
                 dbATCChallengeMemberRef: dbATCChallengeMemberRef,
 
                 authUser: null,
@@ -99,8 +99,8 @@ const provideAuthUserContext = Component => {
 
             // User listener
             // Try to set state together
-            const dbUserRef = this.props.firebase.db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
-            let docRef = dbUserRef.doc(authUser.uid);
+            const dbUsersRef = this.props.firebase.db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+            let docRef = dbUsersRef.doc(authUser.uid);
             this.userListener = docRef.onSnapshot((doc) => {
                 const user = doc.data();
                 if (user) {

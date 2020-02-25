@@ -17,25 +17,51 @@ const admin = require("firebase-admin");
 const storageBucket = "teamatc-challenge.appspot.com";
 const databaseURL = "https://teamatc-challenge.firebaseio.com";
 
+
 function exitProgram() {
     console.log("BYE!");
 }
-// Copy Users from current location to DEV
-async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
+
+    // Add a single activity based on id
+async function createActivity (activity) {
     const db = admin.firestore();
-    const dbUsersRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`users`);
-
-    // These should probably be in a "subcollections" under a document ("race" or "challenge")
     const dbActivitiesRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`activities`);
-    const dbTeamRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`teams`);
-    const dbATCMemberRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`ATCMembers`);
-    const dbATCChallengeMemberRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`atcchallengemembers`);
 
-    // First Read and Parse All from ATC CSV file to grab participating users
-    if (!fileToUpload) {
-        fileToUpload = "ATCActivities.csv";
-    }
-    console.log(`Matching Challenge Users to Members and then users from ${fileToUpload}`);
+    return new Promise((resolve, reject) => {
+        dbActivitiesRef
+            .add({
+                activityDateTime: activity.activityDateTime,
+                activityName: activity.activityName,
+                activityType: activity.activityType,
+                displayName: activity.displayName,
+                distance: activity.distance,
+                distanceUnits: activity.distanceUnits,
+                duration: activity.duration ? activity.duration : 0,
+                email: activity.email,
+                teamName: activity.teamName,
+                teamUid: activity.teamUid
+                    ? activity.teamUid
+                    : null,
+                uid: activity.uid
+            })
+            .then((res) => {
+                console.log("Firestore activity successfully added");
+                return resolve(res);
+            })
+            .catch((error) => {
+                console.error("Firestore activity add failed");
+                return reject(error);
+            });
+    });
+}
+
+
+// Assume users create and up
+async function createActivitiesFromGoogleDoc(fileToUpload) {
+    const db = admin.firestore();
+    const dbUsersRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection("users");
+    const dbTeamsRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`teams`);
+    const dbATCMembersRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`ATCMembers`);
 
     let ATCMembers = [];
     let nbrATCMembers = 0;
@@ -43,9 +69,16 @@ async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
     let nbrTeams = 0;
     let totalBadAtivities = 0;
 
+
+    if (!fileToUpload) {
+        fileToUpload = "ATCActivities.csv";
+    }
+    console.log(`Uploading Activities from ${fileToUpload}`);
+    let ChallengeActivities = [];
+    
     // Get the ATC Members
     try {
-        let allATCMembersSnapshot = await dbATCMemberRef.get();
+        let allATCMembersSnapshot = await dbATCMembersRef.get();
         allATCMembersSnapshot.forEach(doc => {
             nbrATCMembers += 1;
             //console.log(doc.id, '=>', JSON.stringify(doc.data()));
@@ -62,7 +95,7 @@ async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
 
     // Get teams
     try {
-        let allteamsSnapshot = await dbTeamRef.get();
+        let allteamsSnapshot = await dbTeamsRef.get();
         allteamsSnapshot.forEach(doc => {
             nbrTeams += 1;
             console.log(doc.id, '=>', JSON.stringify(doc.data()));
@@ -76,7 +109,7 @@ async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
         console.error(`Error getting ATC Users: ${err}`);
         return
     }
-        
+    
     // read  the file and parse
     if (fileToUpload) {
         fs.readFile(fileToUpload, 'utf8', (err, data) => {
@@ -85,17 +118,15 @@ async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
                 console.log(`OK reading file`);
 
                 let totalActivities = 0;
-                let totalMembers = 0;
  
                 //remove the quotes
                 let fixedData = data.replace(/["]*/g, "");
                 //console.log(`read ${fixedData} from file: ${fileToUpload}`);
                 let lines = fixedData.split('\n');
                 console.log(`read ${lines.length} lines of data from file: ${fileToUpload} line[0].length: ${lines[0].length}`);
-                // 1/15/2020 10:00:53,Laurie Nicholson,1/15/2020,Run,3.4,Rahuligan,Miles (Bike and Run)
 
                 let logged = 0;
-                let ChallengeActivities = lines.map((line) => {
+                ChallengeActivities = lines.map((line) => {
                     let activityFieldsArray = line.split(',');
 
                     let uselessDate = activityFieldsArray[0].trim();
@@ -171,10 +202,10 @@ async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
                         firstName: firstName,
                         lastName: lastName,
 
-                        // email: _foundMember.emailAddress,
+                        email: _foundMember.email,
 
-                        // teamUid: _foundTeam.id,
-                        // teamName: _foundTeam.name,
+                        teamUid: _foundTeam.id,
+                        teamName: _foundTeam.name,
                     }
                     if (logged < 10) {
                         // console.log(`Line: ${line}, activity: ${activityFieldsArray}`);
@@ -194,9 +225,223 @@ async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
                     }
                 });
 
+                console.log(`Found: ${totalActivities} valid activities, ${totalBadAtivities}`)
 
-                let ChallengeMembersAlreadyExists = [];
-                let ChallengeMembers = [];
+                // Now, I need to create the activities
+                for (let i = 0; i < ChallengeActivities.length; i++) {
+                    if (true) {
+                        let activity = ChallengeActivities[i];
+                        // no name in google doc so make up one
+                        activity.activityName = activity.activityType;
+                        let foundUser = false;
+                        let user = {};
+                        // need to get uid from user based on email
+                        let docRef = dbUsersRef.where("email", "==", activity.email.toLowerCase()).limit(1);
+                        docRef.get().then((querySnapshot) => {
+                            querySnapshot.forEach(doc => {
+                                foundUser = true;
+                                user = doc.data();
+                                user.id = doc.id;
+                            });
+            
+                            if (foundUser) {
+                                console.log(`User with email: ${user.email} found!, displayName: ${user.displayName}`);
+                                activity.uid = user.id;
+                                createActivity(activity).then(res => {
+                                    // worked
+                                        console.log(`Created Activity in createActivitiesFromGoogleDoc: ${res}`);
+                                     }).catch(err => {
+                                        console.error(`Error Creating Activity in createActivitiesFromGoogleDoc: ${activity}`);
+                                    });                  
+        
+                            } else {
+                                user.err = `User with email: ${activity.email} not found in firestore`;
+                                console.log(user.err);
+                            }
+                        }).catch(err => {
+                            console.error(`Error getting user ${err.message}`);
+                        });
+                    }
+                }
+            }); //fs.read
+    }
+}
+// Copy Users from current location to DEV
+async function createUsersFromGoogleActivities(fileToUpload) {
+    const db = admin.firestore();
+    const dbUsersRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`users`);
+    // These should probably be in a "subcollections" under a document ("race" or "challenge")
+    const dbActivitiesRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`activities`);
+    const dbTeamsRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`teams`);
+    const dbATCMembersRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`ATCMembers`);
+    const dbATCChallengeMemberRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`atcchallengemembers`);
+    
+    // First Read and Parse All from ATC CSV file to grab participating users
+    if (!fileToUpload) {
+        fileToUpload = "ATCActivities.csv";
+    }
+    console.log(`Matching Challenge Users to Members and then users from ${fileToUpload}`);
+
+    let ATCMembers = [];
+    let nbrATCMembers = 0;
+    let teams = [];
+    let nbrTeams = 0;
+    let totalBadAtivities = 0;
+
+    // Get the ATC Members
+    try {
+        let allATCMembersSnapshot = await dbATCMembersRef.get();
+        allATCMembersSnapshot.forEach(doc => {
+            nbrATCMembers += 1;
+            //console.log(doc.id, '=>', JSON.stringify(doc.data()));
+            let ATCMember = doc.data();
+            ATCMember.id = doc.id;
+            ATCMembers.push(ATCMember)
+        });
+        console.log(`Found: ${nbrATCMembers} Members`);
+    }
+    catch (err) {
+        console.error(`Error getting ATC Users: ${err}`);
+        return
+    }
+
+    // Get teams
+    try {
+        let allteamsSnapshot = await dbTeamsRef.get();
+        allteamsSnapshot.forEach(doc => {
+            nbrTeams += 1;
+            console.log(doc.id, '=>', JSON.stringify(doc.data()));
+            let team = doc.data();
+            team.id = doc.id;
+            teams.push(team)
+        });
+        console.log(`Found: ${nbrTeams} Teams`);
+    }
+    catch (err) {
+        console.error(`Error getting ATC Users: ${err}`);
+        return
+    }
+
+    let ChallengeMembersAlreadyExists = [];
+    let ChallengeMembers = [];
+    let ChallengeActivities = [];
+        
+    // read  the file and parse
+    if (fileToUpload) {
+        fs.readFile(fileToUpload, 'utf8', (err, data) => {
+                //
+                if (err) throw err;
+                console.log(`OK reading file`);
+
+                let totalActivities = 0;
+                let totalMembers = 0;
+ 
+                //remove the quotes
+                let fixedData = data.replace(/["]*/g, "");
+                //console.log(`read ${fixedData} from file: ${fileToUpload}`);
+                let lines = fixedData.split('\n');
+                console.log(`read ${lines.length} lines of data from file: ${fileToUpload} line[0].length: ${lines[0].length}`);
+                // 1/15/2020 10:00:53,Laurie Nicholson,1/15/2020,Run,3.4,Rahuligan,Miles (Bike and Run)
+
+                let logged = 0;
+                ChallengeActivities = lines.map((line) => {
+                    let activityFieldsArray = line.split(',');
+
+                    let uselessDate = activityFieldsArray[0].trim();
+
+                    let dateString = activityFieldsArray[2].trim();
+                    let activityDateTime = new Date(dateString);
+                    let displayName = activityFieldsArray[1].trim();
+                    let displayNameArray = displayName.split(" ");
+                    let firstName = displayNameArray[0];
+                    let lastName = displayNameArray.length > 0 ? displayNameArray[1] : "X";
+                    if (logged < 10) {
+                        // console.log(`lastName: ${lastName}`);
+                    }
+
+                    let activityType = activityFieldsArray[3].trim();
+                    let distance = Number(activityFieldsArray[4]);
+                    let teamName = activityFieldsArray[5].trim();
+                    let teamNameArray = teamName.split(" ");
+                    teamName = teamNameArray[0].trim();
+                    // Fix people using plural of scottie
+                    if (teamName[teamName.length-1] === "s") {
+                        teamName = teamName.substring(0, teamName.length - 1);
+                    }
+
+                    lastName = lastName && lastName.length >= 1 ? lastName.trim().toLowerCase() : " ";
+                    firstName = firstName.trim().toLowerCase();
+
+                    lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
+                    firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
+                    activityType = activityType.charAt(0).toUpperCase() + activityType.slice(1)
+                    teamName = teamName.charAt(0).toUpperCase() + teamName.slice(1)
+                    let distanceUnits = activityType === "Swim" ? "Yards" : "Miles"
+
+                    // See if valid ATCUser
+                    let _foundMember = ATCMembers.find(member => {
+                        if (member.firstName === firstName && member.lastName === lastName) {
+                            return true
+                        } else {
+                            return false;
+                        }
+                    });
+                    if (!_foundMember) {
+                        //console.log(`Error in activity for member: ${firstName} ${lastName}, no valid ATC Member found in record: ${line}`);
+                        totalBadAtivities += 1;
+                        return false;
+                    }
+                    if (logged < 10) {
+                        // console.log(`Found member : ${JSON.stringify(_foundMember)}`);
+                    }
+                    
+                    let _foundTeam = teams.find(team => {
+                        if ( team.name && team.name === teamName ) {
+                            return true
+                        } else {
+                            return false;
+                        }
+                    });
+                    if (!_foundTeam) {
+                        totalBadAtivities += 1;
+                        //console.log(`Error in activity for member: ${displayName} on Team: ${teamName} , no valid ATC Team with that name found`)
+                        return false;
+                    }
+                    if (logged < 10) {
+                        //console.log(`Found team : ${JSON.stringify(_foundTeam)}`);
+                    }
+
+                    let activityPosted = {
+                        activityDateTime: activityDateTime,
+                        activityType: activityType,
+                        displayName: displayName,
+                        distance: distance,
+                        distanceUnits: distanceUnits,
+                        firstName: firstName,
+                        lastName: lastName,
+
+                        email: _foundMember.email,
+
+                        teamUid: _foundTeam.id,
+                        teamName: _foundTeam.name,
+                    }
+                    if (logged < 10) {
+                        // console.log(`Line: ${line}, activity: ${activityFieldsArray}`);
+                        //console.log(`Activity Posted: ${JSON.stringify(activityPosted)}`);
+                        logged += 1;
+                    }
+
+                    totalActivities += 1;
+    
+                    return (activityPosted);
+                });
+
+                // filter out bad records
+                ChallengeActivities = ChallengeActivities.filter( activity => {
+                    if (activity) {
+                        return activity;
+                    }
+                });
 
                 for (let i = 0; i < ChallengeActivities.length; i++) {
                     if (!ChallengeActivities[i]) {
@@ -213,7 +458,12 @@ async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
                             distanceUnits: ChallengeActivities[i].distanceUnits,
                             firstName: ChallengeActivities[i].firstName,
                             lastName: ChallengeActivities[i].lastName,
-                            teamName: ChallengeActivities[i].teamName
+
+                            email:ChallengeActivities[i].email,
+                            phoneNumber: "",
+                            photoURL: "",
+                            teamUid: ChallengeActivities[i].teamUid,
+                            teamName: ChallengeActivities[i].teamName,
                         }
 
                         ChallengeMembers.push(member);
@@ -223,7 +473,51 @@ async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
                     }
                 }
                 console.log(`Found: ${totalActivities} valid activities, ${totalBadAtivities}, Challenge Members: ${totalMembers}`)
-        })
+
+                // Now, I need to creeate the users and then add the acivities
+                for (let i = 0; i < ChallengeMembers.length; i++) {
+                    if (true) {
+                            let user = ChallengeMembers[i];
+                            let authUser = {};
+                            user.password = "123456"
+                            admin.auth().getUserByEmail(user.email).then((authUser) => {
+                                // User found.
+                                console.log(`Found authUser: ${JSON.stringify(authUser, null, 4)}`);
+                                user.uid = authUser.uid;
+                                createFirestoreUserBootstrap(user).then (newUser => {
+                                    console.log(`Creating User in createFirestoreUserBootstrap: ${user}, newUser: ${newUser}`);
+                                }).catch(err => {
+                                    console.error(`Error Creating User in createFirestoreUserBootstrap: ${user}`);
+                                });  
+
+                            }).catch(function(error) {
+                                console.log("Error fetching user data:", error);
+                                createAuthUserBootstrap(user).then(authUser => {
+                                    console.log(`Created authUser: ${JSON.stringify(authUser, null, 4)}`);
+                                    user.uid = authUser.uid;
+                                    createFirestoreUserBootstrap(user).then (newUser => {
+                                        // Now update claims for a user - I dont think I acutaull need to do this
+                                        // setAuthClaimsAsUser(authUser.uid, newClaims).then ( () => {
+                                        //     // claims successful
+                                        //     console.log(`Successfully Creating User in setAuthClaimsAsUser: ${user}`);
+                                        // }).catch(err => {
+                                        //     console.error(`Error Creating User in setAuthClaimsAsUser: ${user}`);
+                                        // });                
+                                    }).catch(err => {
+                                        console.error(`Error Creating User in createFirestoreUserBootstrap: ${user}`);
+                                    });  
+                                });                                 
+                            }).catch(err => {
+                                if (err.code == "auth/email-already-exists") {
+                                    // its OK if already exists sine I just created it
+                                    console.error(`Auth User already exists ${err}`);                                    
+                                } else {
+                                    console.error(`Error Creating User in createAuthUserBootstrap: ${err}`);
+                                }
+                            });
+                    }
+                }
+            }); //fs.read
     }
 }
 
@@ -314,7 +608,7 @@ async function uploadATCMembers(fileToUpload) {
                 let memberArray = line.split(',');
                 let lastName = memberArray[0].trim().toLowerCase();
                 let firstName = memberArray[1].trim().toLowerCase();
-                let emailAddress = memberArray[2].trim();
+                let email = memberArray[2].trim();
 
                 lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
                 firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
@@ -322,7 +616,7 @@ async function uploadATCMembers(fileToUpload) {
                 let member = {
                     lastName: lastName,
                     firstName: firstName,
-                    emailAddress: emailAddress
+                    email: email
                 };
                 //console.log(`Member: ${JSON.stringify(member)}`); 
                 return (member);
@@ -333,7 +627,7 @@ async function uploadATCMembers(fileToUpload) {
 
                 // use email address as key to overwrite duplicates
                 db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection("ATCMembers")
-                    .doc(member.emailAddress)
+                    .doc(member.email)
                     .set(member)
                     .then(memberId => {
                         console.log(
@@ -350,9 +644,11 @@ async function uploadATCMembers(fileToUpload) {
 
 
 // update claims from auth into FB
-function updateClaimsInFirebase(uid, claims, authClaims) {
+function updateClaimsInFirestore(uid, claims, authClaims) {
     return new Promise(async (resolve, reject) => {
         const db = admin.firestore();
+        const dbUsersRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection("users");
+
         // Init claims for primary since you can be multiple
         let updateFields = {
             claims: claims
@@ -369,7 +665,7 @@ function updateClaimsInFirebase(uid, claims, authClaims) {
             updateFields.isUser = authClaims.user;
 
         // update claims
-        db.collection("users")
+        dbUsersRef
             .doc(uid)
             .set(updateFields, {
                 merge: true
@@ -423,7 +719,29 @@ async function setAuthAndFBClaims(uid) {
                 user: true
             })
             .then(async newClaims => {
-                await updateClaimsInFirebase(uid, newClaims.name, newClaims);
+                await updateClaimsInFirestore(uid, newClaims.name, newClaims);
+                resolve();
+            })
+            .catch(err => {
+                // catch all error
+                console.error(
+                    `Error caught in route app.post("/api/auth/setTeamLead..." ${err}`
+                );
+                reject(err);
+            });
+    });
+}
+async function setAuthClaimsAsUser(uid) {
+    return new Promise(async (resolve, reject) => {
+        // Now, set custom claims
+        setAuthClaims(uid, {
+                admin: false,
+                teamLead: false,
+                moderator: false,
+                user: true
+            })
+            .then(async newClaims => {
+                await updateClaimsInFirestore(uid, newClaims.name, newClaims);
                 resolve();
             })
             .catch(err => {
@@ -436,22 +754,24 @@ async function setAuthAndFBClaims(uid) {
     });
 }
 
-async function createUserBootstrap(user) {
+async function createFirestoreUserBootstrap(user) {
     console.log(`trying to update user in fb: ${user}`);
     return new Promise(async (resolve, reject) => {
         const db = admin.firestore();
+        const dbUsersRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection("users");
 
         // update
         console.log("User updated, user=", user);
-        db.collection("users")
-            .doc(user.uid)
+        dbUsersRef.doc(user.uid)
             .set({
                 firstName: user.firstName,
                 lastName: user.lastName,
                 displayName: `${user.firstName} ${user.lastName}`,
                 phoneNumber: user.phoneNumber,
                 email: user.email,
-                photoURL: user.photoURL ? user.photoURL : ""
+                photoURL: user.photoURL ? user.photoURL : "",
+                teamUid: user.teamUid ? user.teamUid : "",
+                teamName: user.teamName ? user.teamName : ""
             }, {
                 merge: true
             })
@@ -471,22 +791,24 @@ function createAuthUserBootstrap(user) {
     console.log(
         `trying to createAuthUserBootstrap: ${JSON.stringify(user, null, 2)}`
     );
+    // Generate random password if no password exists (meaning its created by someone else)
+    if (!user.password || user.password === null || user.password === "") {
+        let randomPassword = Math.random().toString(36).slice(-8);
+        user.password = randomPassword;
+    }
+    
     return new Promise(async (resolve, reject) => {
         // Create auth user
-        admin
-            .auth()
-            .createUser({
+        admin.auth().createUser({
                 email: user.email,
                 emailVerified: true,
                 password: user.password,
                 displayName: `${user.firstName} ${user.lastName}`,
                 disabled: false
-            })
-            .then(authUser => {
+            }).then(authUser => {
                 console.log("Successfully added auth user");
                 resolve(authUser);
-            })
-            .catch(err => {
+            }).catch(err => {
                 console.error("Error creating auth user:", err);
                 reject(err);
             });
@@ -544,7 +866,7 @@ async function seedDatabase() {
     console.log(`Created authUser: ${JSON.stringify(authUser, null, 4)}`);
 
     user.uid = authUser.uid;
-    let newUser = await createUserBootstrap(user);
+    let newUser = await createFirestoreUserBootstrap(user);
 
     await setAuthAndFBClaims(authUser.uid, user);
 
@@ -558,7 +880,8 @@ function mainMenu() {
         seed: seedDatabase,
         deleteATCMembers: deleteATCMembers,
         uploadATCMembers: uploadATCMembers,
-        matchChallengeUsersCreateAuthAndUser: matchChallengeUsersCreateAuthAndUser,
+        createUsersFromGoogleActivities: createUsersFromGoogleActivities,
+        createActivitiesFromGoogleDoc: createActivitiesFromGoogleDoc,
         copyUsersToDev: copyUsersToDev,
         QUIT: exitProgram
     };
