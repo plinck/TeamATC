@@ -42,7 +42,7 @@ class ActivityCard extends React.Component {
         // Band odd rows for clarity
         let rowBg = "";
         let rowFg = ""
-        if (this.props.index % 2 !== 0) {
+        if (this.props.index % 2 === 0) {
             rowBg = "info.main";
             rowFg = "white";
         }

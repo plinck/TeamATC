@@ -19,6 +19,10 @@ import ActivityTotalsGraphs from "./Graphs/ActivityTotalsGraphs";
 import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
 import ActivityTeamBreakdown from "./Graphs/ActivityTeamBreakdown";
 
+//Reports
+import ActivityCard from '../Activity/ActivityCard.jsx';
+
+
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
@@ -614,6 +618,8 @@ class Dashboard extends React.Component {
             return null;
         }
 
+        let activities = this.state.activities;
+
         // header row for results
         const headerRow = 
             <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1}>
@@ -633,6 +639,24 @@ class Dashboard extends React.Component {
                 </div>
                 <div className="green-text col m2 m2 truncate">
                     Run
+                </div>
+            </Box>
+                
+        const activityCardHeaderRow = 
+            <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1} margin={0}>
+                <div className="col s1 m1">
+                </div>
+                <div className="col s4 m4 truncate">
+                    Name
+                </div>
+                <div className="black-text col m2 m2 truncate">
+                    Date
+                </div>
+                <div className="blue-text col s2 offset-s1 m2 offset-m1 truncate">
+                    Time
+                </div>
+                <div className="red-text col s2 m2 fontWeight=fontWeightBold truncate">
+                    Distance
                 </div>
             </Box>
         
@@ -760,7 +784,30 @@ class Dashboard extends React.Component {
                             {/* End All User Totals Cards Stack Bar Graphs - Activities etc*/}
 
                             {/* Current User's Activities */}
-                            <Activities filterByString="Mine" layoutType="userCard"/>
+                            <div className="row">
+                                <div className="card col s12 m6">
+                                    <div className="card-content pCard">
+                                        <span className="card-title">
+                                            <Link to="/activities">Latest Activities ({"Mine"}) : {this.props.user.displayName} </Link>{"   "}
+                                        </span>
+               
+                                        {activityCardHeaderRow}
+                                        {activities.map((activity, index) => {                                         
+                                            return (
+                                                    (index > 10) ?
+                                                    ""
+                                                    :
+                                                    <div key={activity.id}>
+                                                        <ActivityCard 
+                                                            activity={activity} layoutType={this.props.layoutType} index={index}
+                                                        />
+                                                    </div> 
+                                            )                                          
+                                        })} 
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* END Current User"s Activities */}
 
                             {/* Sumary Display */}

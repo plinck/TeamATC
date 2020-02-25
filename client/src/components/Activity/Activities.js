@@ -18,7 +18,6 @@ import Select from "@material-ui/core/Select";
 
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import Activity from './Activity';
-import ActivityCard from './ActivityCard';
 import ActivityDB from './ActivityDB';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -361,37 +360,6 @@ class Activities extends React.Component {
                         })} 
                     </div>
                 </div>
-
-            if ((this.props.layoutType) && (this.props.layoutType === "userCard")){
-                // card?
-                activityView = 
-                <div>
-                    <div className="col s12 m4">
-                        <div className="card">
-                            <div className="card-content pCard">
-                                <span className="card-title">
-                                    <Link to="/activities">Activities ({filterByString})</Link>
-                                </span>
-                                
-                                {activities.map((activity, index) => {
-                                    return (
-                                        <div key={activity.id}>
-                                            <ActivityCard 
-                                                activity={activity} layoutType={this.props.layoutType} index={index}
-                                            />
-                                        </div>
-                                    );
-                                })} 
-                            </div>
-                            <div className="card-action pCard">
-                                <div className="center-align">
-                                    <Link to="/activities" className="waves-effect waves-light dash-btn blue darken-4 btn activityBtn">More Details</Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
 
             return (
                 <div className="container">
