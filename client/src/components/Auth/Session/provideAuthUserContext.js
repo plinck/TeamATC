@@ -1,4 +1,4 @@
-import GLOBAL_ENV from "../Environment/Environment";
+import GLOBAL_ENV from "../../Environment/Environment";
 import React from 'react';
 import AuthUserContext from './AuthUserContext';
 
@@ -14,6 +14,8 @@ const provideAuthUserContext = Component => {
     class ProvideAuthUserContext extends React.Component {
         constructor(props) {
             super(props);
+            const db  = this.props.firebase.db;
+
 
             const dbUsersRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`users`);
 
