@@ -7,7 +7,7 @@ const ORG = "ATC";
 const DEV_ENV = "dev";
 const PROD_ENV = "prod";
 const STAGE_ENV = "stage";
-const USERS_DB=`users`
+const USERS_DB = `users`
 
 require("dotenv");
 const path = require("path");
@@ -20,13 +20,118 @@ const databaseURL = "https://teamatc-challenge.firebaseio.com";
 function exitProgram() {
     console.log("BYE!");
 }
+// Copy Users from current location to DEV
+async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
+    const db = admin.firestore();
+    const dbUserRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`users`)
+    const dbMemberRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`ATCMembers`)
+
+    // First Read and Parse All from ATC CSV file to grab participating users
+    if (!fileToUpload) {
+        fileToUpload = "ATCActivities.csv";
+    }
+    console.log(`Matching Challenge Users to Members and then users from ${fileToUpload}`);
+
+    // read  the file and parse
+    let ATCMembers = [];
+
+    if (fileToUpload) {
+        fs.readFile(fileToUpload, 'utf8', (err, data) => {
+                //
+                if (err) throw err;
+                console.log(`OK reading file`);
+                let totalActivities = 0;
+                let totalMembers = 0;
+ 
+                //remove the quotes
+                let fixedData = data.replace(/["]*/g, "");
+                let lines = fixedData.split('\r');
+                // 1/15/2020 10:00:53,Laurie Nicholson,1/15/2020,Run,3.4,Rahuligan,Miles (Bike and Run)
+
+                let logged = 0;
+                let ChallengeActivities = lines.map((line) => {
+                    let activityFieldsArray = line.split(',');
+
+                    let dateString = activityFieldsArray[0];
+                    let activityDateTime = new Date(dateString);
+                    let displayName = activityFieldsArray[1].trim();
+                    let displayNameArray = displayName.split(" ");
+                    let firstName = displayNameArray[0];
+                    let lastName = displayNameArray.length > 0 ? displayNameArray[1] : "X";
+                    if (logged < 10) {
+                        console.log(`lastName: ${lastName}`);
+                    }
+
+                    let uselessDate = activityFieldsArray[2].trim();
+                    let activityType = activityFieldsArray[3].trim();
+                    let distance = Number(activityFieldsArray[4]);
+                    let teamName = activityFieldsArray[5].trim();
+
+                    // lastName = lastName.length < 1 ? " " : lastName.trim().toLowerCase();
+                    firstName = firstName.trim().toLowerCase();
+
+                    //lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
+                    firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
+                    activityType = activityType.charAt(0).toUpperCase() + activityType.slice(1)
+                    teamName = teamName.charAt(0).toUpperCase() + teamName.slice(1)
+                    let distanceUnits = activityType === "Swim" ? "Yards" : "Miles"
+
+                    let activityPosted = {
+                        activityDateTime: activityDateTime,
+                        activityType: activityType,
+                        displayName: displayName,
+                        distance: distance,
+                        distanceUnits: distanceUnits,
+                        firstName: firstName,
+                        lastName: lastName,
+                        teamName: teamName
+                    }
+                    if (logged < 10) {
+                        console.log(`Line: ${line}, activity: ${activityFieldsArray}`);
+                        console.log(`Activity Posted: ${JSON.stringify(activityPosted)}`);
+                        logged += 1;
+                    }
+
+                    totalActivities += 1;
+    
+                    return (activityPosted);
+                });
+
+                let ChallengeMembersAlreadyExists = [];
+                let ChallengeMembers = [];
+
+                for (let i = 0; i < ChallengeActivities.length; i++) {
+                    if (ChallengeMembersAlreadyExists[ChallengeActivities[i].displayName]) {
+                        continue;
+                    } else {
+                        
+                        ChallengeMembersAlreadyExists[ChallengeActivities[i].displayName] = true;
+                        let member = {
+                            displayName: ChallengeActivities[i].displayName,
+                            distanceUnits: ChallengeActivities[i].distanceUnits,
+                            firstName: ChallengeActivities[i].firstName,
+                            lastName: ChallengeActivities[i].lastName,
+                            teamName: ChallengeActivities[i].teamName
+                        }
+
+                        ChallengeMembers.push(member);
+                        totalMembers += 1;
+
+                        console.log(`Unique Member: ${JSON.stringify(member)}`);
+                    }
+                }
+                console.log(`Found ATCActitities: ${totalActivities}, Challenge Members: ${totalMembers}`)
+        })
+    }
+}
+
 
 // Copy Users from current location to DEV
 async function copyUsersToDev() {
     const db = admin.firestore();
     const dbCollSource = `users`;
     const dbCollDest = `${DEV_DB}/users`;
-    
+
     console.log(`Copying users from ${dbCollSource} to ${dbCollDest}`);
     return new Promise(async (resolve, reject) => {
 
@@ -58,10 +163,10 @@ async function copyUsersToDev() {
                             .catch(err => {
                                 console.error(`error updating user: ${err}`);
                                 reject(err);
-                        });
+                            });
                     });
                 });
-                return resolve();
+            return resolve();
         }).catch(err => {
             reject(err);
         });
@@ -70,7 +175,7 @@ async function copyUsersToDev() {
 
 async function deleteATCMembers() {
     const db = admin.firestore();
-    
+
     // use email address as key to overwrite duplicates
     let dbRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection("ATCMembers");
 
@@ -85,12 +190,12 @@ async function deleteATCMembers() {
 // Copy Users from current location to DEV
 async function uploadATCMembers(fileToUpload) {
     const db = admin.firestore();
-    
+
     if (!fileToUpload) {
         fileToUpload = "ATCMembers.csv";
     }
     console.log(`Uploading ATC users from ${fileToUpload}`);
-    
+
     // read  the file and parse
     let ATCMembers = [];
 
@@ -98,12 +203,12 @@ async function uploadATCMembers(fileToUpload) {
         fs.readFile(fileToUpload, 'utf8', (err, data) => {
             if (err) throw err;
             console.log(`OK reading file`);
-            
+
             //remove the quotes
-            let fixedData = data.replace(/["]*/g, "");            
+            let fixedData = data.replace(/["]*/g, "");
             let lines = fixedData.split('\n');
-            
-            ATCMembers = lines.map( ( line ) => {
+
+            ATCMembers = lines.map((line) => {
                 let memberArray = line.split(',');
                 let lastName = memberArray[0].trim().toLowerCase();
                 let firstName = memberArray[1].trim().toLowerCase();
@@ -111,28 +216,32 @@ async function uploadATCMembers(fileToUpload) {
 
                 lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
                 firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
-                          
-                let member = {lastName: lastName, firstName: firstName, emailAddress: emailAddress};
+
+                let member = {
+                    lastName: lastName,
+                    firstName: firstName,
+                    emailAddress: emailAddress
+                };
                 //console.log(`Member: ${JSON.stringify(member)}`); 
-                return (member);              
+                return (member);
             });
-        
-            let _ = ATCMembers.map( ( member ) => {
+
+            let _ = ATCMembers.map((member) => {
                 console.log(`Trying to update ${JSON.stringify(member)}`);
 
-                    // use email address as key to overwrite duplicates
-                    db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection("ATCMembers")
-                        .doc(member.emailAddress)
-                        .set(member)
-                        .then(memberId => {
-                            console.log(
-                                `Updated member ${JSON.stringify(member)} with id: ${memberId}`
-                            );
-                        })
-                        .catch(err => {
-                            console.error(`error updating user: ${err}`);
+                // use email address as key to overwrite duplicates
+                db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection("ATCMembers")
+                    .doc(member.emailAddress)
+                    .set(member)
+                    .then(memberId => {
+                        console.log(
+                            `Updated member ${JSON.stringify(member)} with id: ${memberId}`
+                        );
+                    })
+                    .catch(err => {
+                        console.error(`error updating user: ${err}`);
                     });
-                });
+            });
         }); // MAP
     }
 }
@@ -206,11 +315,11 @@ async function setAuthAndFBClaims(uid) {
     return new Promise(async (resolve, reject) => {
         // Now, set custom claims
         setAuthClaims(uid, {
-            admin: true,
-            teamLead: true,
-            moderator: true,
-            user: true
-        })
+                admin: true,
+                teamLead: true,
+                moderator: true,
+                user: true
+            })
             .then(async newClaims => {
                 await updateClaimsInFirebase(uid, newClaims.name, newClaims);
                 resolve();
@@ -234,19 +343,16 @@ async function createUserBootstrap(user) {
         console.log("User updated, user=", user);
         db.collection("users")
             .doc(user.uid)
-            .set(
-                {
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    displayName: `${user.firstName} ${user.lastName}`,
-                    phoneNumber: user.phoneNumber,
-                    email: user.email,
-                    photoURL: user.photoURL ? user.photoURL : ""
-                },
-                {
-                    merge: true
-                }
-            )
+            .set({
+                firstName: user.firstName,
+                lastName: user.lastName,
+                displayName: `${user.firstName} ${user.lastName}`,
+                phoneNumber: user.phoneNumber,
+                email: user.email,
+                photoURL: user.photoURL ? user.photoURL : ""
+            }, {
+                merge: true
+            })
             .then(user => {
                 console.log(`Updated user to: ${JSON.stringify(user)}`);
                 resolve(user);
@@ -301,8 +407,7 @@ async function seedDatabase() {
         disabled: false
     };
 
-    const question = [
-        {
+    const question = [{
             name: "email",
             message: "\nEmail Address?",
             validate: value => value !== ""
@@ -351,6 +456,7 @@ function mainMenu() {
         seed: seedDatabase,
         deleteATCMembers: deleteATCMembers,
         uploadATCMembers: uploadATCMembers,
+        matchChallengeUsersCreateAuthAndUser: matchChallengeUsersCreateAuthAndUser,
         copyUsersToDev: copyUsersToDev,
         QUIT: exitProgram
     };
