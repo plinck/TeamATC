@@ -1,4 +1,4 @@
-import GLOBAL_ENV from "../../Environment/Environment";
+import GLOBAL_ENV from "../Environment/Environment";
 import React from 'react';
 import AuthUserContext from './AuthUserContext';
 
@@ -15,7 +15,21 @@ const provideAuthUserContext = Component => {
         constructor(props) {
             super(props);
 
+            const dbUsersRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`users`);
+
+            // These should probably be in a "subcollections" under a document ("race" or "challenge")
+            const dbActivitiesRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`activities`);
+            const dbTeamRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`teams`);
+            const dbATCMemberRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`ATCMembers`);
+            const dbATCChallengeMemberRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`atcchallengemembers`);        
+
             this.state = {
+                dbUsersRef: dbUsersRef,
+                dbActivitiesRef: dbActivitiesRef,
+                dbTeamRef: dbTeamRef,
+                dbATCMemberRef: dbATCMemberRef,
+                dbATCChallengeMemberRef: dbATCChallengeMemberRef,
+
                 authUser: null,
                 uid: null,
                 displayName: null,
@@ -30,7 +44,7 @@ const provideAuthUserContext = Component => {
                 firstName: null,
                 lastName: null,
                 teamUid: null,
-                teamName: null
+                teamName: null,
             };
         }
 

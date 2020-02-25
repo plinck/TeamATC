@@ -23,8 +23,13 @@ function exitProgram() {
 // Copy Users from current location to DEV
 async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
     const db = admin.firestore();
-    const dbUserRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`users`)
-    const dbMemberRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`ATCMembers`)
+    const dbUsersRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`users`);
+
+    // These should probably be in a "subcollections" under a document ("race" or "challenge")
+    const dbActivitiesRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`activities`);
+    const dbTeamRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`teams`);
+    const dbATCMemberRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`ATCMembers`);
+    const dbATCChallengeMemberRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`atcchallengemembers`);
 
     // First Read and Parse All from ATC CSV file to grab participating users
     if (!fileToUpload) {
@@ -32,49 +37,130 @@ async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
     }
     console.log(`Matching Challenge Users to Members and then users from ${fileToUpload}`);
 
-    // read  the file and parse
     let ATCMembers = [];
+    let nbrATCMembers = 0;
+    let teams = [];
+    let nbrTeams = 0;
+    let totalBadAtivities = 0;
 
+    // Get the ATC Members
+    try {
+        let allATCMembersSnapshot = await dbATCMemberRef.get();
+        allATCMembersSnapshot.forEach(doc => {
+            nbrATCMembers += 1;
+            //console.log(doc.id, '=>', JSON.stringify(doc.data()));
+            let ATCMember = doc.data();
+            ATCMember.id = doc.id;
+            ATCMembers.push(ATCMember)
+        });
+        console.log(`Found: ${nbrATCMembers} Members`);
+    }
+    catch (err) {
+        console.error(`Error getting ATC Users: ${err}`);
+        return
+    }
+
+    // Get teams
+    try {
+        let allteamsSnapshot = await dbTeamRef.get();
+        allteamsSnapshot.forEach(doc => {
+            nbrTeams += 1;
+            console.log(doc.id, '=>', JSON.stringify(doc.data()));
+            let team = doc.data();
+            team.id = doc.id;
+            teams.push(team)
+        });
+        console.log(`Found: ${nbrTeams} Teams`);
+    }
+    catch (err) {
+        console.error(`Error getting ATC Users: ${err}`);
+        return
+    }
+        
+    // read  the file and parse
     if (fileToUpload) {
         fs.readFile(fileToUpload, 'utf8', (err, data) => {
                 //
                 if (err) throw err;
                 console.log(`OK reading file`);
+
                 let totalActivities = 0;
                 let totalMembers = 0;
  
                 //remove the quotes
                 let fixedData = data.replace(/["]*/g, "");
-                let lines = fixedData.split('\r');
+                //console.log(`read ${fixedData} from file: ${fileToUpload}`);
+                let lines = fixedData.split('\n');
+                console.log(`read ${lines.length} lines of data from file: ${fileToUpload} line[0].length: ${lines[0].length}`);
                 // 1/15/2020 10:00:53,Laurie Nicholson,1/15/2020,Run,3.4,Rahuligan,Miles (Bike and Run)
 
                 let logged = 0;
                 let ChallengeActivities = lines.map((line) => {
                     let activityFieldsArray = line.split(',');
 
-                    let dateString = activityFieldsArray[0];
+                    let uselessDate = activityFieldsArray[0].trim();
+
+                    let dateString = activityFieldsArray[2].trim();
                     let activityDateTime = new Date(dateString);
                     let displayName = activityFieldsArray[1].trim();
                     let displayNameArray = displayName.split(" ");
                     let firstName = displayNameArray[0];
                     let lastName = displayNameArray.length > 0 ? displayNameArray[1] : "X";
                     if (logged < 10) {
-                        console.log(`lastName: ${lastName}`);
+                        // console.log(`lastName: ${lastName}`);
                     }
 
-                    let uselessDate = activityFieldsArray[2].trim();
                     let activityType = activityFieldsArray[3].trim();
                     let distance = Number(activityFieldsArray[4]);
                     let teamName = activityFieldsArray[5].trim();
+                    let teamNameArray = teamName.split(" ");
+                    teamName = teamNameArray[0].trim();
+                    // Fix people using plural of scottie
+                    if (teamName[teamName.length-1] === "s") {
+                        teamName = teamName.substring(0, teamName.length - 1);
+                    }
 
-                    // lastName = lastName.length < 1 ? " " : lastName.trim().toLowerCase();
+                    lastName = lastName && lastName.length >= 1 ? lastName.trim().toLowerCase() : " ";
                     firstName = firstName.trim().toLowerCase();
 
-                    //lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
+                    lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
                     firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
                     activityType = activityType.charAt(0).toUpperCase() + activityType.slice(1)
                     teamName = teamName.charAt(0).toUpperCase() + teamName.slice(1)
                     let distanceUnits = activityType === "Swim" ? "Yards" : "Miles"
+
+                    // See if valid ATCUser
+                    let _foundMember = ATCMembers.find(member => {
+                        if (member.firstName === firstName && member.lastName === lastName) {
+                            return true
+                        } else {
+                            return false;
+                        }
+                    });
+                    if (!_foundMember) {
+                        //console.log(`Error in activity for member: ${firstName} ${lastName}, no valid ATC Member found in record: ${line}`);
+                        totalBadAtivities += 1;
+                        return false;
+                    }
+                    if (logged < 10) {
+                        // console.log(`Found member : ${JSON.stringify(_foundMember)}`);
+                    }
+                    
+                    let _foundTeam = teams.find(team => {
+                        if ( team.name && team.name === teamName ) {
+                            return true
+                        } else {
+                            return false;
+                        }
+                    });
+                    if (!_foundTeam) {
+                        totalBadAtivities += 1;
+                        //console.log(`Error in activity for member: ${displayName} on Team: ${teamName} , no valid ATC Team with that name found`)
+                        return false;
+                    }
+                    if (logged < 10) {
+                        //console.log(`Found team : ${JSON.stringify(_foundTeam)}`);
+                    }
 
                     let activityPosted = {
                         activityDateTime: activityDateTime,
@@ -84,11 +170,15 @@ async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
                         distanceUnits: distanceUnits,
                         firstName: firstName,
                         lastName: lastName,
-                        teamName: teamName
+
+                        // email: _foundMember.emailAddress,
+
+                        // teamUid: _foundTeam.id,
+                        // teamName: _foundTeam.name,
                     }
                     if (logged < 10) {
-                        console.log(`Line: ${line}, activity: ${activityFieldsArray}`);
-                        console.log(`Activity Posted: ${JSON.stringify(activityPosted)}`);
+                        // console.log(`Line: ${line}, activity: ${activityFieldsArray}`);
+                        //console.log(`Activity Posted: ${JSON.stringify(activityPosted)}`);
                         logged += 1;
                     }
 
@@ -97,10 +187,22 @@ async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
                     return (activityPosted);
                 });
 
+                // filter out bad records
+                ChallengeActivities = ChallengeActivities.filter( activity => {
+                    if (activity) {
+                        return activity;
+                    }
+                });
+
+
                 let ChallengeMembersAlreadyExists = [];
                 let ChallengeMembers = [];
 
                 for (let i = 0; i < ChallengeActivities.length; i++) {
+                    if (!ChallengeActivities[i]) {
+                        console.log(`Bad activity at index: ${i}`);
+                        continue;
+                    }
                     if (ChallengeMembersAlreadyExists[ChallengeActivities[i].displayName]) {
                         continue;
                     } else {
@@ -117,10 +219,10 @@ async function matchChallengeUsersCreateAuthAndUser(fileToUpload) {
                         ChallengeMembers.push(member);
                         totalMembers += 1;
 
-                        console.log(`Unique Member: ${JSON.stringify(member)}`);
+                        //console.log(`Unique Member: ${JSON.stringify(member)}`);
                     }
                 }
-                console.log(`Found ATCActitities: ${totalActivities}, Challenge Members: ${totalMembers}`)
+                console.log(`Found: ${totalActivities} valid activities, ${totalBadAtivities}, Challenge Members: ${totalMembers}`)
         })
     }
 }
