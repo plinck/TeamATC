@@ -622,7 +622,7 @@ class Dashboard extends React.Component {
 
         // header row for results
         const headerRow = 
-            <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1}>
+            <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1} margin={0}>
                 <div className="col s1 m1">
                 </div>
                 <div className="col s3 m3 truncate">
@@ -706,6 +706,9 @@ class Dashboard extends React.Component {
                                             {headerRow}
                                             {this.totals.userR.map((userResult, index) => {
                                                 return (
+                                                    (index > 14) ?
+                                                    ""
+                                                    :
                                                     <div key={index}>
                                                         <ResultsCard result={userResult} index={index}
                                                         />
@@ -743,7 +746,7 @@ class Dashboard extends React.Component {
                             </div>
                             {/* End Breakdowns */}
 
-                            {/* Activities by day and heatmap */}
+                            {/* My Activities and heatmap */}
                             <div className="row">
                                 <div className="card col s12 m6">
                                     <div className="card-content pCard">
@@ -798,7 +801,7 @@ class Dashboard extends React.Component {
                             </div>
                             {/* End All User Totals Cards Stack Bar Graphs - Activities etc*/}
 
-                            {/* Current User's Activities */}
+                            {/*  Activities  by day*/}
                             <div className="row">
                                 <div className="col s12 m6">
                                     <ActivityByDay
@@ -807,7 +810,6 @@ class Dashboard extends React.Component {
                                     />
                                 </div>                            
                             </div>
-
                             {/* END Current User"s Activities */}
 
                             {/* Sumary Display */}

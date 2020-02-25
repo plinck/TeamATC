@@ -14,7 +14,7 @@ const ResultsCard = (props) => {
     // Band odd rows for clarity
     let rowBg = "";
     let rowFg = ""
-    if (props.index % 2 !== 0) {
+    if (props.index % 2 === 0) {
         rowBg = "info.main";
         rowFg = "white";
     }
