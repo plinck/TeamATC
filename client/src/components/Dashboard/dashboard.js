@@ -768,7 +768,7 @@ class Dashboard extends React.Component {
                                 </div>
                                 <div className="col s12 m6">
                                     <ActivityBubble
-                                        title={"Heatmap (duration)"}
+                                        title={"Heatmap (All Athletes)"}
                                         activities={this.state.activities}
                                     />
                                 </div>
