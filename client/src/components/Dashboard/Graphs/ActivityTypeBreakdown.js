@@ -51,6 +51,23 @@ class ActivityTypeBreakdown extends React.Component {
                 values: chartValues[0],
                 labels: chartLabels[0],
                 hoverinfo: 'label+value',
+                text: chartLabels[0],
+                textposition: 'inside',
+                marker: {
+                    colors: ultimateColors[0]
+                }, 
+                domain: {
+                    row: 0,
+                    column: 1
+                },                      
+                name: 'Duration',
+                hole:  donutHoleSize,          
+                type: 'pie'
+            },
+            {
+                values: chartValues[1],
+                labels: chartLabels[0],
+                hoverinfo: 'label+value',
                 //mode: 'markers+text',
                 text: chartLabels[0],
                 textposition: 'inside',
@@ -65,23 +82,6 @@ class ActivityTypeBreakdown extends React.Component {
                 hole:  donutHoleSize,          
                 type: 'pie'
             },
-            {
-                values: chartValues[1],
-                labels: chartLabels[0],
-                hoverinfo: 'label+value',
-                text: chartLabels[0],
-                textposition: 'inside',
-                marker: {
-                    colors: ultimateColors[0]
-                }, 
-                domain: {
-                    row: 0,
-                    column: 1
-                },                      
-                name: 'Duration',
-                hole:  donutHoleSize,          
-                type: 'pie'
-            }
         ];
             
         let layout = {
@@ -99,26 +99,26 @@ class ActivityTypeBreakdown extends React.Component {
             // plot_bgcolor: '#c7c7c7',
 
             showlegend: false,
-            grid: {rows: 1, columns: 2},
+            grid: {rows: 1, columns: 1},
             annotations: [
                 {
                   font: {
                     size: 16
                   },
                   showarrow: false,
-                  text: 'Miles',
-                  x: 0.17,
+                  text: 'Hrs',
+                  x: 0.5,
                   y: 0.5
                 },
-                {
-                  font: {
-                    size: 16
-                  },
-                  showarrow: false,
-                  text: 'Hrs',
-                  x: 0.82,
-                  y: 0.5
-                }
+                // {
+                //   font: {
+                //     size: 16
+                //   },
+                //   showarrow: false,
+                //   text: 'Miles',
+                //   x: 0.82,
+                //   y: 0.5
+                // }
             ]            
         };
                 
