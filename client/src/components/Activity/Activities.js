@@ -48,8 +48,9 @@ const styles = theme => ({
         flexWrap: 'wrap',
     },
     formControl: {
-        margin: theme.spacing.unit,
-        minWidth: 120
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        minWidth: 200
       },
     inputFix: {
         marginTop: 50
@@ -254,9 +255,10 @@ class Activities extends React.Component {
         let filterByString = this.state.filterByString;
         let filterBy = this.state.filterBy;
         let orderBy = this.state.orderBy;
+        let activities = this.state.activities;
         
         const sortFilterRow = 
-            <Box className="row"  border={1} m={0} p={0}>
+            <Box className="row"  border={1} m={1} p={0}>
                 <FormControl className={`${classes.formControl} col s3 m3`} variant="filled">
                     <InputLabel id="filterByLabel">Filter By</InputLabel>
                     <Select
@@ -305,8 +307,9 @@ class Activities extends React.Component {
                         className={classes.textField}
                         InputProps={{
                             style: {
-                                margin: 0,
-                                padding: 19
+                                marginTop: 0,
+                                marginBottom: 16,
+                                padding: 15
                             }, 
                             endAdornment: (
                                 <InputAdornment position="start">
@@ -318,23 +321,25 @@ class Activities extends React.Component {
                     />
                 </div>
 
-                <div className="col s2 m2 align-right">
+                <div className="col s2 m2">
                     <Link to="/activityform">
+                        <i style={{cursor: 'pointer', marginTop: 5, marginRight: 1}}
+                            className="material-icons indigo-text text-darken-4">add
+                        </i>{" "}
+                    {/*  Aklternate icon method
                         <IconButton aria-label="New Activity">
                             <AddIcon />
                         </IconButton>
+                    */}
                     </Link>
-                    {/* <CSVLink
+                    <CSVLink
                         data={activities}
                         filename={'teamatc-transactions.csv'}
                         target="_blank">
-                    */}
-                        <IconButton aria-label="EXPORT TO CSV">
-                            <SettingsIcon />
-                        </IconButton>
-                    {/*
+                        <i style={{cursor: 'pointer', marginTop: 5, marginRight: 1}}
+                            className="material-icons indigo-text text-darken-4">system_update_alt
+                        </i>
                     </CSVLink> 
-                    */}
                 </div>
             </Box>
 
@@ -362,26 +367,10 @@ class Activities extends React.Component {
             </div>
         </Box>
 
-        let activities = this.state.activities;
         if (this.props.user.authUser) {
             // Conditional rendering
             let activityView = 
                 <div>
-                    <br></br>
-                    <div className="row">
-                        <div className="col s2 m2 text-bold blue-text">
-                            Activities ({filterByString ? filterByString : 'All'})
-                        </div>
-                        <Link to="/activityform" className="col s2 offset-s5 m2 offset-m4 btn blue darken-4">New</Link>
-
-                        <CSVLink
-                        data={activities}
-                        filename={'teamatc-transactions.csv'}
-                        className='col s2 offset-s1 m2 offset-m1 btn blue darken-4'
-                        target="_blank">
-                        EXPORT TO CSV</CSVLink>    
-                    </div>
-
                     {sortFilterRow}
                     {headerRow}
                     <div className={classes.root}>
