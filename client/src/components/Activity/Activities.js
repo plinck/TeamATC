@@ -257,27 +257,26 @@ class Activities extends React.Component {
         
         const sortFilterRow = 
             <Box className="row"  border={1} m={0} p={0}>
-                <form className={classes.container} noValidate autoComplete="off" >
-                    <FormControl variant="filled" required className={classes.formControl}>
-                        <InputLabel id="filterByLabel">Filter By</InputLabel>
-                        <Select
-                            labelId="filterByLabel"
-                            id="filterBy"
-                            value={filterBy}
-                            name="filterBy"
-                            type="text"
-                            margin="normal"
-                            className={classes.textField}
-                            style={{marginTop: 23, marginBottom: 16, padding: 0}}
-                            onChange={this.handleChange}
-                            >
-                            <MenuItem value={"Mine"}>Mine</MenuItem>
-                            <MenuItem value={"Team"}>Team</MenuItem>
-                            <MenuItem value={"All"}>All</MenuItem>
-                        </Select>
+                <FormControl className={`${classes.formControl} col s3 m3`} variant="filled">
+                    <InputLabel id="filterByLabel">Filter By</InputLabel>
+                    <Select
+                        labelId="filterByLabel"
+                        id="filterBy"
+                        value={filterBy}
+                        name="filterBy"
+                        type="text"
+                        margin="normal"
+                        className={classes.textField}
+                        style={{marginTop: 23, marginBottom: 16, padding: 0}}
+                        onChange={this.handleChange}
+                        >
+                        <MenuItem value={"Mine"}>Mine</MenuItem>
+                        <MenuItem value={"Team"}>Team</MenuItem>
+                        <MenuItem value={"All"}>All</MenuItem>
+                    </Select>
+                </FormControl>
 
-                    </FormControl>
-                    <FormControl variant="filled" className={classes.formControl}>
+                <FormControl variant="filled" className={`${classes.formControl} col s3 m3`}>
                     <InputLabel id="orderByLabel">Order By</InputLabel>
                     <Select
                         labelId="orderByLabel"
@@ -292,49 +291,51 @@ class Activities extends React.Component {
                         <MenuItem value={"Team"}>Team</MenuItem>
                         <MenuItem value={"Type"}>Type</MenuItem>
                     </Select>
-                    </FormControl>
-                    <div>
-                        <Link to="/activityform">
-                            <IconButton
-                                aria-label="New Activity" className="mui--align-middle"
-                            >
-                                <AddIcon />
-                            </IconButton>
-                        </Link>
-                        <Link to="/activityform">
-                            <IconButton
-                                aria-label="New Activity" className="mui--align-middle"
-                            >
-                                <SettingsIcon />
-                            </IconButton>
-                        </Link>
-                    </div>
+                </FormControl>
 
-                    <div className="blue-text input-field inline align-right">
-                            <TextField
-                            id="searchBy"
-                            name="searchBy"
-                            value={searchBy}
-                            label="Search"
-                            type='text'
-                            variant="outlined"
-                            margin="normal"
-                            className={classes.textField}
-                            InputProps={{
-                                style: {
-                                    margin: 0,
-                                    padding: 19
-                                }, 
-                                endAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon />
-                                    </InputAdornment>
-                                )
-                            }}
-                            onChange={this.handleChange}
-                        />
-                    </div>
-                </form>
+                <div className="col s3 m3 blue-text input-field inline align-right">
+                        <TextField
+                        id="searchBy"
+                        name="searchBy"
+                        value={searchBy}
+                        label="Search"
+                        type='text'
+                        variant="outlined"
+                        margin="normal"
+                        className={classes.textField}
+                        InputProps={{
+                            style: {
+                                margin: 0,
+                                padding: 19
+                            }, 
+                            endAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon />
+                                </InputAdornment>
+                            )
+                        }}
+                        onChange={this.handleChange}
+                    />
+                </div>
+
+                <div className="col s2 m2 align-right">
+                    <Link to="/activityform">
+                        <IconButton aria-label="New Activity">
+                            <AddIcon />
+                        </IconButton>
+                    </Link>
+                    {/* <CSVLink
+                        data={activities}
+                        filename={'teamatc-transactions.csv'}
+                        target="_blank">
+                    */}
+                        <IconButton aria-label="EXPORT TO CSV">
+                            <SettingsIcon />
+                        </IconButton>
+                    {/*
+                    </CSVLink> 
+                    */}
+                </div>
             </Box>
 
         const headerRow = 
