@@ -6,7 +6,7 @@ class ActivityDB {
     static getFiltered = (filterObj, resultLimit) => {
         const db = Util.getFirestoreDB(); // active firestore db ref
 
-        resultLimit = resultLimit || 1000;
+        resultLimit = resultLimit || 100;
 
         // default ref gets all
         const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
@@ -46,7 +46,7 @@ class ActivityDB {
     static getOrdered = (orderObj, resultLimit) => {
         const db = Util.getFirestoreDB(); // active firestore db ref
 
-        resultLimit = resultLimit || 1000;
+        resultLimit = resultLimit || 100;
 
         // default ref gets all
         const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
@@ -126,7 +126,7 @@ class ActivityDB {
     // users even if they havent had an activity
     static getUserWithActivity = (resultLimit) => {
         // Default parameters , optional
-        resultLimit = resultLimit || 50;
+        resultLimit = resultLimit || 100;
 
         // its a promise so return
         return new Promise((resolve, reject) => {
