@@ -110,7 +110,7 @@ class ActivityBubble extends React.Component {
                                 autorange: true,
                                 rangeselector: selectorOptions,
                             },
-                            showlegend: true,
+                            showlegend: false,
                             margin: {
                                 l: 50,
                                 r: 50,

@@ -33,6 +33,7 @@ class Dashboard extends React.Component {
     state = {
         loadingFlag: false,
         activities: [],
+        myActivities: [],
         nbrActivities: 0,
         distanceTotal: 0,
         durationTotal: 0
@@ -601,6 +602,18 @@ class Dashboard extends React.Component {
     }
     // End calulateTeamResults
 
+    async myActivitiesFilter() {
+        const activities = this.state.activities;
+        let myActivities = [];
+
+        myActivities = activities.filter (activity => {
+            if (activity.uid === this.props.user.uid) {
+                return activity;
+            }
+        });
+        this.setState({myActivities: myActivities});
+    }
+
     render() {
         // Some props take time to get ready so return null when uid not avaialble
         if (this.props.user.uid === null || this.props.user.teamUid === null) {
@@ -610,6 +623,7 @@ class Dashboard extends React.Component {
         // if the listener updated the state
         if (this.activitiesUpdated) {
             this.totals = this.calculateTotalsForTeamAndUser();
+            this.myActivitiesFilter(); 
             this.activitiesUpdated = false;
         }
 
@@ -619,6 +633,7 @@ class Dashboard extends React.Component {
         }
 
         let activities = this.state.activities;
+        let myActivities = this.state.myActivities;
 
         // header row for results
         const headerRow = 
@@ -755,7 +770,7 @@ class Dashboard extends React.Component {
                                         </span>
             
                                         {activityCardHeaderRow}
-                                        {activities.map((activity, index) => {                                         
+                                        {myActivities.map((activity, index) => {                                         
                                             return (
                                                     (index > 14) ?
                                                     ""
