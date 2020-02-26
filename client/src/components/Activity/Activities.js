@@ -10,6 +10,12 @@ import SearchIcon from "@material-ui/icons/Search";
 import TextField from '@material-ui/core/TextField';
 import { InputAdornment } from '@material-ui/core';
 
+import IconButton from '@material-ui/core/IconButton';
+import AddIcon from '@material-ui/icons/Add';
+import SettingsIcon from '@material-ui/icons/Settings';
+import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
+
+
 // For select input field
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from "@material-ui/core/InputLabel";
@@ -287,6 +293,22 @@ class Activities extends React.Component {
                         <MenuItem value={"Type"}>Type</MenuItem>
                     </Select>
                     </FormControl>
+                    <div>
+                        <Link to="/activityform">
+                            <IconButton
+                                aria-label="New Activity" className="mui--align-middle"
+                            >
+                                <AddIcon />
+                            </IconButton>
+                        </Link>
+                        <Link to="/activityform">
+                            <IconButton
+                                aria-label="New Activity" className="mui--align-middle"
+                            >
+                                <SettingsIcon />
+                            </IconButton>
+                        </Link>
+                    </div>
 
                     <div className="blue-text input-field inline align-right">
                             <TextField
