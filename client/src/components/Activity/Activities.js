@@ -66,13 +66,44 @@ class Activities extends React.Component {
         this.state = {
             activities: null,
             searchBy: "",
-            filterByString: "ALL",
+            filterByString: "All",
             filterBy: "All",
-            orderBy: "None"
+            orderBy: "None",
+            isLoading: true
         };
     }
 
-    getActivities = (filterByString) => {
+    // Get All Activities on Mount - check if anything passed
+    componentDidMount() {
+        // check to see if we already have activities passed
+        // if so, dont go get them again
+        let filterByString = undefined;
+
+        filterByString = this.props.location && this.props.location.state ? this.props.location.state.filterByString : undefined;
+
+        if (!filterByString) {
+            if (this.props.filterByString) {
+                filterByString = this.props.filterByString
+            } 
+        }
+
+        if (this.props.activities) {
+            this.setState({ activities: this.props.activities });   
+        } else {
+            if (filterByString) {
+                this.setState({filterByString: filterByString, filterBy: filterByString});
+                this.getFilteredActivities(filterByString);
+            } else {
+                this.getFilteredActivities();
+            }
+        }
+    }
+
+    // ************************************************************
+    // Database Interaction Methods   
+    // ************************************************************
+    // Get activities with a filter
+    getFilteredActivities = (filterByString) => {
         if (filterByString === undefined || filterByString === null) {
             filterByString = this.state.filterByString;
         }
@@ -98,19 +129,19 @@ class Activities extends React.Component {
                 filterObj = undefined;
             }     
 
-        // Get with security
-        // comes back sorted already
+        this.setState({isLoading: true});
         ActivityDB.getFiltered(filterObj)
-            .then(res => {
-                let activities = res;
-                this.setState({ activities: activities });
-            })
-            .catch(err => {
-                console.error(err);
-            });
+        .then(res => {
+            let activities = res;
+            this.setState({ activities: activities, isLoading: false});
+        }).catch(err => {
+            this.setState({isLoading: false});
+            console.error(err);
+        });
     };
 
-    getActivitiesOrderBy = (orderBy) => {
+    // Get acvities in certain order 
+    getOrderedActivities = (orderBy) => {
         if (orderBy === undefined || orderBy === null) {
             orderBy = this.state.orderBy;
         }
@@ -135,38 +166,36 @@ class Activities extends React.Component {
 
         // Get with security
         // comes back sorted already
+        this.setState({isLoading: true});
         ActivityDB.getOrdered(orderObj)
             .then(res => {
                 let activities = res;
-                this.setState({ activities: activities });
+                this.setState({ activities: activities, isLoading: false});
             })
             .catch(err => {
+                this.setState({isLoading: false});
                 console.error(err);
             });
     };
 
-    // get all on mount
-    componentDidMount() {
-        // check to see if we already have activities passed
-        // if so, dont go get them again
-        if (this.props.activities) {
-            this.setState({ activities: this.props.activities });   
-        } else {
-            if (this.props.filterByString) {
-                this.setState({filterByString: this.props.filterByString});
-                this.refreshPage(this.props.filterByString);
-            } else {
-                this.refreshPage();
-            }
-        }
-
+    // Delete this activity
+    activityDelete = (id) => {
+        ActivityDB.delete( id )
+        .then(res => {
+            console.log("Deleted activity");
+            this.getFilteredActivities();
+        })
+        .catch(err => {
+            alert(err);
+            console.error(err); 
+        });
     }
-
-    refreshPage(filterByString) {
-        this.getActivities(filterByString);
-    }
-
-    onChange = event => {
+    
+    // ************************************************************
+    // Form Change Handlers - try to keeo grouped    
+    // ************************************************************
+    // general change
+    handleChange = event => {
         // Set Units
         switch (event.target.name) {
             case "filterBy":
@@ -174,43 +203,30 @@ class Activities extends React.Component {
                     "filterByString": event.target.value,
                     "filterBy": event.target.value,
                 });
-                this.refreshPage(event.target.value);
+                this.getFilteredActivities(event.target.value);
                 break;
             case "orderBy":
                 this.setState({
                     "orderBy": event.target.value
                 });
-                this.getActivitiesOrderBy(event.target.value);
+                this.getOrderedActivities(event.target.value);
                 break;
             case "searchBy": 
                 this.setState({
                     [event.target.name]: event.target.value,
                 });
-                this.refreshPage(undefined, undefined, event.target.value);
+                this.getFilteredActivities(event.target.value);
                 break;
             default:
                 break;
         }
     };
 
-    filterByChange = (filterString) => {
-        this.setState({filterByString: filterString});
-        this.refreshPage(filterString);
-    }
+    // ************************************************************
+    // Build JSX Components   
+    // ************************************************************
 
-    // Delete this article from MongoDB
-    activityDelete = (id) => {
-        ActivityDB.delete( id )
-        .then(res => {
-            console.log("Deleted activity");
-            this.refreshPage();
-        })
-        .catch(err => {
-            alert(err);
-            console.error(err); 
-        });
-    }
-
+    // Now we can render page - DO NOT change state in render()
     render() {
         const { classes } = this.props;
 
@@ -223,7 +239,7 @@ class Activities extends React.Component {
             console.error("Fatal Error")
             return (<div> <p>FATAL ERROR Gettng activities ...</p> </div>)
         }
-        if (this.state.activities === null) {
+        if (this.state.activities === null || this.state.isLoading) {
             return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
         } 
 
@@ -247,7 +263,7 @@ class Activities extends React.Component {
                             margin="normal"
                             className={classes.textField}
                             style={{marginTop: 23, marginBottom: 16, padding: 0}}
-                            onChange={this.onChange}
+                            onChange={this.handleChange}
                             >
                             <MenuItem value={"Mine"}>Mine</MenuItem>
                             <MenuItem value={"Team"}>Team</MenuItem>
@@ -262,7 +278,7 @@ class Activities extends React.Component {
                         name="orderBy"
                         id="orderBy"
                         value={orderBy}
-                        onChange={this.onChange}
+                        onChange={this.handleChange}
                         className={classes.textField}
                         style={{marginTop: 23, marginBottom: 16, padding: 0}}
                         >
@@ -293,7 +309,7 @@ class Activities extends React.Component {
                                     </InputAdornment>
                                 )
                             }}
-                            onChange={this.onChange}
+                            onChange={this.handleChange}
                         />
                     </div>
                 </form>
@@ -323,7 +339,6 @@ class Activities extends React.Component {
             </div>
         </Box>
 
-
         let activities = this.state.activities;
         if (this.props.user.authUser) {
             // Conditional rendering
@@ -351,7 +366,6 @@ class Activities extends React.Component {
                             return (
                                 <div key={activity.id}>
                                     <Activity activity={activity}
-                                        layoutType={this.props.layoutType}
                                         activityDelete={this.activityDelete}
                                         index={index}
                                     />

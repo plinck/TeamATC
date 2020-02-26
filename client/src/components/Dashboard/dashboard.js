@@ -766,7 +766,12 @@ class Dashboard extends React.Component {
                                 <div className="card col s12 m6">
                                     <div className="card-content pCard">
                                         <span className="card-title">
-                                            <Link to="/activities">Latest Activities ({"Mine"}) : {this.props.user.displayName} </Link>{"   "}
+                                            <Link to={{
+                                                pathname: "/activities",
+                                                state: {
+                                                    filterByString: "Mine"
+                                                }
+                                            }}>Latest Activities ({"Mine"}) : {this.props.user.displayName} </Link>{"   "}
                                         </span>
             
                                         {activityCardHeaderRow}
@@ -777,7 +782,7 @@ class Dashboard extends React.Component {
                                                     :
                                                     <div key={activity.id}>
                                                         <ActivityCard 
-                                                            activity={activity} layoutType={this.props.layoutType} index={index}
+                                                            activity={activity} index={index}
                                                         />
                                                     </div> 
                                             )                                          
