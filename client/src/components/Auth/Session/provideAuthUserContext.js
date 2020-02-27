@@ -1,7 +1,7 @@
-import GLOBAL_ENV from "../../Environment/Environment";
 import React from 'react';
+import GLOBAL_ENV from "../../Environment/Environment";
+import Util from "../../Util/Util";
 import AuthUserContext from './AuthUserContext';
-
 import { withFirebase } from '../Firebase/FirebaseContext';
 
 // This component WRAPS Firebase and Authentication Context togtehr in 
@@ -16,15 +16,15 @@ const provideAuthUserContext = Component => {
             super(props);
             const db  = this.props.firebase.db;
 
+            let allDBRefs = Util.getDBRefs();
 
-            const dbUsersRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`users`);
+            const dbUsersRef = allDBRefs.dbUsersRef;
+            const dbATCMembersRef = allDBRefs.dbATCMembersRef;
 
-            // These should probably be in a "subcollections" under a document ("race" or "challenge")
-            const dbActivitiesRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`activities`);
-            const dbTeamsRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`teams`);
-            const dbATCMembersRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`ATCMembers`);
-            const dbATCChallengeMemberRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`atcchallengemembers`);        
-
+            const dbATCChallengeMemberRef = allDBRefs.dbATCChallengeMemberRef;
+            const dbActivitiesRef = allDBRefs.dbActivitiesRef;
+            const dbTeamsRef = allDBRefs.dbTeamsRef;
+            
             this.state = {
                 dbUsersRef: dbUsersRef,
                 dbActivitiesRef: dbActivitiesRef,
@@ -99,7 +99,7 @@ const provideAuthUserContext = Component => {
 
             // User listener
             // Try to set state together
-            const dbUsersRef = this.props.firebase.db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+            const dbUsersRef = Util.getDBRefs().dbUsersRef;
             let docRef = dbUsersRef.doc(authUser.uid);
             this.userListener = docRef.onSnapshot((doc) => {
                 const user = doc.data();

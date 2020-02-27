@@ -1,7 +1,6 @@
 const admin = require("../middleware/authServerCommon");
 const requiresLogin = require('../middleware/requiresLogin.js');
-const db = admin.firestore();;
-const {ORG, ENV, USERS_DB} = require("../ServerEnvironment");
+const Util = require("./Util.js");
 
 // Static *class* variables
 let activities = []
@@ -11,8 +10,9 @@ let _distanceTotal = 0;
 let _durationTotal = 0;
 
 // Get all activities anytime it changes and attach user to each
-const dbActivityRef = db.collection(ORG).doc(ENV).collection("activities");
-dbActivityRef.orderBy("activityDateTime", "desc").onSnapshot((querySnapshot) => {
+const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+
+dbActivitiesRef.orderBy("activityDateTime", "desc").onSnapshot((querySnapshot) => {
     activities = [];
     _nbrActivities = 0;
     _distanceTotal = 0;
@@ -35,7 +35,7 @@ dbActivityRef.orderBy("activityDateTime", "desc").onSnapshot((querySnapshot) => 
         }
 
         // console.log(`api-activity-routes DB : ${ORG}/${ENV}/${USERS_DB}`);
-        const dbUsersRef = db.collection(ORG).doc(ENV).collection(USERS_DB);
+        const dbUsersRef = Util.getDBRefs().dbUsersRef;
         const userRef = dbUsersRef.doc(activity.uid);
         const userQuery = userRef.get()
         .then ( user => {

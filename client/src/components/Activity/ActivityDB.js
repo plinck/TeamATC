@@ -9,13 +9,14 @@ class ActivityDB {
         resultLimit = resultLimit || 100;
 
         // default ref gets all
-        const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
-        let ref = dbActivityRef
+        const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+
+        let ref = dbActivitiesRef
             .orderBy("activityDateTime", "desc")
             .limit(resultLimit);
 
         if (filterObj && filterObj.filterName) {
-            ref = dbActivityRef
+            ref = dbActivitiesRef
                 .where(filterObj.filterName, "==", filterObj.filterValue)
                 .orderBy("activityDateTime", "desc")
                 .limit(resultLimit);
@@ -49,18 +50,19 @@ class ActivityDB {
         resultLimit = resultLimit || 100;
 
         // default ref gets all
-        const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
-        let ref = dbActivityRef
+        const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+
+        let ref = dbActivitiesRef
             .orderBy("activityDateTime", "desc")
             .limit(resultLimit);
 
         if (orderObj && orderObj.orderName) {
-            ref = dbActivityRef
+            ref = dbActivitiesRef
                 .orderBy(orderObj.orderName)
                 .limit(resultLimit);
         } 
         if (orderObj && orderObj.orderName && orderObj.orderValue) {
-            ref = dbActivityRef
+            ref = dbActivitiesRef
                 .orderBy(orderObj.orderName, orderObj.orderValue)
                 .limit(resultLimit);
         }
@@ -92,8 +94,9 @@ class ActivityDB {
         const db = Util.getFirestoreDB(); // active firestore db ref
 
         // default ref gets all
-        const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
-        let ref = dbActivityRef
+        const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+        
+        let ref = dbActivitiesRef
             .orderBy("activityDateTime", "desc");
 
         // How can you send back promise and listener?
@@ -134,15 +137,16 @@ class ActivityDB {
             let users = {};
             let activityArray = [];
 
-            const dbUsersRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(GLOBAL_ENV.USERS_DB)
-            const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
+            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+        
             dbUsersRef
                 .get()
                 .then((results) => {
                     results.forEach((doc) => {
                         users[doc.id] = doc.data();
                     });
-                    const depRef = dbActivityRef
+                    const depRef = dbActivitiesRef
                         .orderBy("activityDateTime", "desc")
                         .limit(resultLimit);
                     depRef
@@ -195,8 +199,9 @@ class ActivityDB {
 
             // then get from firestore
             let activities = [];
-            const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
-            let docRef = dbActivityRef
+            const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+
+            let docRef = dbActivitiesRef
                 .orderBy("activityDateTime", "desc");
             docRef
                 .get()
@@ -209,8 +214,8 @@ class ActivityDB {
                             .activityDateTime
                             .toDate();
                             
-                        const dbUsersRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
-                        // get the user doc.data().uid;
+                        const dbUsersRef = Util.getDBRefs().dbUsersRef;
+                            // get the user doc.data().uid;
                         const userRef = dbUsersRef
                             .doc(activity.uid);
 
@@ -255,8 +260,9 @@ class ActivityDB {
             const db = Util.getFirestoreDB(); // active firestore db ref
 
             let activities = [];
-            const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
-            dbActivityRef
+            const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+            
+            dbActivitiesRef
                 .orderBy("activityDateTime", "desc")
                 .get()
                 .then((querySnapshot) => {
@@ -279,8 +285,9 @@ class ActivityDB {
         const db = Util.getFirestoreDB(); // active firestore db ref
 
         // default ref gets all
-        const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
-        let docRef = dbActivityRef
+        const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+            
+        let docRef = dbActivitiesRef
             .doc(id);
 
         return new Promise((resolve, reject) => {
@@ -310,8 +317,9 @@ class ActivityDB {
         return new Promise((resolve, reject) => {
             const db = Util.getFirestoreDB(); // active firestore db ref
 
-            const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
-            dbActivityRef
+            const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+            
+            dbActivitiesRef
                 .add({
                     teamName: activity.teamName,
                     teamUid: activity.teamUid
@@ -342,8 +350,9 @@ class ActivityDB {
         return new Promise((resolve, reject) => {
             const db = Util.getFirestoreDB(); // active firestore db ref
 
-            const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
-            dbActivityRef
+            const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+            
+            dbActivitiesRef
                 .doc(activity.id)
                 .set({
                     teamName: activity.teamName,
@@ -376,8 +385,9 @@ class ActivityDB {
         return new Promise((resolve, reject) => {
             const db = Util.getFirestoreDB(); // active firestore db ref
 
-            const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
-            dbActivityRef
+            const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+            
+            dbActivitiesRef
                 .doc(id)
                 .delete()
                 .then(() => {

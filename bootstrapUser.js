@@ -1,13 +1,7 @@
 "use strict";
 const inquirer = require("inquirer");
 let fs = require('fs');
-
-
-const ORG = "ATC";
-const DEV_ENV = "dev";
-const PROD_ENV = "prod";
-const STAGE_ENV = "stage";
-const USERS_DB = `users`
+const {ORG, ENV} = require("./ServerEnvironment");
 
 require("dotenv");
 const path = require("path");
@@ -16,7 +10,31 @@ const path = require("path");
 const admin = require("firebase-admin");
 const storageBucket = "teamatc-challenge.appspot.com";
 const databaseURL = "https://teamatc-challenge.firebaseio.com";
+let dbALLRefs = {};
 
+class Util {
+
+    static getDBRefs (challengeId) {
+        if (!challengeId) {
+          challengeId = "9uxEvhpHM2cqCcn1ESZg";
+        }
+        const db = admin.firestore();
+    
+        const dbUsersRef = db.collection(ORG).doc(ENV).collection(`users`);
+        const dbATCMembersRef = db.collection(ORG).doc(ENV).collection(`ATCMembers`);
+    
+        const dbATCChallengeMemberRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`atcchallengemembers`);        
+        const dbActivitiesRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`activities`);
+        const dbTeamsRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`teams`);
+    
+        return {dbUsersRef: dbUsersRef,
+          dbATCMembersRef: dbATCMembersRef,
+          dbATCChallengeMemberRef: dbATCChallengeMemberRef,
+          dbActivitiesRef: dbActivitiesRef,
+          dbTeamsRef: dbTeamsRef
+        }
+    }
+}    
 
 function exitProgram() {
     console.log("BYE!");
@@ -24,8 +42,7 @@ function exitProgram() {
 
     // Add a single activity based on id
 async function createActivity (activity) {
-    const db = admin.firestore();
-    const dbActivitiesRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`activities`);
+    const dbActivitiesRef = dbALLRefs.dbActivitiesRef;
 
     return new Promise((resolve, reject) => {
         dbActivitiesRef
@@ -58,10 +75,9 @@ async function createActivity (activity) {
 
 // Assume users create and up
 async function createActivitiesFromGoogleDoc(fileToUpload) {
-    const db = admin.firestore();
-    const dbUsersRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection("users");
-    const dbTeamsRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`teams`);
-    const dbATCMembersRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`ATCMembers`);
+    const dbUsersRef = dbALLRefs.dbUsersRef;
+    const dbTeamsRef = dbALLRefs.dbTeamsRef
+    const dbATCMembersRef = dbALLRefs.dbATCMembersRef
 
     let ATCMembers = [];
     let nbrATCMembers = 0;
@@ -268,13 +284,8 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
 }
 // Copy Users from current location to DEV
 async function createUsersFromGoogleActivities(fileToUpload) {
-    const db = admin.firestore();
-    const dbUsersRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`users`);
-    // These should probably be in a "subcollections" under a document ("race" or "challenge")
-    const dbActivitiesRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`activities`);
-    const dbTeamsRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`teams`);
-    const dbATCMembersRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`ATCMembers`);
-    const dbATCChallengeMemberRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`atcchallengemembers`);
+    const dbTeamsRef = dbALLRefs.dbTeamsRef
+    const dbATCMembersRef = dbALLRefs.dbATCMembersRef
     
     // First Read and Parse All from ATC CSV file to grab participating users
     if (!fileToUpload) {
@@ -479,7 +490,7 @@ async function createUsersFromGoogleActivities(fileToUpload) {
                     if (true) {
                             let user = ChallengeMembers[i];
                             let authUser = {};
-                            user.password = "123456"
+                            user.password = undefined;
                             admin.auth().getUserByEmail(user.email).then((authUser) => {
                                 // User found.
                                 console.log(`Found authUser: ${JSON.stringify(authUser, null, 4)}`);
@@ -524,17 +535,17 @@ async function createUsersFromGoogleActivities(fileToUpload) {
 
 // Copy Users from current location to DEV
 async function copyUsersToDev() {
-    const db = admin.firestore();
-    const dbCollSource = `users`;
-    const dbCollDest = `${DEV_DB}/users`;
+    const dbUsersRef = dbALLRefs.dbUsersRef;
+    const dbTeamsRef = dbALLRefs.dbTeamsRef
+    const dbATCMembersRef = dbALLRefs.dbATCMembersRef
+    const dbActivitiesRef = dbALLRefs.dbActivitiesRef
+    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
 
     console.log(`Copying users from ${dbCollSource} to ${dbCollDest}`);
     return new Promise(async (resolve, reject) => {
 
         return new Promise((resolve, reject) => {
-            const db = admin.firestore();
-
-            db.collection(dbCollSource)
+            dbUsersRef
                 .get()
                 .then(querySnapshot => {
                     let users = [];
@@ -546,8 +557,7 @@ async function copyUsersToDev() {
 
                         // Now create the user with same ID
                         console.log(`User retrieved, user=${JSON.stringify(user)}`);
-                        // db.collection(dbCollDest)
-                        db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection(`${USERS_DB}`)
+                        dbUsersRef
                             .doc(user.id)
                             .set(user)
                             .then(user => {
@@ -570,12 +580,13 @@ async function copyUsersToDev() {
 }
 
 async function deleteATCMembers() {
-    const db = admin.firestore();
+    const dbUsersRef = dbALLRefs.dbUsersRef;
+    const dbTeamsRef = dbALLRefs.dbTeamsRef
+    const dbATCMembersRef = dbALLRefs.dbATCMembersRef
+    const dbActivitiesRef = dbALLRefs.dbActivitiesRef
+    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
 
-    // use email address as key to overwrite duplicates
-    let dbRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection("ATCMembers");
-
-    dbRef.listDocuments().then(val => {
+    dbATCMembersRef.listDocuments().then(val => {
         val.map((val) => {
             val.delete()
         })
@@ -585,7 +596,11 @@ async function deleteATCMembers() {
 
 // Copy Users from current location to DEV
 async function uploadATCMembers(fileToUpload) {
-    const db = admin.firestore();
+    const dbUsersRef = dbALLRefs.dbUsersRef;
+    const dbTeamsRef = dbALLRefs.dbTeamsRef
+    const dbATCMembersRef = dbALLRefs.dbATCMembersRef
+    const dbActivitiesRef = dbALLRefs.dbActivitiesRef
+    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
 
     if (!fileToUpload) {
         fileToUpload = "ATCMembers.csv";
@@ -626,7 +641,7 @@ async function uploadATCMembers(fileToUpload) {
                 console.log(`Trying to update ${JSON.stringify(member)}`);
 
                 // use email address as key to overwrite duplicates
-                db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection("ATCMembers")
+                dbATCMembersRef
                     .doc(member.email)
                     .set(member)
                     .then(memberId => {
@@ -645,9 +660,13 @@ async function uploadATCMembers(fileToUpload) {
 
 // update claims from auth into FB
 function updateClaimsInFirestore(uid, claims, authClaims) {
+    const dbUsersRef = dbALLRefs.dbUsersRef;
+    const dbTeamsRef = dbALLRefs.dbTeamsRef
+    const dbATCMembersRef = dbALLRefs.dbATCMembersRef
+    const dbActivitiesRef = dbALLRefs.dbActivitiesRef
+    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
+
     return new Promise(async (resolve, reject) => {
-        const db = admin.firestore();
-        const dbUsersRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection("users");
 
         // Init claims for primary since you can be multiple
         let updateFields = {
@@ -755,11 +774,14 @@ async function setAuthClaimsAsUser(uid) {
 }
 
 async function createFirestoreUserBootstrap(user) {
+    const dbUsersRef = dbALLRefs.dbUsersRef;
+    const dbTeamsRef = dbALLRefs.dbTeamsRef
+    const dbATCMembersRef = dbALLRefs.dbATCMembersRef
+    const dbActivitiesRef = dbALLRefs.dbActivitiesRef
+    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
+
     console.log(`trying to update user in fb: ${user}`);
     return new Promise(async (resolve, reject) => {
-        const db = admin.firestore();
-        const dbUsersRef = db.collection(`${ORG}`).doc(`${DEV_ENV}`).collection("users");
-
         // update
         console.log("User updated, user=", user);
         dbUsersRef.doc(user.uid)
@@ -908,5 +930,6 @@ admin.initializeApp({
     databaseURL: databaseURL,
     storageBucket: storageBucket
 });
+dbALLRefs = Util.getDBRefs();
 
 mainMenu();

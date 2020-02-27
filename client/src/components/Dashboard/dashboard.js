@@ -46,10 +46,11 @@ class Dashboard extends React.Component {
     componentDidMount() {
         this._mounted = true;
         this.setState({loadingFlag: true });
-        const db = Util.getFirestoreDB();   // active firestore db ref
 
-        const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
-        let ref = dbActivityRef
+        let allDBRefs = Util.getDBRefs();
+        const dbActivitiesRef = allDBRefs.dbActivitiesRef;
+
+        let ref = dbActivitiesRef
             .orderBy("activityDateTime", "desc");
         this.activeListener = ref.onSnapshot((querySnapshot) => {
             let activities = this.state.activities;
@@ -660,7 +661,7 @@ class Dashboard extends React.Component {
 
         const activityBreakdownTitleRow = 
         <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" marginTop={1}>
-            <div className="col s9 m9">Activity Type Brerakdown</div>
+            <div className="col s9 m9">Activity Type Breakdown</div>
             <div className="col s2 offset-s1 m2 offset-m1">
                 <Tooltip title="Show Activities">
                     <Link to={{
@@ -811,7 +812,7 @@ class Dashboard extends React.Component {
                                     </Box>
                                 </div>
                                 <div className="col s12 m4">
-                                    <Box className="grey lighten-3" padding={2} margin={0} borderRadius={8} boxShadow={4}>
+                                    <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
                                         {activityBreakdownTitleRow}
                                         <ActivityTypeBreakdown
                                             title={`${this.props.user.displayName}`}
@@ -820,7 +821,7 @@ class Dashboard extends React.Component {
                                     </Box>
                                 </div>   
                                 <div className="col s12 m4" margin={2}>
-                                    <Box className="grey lighten-3" padding={2} margin={0} borderRadius={8} boxShadow={4}>
+                                    <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
                                         {activityBreakdownTitleRow}
                                         <ActivityTypeBreakdown
                                             title={`Team ${this.props.user.teamName}`}

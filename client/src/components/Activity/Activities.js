@@ -326,11 +326,6 @@ class Activities extends React.Component {
                         <i style={{cursor: 'pointer', marginTop: 5, marginRight: 1}}
                             className="material-icons indigo-text text-darken-4">add
                         </i>{" "}
-                    {/*  Aklternate icon method
-                        <IconButton aria-label="New Activity">
-                            <AddIcon />
-                        </IconButton>
-                    */}
                     </Link>
                     <CSVLink
                         data={activities}
