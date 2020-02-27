@@ -636,7 +636,7 @@ class Dashboard extends React.Component {
         let myActivities = this.state.myActivities;
 
         // header row for results
-        const headerRow = 
+        const leaderBoardHeaderRow = 
             <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1} margin={0}>
                 <div className="col s1 m1">
                 </div>
@@ -657,8 +657,24 @@ class Dashboard extends React.Component {
                 </div>
             </Box>
                 
+        const activityTitleRow = 
+            <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" margin={0}>
+                <Link className="col s10 m10" to={{
+                    pathname: "/activities",
+                    state: {
+                        filterByString: "Mine"
+                    }
+                    }}>Latest Activities ({"Mine"}) : {this.props.user.displayName} 
+                </Link>
+                <Link className="col s1 offset-s1 m1 offset-s1" to="/activityform">
+                    <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
+                        className="material-icons indigo-text text-darken-4">add
+                    </i>{" "}
+                </Link>
+            </Box>
+
         const activityCardHeaderRow = 
-            <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1} margin={0}>
+            <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1} margin={0} padding={0}>
                 <div className="col s1 m1">
                 </div>
                 <div className="col s4 m4 truncate">
@@ -695,7 +711,7 @@ class Dashboard extends React.Component {
                                                     Team Leaderboard (Adjusted Miles)
                                                 </Link>
                                             </span>
-                                            {headerRow}
+                                            {leaderBoardHeaderRow}
                                             {this.totals.teamR.map((teamResult, index) => {
                                                 return (
                                                     <div key={index}>
@@ -718,7 +734,7 @@ class Dashboard extends React.Component {
                                                     User Leaderboard (Adjusted Miles)
                                                 </Link>
                                             </span>
-                                            {headerRow}
+                                            {leaderBoardHeaderRow}
                                             {this.totals.userR.map((userResult, index) => {
                                                 return (
                                                     (index > 14) ?
@@ -763,32 +779,22 @@ class Dashboard extends React.Component {
 
                             {/* My Activities and heatmap */}
                             <div className="row">
-                                <div className="card col s12 m6">
-                                    <div className="card-content pCard">
-                                        <span className="card-title">
-                                            <Link to={{
-                                                pathname: "/activities",
-                                                state: {
-                                                    filterByString: "Mine"
-                                                }
-                                            }}>Latest Activities ({"Mine"}) : {this.props.user.displayName} </Link>{"   "}
-                                        </span>
-            
+                                <Box className="col s12 m6 grey lighten-3" padding={0} margin={0} borderRadius={12}>
+                                    <Box className="blue lighten-1" margin={0} padding={2} > 
+                                        {activityTitleRow}
                                         {activityCardHeaderRow}
                                         {myActivities.map((activity, index) => {                                         
                                             return (
-                                                    (index > 14) ?
-                                                    ""
-                                                    :
-                                                    <div key={activity.id}>
-                                                        <ActivityCard 
-                                                            activity={activity} index={index}
-                                                        />
-                                                    </div> 
+                                                (index > 14) ?
+                                                ""
+                                                :
+                                                <ActivityCard
+                                                key={activity.id} activity={activity} index={index}
+                                                />
                                             )                                          
                                         })} 
-                                    </div>
-                                </div>
+                                    </Box>
+                                </Box>
                                 <div className="col s12 m6">
                                     <ActivityBubble
                                         title={"Heatmap (All Athletes)"}
