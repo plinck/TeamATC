@@ -2,7 +2,7 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import { Redirect } from 'react-router';
 import { withRouter } from 'react-router-dom';
-import ActivityModal from './ActivityModal';
+import ActivityBubbleModal from './ActivityBubbleModal';
 
 
 import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
@@ -65,7 +65,7 @@ class ActivityBubble extends React.Component {
                 default:
                     break;
             }
-            return {distance: distance, duration: activity.duration};
+            return {distance: distance, duration: activity.duration, displayName: activity.displayName};
         })
 
         let xData = activities.map(activity => new Date(activity.activityDateTime));
@@ -74,7 +74,7 @@ class ActivityBubble extends React.Component {
         });
 
         let size = adjustedActivites.map(activity => (activity.distance * 1));
-        let hover = size.map(distance => `${distance.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
+        let hover = adjustedActivites.map(activity => `${activity.displayName} ${activity.distance.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
         let groups = activities.map(activity => activity.email);
         // let groups = activities.map(activity => {
         //     const userInitials = activity.displayName.length > 1 ? activity.displayName.substring(0, 2) : "NN";
@@ -83,7 +83,7 @@ class ActivityBubble extends React.Component {
 
         return (
             <div>
-                <ActivityModal open={this.state.open} amount={this.state.clickedDistance} date={this.state.clickedDate}/>
+                <ActivityBubbleModal open={this.state.open} displayInfo={this.state.clickedDistance} date={this.state.clickedDate}/>
                 <Plot
                     data={[
                         {
@@ -110,6 +110,7 @@ class ActivityBubble extends React.Component {
                                 autorange: true,
                                 rangeselector: selectorOptions,
                             },
+                            hoverMode: "closest",
                             showlegend: false,
                             margin: {
                                 l: 30,
@@ -131,6 +132,7 @@ class ActivityBubble extends React.Component {
                         this.setState({
                             clickedDistance: data.points[0].text,
                             clickedDate: data.points[0].x,
+                            clickedEmail: hover,
                             open: true
                         });
 

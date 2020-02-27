@@ -40,7 +40,7 @@ class ActitityModal extends React.Component {
                         <DialogContentText id="alert-dialog-description">
                             Activity Date: {this.props.date}
                             <br></br>
-                            Distance: {this.props.amount}
+                            {this.props.displayInfo}
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
