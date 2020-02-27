@@ -635,8 +635,30 @@ class Dashboard extends React.Component {
         let activities = this.state.activities;
         let myActivities = this.state.myActivities;
 
+        const leaderboardTitleRow = 
+        <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" marginTop={1}>
+            <Link className="col s9 m9" to={{
+                pathname: "/activities",
+                state: {
+                    filterByString: "Mine"
+                }
+                }}>Leaderboard 
+            </Link>
+            <div className="col s2 offset-s1 m2 offset-m1">
+                <Link to={{
+                    pathname: "/activities",
+                    state: {filterByString: "Mine"}
+                    }}>
+                    <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
+                        className="material-icons indigo-text text-darken-4">launch
+                    </i>{" "}
+                </Link>
+            </div>
+        </Box>
+
+
         // header row for results
-        const headerRow = 
+        const leaderBoardHeaderRow = 
             <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1} margin={0}>
                 <div className="col s1 m1">
                 </div>
@@ -657,8 +679,34 @@ class Dashboard extends React.Component {
                 </div>
             </Box>
                 
+        const activityTitleRow = 
+            <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" marginTop={1}>
+                <Link className="col s9 m9" to={{
+                    pathname: "/activities",
+                    state: {
+                        filterByString: "Mine"
+                    }
+                    }}>Latest Activities ({"Mine"}) : {this.props.user.displayName} 
+                </Link>
+                <div className="col s2 offset-s1 m2 offset-m1">
+                    <Link  to="/activityform">
+                        <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
+                            className="material-icons indigo-text text-darken-4">add
+                        </i>{" "}
+                    </Link>
+                    <Link to={{
+                        pathname: "/activities",
+                        state: {filterByString: "Mine"}
+                        }}>
+                        <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
+                            className="material-icons indigo-text text-darken-4">launch
+                        </i>{" "}
+                    </Link>
+                </div>
+            </Box>
+
         const activityCardHeaderRow = 
-            <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1} margin={0}>
+            <Box className="row"  fontStyle="oblique" bgcolor={"white"} fontWeight="fontWeightBold" border={1} margin={0} padding={0}>
                 <div className="col s1 m1">
                 </div>
                 <div className="col s4 m4 truncate">
@@ -687,15 +735,11 @@ class Dashboard extends React.Component {
                             {/*  OVERALL standings by user and TEAM */}
                             <div className="row">                 
                                 {/* Team standings/results card */}
-                                <div className="col s12 m6">
-                                    <div className="card">
-                                        <div className="card-content pCard">
-                                            <span className="card-title blue-text left-align">
-                                                <Link to="/activities">
-                                                    Team Leaderboard (Adjusted Miles)
-                                                </Link>
-                                            </span>
-                                            {headerRow}
+                                <div className="col s12 m6" margin={2}>
+                                    <Box className="grey lighten-3" padding={2} margin={0} borderRadius={8} boxShadow={4}>
+                                        {leaderboardTitleRow}
+                                        <Box className="white" margin={2} paddingLeft={1} paddingRight={1}> 
+                                            {leaderBoardHeaderRow}
                                             {this.totals.teamR.map((teamResult, index) => {
                                                 return (
                                                     <div key={index}>
@@ -704,21 +748,17 @@ class Dashboard extends React.Component {
                                                     </div>
                                                 );
                                             })}
-                                        </div>
-                                    </div>
+                                        </Box>
+                                    </Box>
                                 </div>
                                 {/* End Team standings/results card */}          
                          
                                 {/* User standings/results card */}
-                                <div className="col s12 m6">
-                                    <div className="card">
-                                        <div className="card-content pCard">
-                                            <span className="card-title blue-text left-align">
-                                                <Link to="/activities">
-                                                    User Leaderboard (Adjusted Miles)
-                                                </Link>
-                                            </span>
-                                            {headerRow}
+                                <div className="col s12 m6" margin={2}>
+                                    <Box className="grey lighten-3" padding={2} margin={0} borderRadius={8} boxShadow={4}>
+                                        {leaderboardTitleRow}
+                                        <Box className="white" margin={2} paddingLeft={1} paddingRight={1}> 
+                                        {leaderBoardHeaderRow}
                                             {this.totals.userR.map((userResult, index) => {
                                                 return (
                                                     (index > 14) ?
@@ -730,8 +770,8 @@ class Dashboard extends React.Component {
                                                     </div>
                                                 );
                                             })}
-                                        </div>
-                                    </div>
+                                        </Box>
+                                    </Box>
                                 </div>
                                 {/* End User standings/results card */}
                             </div>
@@ -763,32 +803,33 @@ class Dashboard extends React.Component {
 
                             {/* My Activities and heatmap */}
                             <div className="row">
-                                <div className="card col s12 m6">
-                                    <div className="card-content pCard">
-                                        <span className="card-title">
-                                            <Link to="/activities">Latest Activities ({"Mine"}) : {this.props.user.displayName} </Link>{"   "}
-                                        </span>
-            
-                                        {activityCardHeaderRow}
-                                        {myActivities.map((activity, index) => {                                         
-                                            return (
+                                <div className="col s12 m6" margin={2}>
+                                    <Box className="grey lighten-3" padding={2} margin={0} borderRadius={8} boxShadow={4}>
+                                        {activityTitleRow}
+                                        <Box className="white" margin={2} paddingLeft={1} paddingRight={1}> 
+                                            {activityCardHeaderRow}
+                                            {myActivities.map((activity, index) => {                                         
+                                                return (
                                                     (index > 14) ?
                                                     ""
                                                     :
-                                                    <div key={activity.id}>
-                                                        <ActivityCard 
-                                                            activity={activity} layoutType={this.props.layoutType} index={index}
-                                                        />
-                                                    </div> 
-                                            )                                          
-                                        })} 
-                                    </div>
+                                                    <ActivityCard
+                                                    key={activity.id} activity={activity} index={index}
+                                                    />
+                                                )                                          
+                                            })} 
+                                        </Box>
+                                    </Box>
                                 </div>
-                                <div className="col s12 m6">
-                                    <ActivityBubble
-                                        title={"Heatmap (All Athletes)"}
-                                        activities={this.state.activities}
-                                    />
+                                <div className="col s12 m6" margin={2}>
+                                    <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
+                                        <Box className="white" margin={2} paddingLeft={0} paddingRight={0}> 
+                                            <ActivityBubble
+                                                title={"Heatmap (All Athletes)"}
+                                                activities={this.state.activities}
+                                            />
+                                        </Box>
+                                    </Box>
                                 </div>
                             </div>
                              {/* END Activities by day and heatmap */}

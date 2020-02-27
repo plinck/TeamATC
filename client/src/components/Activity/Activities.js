@@ -10,6 +10,12 @@ import SearchIcon from "@material-ui/icons/Search";
 import TextField from '@material-ui/core/TextField';
 import { InputAdornment } from '@material-ui/core';
 
+import IconButton from '@material-ui/core/IconButton';
+import AddIcon from '@material-ui/icons/Add';
+import SettingsIcon from '@material-ui/icons/Settings';
+import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
+
+
 // For select input field
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from "@material-ui/core/InputLabel";
@@ -42,8 +48,9 @@ const styles = theme => ({
         flexWrap: 'wrap',
     },
     formControl: {
-        margin: theme.spacing.unit,
-        minWidth: 120
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        minWidth: 200
       },
     inputFix: {
         marginTop: 50
@@ -66,13 +73,44 @@ class Activities extends React.Component {
         this.state = {
             activities: null,
             searchBy: "",
-            filterByString: "ALL",
+            filterByString: "All",
             filterBy: "All",
-            orderBy: "None"
+            orderBy: "None",
+            isLoading: true
         };
     }
 
-    getActivities = (filterByString) => {
+    // Get All Activities on Mount - check if anything passed
+    componentDidMount() {
+        // check to see if we already have activities passed
+        // if so, dont go get them again
+        let filterByString = undefined;
+
+        filterByString = this.props.location && this.props.location.state ? this.props.location.state.filterByString : undefined;
+
+        if (!filterByString) {
+            if (this.props.filterByString) {
+                filterByString = this.props.filterByString
+            } 
+        }
+
+        if (this.props.activities) {
+            this.setState({ activities: this.props.activities });   
+        } else {
+            if (filterByString) {
+                this.setState({filterByString: filterByString, filterBy: filterByString});
+                this.getFilteredActivities(filterByString);
+            } else {
+                this.getFilteredActivities();
+            }
+        }
+    }
+
+    // ************************************************************
+    // Database Interaction Methods   
+    // ************************************************************
+    // Get activities with a filter
+    getFilteredActivities = (filterByString) => {
         if (filterByString === undefined || filterByString === null) {
             filterByString = this.state.filterByString;
         }
@@ -98,19 +136,19 @@ class Activities extends React.Component {
                 filterObj = undefined;
             }     
 
-        // Get with security
-        // comes back sorted already
+        this.setState({isLoading: true});
         ActivityDB.getFiltered(filterObj)
-            .then(res => {
-                let activities = res;
-                this.setState({ activities: activities });
-            })
-            .catch(err => {
-                console.error(err);
-            });
+        .then(res => {
+            let activities = res;
+            this.setState({ activities: activities, isLoading: false});
+        }).catch(err => {
+            this.setState({isLoading: false});
+            console.error(err);
+        });
     };
 
-    getActivitiesOrderBy = (orderBy) => {
+    // Get acvities in certain order 
+    getOrderedActivities = (orderBy) => {
         if (orderBy === undefined || orderBy === null) {
             orderBy = this.state.orderBy;
         }
@@ -135,38 +173,36 @@ class Activities extends React.Component {
 
         // Get with security
         // comes back sorted already
+        this.setState({isLoading: true});
         ActivityDB.getOrdered(orderObj)
             .then(res => {
                 let activities = res;
-                this.setState({ activities: activities });
+                this.setState({ activities: activities, isLoading: false});
             })
             .catch(err => {
+                this.setState({isLoading: false});
                 console.error(err);
             });
     };
 
-    // get all on mount
-    componentDidMount() {
-        // check to see if we already have activities passed
-        // if so, dont go get them again
-        if (this.props.activities) {
-            this.setState({ activities: this.props.activities });   
-        } else {
-            if (this.props.filterByString) {
-                this.setState({filterByString: this.props.filterByString});
-                this.refreshPage(this.props.filterByString);
-            } else {
-                this.refreshPage();
-            }
-        }
-
+    // Delete this activity
+    activityDelete = (id) => {
+        ActivityDB.delete( id )
+        .then(res => {
+            console.log("Deleted activity");
+            this.getFilteredActivities();
+        })
+        .catch(err => {
+            alert(err);
+            console.error(err); 
+        });
     }
-
-    refreshPage(filterByString) {
-        this.getActivities(filterByString);
-    }
-
-    onChange = event => {
+    
+    // ************************************************************
+    // Form Change Handlers - try to keeo grouped    
+    // ************************************************************
+    // general change
+    handleChange = event => {
         // Set Units
         switch (event.target.name) {
             case "filterBy":
@@ -174,43 +210,30 @@ class Activities extends React.Component {
                     "filterByString": event.target.value,
                     "filterBy": event.target.value,
                 });
-                this.refreshPage(event.target.value);
+                this.getFilteredActivities(event.target.value);
                 break;
             case "orderBy":
                 this.setState({
                     "orderBy": event.target.value
                 });
-                this.getActivitiesOrderBy(event.target.value);
+                this.getOrderedActivities(event.target.value);
                 break;
             case "searchBy": 
                 this.setState({
                     [event.target.name]: event.target.value,
                 });
-                this.refreshPage(undefined, undefined, event.target.value);
+                this.getFilteredActivities(event.target.value);
                 break;
             default:
                 break;
         }
     };
 
-    filterByChange = (filterString) => {
-        this.setState({filterByString: filterString});
-        this.refreshPage(filterString);
-    }
+    // ************************************************************
+    // Build JSX Components   
+    // ************************************************************
 
-    // Delete this article from MongoDB
-    activityDelete = (id) => {
-        ActivityDB.delete( id )
-        .then(res => {
-            console.log("Deleted activity");
-            this.refreshPage();
-        })
-        .catch(err => {
-            alert(err);
-            console.error(err); 
-        });
-    }
-
+    // Now we can render page - DO NOT change state in render()
     render() {
         const { classes } = this.props;
 
@@ -223,7 +246,7 @@ class Activities extends React.Component {
             console.error("Fatal Error")
             return (<div> <p>FATAL ERROR Gettng activities ...</p> </div>)
         }
-        if (this.state.activities === null) {
+        if (this.state.activities === null || this.state.isLoading) {
             return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
         } 
 
@@ -232,37 +255,37 @@ class Activities extends React.Component {
         let filterByString = this.state.filterByString;
         let filterBy = this.state.filterBy;
         let orderBy = this.state.orderBy;
+        let activities = this.state.activities;
         
         const sortFilterRow = 
-            <Box className="row"  border={1} m={0} p={0}>
-                <form className={classes.container} noValidate autoComplete="off" >
-                    <FormControl variant="filled" required className={classes.formControl}>
-                        <InputLabel id="filterByLabel">Filter By</InputLabel>
-                        <Select
-                            labelId="filterByLabel"
-                            id="filterBy"
-                            value={filterBy}
-                            name="filterBy"
-                            type="text"
-                            margin="normal"
-                            className={classes.textField}
-                            style={{marginTop: 23, marginBottom: 16, padding: 0}}
-                            onChange={this.onChange}
-                            >
-                            <MenuItem value={"Mine"}>Mine</MenuItem>
-                            <MenuItem value={"Team"}>Team</MenuItem>
-                            <MenuItem value={"All"}>All</MenuItem>
-                        </Select>
+            <Box className="row"  border={1} m={1} p={0}>
+                <FormControl className={`${classes.formControl} col s3 m3`} variant="filled">
+                    <InputLabel id="filterByLabel">Filter By</InputLabel>
+                    <Select
+                        labelId="filterByLabel"
+                        id="filterBy"
+                        value={filterBy}
+                        name="filterBy"
+                        type="text"
+                        margin="normal"
+                        className={classes.textField}
+                        style={{marginTop: 23, marginBottom: 16, padding: 0}}
+                        onChange={this.handleChange}
+                        >
+                        <MenuItem value={"Mine"}>Mine</MenuItem>
+                        <MenuItem value={"Team"}>Team</MenuItem>
+                        <MenuItem value={"All"}>All</MenuItem>
+                    </Select>
+                </FormControl>
 
-                    </FormControl>
-                    <FormControl variant="filled" className={classes.formControl}>
+                <FormControl variant="filled" className={`${classes.formControl} col s3 m3`}>
                     <InputLabel id="orderByLabel">Order By</InputLabel>
                     <Select
                         labelId="orderByLabel"
                         name="orderBy"
                         id="orderBy"
                         value={orderBy}
-                        onChange={this.onChange}
+                        onChange={this.handleChange}
                         className={classes.textField}
                         style={{marginTop: 23, marginBottom: 16, padding: 0}}
                         >
@@ -270,33 +293,54 @@ class Activities extends React.Component {
                         <MenuItem value={"Team"}>Team</MenuItem>
                         <MenuItem value={"Type"}>Type</MenuItem>
                     </Select>
-                    </FormControl>
+                </FormControl>
 
-                    <div className="blue-text input-field inline align-right">
-                            <TextField
-                            id="searchBy"
-                            name="searchBy"
-                            value={searchBy}
-                            label="Search"
-                            type='text'
-                            variant="outlined"
-                            margin="normal"
-                            className={classes.textField}
-                            InputProps={{
-                                style: {
-                                    margin: 0,
-                                    padding: 19
-                                }, 
-                                endAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon />
-                                    </InputAdornment>
-                                )
-                            }}
-                            onChange={this.onChange}
-                        />
-                    </div>
-                </form>
+                <div className="col s3 m3 blue-text input-field inline align-right">
+                        <TextField
+                        id="searchBy"
+                        name="searchBy"
+                        value={searchBy}
+                        label="Search"
+                        type='text'
+                        variant="outlined"
+                        margin="normal"
+                        className={classes.textField}
+                        InputProps={{
+                            style: {
+                                marginTop: 0,
+                                marginBottom: 16,
+                                padding: 15
+                            }, 
+                            endAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon />
+                                </InputAdornment>
+                            )
+                        }}
+                        onChange={this.handleChange}
+                    />
+                </div>
+
+                <div className="col s2 m2">
+                    <Link to="/activityform">
+                        <i style={{cursor: 'pointer', marginTop: 5, marginRight: 1}}
+                            className="material-icons indigo-text text-darken-4">add
+                        </i>{" "}
+                    {/*  Aklternate icon method
+                        <IconButton aria-label="New Activity">
+                            <AddIcon />
+                        </IconButton>
+                    */}
+                    </Link>
+                    <CSVLink
+                        data={activities}
+                        filename={'teamatc-transactions.csv'}
+                        target="_blank">
+                        <i style={{cursor: 'pointer', marginTop: 5, marginRight: 1}}
+                            className="material-icons indigo-text text-darken-4">system_update_alt
+                        </i>
+                    </CSVLink> 
+                </div>
             </Box>
 
         const headerRow = 
@@ -323,27 +367,10 @@ class Activities extends React.Component {
             </div>
         </Box>
 
-
-        let activities = this.state.activities;
         if (this.props.user.authUser) {
             // Conditional rendering
             let activityView = 
                 <div>
-                    <br></br>
-                    <div className="row">
-                        <div className="col s2 m2 text-bold blue-text">
-                            Activities ({filterByString ? filterByString : 'All'})
-                        </div>
-                        <Link to="/activityform" className="col s2 offset-s5 m2 offset-m4 btn blue darken-4">New</Link>
-
-                        <CSVLink
-                        data={activities}
-                        filename={'teamatc-transactions.csv'}
-                        className='col s2 offset-s1 m2 offset-m1 btn blue darken-4'
-                        target="_blank">
-                        EXPORT TO CSV</CSVLink>    
-                    </div>
-
                     {sortFilterRow}
                     {headerRow}
                     <div className={classes.root}>
@@ -351,7 +378,6 @@ class Activities extends React.Component {
                             return (
                                 <div key={activity.id}>
                                     <Activity activity={activity}
-                                        layoutType={this.props.layoutType}
                                         activityDelete={this.activityDelete}
                                         index={index}
                                     />

@@ -70,11 +70,11 @@ class ActivityBubble extends React.Component {
 
         let xData = activities.map(activity => new Date(activity.activityDateTime));
         let yData = adjustedActivites.map(activity => {
-            return activity.duration;
+            return activity.distance;
         });
 
-        let size = adjustedActivites.map(activity => (activity.duration * 100));
-        let hover = size.map(duration => `${duration.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
+        let size = adjustedActivites.map(activity => (activity.distance * 1));
+        let hover = size.map(distance => `${distance.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
         let groups = activities.map(activity => activity.email);
         // let groups = activities.map(activity => {
         //     const userInitials = activity.displayName.length > 1 ? activity.displayName.substring(0, 2) : "NN";
@@ -112,9 +112,9 @@ class ActivityBubble extends React.Component {
                             },
                             showlegend: false,
                             margin: {
-                                l: 50,
-                                r: 50,
-                                b: 30,
+                                l: 30,
+                                r: 30,
+                                b: 10,
                                 t: 10,
                             },
                             // yaxis: {

@@ -48,7 +48,7 @@ class ActivityCard extends React.Component {
         }
 
         return (
-            <Box className="row" color={rowFg} bgcolor={rowBg} m={0}>
+            <Box className="row" color={rowFg} bgcolor={rowBg} m={0} p={0}>
                 <div className="col s1 m1">
                     <img style={{maxHeight: '20px'}} src={activityIcon} alt={activityType} />
                 </div>
