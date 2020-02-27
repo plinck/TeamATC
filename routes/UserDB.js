@@ -17,7 +17,7 @@ class UserDB {
             if (authClaims && authClaims.user != null) updateFields.isUser = authClaims.user;
 
             // update claims
-            const dbUsersRef = db.collection(`${ORG}`).doc(`${ENV}`).collection(`${USERS_DB}`)
+            const dbUsersRef = Util.getDBRefs().dbUsersRef;
             dbUsersRef.doc(uid).set(updateFields,
                 { merge: true }
             ).then(() => {
@@ -37,7 +37,7 @@ class UserDB {
             // update
             console.log("User updated, user=", user);
             console.log(`UserDB using ${ORG}/${ENV}/${USERS_DB}`)
-            const dbUsersRef = db.collection(`${ORG}`).doc(`${ENV}`).collection(`${USERS_DB}`)
+            const dbUsersRef = Util.getDBRefs().dbUsersRef;
             dbUsersRef.doc(user.uid).set({
                 firstName: user.firstName,
                 lastName: user.lastName,

@@ -8,7 +8,8 @@ class TeamAPI {
         return new Promise((resolve, reject) => {
             const db = Util.getFirestoreDB();
 
-            const dbTeamsRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
+            const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
+
             dbTeamsRef.orderBy("name").get().then((querySnapshot) => {
                 let teams = [];
                 querySnapshot.forEach(doc => {
@@ -35,13 +36,17 @@ class TeamAPI {
             const db = Util.getFirestoreDB();
             let teams = {} ;
             let activityArray = [];
-            const dbTeamsRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
+
+            const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
+
             dbTeamsRef.orderBy("name").get().then((results) => {
                 results.forEach((doc) => {
                     teams[doc.id] = doc.data();
                 });
-                const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
-                const ref = dbActivityRef.orderBy("time", "desc");
+                
+                const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+
+                const ref = dbActivitiesRef.orderBy("time", "desc");
                 ref.get().then((docSnaps) => {
                     docSnaps.forEach((doc) => {
                         const activity = doc.data();
@@ -70,7 +75,8 @@ class TeamAPI {
             const db = Util.getFirestoreDB();
 
             // then get from firestore
-            const dbTeamsRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
+            const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
+
             let docRef = dbTeamsRef.doc(id);
             docRef.get().then((doc) => {
                 if (doc.exists) {
@@ -93,7 +99,8 @@ class TeamAPI {
             const db = Util.getFirestoreDB();
 
             // then get from firestore
-            const dbTeamsRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
+            const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
+
             let docRef = dbTeamsRef.doc(id);
             docRef.get().then((doc) => {
                 if (doc.exists) {
@@ -102,7 +109,7 @@ class TeamAPI {
                     let teamUid = doc.id;
                     let userArray = []
 
-                    const dbUsersRef = db.collection(`${GLOBAL_ENV.ORG}`).doc(`${GLOBAL_ENV.ENV}`).collection(`${GLOBAL_ENV.USERS_DB}`)
+                    const dbUsersRef = Util.getDBRefs().dbUsersRef;
                     const docRef = dbUsersRef.orderBy("lastName", "desc");
                     docRef.get().then((docSnaps) => {
                         docSnaps.forEach((doc) => {
@@ -135,7 +142,8 @@ class TeamAPI {
     static delete = (uid) => {
         return new Promise((resolve, reject) => {
             const db = Util.getFirestoreDB();
-            const dbTeamsRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
+            const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
+
             dbTeamsRef.doc(uid).delete().then(() => {
                 console.log("Firestore Team successfully deleted!");
                 return resolve();
@@ -153,10 +161,10 @@ class TeamAPI {
     static update =  (team) => {
         console.log(`trying to update team in firestore: ${team}`);
         return new Promise(async (resolve, reject) => {
-            const db = Util.getFirestoreDB();
 
             // we always want uid = id to keep auth and firestore in sync
-            const dbTeamsRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("teams");
+            const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
+
             dbTeamsRef.doc(team.uid).set({
                 name: team.name ? team.name : "No Name",
                 description: team.description ? team.description : ""

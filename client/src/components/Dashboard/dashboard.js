@@ -46,10 +46,11 @@ class Dashboard extends React.Component {
     componentDidMount() {
         this._mounted = true;
         this.setState({loadingFlag: true });
-        const db = Util.getFirestoreDB();   // active firestore db ref
 
-        const dbActivityRef = db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("activities");
-        let ref = dbActivityRef
+        let allDBRefs = Util.getDBRefs();
+        const dbActivitiesRef = allDBRefs.dbActivitiesRef;
+
+        let ref = dbActivitiesRef
             .orderBy("activityDateTime", "desc");
         this.activeListener = ref.onSnapshot((querySnapshot) => {
             let activities = this.state.activities;
