@@ -658,7 +658,7 @@ class Dashboard extends React.Component {
             </div>
         </Box>
 
-        const activityBrerakdownTitleRow = 
+        const activityBreakdownTitleRow = 
         <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" marginTop={1}>
             <div className="col s9 m9">Activity Type Brerakdown</div>
             <div className="col s2 offset-s1 m2 offset-m1">
@@ -803,7 +803,7 @@ class Dashboard extends React.Component {
                             <div className="row">
                                 <div className="col s12 m4">
                                     <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
-                                        {activityBrerakdownTitleRow}
+                                        {activityBreakdownTitleRow}
                                         <ActivityTypeBreakdown
                                             title={`All Athletes`}
                                             currentTotalsShare={this.totals.all}
@@ -812,7 +812,7 @@ class Dashboard extends React.Component {
                                 </div>
                                 <div className="col s12 m4">
                                     <Box className="grey lighten-3" padding={2} margin={0} borderRadius={8} boxShadow={4}>
-                                        {activityBrerakdownTitleRow}
+                                        {activityBreakdownTitleRow}
                                         <ActivityTypeBreakdown
                                             title={`${this.props.user.displayName}`}
                                             currentTotalsShare={this.totals.user}
@@ -821,7 +821,7 @@ class Dashboard extends React.Component {
                                 </div>   
                                 <div className="col s12 m4" margin={2}>
                                     <Box className="grey lighten-3" padding={2} margin={0} borderRadius={8} boxShadow={4}>
-                                        {activityBrerakdownTitleRow}
+                                        {activityBreakdownTitleRow}
                                         <ActivityTypeBreakdown
                                             title={`Team ${this.props.user.teamName}`}
                                             currentTotalsShare={this.totals.team}
