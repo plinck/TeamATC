@@ -1,5 +1,6 @@
 "use strict";
 const admin = require("../middleware/authServerCommon");
+const Util = require("./Util.js");
 
 // Backend functions for user DB in firestore and auth
 class AuthUserAPI {

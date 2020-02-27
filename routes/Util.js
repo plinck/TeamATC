@@ -4,7 +4,7 @@ const {ORG, ENV} = require("../ServerEnvironment");
 
 class Util {
 
-    static getDBRefs = async (challengeId) => {
+    static getDBRefs (challengeId) {
         if (!challengeId) {
           challengeId = "9uxEvhpHM2cqCcn1ESZg";
         }

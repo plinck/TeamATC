@@ -1,6 +1,6 @@
 "use strict";
 const admin = require("../middleware/authServerCommon");
-const {ORG, ENV, USERS_DB} = require("../ServerEnvironment");
+const Util = require("./Util.js");
 
 // Backend functions for user DB in firestore and auth
 class UserDB {
@@ -36,7 +36,6 @@ class UserDB {
 
             // update
             console.log("User updated, user=", user);
-            console.log(`UserDB using ${ORG}/${ENV}/${USERS_DB}`)
             const dbUsersRef = Util.getDBRefs().dbUsersRef;
             dbUsersRef.doc(user.uid).set({
                 firstName: user.firstName,
