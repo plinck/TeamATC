@@ -12,7 +12,6 @@ import SampleClassPieChart from "./GraphCard/SampleClassPieChart";
 
 import SummaryTotal from "./SummaryTotal/SummaryTotal";
 import ResultsCard from "./ResultsCard/ResultsCard";
-import Activities from "../Activity/Activities";
 import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
 import ActivityTotalsGraphs from "./Graphs/ActivityTotalsGraphs";
@@ -23,6 +22,7 @@ import ActivityTeamBreakdown from "./Graphs/ActivityTeamBreakdown";
 import ActivityCard from '../Activity/ActivityCard.jsx';
 
 
+import Tooltip from '@material-ui/core/Tooltip';
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
@@ -645,17 +645,35 @@ class Dashboard extends React.Component {
                 }}>Leaderboard 
             </Link>
             <div className="col s2 offset-s1 m2 offset-m1">
-                <Link to={{
-                    pathname: "/activities",
-                    state: {filterByString: "Mine"}
-                    }}>
-                    <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
-                        className="material-icons indigo-text text-darken-4">launch
-                    </i>{" "}
-                </Link>
+                <Tooltip title="Show Activities">
+                    <Link to={{
+                        pathname: "/activities",
+                        state: {filterByString: "Mine"}
+                        }}>
+                        <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
+                            className="material-icons indigo-text text-darken-4">launch
+                        </i>{" "}
+                    </Link>
+                </Tooltip>
             </div>
         </Box>
 
+        const activityBrerakdownTitleRow = 
+        <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" marginTop={1}>
+            <div className="col s9 m9">Activity Type Brerakdown</div>
+            <div className="col s2 offset-s1 m2 offset-m1">
+                <Tooltip title="Show Activities">
+                    <Link to={{
+                        pathname: "/activities",
+                        state: {filterByString: "Mine"}
+                        }}>
+                        <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
+                            className="material-icons indigo-text text-darken-4">launch
+                        </i>{" "}
+                    </Link>
+                </Tooltip>
+            </div>
+        </Box>
 
         // header row for results
         const leaderBoardHeaderRow = 
@@ -689,19 +707,23 @@ class Dashboard extends React.Component {
                     }}>Latest Activities ({"Mine"}) : {this.props.user.displayName} 
                 </Link>
                 <div className="col s2 offset-s1 m2 offset-m1">
-                    <Link  to="/activityform">
-                        <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
-                            className="material-icons indigo-text text-darken-4">add
-                        </i>{" "}
-                    </Link>
-                    <Link to={{
-                        pathname: "/activities",
-                        state: {filterByString: "Mine"}
-                        }}>
-                        <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
-                            className="material-icons indigo-text text-darken-4">launch
-                        </i>{" "}
-                    </Link>
+                    <Tooltip title="Add Activity">
+                        <Link  to="/activityform">
+                            <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
+                                className="material-icons indigo-text text-darken-4">add
+                            </i>{" "}
+                        </Link>
+                    </Tooltip>
+                    <Tooltip title="Show Activities">
+                        <Link to={{
+                            pathname: "/activities",
+                            state: {filterByString: "Mine"}
+                            }}>
+                            <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
+                                className="material-icons indigo-text text-darken-4">launch
+                            </i>{" "}
+                        </Link>
+                    </Tooltip>
                 </div>
             </Box>
 
@@ -780,24 +802,32 @@ class Dashboard extends React.Component {
                             {/* Breakdowns */}
                             <div className="row">
                                 <div className="col s12 m4">
-                                    <ActivityTypeBreakdown
-                                        title={`All Athletes`}
-                                        currentTotalsShare={this.totals.all}
-                                    />
-                                </div>                            
+                                    <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
+                                        {activityBrerakdownTitleRow}
+                                        <ActivityTypeBreakdown
+                                            title={`All Athletes`}
+                                            currentTotalsShare={this.totals.all}
+                                        />
+                                    </Box>
+                                </div>
                                 <div className="col s12 m4">
-                                    <ActivityTypeBreakdown
-                                        title={`${this.props.user.displayName}`}
-                                        currentTotalsShare={this.totals.user}
-                                    />
-                                </div>                            
-                                <div className="col s12 m4">
-                                    <ActivityTypeBreakdown
-                                        title={`Team ${this.props.user.teamName}`}
-                                        currentTotalsShare={this.totals.team}
-                                    />
+                                    <Box className="grey lighten-3" padding={2} margin={0} borderRadius={8} boxShadow={4}>
+                                        {activityBrerakdownTitleRow}
+                                        <ActivityTypeBreakdown
+                                            title={`${this.props.user.displayName}`}
+                                            currentTotalsShare={this.totals.user}
+                                        />
+                                    </Box>
                                 </div>   
-                     
+                                <div className="col s12 m4" margin={2}>
+                                    <Box className="grey lighten-3" padding={2} margin={0} borderRadius={8} boxShadow={4}>
+                                        {activityBrerakdownTitleRow}
+                                        <ActivityTypeBreakdown
+                                            title={`Team ${this.props.user.teamName}`}
+                                            currentTotalsShare={this.totals.team}
+                                        />
+                                    </Box>
+                                </div>   
                             </div>
                             {/* End Breakdowns */}
 
