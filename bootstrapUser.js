@@ -36,6 +36,223 @@ class Util {
     }
 }    
 
+class MemberInfo {
+
+    static getName (nickName) {
+        let firstName = "";
+        let lastName = "";
+
+        if (nickName.length < 1) {
+            return {firstName: "NoFirstName", lastName: "noLastName"}
+        }
+        
+        nickName = nickName.trim().toLowerCase();
+        let nameArray = nickName.split(" ");
+        if (nameArray.length >= 3) {
+            if (nameArray[0].trim() === "lisa" && nameArray[1].trim() === "van") {
+                firstName = "Elisabeth";
+                lastName = "Van casteren";
+            } else if (nameArray[0].trim() === "kona") {
+                firstName = "Kona lisa";
+                lastName = "Mahu";
+            } else if (nameArray[0].trim() === "sheelah") {
+                firstName = "Sheelah";
+                lastName = "Cochran";
+            } else if (nameArray[0].trim() === "nicole" && nameArray[1].trim() === "chittick") {
+                firstName = "Nicole";
+                lastName = "Chittick";
+            }
+        } else if (nameArray.length === 1) {
+            if (nameArray[0].trim() === "nicole") {
+                firstName = "Nicole";
+                lastName = "Chittick";
+            } else if (nameArray[0].trim() === "sprinkles") {
+                firstName = "Charlie";
+                lastName = "Holder";
+            } else if (nameArray[0].trim() === "kona") {
+                firstName = "Kona lisa";
+                lastName = "Mahu";
+            } else if (nameArray[0].trim() === "harold") {
+                firstName = "Harold";
+                lastName = "Waldrop";
+            } else if (nameArray[0].trim() === "amit") {
+                firstName = "Amit";
+                lastName = "Patil";
+            } else if (nameArray[0].trim() === "charlean") {
+                firstName = "Charlean";
+                lastName = "Parks";
+            } else if (nameArray[0].trim() === "charlene") {
+                firstName = "Charlene";
+                lastName = "Gabriel";
+            } else if (nameArray[0].trim() === "carolina") {
+                firstName = "Carolina";
+                lastName = "Pinheiro";
+            } else if (nameArray[0].trim() === "tonytoson") {
+                firstName = "Tony";
+                lastName = "Toson";
+            }
+
+        } else {                        // 2 - a firstName and a lastName
+            firstName = nameArray[0].trim();
+            lastName = nameArray[1].trim();
+            if (firstName === "steph") {
+                firstName = "Stephanie";
+            }
+            if (firstName === "jennie") {
+                firstName = "Jennifer";
+                lastName = "McClellan";
+            }
+            if (firstName === "turd") {
+                firstName = "Michelle";
+                lastName = "Crossman";
+            }
+            if (firstName === "the" && lastName === "rahul") {
+                firstName = "Rahul";
+                lastName = "Mahesh";
+            }
+            if (firstName[0] === "a" && lastName === "monroe") {
+                firstName = "Andre";
+                lastName = "Monroe";
+            }
+            if (firstName === "dani") {
+                firstName = "Danielle";
+            }
+            if (firstName === "gene") {
+                firstName = "Eugene";
+            }
+            if (firstName === "carolina" && lastName === "p") {
+                firstName = "Carolina";
+                lastName = "Pinheiro";
+            }
+            if (nameArray[0].trim() === "sheelah") {
+                firstName = "Sheelah";
+                lastName = "Cochran";
+            }
+        }
+
+        firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
+        lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
+    
+        return {
+            firstName: firstName,
+            lastName: lastName
+        }
+    }
+
+    static getTeamName (brokenTeamName) {
+        let teamName = brokenTeamName.trim();
+        let teamNameArray = teamName.split(" ");
+        teamName = teamNameArray[0].trim();
+        // Fix people using plural of scottie
+        if (teamName[teamName.length-1] === "s") {
+            teamName = teamName.substring(0, teamName.length - 1);
+        }
+        if (teamName.length < 2 ) {
+            teamName = "Scottie";           // Assume scottie if no name since susan miller forgot the namne abd she is on scottie
+        } else {
+            teamName = teamName.charAt(0).toUpperCase() + teamName.slice(1)
+        }
+
+        return teamName;
+    }
+}    
+
+class Activities {
+
+    static getChallengeActivities (lines, ATCMembers, teams) {
+
+        let logged = 0;
+        let ChallengeActivities = [];
+        let totalBadAtivities = 0;
+        let totalActivities = 0;    
+
+        ChallengeActivities = lines.map((line) => {
+            let activityFieldsArray = line.split(',');
+
+            let uselessDate = activityFieldsArray[0].trim();
+
+            let dateString = activityFieldsArray[2].trim();
+            let activityDateTime = new Date(dateString);
+
+            // Fix the name to get proper firstname lastname to match ATC Database
+            let fullName = MemberInfo.getName(activityFieldsArray[1]);
+            let firstName = fullName.firstName;
+            let lastName = fullName.lastName;
+            let displayName = `${firstName} ${lastName}`
+        
+            // Fix the team name to get match to Database
+            let teamName = MemberInfo.getTeamName(activityFieldsArray[5]);
+            
+            let activityType = activityFieldsArray[3].trim();
+            let distance = Number(activityFieldsArray[4]);
+            
+            activityType = activityType.charAt(0).toUpperCase() + activityType.slice(1)
+            let distanceUnits = activityType === "Swim" ? "Yards" : "Miles"
+
+            // See if valid ATCUser
+            let _foundMember = ATCMembers.find(member => {
+                if (member.firstName.toLowerCase() === firstName.toLowerCase() && member.lastName.toLowerCase() === lastName.toLowerCase()) {
+                    return true
+                } else {
+                    return false;
+                }
+            });
+            if (!_foundMember) {
+                console.log(`Error in activity for member: ${firstName} ${lastName}, no valid ATC Member found in record: ${line}`);
+                totalBadAtivities += 1;
+                return false;
+            }
+            
+            let _foundTeam = teams.find(team => {
+                if ( team.name.toLowerCase() && team.name.toLowerCase() === teamName.toLowerCase() ) {
+                    return true
+                } else {
+                    return false;
+                }
+            });
+            if (!_foundTeam) {
+                totalBadAtivities += 1;
+                console.log(`Error in activity for member: ${displayName} on Team: ${teamName} , no valid ATC Team with that name found`)
+                return false;
+            }
+
+            let activityPosted = {
+                activityDateTime: activityDateTime,
+                activityType: activityType,
+                displayName: displayName,
+                distance: distance,
+                distanceUnits: distanceUnits,
+                firstName: firstName,
+                lastName: lastName,
+
+                email: _foundMember.email,
+
+                teamUid: _foundTeam.id,
+                teamName: _foundTeam.name,
+            }
+            if (logged < 10) {
+                // console.log(`Line: ${line}, activity: ${activityFieldsArray}`);
+                //console.log(`Activity Posted: ${JSON.stringify(activityPosted)}`);
+                logged += 1;
+            }
+
+            totalActivities += 1;
+
+            return (activityPosted);
+        });
+        
+        // filter out bad records
+        ChallengeActivities = ChallengeActivities.filter( activity => {
+            if (activity) {
+                return activity;
+            }
+        });
+        console.log(`Found: ${totalActivities} valid activities, ${totalBadAtivities} Bad Activities`);
+        return ChallengeActivities;
+    }
+}    
+
+
 function exitProgram() {
     console.log("BYE!");
 }
@@ -83,14 +300,13 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
     let nbrATCMembers = 0;
     let teams = [];
     let nbrTeams = 0;
-    let totalBadAtivities = 0;
-
+    let ChallengeActivities = [];
+    let totalActivitiesAdded = 0;
 
     if (!fileToUpload) {
         fileToUpload = "ATCActivities.csv";
     }
     console.log(`Uploading Activities from ${fileToUpload}`);
-    let ChallengeActivities = [];
     
     // Get the ATC Members
     try {
@@ -119,7 +335,7 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
             team.id = doc.id;
             teams.push(team)
         });
-        console.log(`Found: ${nbrTeams} Teams`);
+        //console.log(`Found: ${nbrTeams} Teams`);
     }
     catch (err) {
         console.error(`Error getting ATC Users: ${err}`);
@@ -132,8 +348,6 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
                 //
                 if (err) throw err;
                 console.log(`OK reading file`);
-
-                let totalActivities = 0;
  
                 //remove the quotes
                 let fixedData = data.replace(/["]*/g, "");
@@ -141,107 +355,7 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
                 let lines = fixedData.split('\n');
                 console.log(`read ${lines.length} lines of data from file: ${fileToUpload} line[0].length: ${lines[0].length}`);
 
-                let logged = 0;
-                ChallengeActivities = lines.map((line) => {
-                    let activityFieldsArray = line.split(',');
-
-                    let uselessDate = activityFieldsArray[0].trim();
-
-                    let dateString = activityFieldsArray[2].trim();
-                    let activityDateTime = new Date(dateString);
-                    let displayName = activityFieldsArray[1].trim();
-                    let displayNameArray = displayName.split(" ");
-                    let firstName = displayNameArray[0];
-                    let lastName = displayNameArray.length > 0 ? displayNameArray[1] : "X";
-                    if (logged < 10) {
-                        // console.log(`lastName: ${lastName}`);
-                    }
-
-                    let activityType = activityFieldsArray[3].trim();
-                    let distance = Number(activityFieldsArray[4]);
-                    let teamName = activityFieldsArray[5].trim();
-                    let teamNameArray = teamName.split(" ");
-                    teamName = teamNameArray[0].trim();
-                    // Fix people using plural of scottie
-                    if (teamName[teamName.length-1] === "s") {
-                        teamName = teamName.substring(0, teamName.length - 1);
-                    }
-
-                    lastName = lastName && lastName.length >= 1 ? lastName.trim().toLowerCase() : " ";
-                    firstName = firstName.trim().toLowerCase();
-
-                    lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
-                    firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
-                    activityType = activityType.charAt(0).toUpperCase() + activityType.slice(1)
-                    teamName = teamName.charAt(0).toUpperCase() + teamName.slice(1)
-                    let distanceUnits = activityType === "Swim" ? "Yards" : "Miles"
-
-                    // See if valid ATCUser
-                    let _foundMember = ATCMembers.find(member => {
-                        if (member.firstName === firstName && member.lastName === lastName) {
-                            return true
-                        } else {
-                            return false;
-                        }
-                    });
-                    if (!_foundMember) {
-                        //console.log(`Error in activity for member: ${firstName} ${lastName}, no valid ATC Member found in record: ${line}`);
-                        totalBadAtivities += 1;
-                        return false;
-                    }
-                    if (logged < 10) {
-                        // console.log(`Found member : ${JSON.stringify(_foundMember)}`);
-                    }
-                    
-                    let _foundTeam = teams.find(team => {
-                        if ( team.name && team.name === teamName ) {
-                            return true
-                        } else {
-                            return false;
-                        }
-                    });
-                    if (!_foundTeam) {
-                        totalBadAtivities += 1;
-                        //console.log(`Error in activity for member: ${displayName} on Team: ${teamName} , no valid ATC Team with that name found`)
-                        return false;
-                    }
-                    if (logged < 10) {
-                        //console.log(`Found team : ${JSON.stringify(_foundTeam)}`);
-                    }
-
-                    let activityPosted = {
-                        activityDateTime: activityDateTime,
-                        activityType: activityType,
-                        displayName: displayName,
-                        distance: distance,
-                        distanceUnits: distanceUnits,
-                        firstName: firstName,
-                        lastName: lastName,
-
-                        email: _foundMember.email,
-
-                        teamUid: _foundTeam.id,
-                        teamName: _foundTeam.name,
-                    }
-                    if (logged < 10) {
-                        // console.log(`Line: ${line}, activity: ${activityFieldsArray}`);
-                        //console.log(`Activity Posted: ${JSON.stringify(activityPosted)}`);
-                        logged += 1;
-                    }
-
-                    totalActivities += 1;
-    
-                    return (activityPosted);
-                });
-
-                // filter out bad records
-                ChallengeActivities = ChallengeActivities.filter( activity => {
-                    if (activity) {
-                        return activity;
-                    }
-                });
-
-                console.log(`Found: ${totalActivities} valid activities, ${totalBadAtivities}`)
+                ChallengeActivities = Activities.getChallengeActivities (lines, ATCMembers, teams);      
 
                 // Now, I need to create the activities
                 for (let i = 0; i < ChallengeActivities.length; i++) {
@@ -261,11 +375,12 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
                             });
             
                             if (foundUser) {
-                                console.log(`User with email: ${user.email} found!, displayName: ${user.displayName}`);
+                                //(`User with email: ${user.email} found!, displayName: ${user.displayName}`);
                                 activity.uid = user.id;
                                 createActivity(activity).then(res => {
                                     // worked
-                                        console.log(`Created Activity in createActivitiesFromGoogleDoc: ${res}`);
+                                        // console.log(`Created Activity in createActivitiesFromGoogleDoc: ${res}`);
+                                        totalActivitiesAdded += 1;
                                      }).catch(err => {
                                         console.error(`Error Creating Activity in createActivitiesFromGoogleDoc: ${activity}`);
                                     });                  
@@ -280,6 +395,8 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
                     }
                 }
             }); //fs.read
+            console.log(`Total Activities Created: ${totalActivitiesAdded}`)
+
     }
 }
 // Copy Users from current location to DEV
@@ -297,7 +414,6 @@ async function createUsersFromGoogleActivities(fileToUpload) {
     let nbrATCMembers = 0;
     let teams = [];
     let nbrTeams = 0;
-    let totalBadAtivities = 0;
 
     // Get the ATC Members
     try {
@@ -321,7 +437,7 @@ async function createUsersFromGoogleActivities(fileToUpload) {
         let allteamsSnapshot = await dbTeamsRef.get();
         allteamsSnapshot.forEach(doc => {
             nbrTeams += 1;
-            console.log(doc.id, '=>', JSON.stringify(doc.data()));
+            //(doc.id, '=>', JSON.stringify(doc.data()));
             let team = doc.data();
             team.id = doc.id;
             teams.push(team)
@@ -344,7 +460,6 @@ async function createUsersFromGoogleActivities(fileToUpload) {
                 if (err) throw err;
                 console.log(`OK reading file`);
 
-                let totalActivities = 0;
                 let totalMembers = 0;
  
                 //remove the quotes
@@ -354,105 +469,7 @@ async function createUsersFromGoogleActivities(fileToUpload) {
                 console.log(`read ${lines.length} lines of data from file: ${fileToUpload} line[0].length: ${lines[0].length}`);
                 // 1/15/2020 10:00:53,Laurie Nicholson,1/15/2020,Run,3.4,Rahuligan,Miles (Bike and Run)
 
-                let logged = 0;
-                ChallengeActivities = lines.map((line) => {
-                    let activityFieldsArray = line.split(',');
-
-                    let uselessDate = activityFieldsArray[0].trim();
-
-                    let dateString = activityFieldsArray[2].trim();
-                    let activityDateTime = new Date(dateString);
-                    let displayName = activityFieldsArray[1].trim();
-                    let displayNameArray = displayName.split(" ");
-                    let firstName = displayNameArray[0];
-                    let lastName = displayNameArray.length > 0 ? displayNameArray[1] : "X";
-                    if (logged < 10) {
-                        // console.log(`lastName: ${lastName}`);
-                    }
-
-                    let activityType = activityFieldsArray[3].trim();
-                    let distance = Number(activityFieldsArray[4]);
-                    let teamName = activityFieldsArray[5].trim();
-                    let teamNameArray = teamName.split(" ");
-                    teamName = teamNameArray[0].trim();
-                    // Fix people using plural of scottie
-                    if (teamName[teamName.length-1] === "s") {
-                        teamName = teamName.substring(0, teamName.length - 1);
-                    }
-
-                    lastName = lastName && lastName.length >= 1 ? lastName.trim().toLowerCase() : " ";
-                    firstName = firstName.trim().toLowerCase();
-
-                    lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
-                    firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
-                    activityType = activityType.charAt(0).toUpperCase() + activityType.slice(1)
-                    teamName = teamName.charAt(0).toUpperCase() + teamName.slice(1)
-                    let distanceUnits = activityType === "Swim" ? "Yards" : "Miles"
-
-                    // See if valid ATCUser
-                    let _foundMember = ATCMembers.find(member => {
-                        if (member.firstName === firstName && member.lastName === lastName) {
-                            return true
-                        } else {
-                            return false;
-                        }
-                    });
-                    if (!_foundMember) {
-                        //console.log(`Error in activity for member: ${firstName} ${lastName}, no valid ATC Member found in record: ${line}`);
-                        totalBadAtivities += 1;
-                        return false;
-                    }
-                    if (logged < 10) {
-                        // console.log(`Found member : ${JSON.stringify(_foundMember)}`);
-                    }
-                    
-                    let _foundTeam = teams.find(team => {
-                        if ( team.name && team.name === teamName ) {
-                            return true
-                        } else {
-                            return false;
-                        }
-                    });
-                    if (!_foundTeam) {
-                        totalBadAtivities += 1;
-                        //console.log(`Error in activity for member: ${displayName} on Team: ${teamName} , no valid ATC Team with that name found`)
-                        return false;
-                    }
-                    if (logged < 10) {
-                        //console.log(`Found team : ${JSON.stringify(_foundTeam)}`);
-                    }
-
-                    let activityPosted = {
-                        activityDateTime: activityDateTime,
-                        activityType: activityType,
-                        displayName: displayName,
-                        distance: distance,
-                        distanceUnits: distanceUnits,
-                        firstName: firstName,
-                        lastName: lastName,
-
-                        email: _foundMember.email,
-
-                        teamUid: _foundTeam.id,
-                        teamName: _foundTeam.name,
-                    }
-                    if (logged < 10) {
-                        // console.log(`Line: ${line}, activity: ${activityFieldsArray}`);
-                        //console.log(`Activity Posted: ${JSON.stringify(activityPosted)}`);
-                        logged += 1;
-                    }
-
-                    totalActivities += 1;
-    
-                    return (activityPosted);
-                });
-
-                // filter out bad records
-                ChallengeActivities = ChallengeActivities.filter( activity => {
-                    if (activity) {
-                        return activity;
-                    }
-                });
+                ChallengeActivities = Activities.getChallengeActivities (lines, ATCMembers, teams);      
 
                 for (let i = 0; i < ChallengeActivities.length; i++) {
                     if (!ChallengeActivities[i]) {
@@ -483,7 +500,7 @@ async function createUsersFromGoogleActivities(fileToUpload) {
                         //console.log(`Unique Member: ${JSON.stringify(member)}`);
                     }
                 }
-                console.log(`Found: ${totalActivities} valid activities, ${totalBadAtivities}, Challenge Members: ${totalMembers}`)
+                console.log(`Challenge Members: ${totalMembers}`)
 
                 // Now, I need to creeate the users and then add the acivities
                 for (let i = 0; i < ChallengeMembers.length; i++) {
@@ -493,18 +510,18 @@ async function createUsersFromGoogleActivities(fileToUpload) {
                             user.password = undefined;
                             admin.auth().getUserByEmail(user.email).then((authUser) => {
                                 // User found.
-                                console.log(`Found authUser: ${JSON.stringify(authUser, null, 4)}`);
+                                // console.log(`Found authUser: ${JSON.stringify(authUser, null, 4)}`);
                                 user.uid = authUser.uid;
                                 createFirestoreUserBootstrap(user).then (newUser => {
-                                    console.log(`Creating User in createFirestoreUserBootstrap: ${user}, newUser: ${newUser}`);
+                                    // console.log(`Creating User in createFirestoreUserBootstrap: ${user}, newUser: ${newUser}`);
                                 }).catch(err => {
                                     console.error(`Error Creating User in createFirestoreUserBootstrap: ${user}`);
                                 });  
 
                             }).catch(function(error) {
-                                console.log("Error fetching user data:", error);
+                                //console.log("Error fetching auth user data:", error);
                                 createAuthUserBootstrap(user).then(authUser => {
-                                    console.log(`Created authUser: ${JSON.stringify(authUser, null, 4)}`);
+                                    //console.log(`Created authUser: ${JSON.stringify(authUser, null, 4)}`);
                                     user.uid = authUser.uid;
                                     createFirestoreUserBootstrap(user).then (newUser => {
                                         // Now update claims for a user - I dont think I acutaull need to do this
@@ -556,14 +573,12 @@ async function copyUsersToDev() {
                         users.push(user);
 
                         // Now create the user with same ID
-                        console.log(`User retrieved, user=${JSON.stringify(user)}`);
+                        // console.log(`User retrieved, user=${JSON.stringify(user)}`);
                         dbUsersRef
                             .doc(user.id)
                             .set(user)
                             .then(user => {
-                                console.log(
-                                    `Updated user ${JSON.stringify(user)}`
-                                );
+                                //console.log(`Updated user ${JSON.stringify(user)}`);
                                 resolve(user);
                             })
                             .catch(err => {
@@ -638,16 +653,14 @@ async function uploadATCMembers(fileToUpload) {
             });
 
             let _ = ATCMembers.map((member) => {
-                console.log(`Trying to update ${JSON.stringify(member)}`);
+                // console.log(`Trying to update ${JSON.stringify(member)}`);
 
                 // use email address as key to overwrite duplicates
                 dbATCMembersRef
                     .doc(member.email)
                     .set(member)
                     .then(memberId => {
-                        console.log(
-                            `Updated member ${JSON.stringify(member)} with id: ${memberId}`
-                        );
+                        //console.log(`Updated member ${JSON.stringify(member)} with id: ${memberId}`);
                     })
                     .catch(err => {
                         console.error(`error updating user: ${err}`);
@@ -780,10 +793,10 @@ async function createFirestoreUserBootstrap(user) {
     const dbActivitiesRef = dbALLRefs.dbActivitiesRef
     const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
 
-    console.log(`trying to update user in fb: ${user}`);
+    //console.log(`trying to update user in fb: ${user}`);
     return new Promise(async (resolve, reject) => {
         // update
-        console.log("User updated, user=", user);
+        // console.log("User updated, user=", user);
         dbUsersRef.doc(user.uid)
             .set({
                 firstName: user.firstName,
@@ -798,7 +811,7 @@ async function createFirestoreUserBootstrap(user) {
                 merge: true
             })
             .then(user => {
-                console.log(`Updated user to: ${JSON.stringify(user)}`);
+                //console.log(`Updated user to: ${JSON.stringify(user)}`);
                 resolve(user);
             })
             .catch(err => {
@@ -810,9 +823,7 @@ async function createFirestoreUserBootstrap(user) {
 
 // Route for Creating a new user with email and password
 function createAuthUserBootstrap(user) {
-    console.log(
-        `trying to createAuthUserBootstrap: ${JSON.stringify(user, null, 2)}`
-    );
+    // console.log(`trying to createAuthUserBootstrap: ${JSON.stringify(user, null, 2)}`);
     // Generate random password if no password exists (meaning its created by someone else)
     if (!user.password || user.password === null || user.password === "") {
         let randomPassword = Math.random().toString(36).slice(-8);
@@ -828,7 +839,7 @@ function createAuthUserBootstrap(user) {
                 displayName: `${user.firstName} ${user.lastName}`,
                 disabled: false
             }).then(authUser => {
-                console.log("Successfully added auth user");
+                // console.log("Successfully added auth user");
                 resolve(authUser);
             }).catch(err => {
                 console.error("Error creating auth user:", err);
@@ -882,10 +893,10 @@ async function seedDatabase() {
     user.firstName = answer.firstName;
     user.lastName = answer.lastName;
 
-    console.log(`user: ${JSON.stringify(user, null, 4)}`);
+    //console.log(`user: ${JSON.stringify(user, null, 4)}`);
 
     let authUser = await createAuthUserBootstrap(user);
-    console.log(`Created authUser: ${JSON.stringify(authUser, null, 4)}`);
+    //console.log(`Created authUser: ${JSON.stringify(authUser, null, 4)}`);
 
     user.uid = authUser.uid;
     let newUser = await createFirestoreUserBootstrap(user);
