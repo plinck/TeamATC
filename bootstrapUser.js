@@ -279,7 +279,7 @@ async function createActivity (activity) {
                 uid: activity.uid
             })
             .then((res) => {
-                console.log("Firestore activity successfully added");
+                // console.log("Firestore activity successfully added");
                 return resolve(res);
             })
             .catch((error) => {
