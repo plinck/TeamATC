@@ -28,10 +28,12 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 
 import Util from "../Util/Util";
+import TeamResultsModal from './Graphs/TeamResultsModal';
 
 class Dashboard extends React.Component {
     state = {
         loadingFlag: false,
+        openTeamResults: false,
         activities: [],
         myActivities: [],
         nbrActivities: 0,
@@ -174,6 +176,13 @@ class Dashboard extends React.Component {
             // console.log(`Detached listener`);
         }
     }
+
+    handleClickTeamResults() {
+        if (this._mounted) {
+            this.setState({ openTeamResults: true });
+        }
+    }
+
 
     // Set the totals for a team calculated from activity listener, based on team name
     // need to check about switching to teamUid since better
@@ -646,15 +655,12 @@ class Dashboard extends React.Component {
                 }}>Leaderboard 
             </Link>
             <div className="col s2 offset-s1 m2 offset-m1">
-                <Tooltip title="Show Activities">
-                    <Link to={{
-                        pathname: "/activities",
-                        state: {filterByString: "Mine"}
-                        }}>
-                        <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
-                            className="material-icons indigo-text text-darken-4">launch
-                        </i>{" "}
-                    </Link>
+                <Tooltip title="Show Results">
+                    <div onClick={this.handleClickTeamResults.bind(this)}>
+                    <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
+                        className="material-icons indigo-text text-darken-4" >launch
+                    </i>{" "}
+                    </div>
                 </Tooltip>
             </div>
         </Box>
@@ -749,6 +755,8 @@ class Dashboard extends React.Component {
         if (this.props.user.authUser) {
             return (
                 <div>
+                    <TeamResultsModal id="TeamResultsModal" open={this.state.openTeamResults} teamTotals={this.totals.teamR}/>
+
                     {this.state.loadingFlag ?
                         <Grid container justify="center">
                             <CircularProgress /> <p>Loading ...</p>

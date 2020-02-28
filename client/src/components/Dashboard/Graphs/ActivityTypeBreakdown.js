@@ -36,7 +36,7 @@ class ActivityTypeBreakdown extends React.Component {
           ];
 
         let chartValues = [
-            [swimDistanceTotal, bikeDistanceTotal, runDistanceTotal],
+            [swimPointsTotal, bikePointsTotal, runPointsTotal],
             [swimDurationTotal, bikeDurationTotal, runDurationTotal]
         ];
 
@@ -60,28 +60,10 @@ class ActivityTypeBreakdown extends React.Component {
                     row: 0,
                     column: 1
                 },                      
-                name: 'Duration',
+                name: 'Points',
                 hole:  donutHoleSize,          
                 type: 'pie'
-            },
-            {
-                values: chartValues[1],
-                labels: chartLabels[0],
-                hoverinfo: 'label+value',
-                //mode: 'markers+text',
-                text: chartLabels[0],
-                textposition: 'inside',
-                marker: {
-                    colors: ultimateColors[0]
-                },    
-                domain: {
-                    row: 0,
-                    column: 0
-                },      
-                name: 'Distance',
-                hole:  donutHoleSize,          
-                type: 'pie'
-            },
+            }
         ];
             
         let layout = {
@@ -106,7 +88,7 @@ class ActivityTypeBreakdown extends React.Component {
                     size: 16
                   },
                   showarrow: false,
-                  text: 'Hrs',
+                  text: 'Points',
                   x: 0.5,
                   y: 0.5
                 },
