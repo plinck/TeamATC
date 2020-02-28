@@ -54,13 +54,16 @@ class TeamResultsModal extends React.Component {
     render() {
         return (
             <div>
-                <Dialog            
+                <Dialog       
+                    fullWidth={"fullWidth"}
+                    maxWidth={"lg"}
+             
                     open={this.state.open}
                     onClose={this.handleClose}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description">
                     <DialogTitle id="alert-dialog-title">{"Team Results"}</DialogTitle>
-                        <DialogContent className="row" style={{width: "100%", maxWidth: "none"}}>
+                        <DialogContent className="row">
                                 {/* Team standings/results card */}
                                         <Box className="white" margin={2} paddingLeft={1} paddingRight={1}> 
                                             {this.leaderBoardHeaderRow}
