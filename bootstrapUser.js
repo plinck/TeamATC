@@ -157,6 +157,102 @@ class MemberInfo {
     }
 }    
 
+class Activities {
+
+    static getChallengeActivities (lines, ATCMembers, teams) {
+
+        let logged = 0;
+        let ChallengeActivities = [];
+        let totalBadAtivities = 0;
+        let totalActivities = 0;    
+
+        ChallengeActivities = lines.map((line) => {
+            let activityFieldsArray = line.split(',');
+
+            let uselessDate = activityFieldsArray[0].trim();
+
+            let dateString = activityFieldsArray[2].trim();
+            let activityDateTime = new Date(dateString);
+
+            // Fix the name to get proper firstname lastname to match ATC Database
+            let fullName = MemberInfo.getName(activityFieldsArray[1]);
+            let firstName = fullName.firstName;
+            let lastName = fullName.lastName;
+            let displayName = `${firstName} ${lastName}`
+        
+            // Fix the team name to get match to Database
+            let teamName = MemberInfo.getTeamName(activityFieldsArray[5]);
+            
+            let activityType = activityFieldsArray[3].trim();
+            let distance = Number(activityFieldsArray[4]);
+            
+            activityType = activityType.charAt(0).toUpperCase() + activityType.slice(1)
+            let distanceUnits = activityType === "Swim" ? "Yards" : "Miles"
+
+            // See if valid ATCUser
+            let _foundMember = ATCMembers.find(member => {
+                if (member.firstName.toLowerCase() === firstName.toLowerCase() && member.lastName.toLowerCase() === lastName.toLowerCase()) {
+                    return true
+                } else {
+                    return false;
+                }
+            });
+            if (!_foundMember) {
+                console.log(`Error in activity for member: ${firstName} ${lastName}, no valid ATC Member found in record: ${line}`);
+                totalBadAtivities += 1;
+                return false;
+            }
+            
+            let _foundTeam = teams.find(team => {
+                if ( team.name.toLowerCase() && team.name.toLowerCase() === teamName.toLowerCase() ) {
+                    return true
+                } else {
+                    return false;
+                }
+            });
+            if (!_foundTeam) {
+                totalBadAtivities += 1;
+                console.log(`Error in activity for member: ${displayName} on Team: ${teamName} , no valid ATC Team with that name found`)
+                return false;
+            }
+
+            let activityPosted = {
+                activityDateTime: activityDateTime,
+                activityType: activityType,
+                displayName: displayName,
+                distance: distance,
+                distanceUnits: distanceUnits,
+                firstName: firstName,
+                lastName: lastName,
+
+                email: _foundMember.email,
+
+                teamUid: _foundTeam.id,
+                teamName: _foundTeam.name,
+            }
+            if (logged < 10) {
+                // console.log(`Line: ${line}, activity: ${activityFieldsArray}`);
+                //console.log(`Activity Posted: ${JSON.stringify(activityPosted)}`);
+                logged += 1;
+            }
+
+            totalActivities += 1;
+
+            return (activityPosted);
+        });
+        
+        // filter out bad records
+        ChallengeActivities = ChallengeActivities.filter( activity => {
+            if (activity) {
+                return activity;
+            }
+        });
+        console.log(`Found: ${totalActivities} valid activities, ${totalBadAtivities} Bad Activities`);
+        return ChallengeActivities;
+    }
+}    
+
+
 function exitProgram() {
     console.log("BYE!");
 }
@@ -204,14 +300,13 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
     let nbrATCMembers = 0;
     let teams = [];
     let nbrTeams = 0;
-    let totalBadAtivities = 0;
-
+    let ChallengeActivities = [];
+    let totalActivitiesAdded = 0;
 
     if (!fileToUpload) {
         fileToUpload = "ATCActivities.csv";
     }
     console.log(`Uploading Activities from ${fileToUpload}`);
-    let ChallengeActivities = [];
     
     // Get the ATC Members
     try {
@@ -253,8 +348,6 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
                 //
                 if (err) throw err;
                 console.log(`OK reading file`);
-
-                let totalActivities = 0;
  
                 //remove the quotes
                 let fixedData = data.replace(/["]*/g, "");
@@ -262,107 +355,7 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
                 let lines = fixedData.split('\n');
                 console.log(`read ${lines.length} lines of data from file: ${fileToUpload} line[0].length: ${lines[0].length}`);
 
-                let logged = 0;
-                ChallengeActivities = lines.map((line) => {
-                    let activityFieldsArray = line.split(',');
-
-                    let uselessDate = activityFieldsArray[0].trim();
-
-                    let dateString = activityFieldsArray[2].trim();
-                    let activityDateTime = new Date(dateString);
-                    let displayName = activityFieldsArray[1].trim();
-                    let displayNameArray = displayName.split(" ");
-                    let firstName = displayNameArray[0];
-                    let lastName = displayNameArray.length > 0 ? displayNameArray[1] : "X";
-                    if (logged < 10) {
-                        // console.log(`lastName: ${lastName}`);
-                    }
-
-                    let activityType = activityFieldsArray[3].trim();
-                    let distance = Number(activityFieldsArray[4]);
-                    let teamName = activityFieldsArray[5].trim();
-                    let teamNameArray = teamName.split(" ");
-                    teamName = teamNameArray[0].trim();
-                    // Fix people using plural of scottie
-                    if (teamName[teamName.length-1] === "s") {
-                        teamName = teamName.substring(0, teamName.length - 1);
-                    }
-
-                    lastName = lastName && lastName.length >= 1 ? lastName.trim().toLowerCase() : " ";
-                    firstName = firstName.trim().toLowerCase();
-
-                    lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
-                    firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
-                    activityType = activityType.charAt(0).toUpperCase() + activityType.slice(1)
-                    teamName = teamName.charAt(0).toUpperCase() + teamName.slice(1)
-                    let distanceUnits = activityType === "Swim" ? "Yards" : "Miles"
-
-                    // See if valid ATCUser
-                    let _foundMember = ATCMembers.find(member => {
-                        if (member.firstName === firstName && member.lastName === lastName) {
-                            return true
-                        } else {
-                            return false;
-                        }
-                    });
-                    if (!_foundMember) {
-                        //console.log(`Error in activity for member: ${firstName} ${lastName}, no valid ATC Member found in record: ${line}`);
-                        totalBadAtivities += 1;
-                        return false;
-                    }
-                    if (logged < 10) {
-                        // console.log(`Found member : ${JSON.stringify(_foundMember)}`);
-                    }
-                    
-                    let _foundTeam = teams.find(team => {
-                        if ( team.name && team.name === teamName ) {
-                            return true
-                        } else {
-                            return false;
-                        }
-                    });
-                    if (!_foundTeam) {
-                        totalBadAtivities += 1;
-                        //console.log(`Error in activity for member: ${displayName} on Team: ${teamName} , no valid ATC Team with that name found`)
-                        return false;
-                    }
-                    if (logged < 10) {
-                        //console.log(`Found team : ${JSON.stringify(_foundTeam)}`);
-                    }
-
-                    let activityPosted = {
-                        activityDateTime: activityDateTime,
-                        activityType: activityType,
-                        displayName: displayName,
-                        distance: distance,
-                        distanceUnits: distanceUnits,
-                        firstName: firstName,
-                        lastName: lastName,
-
-                        email: _foundMember.email,
-
-                        teamUid: _foundTeam.id,
-                        teamName: _foundTeam.name,
-                    }
-                    if (logged < 10) {
-                        // console.log(`Line: ${line}, activity: ${activityFieldsArray}`);
-                        //console.log(`Activity Posted: ${JSON.stringify(activityPosted)}`);
-                        logged += 1;
-                    }
-
-                    totalActivities += 1;
-    
-                    return (activityPosted);
-                });
-
-                // filter out bad records
-                ChallengeActivities = ChallengeActivities.filter( activity => {
-                    if (activity) {
-                        return activity;
-                    }
-                });
-
-                console.log(`Found: ${totalActivities} valid activities, ${totalBadAtivities}`)
+                ChallengeActivities = Activities.getChallengeActivities (lines, ATCMembers, teams);      
 
                 // Now, I need to create the activities
                 for (let i = 0; i < ChallengeActivities.length; i++) {
@@ -382,11 +375,12 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
                             });
             
                             if (foundUser) {
-                                console.log(`User with email: ${user.email} found!, displayName: ${user.displayName}`);
+                                //(`User with email: ${user.email} found!, displayName: ${user.displayName}`);
                                 activity.uid = user.id;
                                 createActivity(activity).then(res => {
                                     // worked
-                                        console.log(`Created Activity in createActivitiesFromGoogleDoc: ${res}`);
+                                        // console.log(`Created Activity in createActivitiesFromGoogleDoc: ${res}`);
+                                        totalActivitiesAdded += 1;
                                      }).catch(err => {
                                         console.error(`Error Creating Activity in createActivitiesFromGoogleDoc: ${activity}`);
                                     });                  
@@ -401,6 +395,8 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
                     }
                 }
             }); //fs.read
+            console.log(`Total Activities Created: ${totalActivitiesAdded}`)
+
     }
 }
 // Copy Users from current location to DEV
@@ -418,7 +414,6 @@ async function createUsersFromGoogleActivities(fileToUpload) {
     let nbrATCMembers = 0;
     let teams = [];
     let nbrTeams = 0;
-    let totalBadAtivities = 0;
 
     // Get the ATC Members
     try {
@@ -442,7 +437,7 @@ async function createUsersFromGoogleActivities(fileToUpload) {
         let allteamsSnapshot = await dbTeamsRef.get();
         allteamsSnapshot.forEach(doc => {
             nbrTeams += 1;
-            console.log(doc.id, '=>', JSON.stringify(doc.data()));
+            //(doc.id, '=>', JSON.stringify(doc.data()));
             let team = doc.data();
             team.id = doc.id;
             teams.push(team)
@@ -465,7 +460,6 @@ async function createUsersFromGoogleActivities(fileToUpload) {
                 if (err) throw err;
                 console.log(`OK reading file`);
 
-                let totalActivities = 0;
                 let totalMembers = 0;
  
                 //remove the quotes
@@ -475,88 +469,7 @@ async function createUsersFromGoogleActivities(fileToUpload) {
                 console.log(`read ${lines.length} lines of data from file: ${fileToUpload} line[0].length: ${lines[0].length}`);
                 // 1/15/2020 10:00:53,Laurie Nicholson,1/15/2020,Run,3.4,Rahuligan,Miles (Bike and Run)
 
-                let logged = 0;
-                ChallengeActivities = lines.map((line) => {
-                    let activityFieldsArray = line.split(',');
-
-                    let uselessDate = activityFieldsArray[0].trim();
-
-                    let dateString = activityFieldsArray[2].trim();
-                    let activityDateTime = new Date(dateString);
-
-                    // Fix the name to get proper firstname lastname to match ATC Database
-                    let fullName = MemberInfo.getName(activityFieldsArray[1]);
-                    let firstName = fullName.firstName;
-                    let lastName = fullName.lastName;
-                    let displayName = `${firstName} ${lastName}`
-                
-                    // Fix the team name to get match to Database
-                    let teamName = MemberInfo.getTeamName(activityFieldsArray[5]);
-                    
-                    let activityType = activityFieldsArray[3].trim();
-                    let distance = Number(activityFieldsArray[4]);
-                    
-                    activityType = activityType.charAt(0).toUpperCase() + activityType.slice(1)
-                    let distanceUnits = activityType === "Swim" ? "Yards" : "Miles"
-
-                    // See if valid ATCUser
-                    let _foundMember = ATCMembers.find(member => {
-                        if (member.firstName.toLowerCase() === firstName.toLowerCase() && member.lastName.toLowerCase() === lastName.toLowerCase()) {
-                            return true
-                        } else {
-                            return false;
-                        }
-                    });
-                    if (!_foundMember) {
-                        console.log(`Error in activity for member: ${firstName} ${lastName}, no valid ATC Member found in record: ${line}`);
-                        totalBadAtivities += 1;
-                        return false;
-                    }
-                    
-                    let _foundTeam = teams.find(team => {
-                        if ( team.name.toLowerCase() && team.name.toLowerCase() === teamName.toLowerCase() ) {
-                            return true
-                        } else {
-                            return false;
-                        }
-                    });
-                    if (!_foundTeam) {
-                        totalBadAtivities += 1;
-                        console.log(`Error in activity for member: ${displayName} on Team: ${teamName} , no valid ATC Team with that name found`)
-                        return false;
-                    }
-
-                    let activityPosted = {
-                        activityDateTime: activityDateTime,
-                        activityType: activityType,
-                        displayName: displayName,
-                        distance: distance,
-                        distanceUnits: distanceUnits,
-                        firstName: firstName,
-                        lastName: lastName,
-
-                        email: _foundMember.email,
-
-                        teamUid: _foundTeam.id,
-                        teamName: _foundTeam.name,
-                    }
-                    if (logged < 10) {
-                        // console.log(`Line: ${line}, activity: ${activityFieldsArray}`);
-                        //console.log(`Activity Posted: ${JSON.stringify(activityPosted)}`);
-                        logged += 1;
-                    }
-
-                    totalActivities += 1;
-    
-                    return (activityPosted);
-                });
-
-                // filter out bad records
-                ChallengeActivities = ChallengeActivities.filter( activity => {
-                    if (activity) {
-                        return activity;
-                    }
-                });
+                ChallengeActivities = Activities.getChallengeActivities (lines, ATCMembers, teams);      
 
                 for (let i = 0; i < ChallengeActivities.length; i++) {
                     if (!ChallengeActivities[i]) {
@@ -587,7 +500,7 @@ async function createUsersFromGoogleActivities(fileToUpload) {
                         //console.log(`Unique Member: ${JSON.stringify(member)}`);
                     }
                 }
-                console.log(`Found: ${totalActivities} valid activities, ${totalBadAtivities}, Challenge Members: ${totalMembers}`)
+                console.log(`Challenge Members: ${totalMembers}`)
 
                 // Now, I need to creeate the users and then add the acivities
                 for (let i = 0; i < ChallengeMembers.length; i++) {
@@ -660,7 +573,7 @@ async function copyUsersToDev() {
                         users.push(user);
 
                         // Now create the user with same ID
-                        console.log(`User retrieved, user=${JSON.stringify(user)}`);
+                        // console.log(`User retrieved, user=${JSON.stringify(user)}`);
                         dbUsersRef
                             .doc(user.id)
                             .set(user)
@@ -740,16 +653,14 @@ async function uploadATCMembers(fileToUpload) {
             });
 
             let _ = ATCMembers.map((member) => {
-                console.log(`Trying to update ${JSON.stringify(member)}`);
+                // console.log(`Trying to update ${JSON.stringify(member)}`);
 
                 // use email address as key to overwrite duplicates
                 dbATCMembersRef
                     .doc(member.email)
                     .set(member)
                     .then(memberId => {
-                        console.log(
-                            `Updated member ${JSON.stringify(member)} with id: ${memberId}`
-                        );
+                        //console.log(`Updated member ${JSON.stringify(member)} with id: ${memberId}`);
                     })
                     .catch(err => {
                         console.error(`error updating user: ${err}`);
@@ -982,7 +893,7 @@ async function seedDatabase() {
     user.firstName = answer.firstName;
     user.lastName = answer.lastName;
 
-    console.log(`user: ${JSON.stringify(user, null, 4)}`);
+    //console.log(`user: ${JSON.stringify(user, null, 4)}`);
 
     let authUser = await createAuthUserBootstrap(user);
     //console.log(`Created authUser: ${JSON.stringify(authUser, null, 4)}`);
