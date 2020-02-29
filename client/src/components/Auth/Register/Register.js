@@ -140,7 +140,7 @@ class Register extends React.Component {
         // Just allow them to register as long as they arte member of the club
         // 1. Validate they are club memmber
         const user = this.state;
-        MemberDB.getByEmail(user.email).then (user => {
+        MemberDB.getByEmail(user.email).then (_ => {
             // First, create the auth user in firebase
             // Should actually update auth profile after this is done but not 100% needed as user stuff comes from firestore
             UserAPI.registerNewUser(user).then(authUser => {
