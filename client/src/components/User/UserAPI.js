@@ -140,7 +140,7 @@ class UserAPI {
         // e.g. this funcxtion is ploymorphic so it can handle setting lots of userInfo or just seeding the firestore collection
         if (userInfo) {
             user = {
-                displayName: `${userInfo.firstName} ${userInfo.firstName}`,
+                displayName: `${userInfo.firstName} ${userInfo.lastName}`,
                 firstName: userInfo.firstName,
                 lastName: userInfo.lastName,
                 phoneNumber: userInfo.phoneNumber ? userInfo.phoneNumber : "",
