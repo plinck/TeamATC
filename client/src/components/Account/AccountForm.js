@@ -204,8 +204,6 @@ class AccountForm extends React.Component {
         const isValid = firstName !== "" && lastName !== "" && phoneNumber !== "";
         var isRoleEditEnabled = false;
 
-        let teamUid1 = "";
-
         // DO NOT allow users to edit their own role even if admin as bad
         // things can happen
         // if (isAdmin) {

@@ -4,17 +4,10 @@ import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Button from '@material-ui/core/Button';
 import Box from "@material-ui/core/Box";
 import SearchIcon from "@material-ui/icons/Search";
 import TextField from '@material-ui/core/TextField';
 import { InputAdornment } from '@material-ui/core';
-
-import IconButton from '@material-ui/core/IconButton';
-import AddIcon from '@material-ui/icons/Add';
-import SettingsIcon from '@material-ui/icons/Settings';
-import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
-
 
 // For select input field
 import FormControl from '@material-ui/core/FormControl';
@@ -252,7 +245,6 @@ class Activities extends React.Component {
 
         // Search and filter
         let searchBy = this.state.searchBy;
-        let filterByString = this.state.filterByString;
         let filterBy = this.state.filterBy;
         let orderBy = this.state.orderBy;
         let activities = this.state.activities;

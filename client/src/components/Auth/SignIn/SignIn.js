@@ -4,9 +4,6 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { InputAdornment } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
-import FormControl from '@material-ui/core/FormControl';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
@@ -180,8 +177,6 @@ class SignInFormBase extends React.Component {
                                     </InputAdornment>
                                 )
                             }}
-                            variant="outlined"
-                            margin="normal"
                             onChange={this.onChange}
                             error={!!this.state.errorText}
                             helperText={this.state.errorText}

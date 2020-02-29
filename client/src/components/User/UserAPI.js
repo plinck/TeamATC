@@ -1,4 +1,3 @@
-import GLOBAL_ENV from "../Environment/Environment";
 import Util from "../Util/Util";
 
 class UserAPI {
@@ -14,8 +13,6 @@ class UserAPI {
     static getCurrentUser = () => {
         // its a promise so return
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB();
-
             Util.getCurrentAuthUser().then(autUser => {
                 const uid = autUser.uid;
 
@@ -45,7 +42,6 @@ class UserAPI {
     static updateCurrent =  (user) => {
         console.log(`trying to update user in fb and auth: ${user}`);
         return new Promise(async (resolve, reject) => {
-            const db = Util.getFirestoreDB();
             const authUser = await Util.getCurrentAuthUser();
 
             // we always want uid = id to keep auth and firestore in sync
@@ -100,6 +96,28 @@ class UserAPI {
         return(firebase.doCreateUserWithEmailAndPassword(user.email, user.password));
     }    
 
+    // Update user's auth profile
+    static updateCurrentUserAuthProfile(user) {
+        // HERE
+        let promise = 
+            this.getCurrentAuthUser().then (authUser => {
+                authUser.updateProfile({
+                    displayName: `${user.firstName} ${user.lastName}`,
+                    photoURL: user.photoURL ? user.photoURL : "",
+                    phoneNumber: user.phoneNumber ? user.phoneNumber : ""
+                }).then(() => {
+                    // Update successful - doesnt matter
+                }).catch((error) => {
+                    // An error happened - doesnt matter, just log
+                    console.error(`Error updateing user's profile ${error}.  No biigie, user still OK`);
+                });
+            }).catch (err => {
+                // no biggie, let go
+            });
+
+        return promise;
+    }
+
     // This calls the backend to allow admins to create an auth user securely abd not change login
     static signinNewUser = (user) => {
         console.log(`trying to sign user in auth: ${user}`);
@@ -147,8 +165,6 @@ class UserAPI {
         }
 
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB();
-
             const dbUsersRef = Util.getDBRefs().dbUsersRef;
             let docRef = dbUsersRef.doc(authUser.user.uid);
             docRef.get().then((doc) => {
@@ -207,8 +223,6 @@ class UserAPI {
     // Everything from top down must be async or awaits do NOT wait
     static getUsers = () => {
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB();
-
             const dbUsersRef = Util.getDBRefs().dbUsersRef;
             dbUsersRef.get().then((querySnapshot) => {
                 let users = [];
@@ -231,8 +245,6 @@ class UserAPI {
     static getByEmail = (email) => {
         // its a promise so return
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB();
-
             // then get from firestore
             let user = {};
             let foundUser = false;
@@ -265,8 +277,6 @@ class UserAPI {
     static get = (id) => {
         // its a promise so return
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB();
-
             // then get from firestore
             const dbUsersRef = Util.getDBRefs().dbUsersRef;
             let docRef = dbUsersRef.doc(id);
@@ -286,7 +296,6 @@ class UserAPI {
 
     // delete later - MUST be done on server in secure admin/auth environment
     static delete = (uid) => {
-        const db = Util.getFirestoreDB();
         const dbUsersRef = Util.getDBRefs().dbUsersRef;
 
         return new Promise((resolve, reject) => {

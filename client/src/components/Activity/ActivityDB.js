@@ -1,11 +1,8 @@
-import GLOBAL_ENV from "../Environment/Environment";
 import Util from "../Util/Util";
 
 class ActivityDB {
     // Get all activities from firestore
     static getFiltered = (filterObj, resultLimit) => {
-        const db = Util.getFirestoreDB(); // active firestore db ref
-
         resultLimit = resultLimit || 100;
 
         // default ref gets all
@@ -45,8 +42,6 @@ class ActivityDB {
     }
 
     static getOrdered = (orderObj, resultLimit) => {
-        const db = Util.getFirestoreDB(); // active firestore db ref
-
         resultLimit = resultLimit || 100;
 
         // default ref gets all
@@ -91,8 +86,6 @@ class ActivityDB {
 
     // Listener for all activities from firestore
     static listenAll = () => {
-        const db = Util.getFirestoreDB(); // active firestore db ref
-
         // default ref gets all
         const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
         
@@ -133,7 +126,6 @@ class ActivityDB {
 
         // its a promise so return
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB();
             let users = {};
             let activityArray = [];
 
@@ -195,8 +187,6 @@ class ActivityDB {
     static getActivityWithUser = () => {
         // its a promise so return
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB();
-
             // then get from firestore
             let activities = [];
             const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
@@ -257,8 +247,6 @@ class ActivityDB {
     static getByDate = (collection) => {
 
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB(); // active firestore db ref
-
             let activities = [];
             const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
             
@@ -282,8 +270,6 @@ class ActivityDB {
 
     // Get single activities from firestore
     static get = (id) => {
-        const db = Util.getFirestoreDB(); // active firestore db ref
-
         // default ref gets all
         const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
             
@@ -315,8 +301,6 @@ class ActivityDB {
     // Add a single activity based on id
     static create = (activity) => {
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB(); // active firestore db ref
-
             const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
             
             dbActivitiesRef
@@ -348,8 +332,6 @@ class ActivityDB {
 
     static update = (activity) => {
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB(); // active firestore db ref
-
             const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
             
             dbActivitiesRef
@@ -383,8 +365,6 @@ class ActivityDB {
     // Delete a single activity based on id
     static delete = (id) => {
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB(); // active firestore db ref
-
             const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
             
             dbActivitiesRef

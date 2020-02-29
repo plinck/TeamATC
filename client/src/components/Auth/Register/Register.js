@@ -9,10 +9,8 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import { InputAdornment } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import SearchIcon from "@material-ui/icons/Search";
 import UserAPI from "../../User/UserAPI";
-import TeamAPI from "../../Team/TeamAPI";
+import MemberDB from "../../User/MemberDB";
 
 const styles = theme => ({
     container: {
@@ -140,39 +138,38 @@ class Register extends React.Component {
 
     registerUser = event => {
         // Just allow them to register as long as they arte member of the club
-        // 0. check to ensure thet are not already registered
         // 1. Validate they are club memmber
-
-        // 2. Sign the up as user - Auth and user DB
         const user = this.state;
-        // set team name from ID
-       //  user.teamName = this.state.teamLookup[this.state.teamUid]
-    
-        // First, create the auth user in firebase
-        // Should actually update auth profile after this is done but not 100% needed as user stuff comes from firestore
-        UserAPI.registerNewUser(user).then(authUser => {
-            // Now Create the user in firestore
-            UserAPI.addAuthUserToFirestore(authUser, user).then( (id) => {
-                this.setState({message: "New User Added. "});
-                this.props.history.push("/dashboard"); 
+        MemberDB.getByEmail(user.email).then (user => {
+            // First, create the auth user in firebase
+            // Should actually update auth profile after this is done but not 100% needed as user stuff comes from firestore
+            UserAPI.registerNewUser(user).then(authUser => {
+                // Now Create the user in firestore
+                UserAPI.addAuthUserToFirestore(authUser, user).then( (id) => {
+                    this.setState({message: "New User Added. "});
+                    this.props.history.push("/dashboard"); 
+                }).catch(err => {
+                    this.setState({ message: err.message });
+                });    
             }).catch(err => {
-                this.setState({ message: err.message });
-            });    
-        }).catch(err => {
-            // try to refresh token
-            this.setState({ message: `Error adding user ${err}` });
-        });          
+                // try to refresh token
+                this.setState({ message: `Error adding user ${err}` });
+            });
+        }).catch (_ => {
+            this.setState({ message: `Can not register - Not a valid ATC Member - Please check with club admin` });
+        });        
     }
 
     render() {
         const { classes } = this.props;
-        const { showPassword, password, confirmPassword } = this.state;
+        const { showPassword } = this.state;
 
         return (
             <div className="container">
                 <div className="card">
                     <div className="card-content">
                         <span className="card-title">Register Now</span>
+                        {this.state.message ? <div className="red-text">{this.state.message}</div> : ""}
               
                             <TextField
                                 id="firstName"
@@ -240,8 +237,6 @@ class Register extends React.Component {
                                         </InputAdornment>
                                     )
                                 }}
-                                variant="outlined"
-                                margin="normal"
                                 onChange={this.handleChange('password')}
                                 error={!!this.state.errorText}
                                 helperText={this.state.errorText}
@@ -268,8 +263,6 @@ class Register extends React.Component {
                                         </InputAdornment>
                                     )
                                 }}
-                                variant="outlined"
-                                margin="normal"
                                 onChange={this.handlePasswordValidator}
                                 error={!!this.state.errorText}
                                 helperText={this.state.errorText}

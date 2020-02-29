@@ -50,6 +50,10 @@ class Firebase {
     console.log(`using ENV: ${process.env.REACT_APP_FIREBASE_ENVIRONMENT}`);
   }
 
+  doGetCurrentUser = () => {
+    return this.auth.currentUser;
+  }
+
   doRefreshToken = () => {
     return new Promise((resolve, reject) => {
       if (this.auth.currentUser !== null) {

@@ -1,17 +1,16 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
-import _ from "underscore";
-import moment from "moment";
 import { Redirect } from 'react-router';
 import { withRouter } from 'react-router-dom';
 
 import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
 
 class ActivityTotalsGraphs extends React.Component {
-    constructor(props) {
-        super(props);
+    // Dnt need constructor but leave sig in case I need to addd to it
+    // constructor(props) {
+    //     super(props);
 
-    }
+    // }
     
     plotGraph() {
         // Grab props
@@ -60,7 +59,7 @@ class ActivityTotalsGraphs extends React.Component {
             type: 'bar'
         };
         
-        let data = [trace1, trace2, trace3];
+        let data = [trace1, trace2, trace3, trace4];
         let layout = {barmode: 'stack'};
         
         return (
@@ -79,8 +78,6 @@ class ActivityTotalsGraphs extends React.Component {
         if (!this.props.user) {
             return null;
         }
-
-        const displayName = this.props.user.displayName;
 
         if (this.props.user.authUser) {
             return (

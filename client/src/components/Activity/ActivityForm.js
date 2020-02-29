@@ -15,7 +15,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Button from '@material-ui/core/Button';
 import moment from "moment";
 
 import TeamAPI from "../Team/TeamAPI"
@@ -197,7 +196,6 @@ class ActivityForm extends React.Component {
         // No name on Fit File???
         activity.activityName = `${activity.activityType} on ${activity.activityDateTimeString}`;
 
-        const sub_sport = jsonData.sport["sub_sport"];
         
         const total_distance = jsonData.activity.sessions[0].total_distance;
         activity.distance = Number(total_distance).toFixed(2);
@@ -205,17 +203,18 @@ class ActivityForm extends React.Component {
         
         const total_timer_time = jsonData.activity.total_timer_time;
         activity.duration = (Number(total_timer_time) / 3600).toFixed(2);
-       
-        const total_calories = jsonData.activity.sessions[0].total_calories;
-        const avg_speed = jsonData.activity.sessions[0].avg_speed;
-        const avg_power = jsonData.activity.sessions[0].avg_power;
-        const normalized_power = jsonData.activity.sessions[0].normalized_power;
-        const training_stress_score = jsonData.activity.sessions[0].training_stress_score;
-        const intensity_factor = jsonData.activity.sessions[0].intensity_factor;
-        const avg_heart_rate = jsonData.activity.sessions[0].avg_heart_rate;
-        const max_heart_rate = jsonData.activity.sessions[0].max_heart_rate;
-        const avg_cadence = jsonData.activity.sessions[0].avg_cadence;
-        const max_cadence = jsonData.activity.sessions[0].max_cadence;
+        
+        // const sub_sport = jsonData.sport["sub_sport"];
+        // const total_calories = jsonData.activity.sessions[0].total_calories;
+        // const avg_speed = jsonData.activity.sessions[0].avg_speed;
+        // const avg_power = jsonData.activity.sessions[0].avg_power;
+        // const normalized_power = jsonData.activity.sessions[0].normalized_power;
+        // const training_stress_score = jsonData.activity.sessions[0].training_stress_score;
+        // const intensity_factor = jsonData.activity.sessions[0].intensity_factor;
+        // const avg_heart_rate = jsonData.activity.sessions[0].avg_heart_rate;
+        // const max_heart_rate = jsonData.activity.sessions[0].max_heart_rate;
+        // const avg_cadence = jsonData.activity.sessions[0].avg_cadence;
+        // const max_cadence = jsonData.activity.sessions[0].max_cadence;
       
         console.log(`Ready to upload activity: ${JSON.stringify(activity, null, 4)}`);
         this.setState({

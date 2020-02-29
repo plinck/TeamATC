@@ -1,7 +1,5 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
-import _ from "underscore";
-import moment from "moment";
 import { Redirect } from 'react-router';
 import { withRouter } from 'react-router-dom';
 import Grid from "@material-ui/core/Grid";
@@ -12,22 +10,22 @@ class ActivityTypeBreakdown extends React.Component {
             
     plotGraph() {
         // Grab props
-        let distanceTotal  = this.props.currentTotalsShare.distanceTotal;
+        // let distanceTotal  = this.props.currentTotalsShare.distanceTotal;
         let swimDistanceTotal  = this.props.currentTotalsShare.swimDistanceTotal;
         let swimPointsTotal  = swimDistanceTotal * 10;
         let bikeDistanceTotal  = this.props.currentTotalsShare.bikeDistanceTotal;
         let bikePointsTotal  = bikeDistanceTotal;
         let runDistanceTotal  = this.props.currentTotalsShare.runDistanceTotal;
         let runPointsTotal  = runDistanceTotal * 3;
-        let durationTotal = this.props.currentTotalsShare.durationTotal;
-        let nbrActivities = this.props.currentTotalsShare.nbrActivities;
-        let swimNbrActivities = this.props.currentTotalsShare.swimNbrActivities;
+        // let durationTotal = this.props.currentTotalsShare.durationTotal;
+        // let nbrActivities = this.props.currentTotalsShare.nbrActivities;
+        // let swimNbrActivities = this.props.currentTotalsShare.swimNbrActivities;
         let swimDurationTotal = this.props.currentTotalsShare.swimDurationTotal;
-        let bikeNbrActivities = this.props.currentTotalsShare.bikeNbrActivities;
+        // let bikeNbrActivities = this.props.currentTotalsShare.bikeNbrActivities;
         let bikeDurationTotal = this.props.currentTotalsShare.bikeDurationTotal;
-        let runNbrActivities = this.props.currentTotalsShare.runNbrActivities;
+        // let runNbrActivities = this.props.currentTotalsShare.runNbrActivities;
         let runDurationTotal = this.props.currentTotalsShare.runDurationTotal
-        let pointsTotal  = swimPointsTotal + bikePointsTotal + runPointsTotal;
+        // let pointsTotal  = swimPointsTotal + bikePointsTotal + runPointsTotal;
         
         
 
@@ -120,8 +118,6 @@ class ActivityTypeBreakdown extends React.Component {
         if (!this.props.user) {
             return null;
         }
-
-        const displayName = this.props.user.displayName;
 
         if (this.props.user.authUser) {
             return (

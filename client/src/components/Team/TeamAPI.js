@@ -1,4 +1,3 @@
-import GLOBAL_ENV from "../Environment/Environment";
 import Util from "../Util/Util";
 
 class TeamAPI {
@@ -6,8 +5,6 @@ class TeamAPI {
     // Everything from top down must be async or awaits do NOT wait
     static getTeams = () => {
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB();
-
             const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
 
             dbTeamsRef.orderBy("name").get().then((querySnapshot) => {
@@ -33,7 +30,6 @@ class TeamAPI {
     static getTeamsWithActivities = () => {
         // its a promise so return
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB();
             let teams = {} ;
             let activityArray = [];
 
@@ -72,8 +68,6 @@ class TeamAPI {
     static get = (id) => {
         // its a promise so return
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB();
-
             // then get from firestore
             const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
 
@@ -96,8 +90,6 @@ class TeamAPI {
     static getTeamUsers = (id) => {
         // its a promise so return
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB();
-
             // then get from firestore
             const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
 
@@ -141,7 +133,6 @@ class TeamAPI {
     // delete team
     static delete = (uid) => {
         return new Promise((resolve, reject) => {
-            const db = Util.getFirestoreDB();
             const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
 
             dbTeamsRef.doc(uid).delete().then(() => {

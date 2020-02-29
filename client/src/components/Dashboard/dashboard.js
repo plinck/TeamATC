@@ -1,5 +1,3 @@
-import GLOBAL_ENV from "../Environment/Environment";
-
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -7,20 +5,15 @@ import "./dashboard.css";
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Redirect } from "react-router";
 
-import SampleClassGraphCard from "./GraphCard/SampleClassGraphCard";
-import SampleClassPieChart from "./GraphCard/SampleClassPieChart";
-
 import SummaryTotal from "./SummaryTotal/SummaryTotal";
 import ResultsCard from "./ResultsCard/ResultsCard";
 import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
 import ActivityTotalsGraphs from "./Graphs/ActivityTotalsGraphs";
 import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
-import ActivityTeamBreakdown from "./Graphs/ActivityTeamBreakdown";
 
 //Reports
 import ActivityCard from '../Activity/ActivityCard.jsx';
-
 
 import Tooltip from '@material-ui/core/Tooltip';
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -627,6 +620,8 @@ class Dashboard extends React.Component {
         myActivities = activities.filter (activity => {
             if (activity.uid === this.props.user.uid) {
                 return activity;
+            } else {
+                return false;
             }
         });
         this.setState({myActivities: myActivities});
@@ -650,7 +645,6 @@ class Dashboard extends React.Component {
             return null;
         }
 
-        let activities = this.state.activities;
         let myActivities = this.state.myActivities;
 
         const leaderboardTitleRow = 

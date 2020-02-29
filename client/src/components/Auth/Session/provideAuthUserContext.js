@@ -1,8 +1,8 @@
 import React from 'react';
-import GLOBAL_ENV from "../../Environment/Environment";
 import Util from "../../Util/Util";
 import AuthUserContext from './AuthUserContext';
 import { withFirebase } from '../Firebase/FirebaseContext';
+import UserAPI from '../../User/UserAPI';
 
 // This component WRAPS Firebase and Authentication Context togtehr in 
 // a HOC - Higher Order Component.
@@ -14,8 +14,6 @@ const provideAuthUserContext = Component => {
     class ProvideAuthUserContext extends React.Component {
         constructor(props) {
             super(props);
-            const db  = this.props.firebase.db;
-
             let allDBRefs = Util.getDBRefs();
 
             const dbUsersRef = allDBRefs.dbUsersRef;
@@ -97,7 +95,7 @@ const provideAuthUserContext = Component => {
                 this.userListener();
             }
 
-            // User listener
+            // User listener for the current signed in user
             // Try to set state together
             const dbUsersRef = Util.getDBRefs().dbUsersRef;
             let docRef = dbUsersRef.doc(authUser.uid);
@@ -115,6 +113,12 @@ const provideAuthUserContext = Component => {
                         lastName: user.lastName,
                         teamUid: user.teamUid,
                         teamName: user.teamName
+                    });
+                    // update firebase auth profile if this user's info changed
+                    UserAPI.updateCurrentUserAuthProfile(user).then (() => {
+                        // OK, no harm done
+                    }).catch(err => {
+                        // OK, no harm done
                     });
                 } else {            // If cant find *user* you still need to set authUser
                     this.setState({
