@@ -28,7 +28,7 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 
 import Util from "../Util/Util";
-import TeamResultsModal from './Graphs/TeamResultsModal';
+import TeamResultsModal from './ResultsCard/TeamResultsModal';
 
 class Dashboard extends React.Component {
     state = {
@@ -392,7 +392,9 @@ class Dashboard extends React.Component {
             bikeNbrActivities: 0,
             bikeDurationTotal: 0,
             runNbrActivities: 0,
-            runDurationTotal: 0
+            runDurationTotal: 0,
+            teamName: "",
+            teamRecord: false
         }
 
         let idx = userResults.findIndex( (uResult) => { 
@@ -446,6 +448,8 @@ class Dashboard extends React.Component {
             newUserResult.isThisMine = activity.uid === this.props.user.uid ? true : false;
             newUserResult.userOrTeamUid = activity.uid;
             newUserResult.userOrTeamName = activity.displayName;
+            newUserResult.teamName = activity.teamName;
+            newUserResult.teamRecord = false;
 
             const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
             newUserResult.distanceTotal +=  distanceInMiles;
@@ -512,7 +516,9 @@ class Dashboard extends React.Component {
             bikeNbrActivities: 0,
             bikeDurationTotal: 0,
             runNbrActivities: 0,
-            runDurationTotal: 0
+            runDurationTotal: 0,
+            teamName: "",
+            teamRecord: true
         }        
 
         let idx = teamResults.findIndex( (uResult) => { 
@@ -568,7 +574,9 @@ class Dashboard extends React.Component {
             newTeamResult.isThisMine = activity.teamUid === this.props.user.teamUid ? true : false;
             newTeamResult.userOrTeamUid = activity.teamUid;
             newTeamResult.userOrTeamName = activity.teamName;
-
+            newTeamResult.teamName = activity.teamName;
+            newTeamResult.teamRecord = true;
+            
             const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
             newTeamResult.distanceTotal +=  distanceInMiles;
             newTeamResult.durationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration ;  
@@ -755,7 +763,7 @@ class Dashboard extends React.Component {
         if (this.props.user.authUser) {
             return (
                 <div>
-                    <TeamResultsModal id="TeamResultsModal" open={this.state.openTeamResults} teamTotals={this.totals.teamR}/>
+                    <TeamResultsModal id="TeamResultsModal" open={this.state.openTeamResults} teamTotals={this.totals.teamR} userTotals={this.totals.userR}/>
 
                     {this.state.loadingFlag ?
                         <Grid container justify="center">
@@ -774,7 +782,7 @@ class Dashboard extends React.Component {
                                             {this.totals.teamR.map((teamResult, index) => {
                                                 return (
                                                     <div key={index}>
-                                                        <ResultsCard result={teamResult} index={index}
+                                                        <ResultsCard result={teamResult} index={index} onlyTeams={true}
                                                         />
                                                     </div>
                                                 );
