@@ -24,7 +24,7 @@ import Util from "../Util/Util";
 
 class Dashboard extends React.Component {
     state = {
-        loadingFlag: false,
+        loadingFlag: true,
         activities: [],
         myActivities: [],
         nbrActivities: 0,
@@ -618,7 +618,11 @@ class Dashboard extends React.Component {
         this.setState({myActivities: myActivities});
     }
 
-    render() {
+    render() {            
+        if (this.state.loadingFlag) {
+            return (<Grid container justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
+        }
+
         // Some props take time to get ready so return null when uid not avaialble
         if (this.props.user.uid === null || this.props.user.teamUid === null) {
             return null;
@@ -702,15 +706,10 @@ class Dashboard extends React.Component {
                     Distance
                 </div>
             </Box>
-        
+
         if (this.props.user.authUser) {
             return (
                 <div>
-                    {this.state.loadingFlag ?
-                        <Grid container justify="center">
-                            <CircularProgress /> <p>Loading ...</p>
-                        </Grid>
-                        :
                         <div className="container">
                             {/*  OVERALL standings by user and TEAM */}
                             <div className="row">                 
@@ -837,7 +836,7 @@ class Dashboard extends React.Component {
                             {/* END Sumary Display */}
 
                         </div>
-                    }
+
                 </div>
             );
         } else {
