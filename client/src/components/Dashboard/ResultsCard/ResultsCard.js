@@ -1,67 +1,105 @@
 import React from 'react';
 import Box from '@material-ui/core/Box';
+import { Link } from "react-router-dom";
+import Tooltip from '@material-ui/core/Tooltip';
 
-import './ResultsCard.css'
+import './Result.css'
+import Result from "./Result";
+import TeamResultsModal from './TeamResultsModal';
 
-const ResultsCard = (props) => {
-    // wait for props
-    if (!props.result) {
-        return(null);
+class ResultsCard extends React.Component {
+    state = {
+        openTeamResults: false,
     }
 
-    //console.log(`${JSON.stringify(props.result)}`);
-
-    // Band odd rows for clarity
-    let rowBg = "";
-    let rowFg = ""
-    if (props.index % 2 === 0) {
-        rowBg = "info.main";
-        rowFg = "white";
-    }
-    if (props.result.teamRecord && !props.onlyTeams) {
-        rowBg = "yellow";
-        rowFg = "black";
+    handleClickTeamResults() {
+        this.setState({ openTeamResults: true });
+        console.log("In handleClickTeamResults");
     }
 
-    return (
-        <div>
-            {/*<-- Leaderboad row -->*/}
-            {/* One Row for each result in leaderboard */}
-            <Box className="row" color={rowFg} bgcolor={rowBg} m={0}>
-                {/* If its teamRecord display non-indednted, otherwise just indent user record as normal*/}
-                {props.result.teamRecord ?
-                    <div className="col s4 m4 truncate">
-                        {props.result.userOrTeamName}
-                    </div>
-                :  
-                    <div>
-                        <div className="col s1 m1">
-                            { props.result.isThisMine ?
-                                <img style={{maxHeight: '20px'}} src={"/images/me.png"} alt={"me"} />
-                                :  props.result.isThisMine
-                            }
-                        </div>
-                        <div className="col s3 m3 truncate">
-                            {props.result.userOrTeamName}
-                        </div>
-                    </div>
+    render() {
+        // wait for props
+        if (!this.props.teamTotals) {
+            return(null);
+        }
+
+        let teamTotals = this.props.teamTotals;
+        let userTotals = this.props.userTotals;
+        let onlyTeams = this.props.onlyTeams;
+
+        const leaderboardTitleRow = 
+        <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" marginTop={1}>
+            <Link className="col s9 m9" to={{
+                pathname: "/activities",
+                state: {
+                    filterByString: "Mine"
                 }
-                <div className="col s2 m2 truncate">
-                    {props.result.pointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </div>
-                <div className="col s2 m2 truncate">
-                    {props.result.swimPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </div>
-                <div className="col s2 m2 truncate">
-                    {props.result.bikePointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </div>
-                <div className="col s2 m2 truncate">
-                    {props.result.runPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </div>
-            </Box>
-            {/* End Row */}         
-        </div>
-    )
+                }}>Leaderboard 
+            </Link>
+            <div className="col s2 offset-s1 m2 offset-m1">
+                <Tooltip title="Show Results">
+                    <div onClick={this.handleClickTeamResults.bind(this)}>
+                        <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
+                            className="material-icons indigo-text text-darken-4" >launch
+                        </i>{" "}
+                    </div>
+                </Tooltip>
+            </div>
+        </Box>
+
+        const leaderBoardHeaderRow = 
+        <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1} margin={0}>
+            <div className="col s1 m1">
+            </div>
+            <div className="col s3 m3 truncate">
+                Name
+            </div>
+            <div className="black-text col m2 m2 truncate">
+                Total
+            </div>
+            <div className="blue-text col m2 m2 truncate">
+                Swim
+            </div>
+            <div className="red-text col m2 m2 truncate">
+                Bike
+            </div>
+            <div className="green-text col m2 m2 truncate">
+                Run
+            </div>
+        </Box>
+
+        let totals = userTotals;
+        if (onlyTeams) {
+            totals = teamTotals;
+        }
+        
+        return (
+            <div>
+                <TeamResultsModal id="TeamResultsModal" open={this.state.openTeamResults} teamTotals={teamTotals} userTotals={userTotals}/>
+                
+                <div className="col s12 m6" margin={2}>
+                    <Box className="grey lighten-3" padding={2} margin={0} borderRadius={8} boxShadow={4}>
+                        {leaderboardTitleRow}
+                        <Box className="white" margin={2} paddingLeft={1} paddingRight={1}> 
+                            {leaderBoardHeaderRow}            
+                            {totals.map((result, index) => {
+                                return (
+                                    <div key={index}>
+                                        {(index > 9) ?
+                                            ""
+                                        :
+                                            <Result result={result} index={index} onlyTeams={onlyTeams}
+                                        />
+                                        }
+                                    </div>
+                                );
+                            })}
+                        </Box>
+                    </Box>
+                </div>    
+            </div>
+        )
+    }
 }
 
 export default ResultsCard;

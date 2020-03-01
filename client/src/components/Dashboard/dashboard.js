@@ -6,7 +6,7 @@ import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Redirect } from "react-router";
 
 import SummaryTotal from "./SummaryTotal/SummaryTotal";
-import ResultListCard from "./ResultsCard/ResultListCard";
+import ResultsCard from "./ResultsCard/ResultsCard";
 import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
 import ActivityTotalsGraphs from "./Graphs/ActivityTotalsGraphs";
@@ -715,9 +715,9 @@ class Dashboard extends React.Component {
                             {/*  OVERALL standings by user and TEAM */}
                             <div className="row">                 
                                 {/* Team standings/results card */}
-                                <ResultListCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={true}
+                                <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={true}
                                 />
-                                <ResultListCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={false}
+                                <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={false}
                                 />
                                 {/* End Team standings/results card */}                              
                             </div>

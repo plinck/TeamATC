@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Box from "@material-ui/core/Box";
-import ResultsCard from "./ResultsCard";
+import Result from "./Result";
 
 class TeamResultsModal extends React.Component {
 
@@ -109,7 +109,7 @@ class TeamResultsModal extends React.Component {
                                 {combinedResults.map((combinedResult, index) => {
                                     return (
                                         <div key={index}>
-                                            <ResultsCard result={combinedResult} index={index}
+                                            <Result result={combinedResult} index={index}
                                             />
                                         </div>
                                     );
