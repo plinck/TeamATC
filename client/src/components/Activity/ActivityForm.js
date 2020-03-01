@@ -641,7 +641,7 @@ class ActivityForm extends React.Component {
                                             />}
                                         />
 
-                                        {/* 
+                                        {/*
                                         <FormControl variant="outlined" required>
                                             <InputLabel id="activityTypeLabel">Activity Type</InputLabel>
                                             <Select
@@ -649,11 +649,12 @@ class ActivityForm extends React.Component {
                                                 id="activityType"
                                                 value={activityType}
                                                 name="activityType"
-                                                multiline
                                                 type="text"
                                                 margin="normal"
-                                                style={{marginTop: 16, padding: 18}}
+                                                style={{marginTop: 16, padding: 0}}
                                                 className={classes.textField}
+                                                autoHighlight
+                                                autoComplete="text"
                                                 onChange={this.onChange}
                                                 >
                                                 <MenuItem value={"Swim"}>Swim</MenuItem>

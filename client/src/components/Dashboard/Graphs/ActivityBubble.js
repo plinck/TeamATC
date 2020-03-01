@@ -115,8 +115,8 @@ class ActivityBubble extends React.Component {
                             margin: {
                                 l: 30,
                                 r: 30,
-                                b: 10,
-                                t: 10,
+                                b: 20,
+                                t: 20,
                             },
                             // yaxis: {
                             //     tickprefix: "$",
