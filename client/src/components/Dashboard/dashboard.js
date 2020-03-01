@@ -6,7 +6,7 @@ import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Redirect } from "react-router";
 
 import SummaryTotal from "./SummaryTotal/SummaryTotal";
-import ResultsCard from "./ResultsCard/ResultsCard";
+import ResultListCard from "./ResultsCard/ResultListCard";
 import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
 import ActivityTotalsGraphs from "./Graphs/ActivityTotalsGraphs";
@@ -21,12 +21,10 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 
 import Util from "../Util/Util";
-import TeamResultsModal from './ResultsCard/TeamResultsModal';
 
 class Dashboard extends React.Component {
     state = {
         loadingFlag: false,
-        openTeamResults: false,
         activities: [],
         myActivities: [],
         nbrActivities: 0,
@@ -169,13 +167,6 @@ class Dashboard extends React.Component {
             // console.log(`Detached listener`);
         }
     }
-
-    handleClickTeamResults() {
-        if (this._mounted) {
-            this.setState({ openTeamResults: true });
-        }
-    }
-
 
     // Set the totals for a team calculated from activity listener, based on team name
     // need to check about switching to teamUid since better
@@ -647,26 +638,6 @@ class Dashboard extends React.Component {
 
         let myActivities = this.state.myActivities;
 
-        const leaderboardTitleRow = 
-        <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" marginTop={1}>
-            <Link className="col s9 m9" to={{
-                pathname: "/activities",
-                state: {
-                    filterByString: "Mine"
-                }
-                }}>Leaderboard 
-            </Link>
-            <div className="col s2 offset-s1 m2 offset-m1">
-                <Tooltip title="Show Results">
-                    <div onClick={this.handleClickTeamResults.bind(this)}>
-                    <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
-                        className="material-icons indigo-text text-darken-4" >launch
-                    </i>{" "}
-                    </div>
-                </Tooltip>
-            </div>
-        </Box>
-
         const activityBreakdownTitleRow = 
         <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" marginTop={1}>
             <div className="col s9 m9">Activity Type Breakdown</div>
@@ -684,28 +655,6 @@ class Dashboard extends React.Component {
             </div>
         </Box>
 
-        // header row for results
-        const leaderBoardHeaderRow = 
-            <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1} margin={0}>
-                <div className="col s1 m1">
-                </div>
-                <div className="col s3 m3 truncate">
-                    Name
-                </div>
-                <div className="black-text col m2 m2 truncate">
-                    Total
-                </div>
-                <div className="blue-text col m2 m2 truncate">
-                    Swim
-                </div>
-                <div className="red-text col m2 m2 truncate">
-                    Bike
-                </div>
-                <div className="green-text col m2 m2 truncate">
-                    Run
-                </div>
-            </Box>
-                
         const activityTitleRow = 
             <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" marginTop={1}>
                 <Link className="col s9 m9" to={{
@@ -757,8 +706,6 @@ class Dashboard extends React.Component {
         if (this.props.user.authUser) {
             return (
                 <div>
-                    <TeamResultsModal id="TeamResultsModal" open={this.state.openTeamResults} teamTotals={this.totals.teamR} userTotals={this.totals.userR}/>
-
                     {this.state.loadingFlag ?
                         <Grid container justify="center">
                             <CircularProgress /> <p>Loading ...</p>
@@ -768,45 +715,11 @@ class Dashboard extends React.Component {
                             {/*  OVERALL standings by user and TEAM */}
                             <div className="row">                 
                                 {/* Team standings/results card */}
-                                <div className="col s12 m6" margin={2}>
-                                    <Box className="grey lighten-3" padding={2} margin={0} borderRadius={8} boxShadow={4}>
-                                        {leaderboardTitleRow}
-                                        <Box className="white" margin={2} paddingLeft={1} paddingRight={1}> 
-                                            {leaderBoardHeaderRow}
-                                            {this.totals.teamR.map((teamResult, index) => {
-                                                return (
-                                                    <div key={index}>
-                                                        <ResultsCard result={teamResult} index={index} onlyTeams={true}
-                                                        />
-                                                    </div>
-                                                );
-                                            })}
-                                        </Box>
-                                    </Box>
-                                </div>
-                                {/* End Team standings/results card */}          
-                         
-                                {/* User standings/results card */}
-                                <div className="col s12 m6" margin={2}>
-                                    <Box className="grey lighten-3" padding={2} margin={0} borderRadius={8} boxShadow={4}>
-                                        {leaderboardTitleRow}
-                                        <Box className="white" margin={2} paddingLeft={1} paddingRight={1}> 
-                                        {leaderBoardHeaderRow}
-                                            {this.totals.userR.map((userResult, index) => {
-                                                return (
-                                                    (index > 14) ?
-                                                    ""
-                                                    :
-                                                    <div key={index}>
-                                                        <ResultsCard result={userResult} index={index}
-                                                        />
-                                                    </div>
-                                                );
-                                            })}
-                                        </Box>
-                                    </Box>
-                                </div>
-                                {/* End User standings/results card */}
+                                <ResultListCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={true}
+                                />
+                                <ResultListCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={false}
+                                />
+                                {/* End Team standings/results card */}                              
                             </div>
                             {/*  END OVERALL standings by user and TEAM */}
 
