@@ -9,11 +9,13 @@ import TextField from "@material-ui/core/TextField";
 import { withStyles } from "@material-ui/core/styles";
 
 // For select input field
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-
+// import FormControl from '@material-ui/core/FormControl';
+// import InputLabel from "@material-ui/core/InputLabel";
+// import MenuItem from "@material-ui/core/MenuItem";
+// import Select from "@material-ui/core/Select";
+// Changed select to autocomplete so keyboard would work
+import Autocomplete from '@material-ui/lab/Autocomplete';
+ 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import moment from "moment";
 
@@ -106,6 +108,29 @@ class ActivityForm extends React.Component {
             this.setState({ [name]: 0 });
         }
     };
+
+    // used for autocomplete component
+    onTagsChange = (event, value) => {
+        //console.log(`Values: ${value}`)
+        let distanceUnits = "Miles";
+        switch(value) {
+            case "Swim":
+                distanceUnits = "Yards";
+                break;
+            case "Bike":                            
+                distanceUnits = "Miles";
+                break;
+            case "Run":
+                distanceUnits = "Miles";
+                break;
+            default:
+                distanceUnits = "Miles";
+            }     
+        this.setState({
+            activityType: value,
+            distanceUnits: distanceUnits
+        });
+    }
     
     onChange = event => {
         // Set Units
@@ -402,7 +427,7 @@ class ActivityForm extends React.Component {
         } 
 
         if (!activity.teamName || activity.teamName.length < 1) {
-            this.setState({ message: `Team Name missing - Join team before adding activity`});
+            this.setState({ message: `Team Name missing - Join team (using Account Update Form) before adding activity`});
             return false;
         } 
 
@@ -592,8 +617,31 @@ class ActivityForm extends React.Component {
                                             autoComplete="date"
                                             margin="normal"
                                             onChange={this.dateNumberOnChange}
-                                        />        
+                                        />     
 
+                                        <Autocomplete
+                                        id="activityType"
+                                        value={activityType}
+                                        name="activityType"
+                                        autoHighlight
+                                        margin="normal"
+                                        style={{marginTop: 16, padding: 0}}
+                                        onChange={this.onTagsChange}
+                                        options={[
+                                            'Swim',
+                                            'Bike',
+                                            'Run',
+                                        ]}
+                                        getOptionLabel={option => option}
+                                        renderInput={params => 
+                                            <TextField {...params} 
+                                                label="Type" 
+                                                className={classes.textField} 
+                                                variant="outlined" 
+                                            />}
+                                        />
+
+                                        {/* 
                                         <FormControl variant="outlined" required>
                                             <InputLabel id="activityTypeLabel">Activity Type</InputLabel>
                                             <Select
@@ -613,6 +661,7 @@ class ActivityForm extends React.Component {
                                                 <MenuItem value={"Run"}>Run</MenuItem>
                                             </Select>
                                         </FormControl>
+                                        */}
                       
                                         <TextField
                                             id="distance"

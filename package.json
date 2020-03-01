@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/lab": "^4.0.0-alpha.45",
     "axios": "^0.18.1",
     "caniuse": "^0.1.3",
     "caniuse-api": "^3.0.0",
