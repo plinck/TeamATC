@@ -33,6 +33,7 @@ import EasyFit from "easy-fit";
 
 
 const INITIAL_STATE = {
+    updateButtonDisabled: true,
     uid: "",
     email: "",
     displayName: "",
@@ -105,12 +106,20 @@ class ActivityForm extends React.Component {
         M.Modal.init(elem);
     }
 
+    enableButton = () => {
+        if (this.state.activityName && this.state.activityDateTimeString && this.state.activityType && this.state.distance && this.state.duration) {
+            this.setState({ updateButtonDisabled: false });
+        } else {
+            this.setState({ updateButtonDisabled: true });
+        }
+    }
+
     handleChange = name => event => {
         if (event.target.value) {
-            this.setState({ [name]: parseInt(event.target.value) });
+            this.setState({ [name]: parseInt(event.target.value) }, () => this.enableButton());
         }
         else {
-            this.setState({ [name]: 0 });
+            this.setState({ [name]: 0 }, () => this.enableButton());
         }
     };
 
@@ -134,7 +143,7 @@ class ActivityForm extends React.Component {
         this.setState({
             activityType: value,
             distanceUnits: distanceUnits
-        });
+        }, () => this.enableButton());
     }
     
     onChange = event => {
@@ -157,11 +166,11 @@ class ActivityForm extends React.Component {
             this.setState({
                 [event.target.name]: event.target.value,
                 distanceUnits: distanceUnits
-            });
+            }, () => this.enableButton());
         } else {
             this.setState({
                 [event.target.name]: event.target.value,
-            });
+            }, () => this.enableButton());
         }
     };
 
@@ -174,7 +183,7 @@ class ActivityForm extends React.Component {
         if (value === '' || floatRegExp.test(value)) {
             this.setState({
                 [event.target.name]: event.target.value,
-            });
+            }, () => this.enableButton());
         }
     }
 
@@ -187,7 +196,7 @@ class ActivityForm extends React.Component {
         if (value === '' || floatRegExp.test(value)) {
             this.setState({
                 [event.target.name]: event.target.value,
-            });
+            }, () => this.enableButton());
         }
     }
 
@@ -225,7 +234,6 @@ class ActivityForm extends React.Component {
         }
         // No name on Fit File???
         activity.activityName = `${activity.activityType} on ${activity.activityDateTimeString}`;
-
         
         const total_distance = jsonData.activity.sessions[0].total_distance;
         activity.distance = Number(total_distance).toFixed(2);
@@ -262,7 +270,7 @@ class ActivityForm extends React.Component {
             distanceUnits: activity.distanceUnits,
             duration: activity.duration,
             message: `Uploaded FIT file, make any changes and hit <CREATE> to save`
-        })
+        }, () => this.enableButton());
 
         // for now, set the state so user cn name it and fix errors
         // this.createActivity(activity);
@@ -722,8 +730,13 @@ class ActivityForm extends React.Component {
                             </div>
                             <div className="card-action pCard row">
                                 <div className="col s2 m2">
-                                    <button className="btn waves-effect waves-light blue darken-4 modal-trigger m2"
-                                        type="submit" href="#modal1" onClick={this.onSubmitHandler} name="action">{this.state.id ? "Update" : "Create"}
+                                    <button disabled={this.state.updateButtonDisabled}
+                                        className="btn waves-effect waves-light blue darken-4 modal-trigger m2"
+                                        name="action"
+                                        type="submit"
+                                        href="#modal1"
+                                        onClick={this.onSubmitHandler}>
+                                        {this.state.id ? "Update" : "Create"}
                                     </button>
                                 </div>
 
