@@ -16,12 +16,51 @@ function exitProgram() {
 }
 
     // Add a single activity based on id
-async function createActivity (activity) {
+function createActivity (activity) {
     const dbActivitiesRef = dbALLRefs.dbActivitiesRef;
 
+    // first check if activiy already exist with this info
     return new Promise((resolve, reject) => {
-        dbActivitiesRef
-            .add({
+        dbActivitiesRef.get()
+        .where(email, "==", activity.email)
+        .where(activityDateTime, "==", activity.activityDateTime)
+        .where(distance, "==", activity.distance)
+        .where(activityType, "==", activity.activityType)
+        .limit(1)
+        .then(snapShot => {
+            let foundActivity = false;
+            snapShot.forEach(function (doc) {
+                foundActivity = true;
+                console.log(doc.id, ' => ', doc.data());
+            });
+            if (!foundActivity) {
+                dbActivitiesRef.add({
+                    activityDateTime: activity.activityDateTime,
+                    activityName: activity.activityName,
+                    activityType: activity.activityType,
+                    displayName: activity.displayName,
+                    distance: activity.distance,
+                    distanceUnits: activity.distanceUnits,
+                    duration: activity.duration ? activity.duration : 0,
+                    email: activity.email,
+                    teamName: activity.teamName,
+                    teamUid: activity.teamUid
+                        ? activity.teamUid
+                        : null,
+                    uid: activity.uid
+                }).then((res) => {
+                    // console.log("Firestore activity successfully added");
+                    return resolve(res);
+                }).catch((error) => {
+                    console.error("Firestore activity add failed");
+                    return reject(error);
+                });    
+            } else {
+                return resolve(activity);
+            }
+        }).catch((error) => {
+            console.error("Activity not found which is OK, as I will add");
+            dbActivitiesRef.add({
                 activityDateTime: activity.activityDateTime,
                 activityName: activity.activityName,
                 activityType: activity.activityType,
@@ -35,15 +74,14 @@ async function createActivity (activity) {
                     ? activity.teamUid
                     : null,
                 uid: activity.uid
-            })
-            .then((res) => {
+            }).then((res) => {
                 // console.log("Firestore activity successfully added");
                 return resolve(res);
-            })
-            .catch((error) => {
+            }).catch((error) => {
                 console.error("Firestore activity add failed");
                 return reject(error);
             });
+        });
     });
 }
 
