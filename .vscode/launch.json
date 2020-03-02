@@ -9,7 +9,7 @@
             "request": "launch",
             "console": "integratedTerminal",
             "name": "Launch TeamATC bootstrapUser.js",
-            "program": "${workspaceFolder}/bootstrapUser.js",
+            "program": "${workspaceFolder}/bulkLoader/bootstrapUser.js",
             "skipFiles": [
                 "<node_internals>/**"
             ]
