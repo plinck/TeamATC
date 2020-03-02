@@ -298,7 +298,7 @@ class ActivityForm extends React.Component {
                     // Handle result of parse method
                     if (error) {
                       console.error(error);
-                      this.setState({message: `error loading fit file ${error}`});
+                      this.setState({message: `error loading fit file ${error}`}, () => this.enableButton());
                     } else {
                       // console.log(JSON.stringify(data));
                       this.saveFITFileToState(data);
@@ -307,7 +307,7 @@ class ActivityForm extends React.Component {
             }
             reader.onerror = function (evt) {
                 console.error(`error reading file ${evt.error}`);
-                this.setState({message: `error reading file ${evt.error}`});
+                this.setState({message: `error reading file ${evt.error}`}, () => this.enableButton());
             }
         }
     }
@@ -349,7 +349,7 @@ class ActivityForm extends React.Component {
                 email: activity.email,
                 teamUid: activity.teamUid,
                 teamName: activity.teamName
-            });
+            }, () => this.enableButton());
         });
     }
 
