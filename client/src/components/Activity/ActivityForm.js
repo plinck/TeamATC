@@ -2,7 +2,7 @@ import React from "react";
 import { withRouter } from 'react-router';
 
 import M from "materialize-css/dist/js/materialize.min.js";
-import Modal from "./ActivityModal";
+import ActivityModal from "./ActivityModal";
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Redirect } from "react-router";
 import TextField from "@material-ui/core/TextField";
@@ -97,7 +97,7 @@ class ActivityForm extends React.Component {
         }
     
         let elem = document.querySelector(".modal");
-        M.Modal.init(elem);
+        M.ActivityModal.init(elem);
     }
 
     handleChange = name => event => {
@@ -560,7 +560,7 @@ class ActivityForm extends React.Component {
         if (this.props.user.authUser) {
             return (
                 <div className="container">
-                    <Modal distance={this.state.distance} />
+                    <ActivityModal distance={this.state.distance} />
                     <div className="col s12">
                         <div className="card">
                             <div className="card-content pCard">

@@ -290,7 +290,7 @@ class Register extends React.Component {
                                 </Button>
                             </div>
                     </div>
-                </div >
+                </div>
             </div>
         );
     }
