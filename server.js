@@ -29,7 +29,7 @@ if (process.env.NODE_ENV === 'production') {
         res.sendFile(index);
     });
 } else {
-    console.log(`dev mode ${path.join(__dirname, '/client/public/index.html')}`);
+    //console.log(`dev mode ${path.join(__dirname, '/client/public/index.html')}`);
     //dev mode
     app.use(express.static(path.join(__dirname, 'client', 'public')));
     app.get('*', (req, res) => {

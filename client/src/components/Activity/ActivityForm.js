@@ -15,8 +15,13 @@ import { withStyles } from "@material-ui/core/styles";
 // import Select from "@material-ui/core/Select";
 // Changed select to autocomplete so keyboard would work
 import Autocomplete from '@material-ui/lab/Autocomplete';
- 
 import CircularProgress from '@material-ui/core/CircularProgress';
+import AddIcon from "@material-ui/icons/Add";
+import { Fab } from "@material-ui/core";
+
+
+
+
 import moment from "moment";
 
 import TeamAPI from "../Team/TeamAPI"
@@ -97,7 +102,7 @@ class ActivityForm extends React.Component {
         }
     
         let elem = document.querySelector(".modal");
-        M.ActivityModal.init(elem);
+        M.Modal.init(elem);
     }
 
     handleChange = name => event => {
@@ -256,7 +261,7 @@ class ActivityForm extends React.Component {
             distance: activity.distance,
             distanceUnits: activity.distanceUnits,
             duration: activity.duration,
-            message: `Uploaded FIT file, hit <CREATE> to save`
+            message: `Uploaded FIT file, make any changes and hit <CREATE> to save`
         })
 
         // for now, set the state so user cn name it and fix errors
@@ -269,7 +274,6 @@ class ActivityForm extends React.Component {
             let reader = new FileReader();
             reader.readAsArrayBuffer(fileToUpload, "UTF-8");
             reader.onload = (evt) => {
-                console.log("OK reading file");
                 let content = evt.target.result;
 
                 var easyFit = new EasyFit({
@@ -285,7 +289,8 @@ class ActivityForm extends React.Component {
                   easyFit.parse(content,  (error, data) => {
                     // Handle result of parse method
                     if (error) {
-                      console.log(error);
+                      console.error(error);
+                      this.setState({message: `error loading fit file ${error}`});
                     } else {
                       // console.log(JSON.stringify(data));
                       this.saveFITFileToState(data);
@@ -294,6 +299,7 @@ class ActivityForm extends React.Component {
             }
             reader.onerror = function (evt) {
                 console.error(`error reading file ${evt.error}`);
+                this.setState({message: `error reading file ${evt.error}`});
             }
         }
     }
@@ -303,26 +309,20 @@ class ActivityForm extends React.Component {
 
         if (event.target.files.length > 0) {
             console.log(event.target.files[0]);
+            let fitFileToUpload = event.target.files[0];
 
-            this.setState({
-                fitFileToUpload: event.target.files[0],
-                fitFileLoaded: false
-            });
+            // Make sure its file type === fit
+            let fileExt = fitFileToUpload.name.split('.').pop()
+            if (!fileExt || fileExt !== "fit") {
+                this.setState({message: `Error - File MUST be of type ".fit"`});
+                return;
+            }
+
+            console.log(`Uploading file ${fitFileToUpload.name}... `);
+            this.readFitFile(fitFileToUpload);  // use direct for now
         }
     }
        
-    uploadFitFile = (event) => {
-        event.preventDefault();
-        // Here is where we grab and parse the file and upload it
-        // Send a spinner while its happening
-
-        if (this.state.fitFileToUpload && this.state.fitFileToUpload !== null) {
-            let fileToUpload = this.state.fitFileToUpload;
-            console.log(`Uploading file ${fileToUpload.name}... `);
-            this.readFitFile(fileToUpload);  // use direct for now
-        }
-    }
-
     // Get the activity info
     fetchActivity(id) {
         ActivityDB.get(id).then(activity => {
@@ -570,6 +570,7 @@ class ActivityForm extends React.Component {
                                         {message != null ? <p className="blue-text">{message}</p> : ""}
                                         <form className={classes.container} noValidate autoComplete="off">
 
+                                        {/* Dont show name input field 
                                         <TextField
                                             disabled
                                             id="displayName"
@@ -586,6 +587,7 @@ class ActivityForm extends React.Component {
                                             value={displayName}
                                             onChange={this.onChange}
                                         />        
+                                        */}
                           
                                         <TextField
                                             id="activityName"
@@ -725,16 +727,23 @@ class ActivityForm extends React.Component {
                                     </button>
                                 </div>
 
-                                {/* UPLOAD FILE */}
-                                <div className="col s5 offset-s2 m5 offset-m2">
-                                    <input type="file" name="file" onChange={this.fitFileChange}/>
-                                </div>
-                                <div className="col s3 m3">
-                                    <button className="btn waves-effect waves-light blue darken-4 modal-trigger m2"
-                                        onClick={this.uploadFitFile}>Upload Fit 
-                                    </button>
-                                </div>
-                                {/* UPLOAD FILE*/}
+                                <label htmlFor="file">
+                                    <input
+                                        id="file"
+                                        name="file"
+                                        type="file"
+                                        onChange={this.fitFileChange}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <Fab
+                                        color="secondary"
+                                        size="small"
+                                        component="span"
+                                        aria-label="add"
+                                        variant="extended">
+                                        <AddIcon /> Upload FIT File 
+                                    </Fab>
+                                </label>
                             </div>
                         </div>
                     </div>

@@ -12,14 +12,14 @@ const databaseURL = "https://teamatc-challenge.firebaseio.com";
 // if  GOOGLE_APPLICATION_CREDENTIALS set, use this file, else, dont send cred since App Engine finds it
 if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     const serviceAccount = require(path.join(__dirname, process.env.GOOGLE_APPLICATION_CREDENTIALS));
-    console.log(`Deployed Local ${process.env.GOOGLE_APPLICATION_CREDENTIALS}`);
+    // console.log(`Deployed Local ${process.env.GOOGLE_APPLICATION_CREDENTIALS}`);
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
         databaseURL: databaseURL,
         storageBucket: storageBucket
     });
 } else if (process.env.HEROKU_GOOGLE_CREDENTIALS) {
-    console.log("Deployed HEROKU_GOOGLE_CREDENTIALS");
+    // console.log("Deployed HEROKU_GOOGLE_CREDENTIALS");
     const serviceAccount = JSON.parse(process.env.HEROKU_GOOGLE_CREDENTIALS);
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
@@ -27,7 +27,7 @@ if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
         storageBucket: storageBucket
     });
 } else {
-    console.log("Deployed To Google Cloud");
+    // console.log("Deployed To Google Cloud");
     admin.initializeApp({
         databaseURL: databaseURL,
         storageBucket: storageBucket
