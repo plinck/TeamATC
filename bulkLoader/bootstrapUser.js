@@ -50,13 +50,13 @@ function createActivity (activity) {
                     uid: activity.uid
                 }).then((res) => {
                     // console.log("Firestore activity successfully added");
-                    return resolve(res);
+                    resolve(res);
                 }).catch((error) => {
                     console.error("Firestore activity add failed");
-                    return reject(error);
+                    reject(error);
                 });    
             } else {
-                return resolve(activity);
+                resolve(activity);
             }
         }).catch((error) => {
             console.error("Activity not found which is OK, as I will add");
@@ -76,10 +76,10 @@ function createActivity (activity) {
                 uid: activity.uid
             }).then((res) => {
                 // console.log("Firestore activity successfully added");
-                return resolve(res);
+                resolve(res);
             }).catch((error) => {
                 console.error("Firestore activity add failed");
-                return reject(error);
+                reject(error);
             });
         });
     });
@@ -138,11 +138,11 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
                                 activity.uid = user.id;
                                 createActivity(activity).then(res => {
                                     // worked
-                                        // console.log(`Created Activity in createActivitiesFromGoogleDoc: ${res}`);
-                                        totalActivitiesAdded += 1;
-                                     }).catch(err => {
-                                        console.error(`Error Creating Activity in createActivitiesFromGoogleDoc: ${activity}`);
-                                    });                  
+                                    // console.log(`Created Activity in createActivitiesFromGoogleDoc: ${res}`);
+                                    totalActivitiesAdded += 1;
+                                }).catch(err => {
+                                    console.error(`Error Creating Activity in createActivitiesFromGoogleDoc: ${activity}`);
+                                });                  
         
                             } else {
                                 user.err = `User with email: ${activity.email} not found in firestore`;
