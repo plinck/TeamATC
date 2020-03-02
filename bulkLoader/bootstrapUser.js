@@ -21,12 +21,12 @@ function createActivity (activity) {
 
     // first check if activiy already exist with this info
     return new Promise((resolve, reject) => {
-        dbActivitiesRef.get()
-        .where(email, "==", activity.email)
-        .where(activityDateTime, "==", activity.activityDateTime)
-        .where(distance, "==", activity.distance)
-        .where(activityType, "==", activity.activityType)
-        .limit(1)
+        dbActivitiesRef
+        .where("email", "==", activity.email)
+        .where("activityDateTime", "==", activity.activityDateTime)
+        .where("distance", "==", activity.distance)
+        .where("activityType", "==", activity.activityType)
+        .get()
         .then(snapShot => {
             let foundActivity = false;
             snapShot.forEach(function (doc) {
@@ -146,7 +146,7 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
         
                             } else {
                                 user.err = `User with email: ${activity.email} not found in firestore`;
-                                console.log(user.err);
+                                console.error(user.err);
                             }
                         }).catch(err => {
                             console.error(`Error getting user ${err.message}`);
@@ -210,7 +210,7 @@ async function createUsersFromGoogleActivities(fileToUpload) {
                         firstName: ChallengeActivities[i].firstName,
                         lastName: ChallengeActivities[i].lastName,
 
-                        email:ChallengeActivities[i].email,
+                        email:ChallengeActivities[i].email.toLowerCase(),
                         phoneNumber: "",
                         photoURL: "",
                         teamUid: ChallengeActivities[i].teamUid,
@@ -361,7 +361,7 @@ async function uploadATCMembers(fileToUpload) {
                 let memberArray = line.split(',');
                 let lastName = memberArray[0].trim().toLowerCase();
                 let firstName = memberArray[1].trim().toLowerCase();
-                let email = memberArray[2].trim();
+                let email = memberArray[2].trim().toLowerCase();
 
                 lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
                 firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
@@ -526,7 +526,7 @@ async function createFirestoreUserBootstrap(user) {
                 lastName: user.lastName,
                 displayName: `${user.firstName} ${user.lastName}`,
                 phoneNumber: user.phoneNumber,
-                email: user.email,
+                email: user.email.toLowerCase(),
                 photoURL: user.photoURL ? user.photoURL : "",
                 teamUid: user.teamUid ? user.teamUid : "",
                 teamName: user.teamName ? user.teamName : ""
