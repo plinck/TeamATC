@@ -21,12 +21,12 @@ class Account extends React.Component {
       displayName,
       email,
       phoneNumber,
-      claims
+      primaryRole
     } = this.props.user;
     displayName = displayName || "";
     email = email || "";
     phoneNumber = phoneNumber || "";
-    claims = claims || "";
+    primaryRole = primaryRole || "";
 
     // Some props take time to get ready so return null when uid not avaialble
     if (uid === null) {
@@ -41,7 +41,7 @@ class Account extends React.Component {
             displayName={displayName}
             email={email}
             phoneNumber={phoneNumber}
-            claims={claims}
+            primaryRole={primaryRole}
           />
           <PasswordChangeForm />
         </div>

@@ -84,7 +84,7 @@ class UserForm extends React.Component {
       uid: "",
       teamUid: "",
       teamName: "",
-      claims: "noauth",
+      primaryRole: "noauth",
       isAdmin: false,
       isTeamLead: false,
       isModerator: false,
@@ -106,15 +106,13 @@ class UserForm extends React.Component {
         uid: user.uid,
         teamUid: user.teamUid || "",
         teamName: user.teamName || "",    
-        claims: user.claims,
+        primaryRole: user.primaryRole,
         isAdmin: user.isAdmin,
         isTeamLead: user.isTeamLead,
         isModerator: user.isModerator,
         isUser: user.isUser,
         email: user.email
       });
-      // Dont need to get custom claims since they are passed in props from context
-      // and can not be changed here
     })
     .catch(err => {
       console.error(`Error getting user ${err}`);
@@ -137,9 +135,6 @@ class UserForm extends React.Component {
         teams: teams,
         teamLookup: teamLookup
       });
-
-      // Dont need to get custom claims since they are passed in props from context
-      // and can not be changed here
     })
     .catch(err => {
       console.error(`Error getting teams ${err}`);
@@ -304,7 +299,7 @@ class UserForm extends React.Component {
       photoURL,
       phoneNumber,
       email,
-      claims,
+      primaryRole,
       message,
       teamUid,
       teams
@@ -337,7 +332,7 @@ class UserForm extends React.Component {
       <div className="container">
         <div className="card">
           <div className="card-content">
-            <span className="card-title">User (Role: {claims})</span>
+            <span className="card-title">User (Role: {primaryRole})</span>
             <form onSubmit={this.saveUser} >
 
             <FormControl variant="outlined" required className={classes.formControl}>

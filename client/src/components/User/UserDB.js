@@ -1,11 +1,24 @@
-"use strict";
-const admin = require("../middleware/authServerCommon");
-const Util = require("./Util.js");
+import Util from "../Util/Util";
 
 // Backend functions for user DB in firestore and auth
 class UserDB {
     static updateClaims (uid, claims) {
+        
+        /* Use this after you get thje claims of users DB
+        if (user.isAdmin) {
+            user.primaryRole = "admin"
+        } else if (user.isTeamLead) {
+            user.primaryRole = "teamLead"
+        } else if (user.isModerator) {
+            user.primaryRole = "moderator"
+        } else {
+            user.primaryRole = "athlete"
+            user.isUser  = true;
+        }
+        */
+
         return new Promise(async (resolve, reject) => {
+            // Init claims for primary since you can be multiple
             // update claims
             const dbUsersRef = Util.getDBRefs().dbUsersRef;
             dbUsersRef.doc(uid).set(claims,
@@ -22,7 +35,6 @@ class UserDB {
     static update (user) {
         console.log(`trying to update user in fb: ${user}`);
         return new Promise(async (resolve, reject) => {
-            const db = admin.firestore();;
 
             // update
             console.log("User updated, user=", user);
@@ -33,7 +45,9 @@ class UserDB {
                 displayName: `${user.firstName} ${user.lastName}`,
                 phoneNumber: user.phoneNumber,
                 email: user.email,
-                photoURL: user.photoURL ? user.photoURL : ""
+                photoURL: user.photoURL ? user.photoURL : "",
+                teamUid: user.teamUid ? user.teamUid  : "",
+                teamName: user.teamName ? user.teamName  : ""
             }, {
                 merge: true
             }).then(() => {
@@ -47,4 +61,4 @@ class UserDB {
     }
 }
 
-module.exports = UserDB;
+export default UserDB;

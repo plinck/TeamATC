@@ -31,7 +31,7 @@ class User extends React.Component {
     
     // decontruct props
     render() {
-        let { id, uid, firstName, lastName, phoneNumber, email, photoURL, claims } =  this.props.userInfo;
+        let { id, uid, firstName, lastName, phoneNumber, email, photoURL, primaryRole } =  this.props.userInfo;
         let { userMakeAdmin, userMakeTeamLead, userMakeUser, userMakeModerator } =  this.props;
     
         if (!photoURL) {
@@ -63,7 +63,7 @@ class User extends React.Component {
                         <span className="card-title">{firstName} {lastName}</span>
                         <p>{email}</p>
                         <p>{phoneNumber.length > 9 ? phoneNumber.replace(/(\d\d\d)(\d\d\d)(\d\d\d\d)/, '$1-$2-$3') : phoneNumber}</p>
-                        <p>Primary Role: {claims}</p>
+                        <p>Primary Role: {primaryRole}</p>
                     </div>
                     <div className="card-action">
                         <div className="left-align">

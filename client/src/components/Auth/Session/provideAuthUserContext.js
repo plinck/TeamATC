@@ -31,34 +31,31 @@ const provideAuthUserContext = Component => {
                 dbATCChallengeMemberRef: dbATCChallengeMemberRef,
 
                 authUser: null,
+                token: null,
+
                 uid: null,
                 displayName: null,
                 phoneNumber: null,
                 email: null,
-                token: null,
-                claims: null,
-                isAdmin: false,
-                isTeamLead: false,
-                isModerator: false,
-                isUser: false,
+
                 firstName: null,
                 lastName: null,
                 teamUid: null,
                 teamName: null,
+
+                primaryRole: "user",
+                isAdmin: false,
+                isTeamLead: false,
+                isModerator: false,
+                isUser: false,
             };
         }
 
         refreshToken = async () => {
             try {
                 let token = await this.props.firebase.doRefreshToken();
-                let claims = await this.props.firebase.doGetUserRole();
                 this.setState({
                     token: token,
-                    claims: claims.name,
-                    isAdmin: claims.isAdmin,
-                    isTeamLead: claims.isTeamLead,
-                    isModerator: claims.isModerator,
-                    isUser: claims.isUser
                  });
             } catch {
                 console.error("Error refreshng token");
@@ -81,7 +78,6 @@ const provideAuthUserContext = Component => {
                     } else {
                         this.setState({
                             authUser: null,
-                            authUserRole: null,
                             token: null
                         });
                     }
@@ -102,6 +98,16 @@ const provideAuthUserContext = Component => {
             this.userListener = docRef.onSnapshot((doc) => {
                 const user = doc.data();
                 if (user) {
+                    if (user.isAdmin) {
+                        user.primaryRole = "admin"
+                    } else if (user.isTeamLead) {
+                        user.primaryRole = "teamLead"
+                    } else if (user.isModerator) {
+                        user.primaryRole = "moderator"
+                    } else {
+                        user.primaryRole = "athlete"
+                        user.isUser  = true;
+                    }
                     this.setState({
                         authUser: authUser, 
                         uid: authUser.uid,
@@ -112,7 +118,13 @@ const provideAuthUserContext = Component => {
                         firstName: user.firstName,
                         lastName: user.lastName,
                         teamUid: user.teamUid,
-                        teamName: user.teamName
+                        teamName: user.teamName,
+
+                        primaryRole: user.primaryRole ? user.primaryRole : "",
+                        isAdmin: user.isAdmin ? user.isAdmin : false,
+                        isTeamLead: user.isTeamLead ? user.isTeamLead : false,
+                        isModerator: user.isModerator ? user.isModerator : false,
+                        isUser: user.isUser ? user.isUser : false
                     });
                     // update firebase auth profile if this user's info changed
                     UserAPI.updateCurrentUserAuthProfile(user).then (() => {

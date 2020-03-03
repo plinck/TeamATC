@@ -80,7 +80,7 @@ class AccountForm extends React.Component {
             photoURL: "",
             phoneNumber: "",
             email: "",
-            claims: "",
+            primaryRole: "",
             isAdmin: false,
             isTeamLead: false,
             isModerator: false,
@@ -103,14 +103,14 @@ class AccountForm extends React.Component {
                     uid: user.uid,
                     teamUid: user.teamUid || "",
                     teamName: user.teamName || "",    
-                    claims: user.claims,
+                    primaryRole: user.primaryRole,
                     isAdmin: user.isAdmin,
                     isTeamLead: user.isTeamLead,
                     isModerator: user.isModerator,
                     isUser: user.isUser,
                     email: user.email            
                 });
-                // Dont need to get custom claims since they are passed in props from context
+                // Dont need to get custom primaryRole since they are passed in props from context
                 // and can not be changed here
             })
             .catch(err => {
@@ -135,8 +135,6 @@ class AccountForm extends React.Component {
             teamLookup: teamLookup
         });
 
-        // Dont need to get custom claims since they are passed in props from context
-        // and can not be changed here
         })
         .catch(err => {
         console.error(`Error getting teams ${err}`);
@@ -191,7 +189,7 @@ class AccountForm extends React.Component {
             photoURL,
             phoneNumber,
             email,
-            claims,
+            primaryRole,
             isAdmin,
             isTeamLead,
             isModerator,
@@ -223,7 +221,7 @@ class AccountForm extends React.Component {
             <div className="container">
             <div className="card">
                 <div className="card-content">
-                    <span className="card-title">User Profile (Role: {claims})</span>
+                    <span className="card-title">User Profile (Role: {primaryRole})</span>
                     <form className={classes.container} onSubmit={this.updateUser} >
 
                         <FormControl variant="outlined" required className={classes.formControl}>

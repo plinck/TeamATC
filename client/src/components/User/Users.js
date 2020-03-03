@@ -25,7 +25,7 @@ class Users extends React.Component {
             for (let i in users) {
                 users[i].firstName = users[i].firstName || "First";
                 users[i].lastName = users[i].lastName || "Last";
-                users[i].claims = users[i].claims || "user"; 
+                users[i].primaryRole = users[i].primaryRole || "user"; 
             }
 
             // console.log(`Users in refresh page: ${JSON.stringify(users, null, 2)}`);
