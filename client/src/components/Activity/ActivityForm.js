@@ -375,8 +375,6 @@ class ActivityForm extends React.Component {
                 teams: teams,
                 teamLookup: teamLookup
             });
-        // Dont need to get custom claims since they are passed in props from context
-        // and can not be changed here
         })
         .catch(err => {
             console.error(`Error getting teams ${err}`);

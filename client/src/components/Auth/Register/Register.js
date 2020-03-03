@@ -103,7 +103,7 @@ class Register extends React.Component {
         uid: "",
         teamUid: "",
         teamName: "",
-        claims: "noauth",
+        primaryRole: "noauth",
         errorText: "",
         showPassword: false
     };

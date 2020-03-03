@@ -60,30 +60,6 @@ class Util {
     return currentAuthUser;
   }
 
-  static getUserRole = async () => {
-    const firebase = new Firebase();
-    const currentUserRole = await firebase.auth.doGetUserRole();
-    return currentUserRole;
-  }
-
-  static isUserAdmin = async () => {
-    const firebase = new Firebase();
-    const userIsAdmin = await firebase.auth.doIsUserAdmin();
-    return userIsAdmin;
-  }
-
-  static isUserModerator = async () => {
-    const firebase = new Firebase();
-    const userIsModerator = await firebase.auth.doIsUserModerator();
-    return userIsModerator;
-  }
-
-  static isUserTeamLead = async () => {
-    const firebase = new Firebase();
-    const userIsTeamLead = await firebase.auth.doIsUserTeamLead();
-    return userIsTeamLead;
-  }
-
   static getFirestoreDB = () => {
     const firebase = new Firebase();
     const db = firebase.db;

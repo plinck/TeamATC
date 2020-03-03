@@ -1,4 +1,5 @@
 import Util from "../Util/Util";
+import UserDB from "./UserDB";
 
 class UserAPI {
     // geths the current auth user info from firestore auth service
@@ -53,7 +54,6 @@ class UserAPI {
                 console.log("Auth Profile for User successfully updated!");
                 const dbUsersRef = Util.getDBRefs().dbUsersRef;
                 // update
-                // Note: DO NOT update claims since that can only be done by admin
                 dbUsersRef.doc(user.id).set({
                     firstName: user.firstName,
                     lastName: user.lastName,
@@ -137,7 +137,7 @@ class UserAPI {
         let user = {};
 
         // check if userInfo exists and set accordingly
-        // e.g. this funcxtion is ploymorphic so it can handle setting lots of userInfo or just seeding the firestore collection
+        // e.g. this function is ploymorphic so it can handle setting lots of userInfo or just seeding the firestore collection
         if (userInfo) {
             user = {
                 displayName: `${userInfo.firstName} ${userInfo.lastName}`,
@@ -213,11 +213,6 @@ class UserAPI {
                 reject(`error in addAuthUserToFirestore.docRef.get creating user from authUser: ${err}`);
             });
         });
-    }
-
-    static getUsersClaims = (uid) => {
-        // its a promise so return
-        return (Util.apiGet(`/api/auth/getClaims/${uid}`));
     }
 
     // Everything from top down must be async or awaits do NOT wait
@@ -327,7 +322,7 @@ class UserAPI {
         return new Promise(async (resolve, reject) => {
 
             // we always want uid = id to keep auth and firestore in sync
-            // Do NOT update isAdmin, isTeamLead etc.  or claims i- only change claims through auth
+            // Do NOT update isAdmin, isTeamLead etc.  or primaryRole i- only change primaryRole through auth
             // (unless using just user or noAuth since those are not *secure*)
             dbUsersRef.doc(user.id).set({
                 firstName: user.firstName,
@@ -349,30 +344,30 @@ class UserAPI {
 
     // Make user an Admin user - returns a promise 
     static makeAdmin = (uid) => {
-        return (Util.apiPost(`/api/auth/setAdmin/${uid}`, {
-            id: uid
-        }));
+        return (UserDB.updateClaims(uid, {isAdmin: true, primaryRole: "admin"}));
     }
 
     // Make user an Admin user - returns a promise 
     static makeModerator = (uid) => {
-        return (Util.apiPost(`/api/auth/setModerator/${uid}`, {
-            id: uid
-        }));
+        return (UserDB.updateClaims(uid, {isModerator: true}));
     }
     
     // Make user a teamLead - returns a promise 
     static makeTeamLead = (uid) => {
-        return (Util.apiPost(`/api/auth/setTeamLead/${uid}`, {
-            id: uid
-        }));
+        return (UserDB.updateClaims(uid, {isteamLead: true}));
     }
 
     // Make user a plain ole user - essential disables admin or teamLead or other functionality 
     static makeUser = (uid) => {
-        return (Util.apiPost(`/api/auth/setUser/${uid}`, {
-            id: uid
-        }));
+        return (UserDB.updateClaims(uid,
+            {
+                istAdmin: false,
+                isModerator: false,
+                isteamLead: false,
+                isUser: false,
+                primaryRole: "user"
+            }
+        ));
     }    
     
 }
