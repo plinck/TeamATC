@@ -7,7 +7,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Box from "@material-ui/core/Box";
 import SearchIcon from "@material-ui/icons/Search";
 import TextField from '@material-ui/core/TextField';
-import { InputAdornment } from '@material-ui/core';
+import { InputAdornment, Button } from '@material-ui/core';
 
 // For select input field
 import FormControl from '@material-ui/core/FormControl';
@@ -65,6 +65,7 @@ class Activities extends React.Component {
 
         this.state = {
             activities: null,
+            lastActivityDoc: undefined,
             searchBy: "",
             filterByString: "All",
             filterBy: "All",
@@ -103,8 +104,8 @@ class Activities extends React.Component {
     // Database Interaction Methods   
     // ************************************************************
     // Get activities with a filter
-    getFilteredActivities = (filterByString) => {
-        if (filterByString === undefined || filterByString === null) {
+    getFilteredActivities = (filterByString, lastActivityDoc) => {
+        if (!filterByString || filterByString === null) {
             filterByString = this.state.filterByString;
         }
 
@@ -130,10 +131,46 @@ class Activities extends React.Component {
             }     
 
         this.setState({isLoading: true});
-        ActivityDB.getFiltered(filterObj)
+        ActivityDB.getFiltered(filterObj, undefined, lastActivityDoc)
         .then(res => {
-            let activities = res;
-            this.setState({ activities: activities, isLoading: false});
+            let activities = res.activities;
+            this.setState({ activities: activities, lastActivityDoc: res.lastActivityDoc, isLoading: false});
+        }).catch(err => {
+            this.setState({isLoading: false});
+            console.error(err);
+        });
+    };
+
+    // Get next page
+    getNextPage = () => {
+       let filterBy = this.state.filterBy;
+       let lastActivityDoc = this.state.lastActivityDoc;
+       let filterObj = {
+            filterName: undefined,
+            filterValue: undefined
+       }
+
+        switch(filterBy) {
+            case "All":
+                filterObj = undefined;
+                break;
+            case "Team":                            
+                filterObj.filterName = "teamUid";
+                filterObj.filterValue = this.props.user.teamUid;
+                break;
+            case "Mine":
+                filterObj.filterName = "uid";
+                filterObj.filterValue = this.props.user.uid;
+                break;
+            default:
+                filterObj = undefined;
+            }     
+
+        this.setState({isLoading: true});
+        ActivityDB.getFiltered(filterObj, undefined, lastActivityDoc)
+        .then(res => {
+            let activities = res.activities;
+            this.setState({ activities: activities, lastActivityDoc: res.lastActivityDoc, isLoading: false});
         }).catch(err => {
             this.setState({isLoading: false});
             console.error(err);
@@ -310,9 +347,9 @@ class Activities extends React.Component {
                             )
                         }}
                         onChange={this.handleChange}
-                    />
+                        />
                 </div>
-
+                
                 <div className="col s2 m2">
                     <Link to="/activityform">
                         <i style={{cursor: 'pointer', marginTop: 5, marginRight: 1}}
@@ -327,6 +364,16 @@ class Activities extends React.Component {
                             className="material-icons indigo-text text-darken-4">system_update_alt
                         </i>
                     </CSVLink> 
+                    <Button onClick={this.getNextPage}>Page
+                        {/*
+                            <i style={{cursor: 'pointer', marginTop: 5, marginRight: 1}}
+                            className="material-icons indigo-text text-darken-4">skip_previous
+                        </i>
+                        */}
+                        <i style={{cursor: 'pointer', marginTop: 5, marginRight: 1}}
+                            className="material-icons indigo-text text-darken-4">skip_next
+                        </i>
+                    </Button>
                 </div>
             </Box>
 
