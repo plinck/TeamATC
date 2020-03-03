@@ -27,6 +27,7 @@ app-dev.yaml
 app-stag.yaml
 app-prod.yaml
 app-std.yaml
+app-flex.yaml
 **.serviceAccountKey.json
 **.serviceAccountKey*.json
 
