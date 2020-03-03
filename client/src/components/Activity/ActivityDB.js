@@ -1,22 +1,39 @@
 import Util from "../Util/Util";
 
 class ActivityDB {
+    
     // Get all activities from firestore
-    static getFiltered = (filterObj, resultLimit) => {
+    static getFiltered = (filterObj, resultLimit, startAfter) => {
         resultLimit = resultLimit || 100;
 
         // default ref gets all
         const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
 
-        let ref = dbActivitiesRef
-            .orderBy("activityDateTime", "desc")
-            .limit(resultLimit);
-
-        if (filterObj && filterObj.filterName) {
+        let ref = undefined;
+        if (startAfter) {
             ref = dbActivitiesRef
-                .where(filterObj.filterName, "==", filterObj.filterValue)
+                .orderBy("activityDateTime", "desc")
+                .limit(resultLimit)
+                .startAfter(startAfter);
+        } else {
+            ref = dbActivitiesRef
                 .orderBy("activityDateTime", "desc")
                 .limit(resultLimit);
+        }
+
+        if (filterObj && filterObj.filterName) {
+            if (startAfter) {
+                ref = dbActivitiesRef
+                    .where(filterObj.filterName, "==", filterObj.filterValue)
+                    .orderBy("activityDateTime", "desc")
+                    .limit(resultLimit)
+                    .startAfter(startAfter);
+            } else {
+                ref = dbActivitiesRef
+                    .where(filterObj.filterName, "==", filterObj.filterValue)
+                    .orderBy("activityDateTime", "desc")
+                    .limit(resultLimit);
+            }
         }
 
         return new Promise((resolve, reject) => {
@@ -33,7 +50,8 @@ class ActivityDB {
                             .toDate();
                         activities.push(activity);
                     });
-                    return (resolve(activities));
+                    startAfter = querySnapshot.docs[querySnapshot.docs.length-1];
+                    return (resolve({activities: activities, lastActivityDoc: startAfter}));
                 })
                 .catch(err => {
                     reject(err);
