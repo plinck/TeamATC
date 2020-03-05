@@ -1,5 +1,5 @@
 import axios from 'axios';
-import GLOBAL_ENV from "../Environment/Environment";
+import { ORG, ENV } from "../Environment/Environment";
 import Firebase from "../Auth/Firebase/firebase";
 
 // Util is used for various common functions
@@ -40,12 +40,12 @@ class Util {
     }
     const firebase = new Firebase();
 
-    const dbUsersRef = firebase.db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`users`);
-    const dbATCMembersRef = firebase.db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection(`ATCMembers`);
+    const dbUsersRef = firebase.db.collection(ORG).doc(ENV).collection(`users`);
+    const dbATCMembersRef = firebase.db.collection(ORG).doc(ENV).collection(`ATCMembers`);
 
-    const dbATCChallengeMemberRef = firebase.db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("challenges").doc(challengeId).collection(`atcchallengemembers`);        
-    const dbActivitiesRef = firebase.db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("challenges").doc(challengeId).collection(`activities`);
-    const dbTeamsRef = firebase.db.collection(GLOBAL_ENV.ORG).doc(GLOBAL_ENV.ENV).collection("challenges").doc(challengeId).collection(`teams`);
+    const dbATCChallengeMemberRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`atcchallengemembers`);        
+    const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`activities`);
+    const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`teams`);
 
     return {dbUsersRef: dbUsersRef,
       dbATCMembersRef: dbATCMembersRef,

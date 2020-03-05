@@ -1,7 +1,7 @@
 const ORG=process.env.REACT_APP_FIREBASE_ORG ? process.env.REACT_APP_FIREBASE_ORG : "ATC";
 const ENV=process.env.REACT_APP_FIREBASE_ENV ? process.env.REACT_APP_FIREBASE_ENV : "dev";
-const USERS_DB="users";
 
+console.log(`Using global environment ORG: ${ORG}, ENV: ${ENV}`);  
 
 class globalEnv {
     // Formats a display money field 
@@ -9,11 +9,11 @@ class globalEnv {
         const env = {
             ORG: ORG,
             ENV: ENV,
-            USERS_DB: USERS_DB
         };
-        console.log(`using global environment: ${JSON.stringify(env, null, 4)}`);  
+        console.log(`Using global environment: ${JSON.stringify(env, null, 4)}`);  
         return env;
     };
 }
 
-export default { ORG, ENV, USERS_DB, globalEnv };  
+export default globalEnv;
+export { ORG, ENV };

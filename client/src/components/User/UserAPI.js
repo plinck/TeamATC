@@ -289,7 +289,7 @@ class UserAPI {
         });
     };
 
-    // delete later - MUST be done on server in secure admin/auth environment
+    // delete later - MUST be done on server in secure admin/auth 
     static delete = (uid) => {
         const dbUsersRef = Util.getDBRefs().dbUsersRef;
 

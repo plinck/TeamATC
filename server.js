@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const path = require('path');
 require("dotenv").config();
+const {ORG, ENV} = require("./ServerEnvironment");
+
 const port = process.env.PORT || 5000;
 
 // Parse request body as JSON
@@ -39,5 +41,5 @@ if (process.env.NODE_ENV === 'production') {
 
 //Start server
 app.listen(port, (req, res) => {
-    console.log(`server listening on port: ${port}`)
+    console.log(`server listening on port: ${port} for ORG: ${ORG}, ENV: ${ENV}`)
 });

@@ -46,8 +46,6 @@ class Firebase {
     this.auth = firebase.auth();
     this.db = firebase.firestore();
     this.functions = firebase.functions();
-    console.log(`using ORG: ${process.env.REACT_APP_FIREBASE_ORG}`);
-    console.log(`using ENV: ${process.env.REACT_APP_FIREBASE_ENVIRONMENT}`);
   }
 
   doGetCurrentUser = () => {
