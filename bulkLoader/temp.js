@@ -31,7 +31,7 @@ function createActivity (activity) {
             let foundActivity = false;
             snapShot.forEach(function (doc) {
                 foundActivity = true;
-                // console.log(doc.id, ' => ', doc.data());
+                console.log(doc.id, ' => ', doc.data());
             });
             if (!foundActivity) {
                 dbActivitiesRef.add({
@@ -89,8 +89,6 @@ function createActivity (activity) {
 // Assume users create and up
 async function createActivitiesFromGoogleDoc(fileToUpload) {
     const dbUsersRef = dbALLRefs.dbUsersRef;
-    const dbTeamsRef = dbALLRefs.dbTeamsRef
-    const dbATCMembersRef = dbALLRefs.dbATCMembersRef
 
     let ChallengeActivities = [];
     let totalActivitiesAdded = 0;
@@ -153,9 +151,9 @@ async function createActivitiesFromGoogleDoc(fileToUpload) {
                         });
                     }
                 }
-            }); //fs.read
-            console.log(`Total Activities Created: ${totalActivitiesAdded}`)
-
+        }); //fs.read
+        console.log(`Total Activities Created: ${totalActivitiesAdded}`)
+    } else {
     }
 }
 // Copy Users from current location to DEV
@@ -179,96 +177,97 @@ async function createUsersFromGoogleActivities(fileToUpload) {
     // read  the file and parse
     if (fileToUpload) {
         fs.readFile(fileToUpload, 'utf8', (err, data) => {
-                //
-                if (err) throw err;
-                console.log(`OK reading file`);
+            //
+            if (err) throw err;
+            console.log(`OK reading file`);
 
-                let totalMembers = 0;
- 
-                //remove the quotes
-                let fixedData = data.replace(/["]*/g, "");
-                //console.log(`read ${fixedData} from file: ${fileToUpload}`);
-                let lines = fixedData.split('\n');
-                console.log(`read ${lines.length} lines of data from file: ${fileToUpload} line[0].length: ${lines[0].length}`);
-                // 1/15/2020 10:00:53,Laurie Nicholson,1/15/2020,Run,3.4,Rahuligan,Miles (Bike and Run)
+            let totalMembers = 0;
 
-                ChallengeActivities = Activities.getChallengeActivities (lines, ATCMembers, teams);      
+            //remove the quotes
+            let fixedData = data.replace(/["]*/g, "");
+            //console.log(`read ${fixedData} from file: ${fileToUpload}`);
+            let lines = fixedData.split('\n');
+            console.log(`read ${lines.length} lines of data from file: ${fileToUpload} line[0].length: ${lines[0].length}`);
+            // 1/15/2020 10:00:53,Laurie Nicholson,1/15/2020,Run,3.4,Rahuligan,Miles (Bike and Run)
 
-                for (let i = 0; i < ChallengeActivities.length; i++) {
-                    if (!ChallengeActivities[i]) {
-                        console.log(`Bad activity at index: ${i}`);
-                        continue;
-                    }
-                    if (ChallengeMembersAlreadyExists[ChallengeActivities[i].displayName]) {
-                        continue;
-                    } else {
-                        
-                    ChallengeMembersAlreadyExists[ChallengeActivities[i].displayName] = true;
-                    let member = {
-                        displayName: ChallengeActivities[i].displayName,
-                        distanceUnits: ChallengeActivities[i].distanceUnits,
-                        firstName: ChallengeActivities[i].firstName,
-                        lastName: ChallengeActivities[i].lastName,
+            ChallengeActivities = Activities.getChallengeActivities (lines, ATCMembers, teams);      
 
-                        email:ChallengeActivities[i].email.toLowerCase(),
-                        phoneNumber: "",
-                        photoURL: "",
-                        teamUid: ChallengeActivities[i].teamUid,
-                        teamName: ChallengeActivities[i].teamName,
-                    }
-
-                    ChallengeMembers.push(member);
-                    totalMembers += 1;
-
-                        //console.log(`Unique Member: ${JSON.stringify(member)}`);
-                    }
+            for (let i = 0; i < ChallengeActivities.length; i++) {
+                if (!ChallengeActivities[i]) {
+                    console.log(`Bad activity at index: ${i}`);
+                    continue;
                 }
-                console.log(`Challenge Members: ${totalMembers}`)
+                if (ChallengeMembersAlreadyExists[ChallengeActivities[i].displayName]) {
+                    continue;
+                } else {
+                    
+                ChallengeMembersAlreadyExists[ChallengeActivities[i].displayName] = true;
+                let member = {
+                    displayName: ChallengeActivities[i].displayName,
+                    distanceUnits: ChallengeActivities[i].distanceUnits,
+                    firstName: ChallengeActivities[i].firstName,
+                    lastName: ChallengeActivities[i].lastName,
 
-                // Now, I need to creeate the users and then add the acivities
-                for (let i = 0; i < ChallengeMembers.length; i++) {
-                    if (true) {
-                            let user = ChallengeMembers[i];
-                            let authUser = {};
-                            user.password = undefined;
-                            admin.auth().getUserByEmail(user.email).then((authUser) => {
-                                // User found.
-                                // console.log(`Found authUser: ${JSON.stringify(authUser, null, 4)}`);
-                                user.uid = authUser.uid;
-                                createFirestoreUserBootstrap(user).then (newUser => {
-                                    // console.log(`Creating User in createFirestoreUserBootstrap: ${user}, newUser: ${newUser}`);
-                                }).catch(err => {
-                                    console.error(`Error Creating User in createFirestoreUserBootstrap: ${user}`);
-                                });  
+                    email:ChallengeActivities[i].email.toLowerCase(),
+                    phoneNumber: "",
+                    photoURL: "",
+                    teamUid: ChallengeActivities[i].teamUid,
+                    teamName: ChallengeActivities[i].teamName,
+                }
 
-                            }).catch(function(error) {
-                                //console.log("Error fetching auth user data:", error);
-                                createAuthUserBootstrap(user).then(authUser => {
-                                    //console.log(`Created authUser: ${JSON.stringify(authUser, null, 4)}`);
-                                    user.uid = authUser.uid;
-                                    createFirestoreUserBootstrap(user).then (newUser => {
-                                        // Now update claims for a user - I dont think I acutaull need to do this
-                                        // setAuthClaimsAsUser(authUser.uid, newClaims).then ( () => {
-                                        //     // claims successful
-                                        //     console.log(`Successfully Creating User in setAuthClaimsAsUser: ${user}`);
-                                        // }).catch(err => {
-                                        //     console.error(`Error Creating User in setAuthClaimsAsUser: ${user}`);
-                                        // });                
-                                    }).catch(err => {
-                                        console.error(`Error Creating User in createFirestoreUserBootstrap: ${user}`);
-                                    });  
-                                });                                 
+                ChallengeMembers.push(member);
+                totalMembers += 1;
+
+                    //console.log(`Unique Member: ${JSON.stringify(member)}`);
+                }
+            }
+            console.log(`Challenge Members: ${totalMembers}`)
+
+            // Now, I need to creeate the users and then add the acivities
+            for (let i = 0; i < ChallengeMembers.length; i++) {
+                if (true) {
+                    let user = ChallengeMembers[i];
+                    let authUser = {};
+                    user.password = undefined;
+                    admin.auth().getUserByEmail(user.email).then((authUser) => {
+                        // User found.
+                        // console.log(`Found authUser: ${JSON.stringify(authUser, null, 4)}`);
+                        user.uid = authUser.uid;
+                        createFirestoreUserBootstrap(user).then (newUser => {
+                            // console.log(`Creating User in createFirestoreUserBootstrap: ${user}, newUser: ${newUser}`);
+                        }).catch(err => {
+                            console.error(`Error Creating User in createFirestoreUserBootstrap: ${user}`);
+                        });  
+
+                    }).catch(function(error) {
+                        //console.log("Error fetching auth user data:", error);
+                        createAuthUserBootstrap(user).then(authUser => {
+                            //console.log(`Created authUser: ${JSON.stringify(authUser, null, 4)}`);
+                            user.uid = authUser.uid;
+                            createFirestoreUserBootstrap(user).then (newUser => {
+                                // Now update claims for a user - I dont think I acutaull need to do this
+                                // setAuthClaimsAsUser(authUser.uid, newClaims).then ( () => {
+                                //     // claims successful
+                                //     console.log(`Successfully Creating User in setAuthClaimsAsUser: ${user}`);
+                                // }).catch(err => {
+                                //     console.error(`Error Creating User in setAuthClaimsAsUser: ${user}`);
+                                // });                
                             }).catch(err => {
-                                if (err.code == "auth/email-already-exists") {
-                                    // its OK if already exists sine I just created it
-                                    console.error(`Auth User already exists ${err}`);                                    
-                                } else {
-                                    console.error(`Error Creating User in createAuthUserBootstrap: ${err}`);
-                                }
-                            });
-                    }
-                }
-            }); //fs.read
+                                console.error(`Error Creating User in createFirestoreUserBootstrap: ${user}`);
+                            });  
+                        });                                 
+                    }).catch(err => {
+                        if (err.code == "auth/email-already-exists") {
+                            // its OK if already exists sine I just created it
+                            console.error(`Auth User already exists ${err}`);                                    
+                        } else {
+                            console.error(`Error Creating User in createAuthUserBootstrap: ${err}`);
+                        }
+                    });
+                } // if true
+            } // loop challenge members
+        }); //fs.read
+    } else {
     }
 }
 
@@ -276,13 +275,8 @@ async function createUsersFromGoogleActivities(fileToUpload) {
 // Copy Users from current location to DEV
 async function copyUsersToDev() {
     const dbUsersRef = dbALLRefs.dbUsersRef;
-    const dbTeamsRef = dbALLRefs.dbTeamsRef
-    const dbATCMembersRef = dbALLRefs.dbATCMembersRef
-    const dbActivitiesRef = dbALLRefs.dbActivitiesRef
-    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
 
     console.log(`Copying users from ${dbCollSource} to ${dbCollDest}`);
-    return new Promise(async (resolve, reject) => {
 
         return new Promise((resolve, reject) => {
             dbUsersRef
@@ -314,15 +308,10 @@ async function copyUsersToDev() {
         }).catch(err => {
             reject(err);
         });
-    });
 }
 
 async function deleteATCMembers() {
-    const dbUsersRef = dbALLRefs.dbUsersRef;
-    const dbTeamsRef = dbALLRefs.dbTeamsRef
     const dbATCMembersRef = dbALLRefs.dbATCMembersRef
-    const dbActivitiesRef = dbALLRefs.dbActivitiesRef
-    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
 
     dbATCMembersRef.listDocuments().then(val => {
         val.map((val) => {
@@ -334,11 +323,7 @@ async function deleteATCMembers() {
 
 // Copy Users from current location to DEV
 async function uploadATCMembers(fileToUpload) {
-    const dbUsersRef = dbALLRefs.dbUsersRef;
-    const dbTeamsRef = dbALLRefs.dbTeamsRef
     const dbATCMembersRef = dbALLRefs.dbATCMembersRef
-    const dbActivitiesRef = dbALLRefs.dbActivitiesRef
-    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
 
     if (!fileToUpload) {
         fileToUpload = "ATCMembers.csv";
@@ -377,7 +362,6 @@ async function uploadATCMembers(fileToUpload) {
 
             let _ = ATCMembers.map((member) => {
                 // console.log(`Trying to update ${JSON.stringify(member)}`);
-
                 // use email address as key to overwrite duplicates
                 dbATCMembersRef
                     .doc(member.email)
@@ -390,6 +374,7 @@ async function uploadATCMembers(fileToUpload) {
                     });
             });
         }); // MAP
+    } else {
     }
 }
 
@@ -397,10 +382,6 @@ async function uploadATCMembers(fileToUpload) {
 // update claims from auth into FB
 function updateClaimsInFirestore(uid, claims, authClaims) {
     const dbUsersRef = dbALLRefs.dbUsersRef;
-    const dbTeamsRef = dbALLRefs.dbTeamsRef
-    const dbATCMembersRef = dbALLRefs.dbATCMembersRef
-    const dbActivitiesRef = dbALLRefs.dbActivitiesRef
-    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
 
     return new Promise(async (resolve, reject) => {
 
@@ -511,10 +492,6 @@ async function setAuthClaimsAsUser(uid) {
 
 async function createFirestoreUserBootstrap(user) {
     const dbUsersRef = dbALLRefs.dbUsersRef;
-    const dbTeamsRef = dbALLRefs.dbTeamsRef
-    const dbATCMembersRef = dbALLRefs.dbATCMembersRef
-    const dbActivitiesRef = dbALLRefs.dbActivitiesRef
-    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
 
     //console.log(`trying to update user in fb: ${user}`);
     return new Promise(async (resolve, reject) => {
@@ -571,10 +548,6 @@ function createAuthUserBootstrap(user) {
     });
 }
 
-async function showUsers() {
-    console.log(`user: ${JSON.stringify(user, null, 4)}`);
-}
-
 async function seedDatabase() {
     let user = {
         uid: null,
@@ -626,112 +599,31 @@ async function seedDatabase() {
 
     await setAuthAndFBClaims(authUser.uid, user);
 
-    exitProgram();
-    return;
 }
 
 async function copyDevToProd() {
     const dbDevUsersRef = dbALLRefs.dbDevUsersRef;
-    const dbDevATCMembersRef = dbALLRefs.dbDevATCMembersRef;
-    const dbDevChallengesRef = dbALLRefs.dbDevChallengesRef;
-    const dbDevATCChallengeMemberRef = dbALLRefs.dbDevATCChallengeMemberRef;
-    const dbDevActivitiesRef = dbALLRefs.dbDevActivitiesRef;
-    const dbDevTeamsRef = dbALLRefs.dbDevTeamsRef;
-    
     const dbProdUsersRef = dbALLRefs.dbProdUsersRef;
-    const dbProdATCMembersRef = dbALLRefs.dbProdATCMembersRef;
-    const dbProdChallengesRef = dbALLRefs.dbProdChallengesRef;
-    const dbProdATCChallengeMemberRef = dbALLRefs.dbProdATCChallengeMemberRef;
-    const dbProdActivitiesRef = dbALLRefs.dbProdActivitiesRef;
-    const dbProdTeamsRef = dbALLRefs.dbProdTeamsRef;
-
+    
     console.log("Copying users from dev to prod ...")
     dbDevUsersRef.get().then(snap => {
         snap.forEach(doc => {
-            let docData = doc.data();
-            dbProdUsersRef.doc(doc.id).set(docData).then(newDoc => {
-                return;
+            let user = {};
+            user = doc.data();
+            user.id = doc.id;
+            // Now create the user with same ID
+            // console.log(`User retrieved, user=${JSON.stringify(user)}`);
+            dbProdUsersRef.doc(user.id).set(user).then(user => {
+                //console.log(`Updated user ${JSON.stringify(user)}`);
+            }).catch(err => {
+                console.error(`error updating user: ${err}`);
             });
         });
-    }).then( () => {
-        console.log(`Copied all users from dev to prod`);
     }).catch(err => {
         console.error(`error updating user: ${err}`);
     });
 
-    console.log("Copying ATCMembers from dev to prod ...")
-    dbDevATCMembersRef.get().then(snap => {
-        snap.forEach(doc => {
-            let docData = doc.data();
-            dbProdATCMembersRef.doc(doc.id).set(docData).then(newDoc => {
-                return;
-            });
-        });
-    }).then( () => {
-        console.log(`Copied all ATCMembers from dev to prod`);
-    }).catch(err => {
-        console.error(`error updating ATCMembers: ${err}`);
-    });
-
-    console.log("Copying challenges from dev to prod ...")
-    dbDevChallengesRef.get().then(snap => {
-        snap.forEach(doc => {
-            let docData = doc.data();
-            dbProdChallengesRef.doc(doc.id).set(docData).then(newDoc => {
-                return;
-            });
-        });
-    }).then( () => {
-        console.log(`Copied all Challenges from dev to prod`);
-    }).catch(err => {
-        console.error(`error updating Challenges: ${err}`);
-    });
-
-    console.log("Copying challengeMembers from dev to prod ...")
-    dbDevATCChallengeMemberRef.get().then(snap => {
-        snap.forEach(doc => {
-            let docData = doc.data();
-            dbProdATCChallengeMemberRef.doc(doc.id).set(docData).then(newDoc => {
-                return;
-            });
-        });
-    }).then( () => {
-        console.log(`Copied all challengeMembers from dev to prod`);
-    }).catch(err => {
-        console.error(`error updating challengeMembers: ${err}`);
-    });
-
-    console.log("Copying challengeActivities from dev to prod ...")
-    dbDevActivitiesRef.get().then(snap => {
-        snap.forEach(doc => {
-            let docData = doc.data();
-            dbProdActivitiesRef.doc(doc.id).set(docData).then(newDoc => {
-                return;
-            });
-        });
-    }).then( () => {
-        console.log(`Copied all challengeActivities from dev to prod`);
-    }).catch(err => {
-        console.error(`error updating challengeActivities: ${err}`);
-    });
-
-    console.log("Copying teams from dev to prod ...")
-    dbDevTeamsRef.get().then(snap => {
-        snap.forEach(doc => {
-            let docData = doc.data();
-            dbProdTeamsRef.doc(doc.id).set(docData).then(newDoc => {
-                return;
-            });
-        });
-    }).then( () => {
-        console.log(`Copied all teams from dev to prod`);
-    }).catch(err => {
-        console.error(`error updating teams: ${err}`);
-    });
-
-
 }
-
 
 // Main menu
 function mainMenu() {
@@ -741,6 +633,7 @@ function mainMenu() {
         uploadATCMembers: uploadATCMembers,
         createUsersFromGoogleActivities: createUsersFromGoogleActivities,
         createActivitiesFromGoogleDoc: createActivitiesFromGoogleDoc,
+        copyUsersToDev: copyUsersToDev,
         copyDevToProd: copyDevToProd,
         QUIT: exitProgram
     };
