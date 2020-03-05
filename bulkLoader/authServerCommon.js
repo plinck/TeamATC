@@ -1,5 +1,5 @@
 "use strict";
-require("dotenv");
+require("dotenv").config();
 const path = require("path");
 
 // Need to use firebase admin to get at firebase stuff in node

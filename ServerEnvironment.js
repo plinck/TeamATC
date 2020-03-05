@@ -1,6 +1,8 @@
 require("dotenv").config();
+const ORG = process.env.REACT_APP_FIREBASE_ORG;
+const ENV = process.env.REACT_APP_FIREBASE_ENVIRONMENT;
 
 module.exports = {
-    ORG: process.env.REACT_APP_FIREBASE_ORG ? process.env.REACT_APP_FIREBASE_ORG : "ATC",
-    ENV: process.env.REACT_APP_FIREBASE_ENV ? process.env.REACT_APP_FIREBASE_ENV : "dev",
+    ORG: ORG,
+    ENV: ENV,
 };
