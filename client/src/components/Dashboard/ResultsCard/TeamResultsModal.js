@@ -8,11 +8,21 @@ import Box from "@material-ui/core/Box";
 import Result from "./Result";
 
 class TeamResultsModal extends React.Component {
+    constructor(props) {
+        super(props);
 
-    state = {
-        open: false
+        this.state = {
+            open: props.open,
+        };
     }
-
+    // gthis isnt orking since when state changes to close, it overrides it with prop passed in
+    // static getDerivedStateFromProps(nextProps, prevState){
+    //     if(nextProps.open !==prevState.open){
+    //       return { open: nextProps.open};
+    //    }
+    //    else return null;
+    //  }
+         
     componentWillReceiveProps(nextProps) {
         if (nextProps.open === true) {
             this.setState({ open: true });
