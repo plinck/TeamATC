@@ -15,6 +15,7 @@ import ActivityForm from './components/Activity/ActivityForm';
 import UserPage from './components/User/UserPage';
 import UserForm from './components/User/UserForm';
 import Register from './components/Auth/Register/Register';
+import { Toolbar } from '@material-ui/core';
 
 // Auth components
 import SignInForm from './components/Auth/SignIn/SignIn';
@@ -30,6 +31,7 @@ class App extends React.Component {
       <Router>
         <div>
           <Navigation />
+          <Toolbar />
           <Route exact path="/" component={LandingPage} />
           <Route exact path="/signin" component={SignInForm} />
           <Route exact path="/pw-forget" component={PasswordForgetPage} />
