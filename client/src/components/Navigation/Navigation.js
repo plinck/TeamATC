@@ -7,8 +7,13 @@ import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
 import { withRouter } from 'react-router-dom';
 import AccountMenu from "../Account/AccountMenu";
 import './Navigation.css';
-import { Button, Typography, Container, Toolbar, IconButton, SwipeableDrawer } from '@material-ui/core';
+import { Button, Typography, Container, Toolbar, IconButton, SwipeableDrawer, ListItem, ListItemText, List, ListItemIcon } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
+import HomeIcon from '@material-ui/icons/Home'
+import PersonIcon from '@material-ui/icons/Person';
+import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -16,6 +21,10 @@ const useStyles = makeStyles(theme => ({
   },
   menuButton: {
     color: 'white',
+    textDecoration: 'none'
+  },
+  mobileButton: {
+    color: 'gray',
     textDecoration: 'none'
   },
   title: {
@@ -57,54 +66,54 @@ let Navigation = (props) => {
 
 
   const navigationAdminMobile =
-    <ul>
-      <li><NavLink to="/dashboard">Home</NavLink></li>
-      <li><NavLink to="/activities">Activities</NavLink></li>
-      <li><NavLink to="/activitypage" className="waves-effect waves-light btn">New Workut</NavLink></li>
-      <li><NavLink to="/account">Account</NavLink></li>
-      <li><NavLink to="/admin">Admin</NavLink></li>
+    <List onClick={toggleDrawer('left', false)}>
+      <ListItem><ListItemIcon><DashboardIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/dashboard">Home</NavLink></ListItemText></ListItem>
+      <ListItem><ListItemIcon><DirectionsRunIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/activities">Activities</NavLink></ListItemText></ListItem>
+      <ListItem><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/account">Account</NavLink></ListItemText></ListItem>
+      <ListItem><ListItemText><Button variant="contained" color="secondary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText></ListItem>
+      <ListItem><ListItemIcon><SettingsIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/admin">Admin</NavLink></ListItemText></ListItem>
+      <ListItem><ListItemText> <SignOutButton /></ListItemText></ListItem>
       {/* this.props.user.isModerator ? <li><NavLink onClick={this.forceCloseSideNav} to="/moderator">Moderator</NavLink></li> : "" */}
-      <li><SignOutButton /></li>
-    </ul>
+    </List >
     ;
 
   const navigationAdmin =
-    <ul>
-      <li><NavLink to="/dashboard">Home</NavLink></li>
-      <li><NavLink to="/activities">Activities</NavLink></li>
-      <li><NavLink to="/activitypage" className="waves-effect waves-light btn">New Workut</NavLink></li>
-      <li><AccountMenu /></li>
-      <li><NavLink to="/admin">Admin</NavLink></li>
-    </ul>
+    <div className={classes.navButtonsHide}>
+      <Button><NavLink className={classes.menuButton} to="/dashboard">Home</NavLink></Button>
+      <Button><NavLink className={classes.menuButton} to="/activities">Activities</NavLink></Button>
+      <Button variant="contained" color="secondary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button>
+      <Button><AccountMenu /></Button>
+      <Button><NavLink className={classes.menuButton} to="/admin">Admin</NavLink></Button>
+    </div>
     ;
 
   const navigationAuthMobile =
-    <ul>
-      <li><NavLink to="/dashboard">Home</NavLink></li>
-      <li><NavLink to="/activities">Activities</NavLink></li>
-      <li><NavLink to="/activitypage" className="waves-effect waves-light btn">New Workut</NavLink></li>
-      <li><NavLink to="/account">Account</NavLink></li>
-      <li > <SignOutButton /></li>
-    </ul>
+    <List onClick={toggleDrawer('left', false)}>
+      <ListItem><ListItemIcon><DashboardIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/dashboard">Home</NavLink></ListItemText></ListItem>
+      <ListItem><ListItemIcon><DirectionsRunIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/activities">Activities</NavLink></ListItemText></ListItem>
+      <ListItem><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/account">Account</NavLink></ListItemText></ListItem>
+      <ListItem><ListItemText><Button variant="contained" color="secondary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText></ListItem>
+      <ListItem><ListItemText> <SignOutButton /></ListItemText></ListItem>
+    </List>
     ;
 
 
 
 
   const navigationAuth =
-    <>
+    <div className={classes.navButtonsHide}>
       <Button><NavLink className={classes.menuButton} to="/dashboard">Home</NavLink></Button>
       <Button><NavLink className={classes.menuButton} to="/activities">Activities</NavLink></Button>
-      <Button variant="contained" color="secondary"><NavLink className={classes.menuButton} to="/activitypage" >New Workut</NavLink></Button>
+      <Button variant="contained" color="secondary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button>
       <Button><AccountMenu /></Button>
-    </>
+    </div>
     ;
 
   const navigationNonAuthMobile =
-    <ul>
-      <li><NavLink to="/">Landing</NavLink></li>
-      <li><NavLink to="/signin">Sign In</NavLink></li>
-    </ul>
+    <List onClick={toggleDrawer('left', false)}>
+      <ListItem><ListItemIcon><HomeIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/">Landing</NavLink></ListItemText></ListItem>
+      <ListItem><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/signin">Sign In</NavLink></ListItemText></ListItem>
+    </List >
     ;
 
   const navigationNonAuth =
