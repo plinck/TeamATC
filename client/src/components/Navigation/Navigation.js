@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import SignOutButton from '../Auth/SignOut/SignOut';
 import AppBar from '@material-ui/core/AppBar';
 import { makeStyles } from '@material-ui/core/styles';
@@ -81,7 +81,7 @@ let Navigation = (props) => {
     <div className={classes.navButtonsHide}>
       <Button><NavLink className={classes.menuButton} to="/dashboard">Home</NavLink></Button>
       <Button><NavLink className={classes.menuButton} to="/activities">Activities</NavLink></Button>
-      <Button variant="contained" color="secondary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button>
+      <Button variant="contained" color="primary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button>
       <Button><AccountMenu /></Button>
       <Button><NavLink className={classes.menuButton} to="/admin">Admin</NavLink></Button>
     </div>
@@ -92,7 +92,7 @@ let Navigation = (props) => {
       <ListItem><ListItemIcon><DashboardIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/dashboard">Home</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><DirectionsRunIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/activities">Activities</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/account">Account</NavLink></ListItemText></ListItem>
-      <ListItem><ListItemText><Button variant="contained" color="secondary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText></ListItem>
+      <ListItem><ListItemText><Button variant="contained" color="primary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText></ListItem>
       <ListItem><ListItemText> <SignOutButton /></ListItemText></ListItem>
     </List>
     ;
@@ -104,7 +104,7 @@ let Navigation = (props) => {
     <div className={classes.navButtonsHide}>
       <Button><NavLink className={classes.menuButton} to="/dashboard">Home</NavLink></Button>
       <Button><NavLink className={classes.menuButton} to="/activities">Activities</NavLink></Button>
-      <Button variant="contained" color="secondary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button>
+      <Button variant="contained" color="primary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button>
       <Button><AccountMenu /></Button>
     </div>
     ;
@@ -119,7 +119,7 @@ let Navigation = (props) => {
   const navigationNonAuth =
     <div className={classes.navButtonsHide}>
       <Button><NavLink className={classes.menuButton} to="/">Landing</NavLink></Button>
-      <Button><NavLink className={classes.menuButton} to="/signin">Sign In</NavLink></Button>
+      <Button variant="contained" color="primary"><NavLink className={classes.menuButton} to="/signin">Login</NavLink></Button>
     </div>
 
   // get auth user from react-context firebase
@@ -149,11 +149,13 @@ let Navigation = (props) => {
         {navBarMobile}
       </SwipeableDrawer>
 
-      <AppBar color="primary">
+      <AppBar color="secondary">
         <Container>
           <Toolbar>
             <Typography variant="h4" className={classes.title}>
-              <img className="logo" src="../images/logo.png" alt="TeamATC Challenge Logo" /> <span className={classes.titleText}>{name}</span>
+              <Link style={{ textDecoration: "none", color: "white" }} to="/">
+                <img className="logo" src="../images/logo.png" alt="TeamATC Challenge Logo" /> <span className={classes.titleText}>{name}</span>
+              </Link>
             </Typography>
             {navBar}
             <IconButton

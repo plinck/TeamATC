@@ -21,7 +21,7 @@ class SignOutButton extends React.Component {
           {user => user.authUser ? null : <Redirect to="/signin" />}
         </AuthUserContext.Consumer>
 
-        <Button variant="contained" color="primary" onClick={this.handleSignout}>
+        <Button variant="contained" color="secondary" onClick={this.handleSignout}>
           Logout
         </Button>
       </div>
