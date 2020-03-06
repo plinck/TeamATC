@@ -1,0 +1,13 @@
+runtime: nodejs12
+instance_class: F1
+automatic_scaling:
+  max_instances: 1
+
+# The following env variables may contain sensitive information that grants
+# anyone access to your database. Do not add this file to your source control.
+env_variables:
+  NODE_ENV: production
+  MONGO_USER: admin
+  MONGO_PASSWORD: mongoadmin
+  REACT_APP_FIREBASE_ORG: ATC
+  REACT_APP_FIREBASE_ENVIRONMENT: dev
