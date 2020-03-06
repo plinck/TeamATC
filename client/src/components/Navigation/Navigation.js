@@ -149,7 +149,7 @@ let Navigation = (props) => {
         {navBarMobile}
       </SwipeableDrawer>
 
-      <AppBar>
+      <AppBar color="primary">
         <Container>
           <Toolbar>
             <Typography variant="h4" className={classes.title}>
