@@ -3,13 +3,12 @@ import './Landing.css';
 import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
 import { Redirect } from 'react-router';
 import { useHistory } from "react-router-dom";
-import { Link } from "react-router-dom";
 import { Container, Button, Grid, Paper, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
     container: {
-        height: '100vh',
+        height: '95vh',
         backgroundImage: 'url(/images/landingPageBackground2.jpg)',
         backgroundSize: "cover",
         [theme.breakpoints.down('md')]: {
@@ -30,6 +29,10 @@ const useStyles = makeStyles(theme => ({
     },
     homeButton: {
         margin: "0px 20px 0px 0px",
+    },
+    footer: {
+        backgroundColor: theme.palette.primary.dark,
+        color: theme.palette.primary.contrastText
     }
 }));
 
@@ -67,13 +70,20 @@ const Landing = (props) => {
 
 
             </Container>
-            <br />
-            <footer className="page-footer blue darken-4">
-                <div className="footer-copyright">
-                    <div className="container">
-                        © 2020 Copyright
-                        </div>
-                </div>
+            <footer className={classes.footer}>
+                <Container>
+                    <Grid container
+                        justify="space-between">
+                        <Grid item>
+                            <img style={{ maxWidth: '100%' }} src="../images/ATC-Banner-2016.png" />
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="body1" style={{fontSize: "12px"}}>
+                                Copyright © TeamATC {new Date().getFullYear()}
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                </Container>
             </footer>
 
         </div >

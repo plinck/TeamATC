@@ -2,8 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import Firebase  from './components/Auth/Firebase/firebase'; // Firebase instance 
+import Firebase from './components/Auth/Firebase/firebase'; // Firebase instance 
 import FirebaseContext from "./components/Auth/Firebase/FirebaseContext";
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import theme from './theme/theme';
 // To ensure firebase is only instantiated once
 
 import * as serviceWorker from './serviceWorker';
@@ -22,7 +24,9 @@ import * as serviceWorker from './serviceWorker';
 // export default SomeComponent;
 ReactDOM.render(
     <FirebaseContext.Provider value={new Firebase()}>
-        <App />
+        <MuiThemeProvider theme={theme}>
+            <App />
+        </MuiThemeProvider>
     </FirebaseContext.Provider>,
     document.getElementById('root')
 );
