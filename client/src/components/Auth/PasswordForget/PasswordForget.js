@@ -5,7 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
 import { withFirebase } from '../Firebase/FirebaseContext';
-import { Container, Card, CardContent } from '@material-ui/core';
+import { Container, Card, CardContent, Typography, Grid } from '@material-ui/core';
 
 const PasswordForgetPage = () => (
   <div>
@@ -21,22 +21,14 @@ const styles = theme => ({
   inputFix: {
     marginTop: 5
   },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: 300,
-  },
   menu: {
     width: 200,
   },
-  formControl: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    minWidth: 300,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing.unit * 2,
-  },
+  background: {
+    height: 'calc(100vh - 64px)',
+    backgroundSize: "cover",
+    background: 'url(./images/ATC-repeating-background.png) center center fixed'
+  }
 });
 
 const INITIAL_STATE = {
@@ -80,38 +72,45 @@ class PasswordForgetFormBase extends Component {
 
     return (
 
+      <div className={classes.background}>
+        <Container>
+          <Grid container
+            justify="center">
+            <Grid style={{ marginTop: '70px' }} xs={11} md={6} item>
 
-      <Container>
-        <Card>
-          <CardContent>
-            <span className="card-title">Reset Password</span>
-            <form className={classes.container}>
-              <TextField
-                id="email"
-                label="Email"
-                placeholder="example@gmail.com"
-                multiline
-                className={classes.textField}
-                type="email"
-                name="email"
-                autoComplete="email"
-                margin="normal"
-                value={email}
-                onChange={this.onChange}
-              />
+              <Card>
+                <CardContent>
+                  <Typography variant="h5">Reset Password</Typography>
+                  <form className={classes.container}>
+                    <TextField
+                      id="email"
+                      label="Email"
+                      placeholder="example@gmail.com"
+                      multiline
+                      className={classes.textField}
+                      type="email"
+                      name="email"
+                      autoComplete="email"
+                      margin="normal"
+                      value={email}
+                      onChange={this.onChange}
+                    />
 
-            </form>
-            <br />
-            <div className="row">
-              <Button disabled={isInvalid} onClick={this.onSubmit} variant="contained" color="primary" className={classes.button}>
-                Reset My Password
+                  </form>
+                  <br />
+                  <div className="row">
+                    <Button disabled={isInvalid} onClick={this.onSubmit} variant="contained" color="primary" className={classes.button}>
+                      Reset My Password
                         </Button>
-            </div>
-            <p>{message}</p>
+                  </div>
+                  <p>{message}</p>
 
-          </CardContent>
-        </Card>
-      </Container>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Container>
+      </div>
     );
   }
 }
