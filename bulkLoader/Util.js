@@ -1,8 +1,11 @@
 const admin = require("./authServerCommon");
 
-const {ORG, ENV} = require("../ServerEnvironment");
 const PROD_ENV="prod"
 const DEV_ENV="dev"
+
+// const {ORG, ENV} = require("../ServerEnvironment");
+const ORG="ATC"
+const ENV="dev"
 
 class Util {
 
