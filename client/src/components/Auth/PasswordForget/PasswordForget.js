@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
 import { withFirebase } from '../Firebase/FirebaseContext';
+import { Container, Card, CardContent } from '@material-ui/core';
 
 const PasswordForgetPage = () => (
   <div>
@@ -13,29 +14,29 @@ const PasswordForgetPage = () => (
 );
 
 const styles = theme => ({
-    container: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-    inputFix: {
-        marginTop: 5
-    },
-    textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
-        width: 300,
-    },
-    menu: {
-        width: 200,
-    },
-    formControl: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
-        minWidth: 300,
-    },
-    selectEmpty: {
-        marginTop: theme.spacing.unit * 2,
-    },
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  inputFix: {
+    marginTop: 5
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 300,
+  },
+  menu: {
+    width: 200,
+  },
+  formControl: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    minWidth: 300,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing.unit * 2,
+  },
 });
 
 const INITIAL_STATE = {
@@ -57,7 +58,7 @@ class PasswordForgetFormBase extends Component {
       .then(() => {
         this.props.history.push({
           pathname: '/signin',
-        });  
+        });
       })
       .catch(error => {
         this.setState({ message: error.message });
@@ -78,37 +79,39 @@ class PasswordForgetFormBase extends Component {
     const isInvalid = email === '';
 
     return (
-        <div className="container">
-            <div className="card">
-                <div className="card-content">
-                    <span className="card-title">Reset Password</span>
-                    <form className={classes.container}>
-                        <TextField
-                        id="email"
-                        label="Email"
-                        placeholder="example@gmail.com"
-                        multiline
-                        className={classes.textField}
-                        type="email"
-                        name="email"
-                        autoComplete="email"
-                        margin="normal"
-                        value={email}
-                        onChange={this.onChange}
-                        />
 
-                    </form>
-                    <br />
-                    <div className="row">
-                        <Button disabled={isInvalid} onClick={this.onSubmit} variant="contained" color="primary" className={classes.button}>
-                            Reset My Password
+
+      <Container>
+        <Card>
+          <CardContent>
+            <span className="card-title">Reset Password</span>
+            <form className={classes.container}>
+              <TextField
+                id="email"
+                label="Email"
+                placeholder="example@gmail.com"
+                multiline
+                className={classes.textField}
+                type="email"
+                name="email"
+                autoComplete="email"
+                margin="normal"
+                value={email}
+                onChange={this.onChange}
+              />
+
+            </form>
+            <br />
+            <div className="row">
+              <Button disabled={isInvalid} onClick={this.onSubmit} variant="contained" color="primary" className={classes.button}>
+                Reset My Password
                         </Button>
-                    </div>
-                    <p>{message}</p>
-
-                </div>
             </div>
-      </div>
+            <p>{message}</p>
+
+          </CardContent>
+        </Card>
+      </Container>
     );
   }
 }
