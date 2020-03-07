@@ -39,7 +39,7 @@ const styles = theme => ({
     background: {
         height: 'calc(100vh - 64px)',
         backgroundSize: "cover",
-        background: 'url(/images/loginGif2.gif) center center fixed'
+        background: 'url(/images/ATC-repeating-background.png) center center fixed'
     }
 });
 
