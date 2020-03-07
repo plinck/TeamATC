@@ -141,12 +141,14 @@ class SignInFormBase extends React.Component {
                                 value={email}
                                 placeholder="JohnDoe@gmail.com"
                                 className={classes.textField}
-                                multiline // TODO: Remove this once materialize is gone.
                                 variant="outlined"
                                 type="email"
                                 autoComplete="email"
                                 margin="normal"
                                 onChange={this.onChange}
+                                inputProps={{
+                                    style: { padding: '18px' }
+                                }}
                             />
 
                             <TextField
@@ -156,7 +158,6 @@ class SignInFormBase extends React.Component {
                                 type={showPassword ? 'text' : 'password'}
                                 variant="outlined"
                                 margin="normal"
-                                multiline // TODO: Remove this once materialize is gone.
                                 className={classes.textField}
                                 InputProps={{
                                     endAdornment: (
@@ -172,6 +173,9 @@ class SignInFormBase extends React.Component {
                                 onChange={this.onChange}
                                 error={!!this.state.errorText}
                                 helperText={this.state.errorText}
+                                inputProps={{
+                                    style: { padding: '18px' }
+                                }}
                             />
                             <Button disabled={isInvalid} onClick={this.signInUser} variant="contained" color="primary" className={classes.button}>
                                 Login

@@ -3,7 +3,7 @@ import './Landing.css';
 import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
 import { Redirect } from 'react-router';
 import { useHistory } from "react-router-dom";
-import { Container, Button, Grid, Paper, Typography } from '@material-ui/core';
+import { Container, Button, Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -75,10 +75,10 @@ const Landing = (props) => {
                     <Grid container
                         justify="space-between">
                         <Grid item>
-                            <img style={{ maxWidth: '100%' }} src="../images/ATC-Banner-2016.png" />
+                            <img alt="banner logo" style={{ maxWidth: '100%' }} src="../images/ATC-Banner-2016.png" />
                         </Grid>
                         <Grid item>
-                            <Typography variant="body1" style={{fontSize: "12px"}}>
+                            <Typography variant="body1" style={{ fontSize: "12px" }}>
                                 Copyright © TeamATC {new Date().getFullYear()}
                             </Typography>
                         </Grid>
