@@ -3,67 +3,37 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import NumberFormat from 'react-number-format';
-import localStyles from './Register.module.css';
 import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import { InputAdornment } from '@material-ui/core';
+import { InputAdornment, Container, Card, CardContent, Grid, Typography, Divider } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import UserAPI from "../../User/UserAPI";
 import MemberDB from "../../User/MemberDB";
+
+// TODO: Remove input props once materialize is removed.
 
 const styles = theme => ({
     container: {
         display: 'flex',
         flexWrap: 'wrap',
     },
-    inputFix: {
-        marginTop: 50
-    },
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
-        width: 300,
+        margin: theme.spacing(1),
+        width: 250,
     },
-        //style for font size
-    resize:{
-        fontSize:200
+    resize: {
+        fontSize: 200
     },
-    
-    
     menu: {
         width: 200,
     },
-    formControl: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
-        minWidth: 300,
-    },
-    selectEmpty: {
-        marginTop: theme.spacing.unit * 2,
-    },
+    background: {
+        height: 'calc(100vh - 64px)',
+        backgroundSize: "cover",
+        background: 'url(./images/ATC-repeating-background.png) center center fixed'
+    }
 });
-
-function NumberFormatCustom(props) {
-    const { inputRef, onChange, ...other } = props;
-
-    return (
-        <NumberFormat
-            {...other}
-            className={localStyles.input}
-            getInputRef={inputRef}
-            onValueChange={values => {
-                onChange({
-                    target: {
-                        value: values.value,
-                    },
-                });
-            }}
-            thousandSeparator
-            prefix="$"
-        />
-    );
-}
 
 function NumberFormatPhone(props) {
     const { inputRef, onChange, ...other } = props;
@@ -71,7 +41,6 @@ function NumberFormatPhone(props) {
     return (
         <NumberFormat
             {...other}
-            className={localStyles.input}
             getInputRef={inputRef}
             onValueChange={values => {
                 onChange({
@@ -85,10 +54,6 @@ function NumberFormatPhone(props) {
         />
     );
 }
-NumberFormatCustom.propTypes = {
-    inputRef: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired,
-};
 
 class Register extends React.Component {
     state = {
@@ -140,24 +105,24 @@ class Register extends React.Component {
         // Just allow them to register as long as they arte member of the club
         // 1. Validate they are club memmber
         const user = this.state;
-        MemberDB.getByEmail(user.email).then (_ => {
+        MemberDB.getByEmail(user.email).then(_ => {
             // First, create the auth user in firebase
             // Should actually update auth profile after this is done but not 100% needed as user stuff comes from firestore
             UserAPI.registerNewUser(user).then(authUser => {
                 // Now Create the user in firestore
-                UserAPI.addAuthUserToFirestore(authUser, user).then( (id) => {
-                    this.setState({message: "New User Added. "});
-                    this.props.history.push("/dashboard"); 
+                UserAPI.addAuthUserToFirestore(authUser, user).then((id) => {
+                    this.setState({ message: "New User Added. " });
+                    this.props.history.push("/dashboard");
                 }).catch(err => {
                     this.setState({ message: err.message });
-                });    
+                });
             }).catch(err => {
                 // try to refresh token
                 this.setState({ message: `Error adding user ${err}` });
             });
-        }).catch (_ => {
+        }).catch(_ => {
             this.setState({ message: `Can not register - Not a valid ATC Member - Please check with club admin` });
-        });        
+        });
     }
 
     render() {
@@ -165,132 +130,138 @@ class Register extends React.Component {
         const { showPassword } = this.state;
 
         return (
-            <div className="container">
-                <div className="card">
-                    <div className="card-content">
-                        <span className="card-title">Register Now</span>
-                        {this.state.message ? <div className="red-text">{this.state.message}</div> : ""}
-              
-                            <TextField
-                                id="firstName"
-                                label="First Name"
-                                placeholder="John"
-                                inputProps={{
-                                    style: {margin: 5, padding: 18} 
-                                }}                              
-                                className={classes.textField}
-                                variant="outlined"
-                                margin="normal"
-                                value={this.state.firstName}
-                                onChange={this.handleChange('firstName')}
-                            />
+            <div className={classes.background}>
+                <Container>
+                    <Grid container
+                        justify="center">
+                        <Grid style={{ marginTop: '70px' }} xs={11} md={6} item>
 
-                            <TextField
-                                id="lastName"
-                                label="Last Name"
-                                placeholder="Doe"
-                                inputProps={{
-                                    style: {margin: 5, padding: 18} 
-                                }}                              
-                                className={classes.textField}
-                                variant="outlined"
-                                margin="normal"
-                                value={this.state.lastName}
-                                onChange={this.handleChange('lastName')}
-                            />
+                            <Card>
+                                <CardContent>
+                                    <Typography variant="h5">Register Now</Typography>
+                                    {this.state.message ? <div className="red-text">{this.state.message}</div> : ""}
 
-                            <TextField
-                                id="email"
-                                label="Email"
-                                placeholder="JohnDoe@gmail.com"
-                                inputProps={{
-                                    style: {margin: 5, padding: 18}
-                                }}                              
-                                className={classes.textField}
-                                variant="outlined"
-                                type="email"
-                                name="email"
-                                autoComplete="email"
-                                margin="normal"
-                                value={this.state.email}
-                                onChange={this.handleChange('email')}
-                            />
+                                    <TextField
+                                        id="firstName"
+                                        label="First Name"
+                                        placeholder="John"
+                                        className={classes.textField}
+                                        variant="outlined"
+                                        margin="normal"
+                                        value={this.state.firstName}
+                                        onChange={this.handleChange('firstName')}
+                                        inputProps={{
+                                            style: { padding: '18px' }
+                                        }}
+                                    />
 
-                            <TextField
-                                id="password"
-                                label="Password"
-                                type={showPassword ? 'text' : 'password'}
-                                variant="outlined"
-                                margin="normal"
-                                className={classes.textField}
-                                InputProps={{
-                                    style: {
-                                        padding: 18
-                                    }, 
-                                    endAdornment: (
-                                        <InputAdornment position="start">
-                                            <IconButton
-                                                aria-label="Toggle password visibility"
-                                                onClick={this.handleClickShowPassword}>
-                                                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    )
-                                }}
-                                onChange={this.handleChange('password')}
-                                error={!!this.state.errorText}
-                                helperText={this.state.errorText}
-                            />
-                          
-                            <TextField
-                                id="confirmPassword"
-                                label="Confirm Password"
-                                type={showPassword ? 'text' : 'password'}
-                                variant="outlined"
-                                margin="normal"
-                                className={classes.textField}
-                                InputProps={{
-                                    style: {
-                                        padding: 18
-                                    }, 
-                                    endAdornment: (
-                                        <InputAdornment position="start">
-                                            <IconButton
-                                                aria-label="Toggle password visibility"
-                                                onClick={this.handleClickShowPassword}>
-                                                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    )
-                                }}
-                                onChange={this.handlePasswordValidator}
-                                error={!!this.state.errorText}
-                                helperText={this.state.errorText}
-                            />
-                          
-                            <TextField
-                                id="phoneNumber"
-                                label="Phone Number"
-                                inputProps={{
-                                    style: {margin: 5, padding: 18} 
-                                }}                              
-                                className={classes.textField}
-                                variant="outlined"
-                                margin="normal"
-                                value={this.state.phoneNumber}
-                                onChange={this.handleChange('phoneNumber')}
-                                InputProps={{
-                                    inputComponent: NumberFormatPhone,
-                                }}
-                            />
-                            <br />
-                            <div className="center-align">
-                                <Button disabled={this.state.disabled} onClick={this.registerUser} id="submit" variant="contained" color="primary" className={classes.button}>
-                                    Register
+                                    <TextField
+                                        id="lastName"
+                                        label="Last Name"
+                                        placeholder="Doe"
+                                        className={classes.textField}
+                                        variant="outlined"
+                                        margin="normal"
+                                        value={this.state.lastName}
+                                        onChange={this.handleChange('lastName')}
+                                        inputProps={{
+                                            style: { padding: '18px' }
+                                        }}
+                                    />
+
+                                    <TextField
+                                        id="email"
+                                        label="Email"
+                                        placeholder="JohnDoe@gmail.com"
+                                        className={classes.textField}
+                                        variant="outlined"
+                                        type="email"
+                                        name="email"
+                                        autoComplete="email"
+                                        margin="normal"
+                                        value={this.state.email}
+                                        onChange={this.handleChange('email')}
+                                        inputProps={{
+                                            style: { padding: '18px' }
+                                        }}
+                                    />
+                                    <TextField
+                                        id="phoneNumber"
+                                        label="Phone Number"
+                                        className={classes.textField}
+                                        variant="outlined"
+                                        margin="normal"
+                                        value={this.state.phoneNumber}
+                                        onChange={this.handleChange('phoneNumber')}
+                                        InputProps={{
+                                            inputComponent: NumberFormatPhone,
+                                        }}
+                                        inputProps={{
+                                            style: { padding: '18px' }
+                                        }}
+                                    />
+                                    <Divider />
+                                    <TextField
+                                        id="password"
+                                        label="Password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        variant="outlined"
+                                        margin="normal"
+                                        className={classes.textField}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="start">
+                                                    <IconButton
+                                                        aria-label="Toggle password visibility"
+                                                        onClick={this.handleClickShowPassword}>
+                                                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            )
+                                        }}
+                                        onChange={this.handleChange('password')}
+                                        error={!!this.state.errorText}
+                                        helperText={this.state.errorText}
+                                        inputProps={{
+                                            style: { padding: '18px' }
+                                        }}
+                                    />
+
+                                    <TextField
+                                        id="confirmPassword"
+                                        label="Confirm Password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        variant="outlined"
+                                        margin="normal"
+                                        className={classes.textField}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="start">
+                                                    <IconButton
+                                                        aria-label="Toggle password visibility"
+                                                        onClick={this.handleClickShowPassword}>
+                                                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            )
+                                        }}
+                                        onChange={this.handlePasswordValidator}
+                                        error={!!this.state.errorText}
+                                        helperText={this.state.errorText}
+                                        inputProps={{
+                                            style: { padding: '18px' }
+                                        }}
+                                    />
+                                    <div style={{ textAlign: "center" }}>
+                                        <Button disabled={this.state.disabled} onClick={this.registerUser} id="submit" variant="contained" color="primary" className={classes.button}>
+                                            Register
                                 </Button>
-                            </div>
-                    </div>
-                </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    </Grid>
+                </Container>
             </div>
         );
     }

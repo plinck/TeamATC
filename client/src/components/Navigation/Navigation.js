@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import SignOutButton from '../Auth/SignOut/SignOut';
 import AppBar from '@material-ui/core/AppBar';
