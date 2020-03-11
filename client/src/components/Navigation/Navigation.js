@@ -14,6 +14,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import SettingsIcon from '@material-ui/icons/Settings';
+import Sidenav from './SideNav/Sidenav';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,7 +29,11 @@ const useStyles = makeStyles(theme => ({
     textDecoration: 'none'
   },
   title: {
-    flexGrow: 1,
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
+    },
+  },
+  nonAuthTitle: {
   },
   titleText: {
     verticalAlign: "super",
@@ -46,6 +51,17 @@ const useStyles = makeStyles(theme => ({
       display: 'none',
     },
   },
+  toolBarFlex: {
+    [theme.breakpoints.up('md')]: {
+      justifyContent: 'flex-end',
+    },
+    [theme.breakpoints.down('sm')]: {
+      justifyContent: 'space-between',
+    },
+  },
+  nonAuthToolBarFlex: {
+    justifyContent: 'space-between'
+  }
 }));
 
 let Navigation = (props) => {
@@ -79,6 +95,7 @@ let Navigation = (props) => {
 
   const navigationAdmin =
     <div className={classes.navButtonsHide}>
+      <Sidenav></Sidenav>
       <Button><NavLink className={classes.menuButton} to="/dashboard">Home</NavLink></Button>
       <Button><NavLink className={classes.menuButton} to="/activities">Activities</NavLink></Button>
       <Button variant="contained" color="primary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button>
@@ -102,6 +119,7 @@ let Navigation = (props) => {
 
   const navigationAuth =
     <div className={classes.navButtonsHide}>
+      <Sidenav></Sidenav>
       <Button><NavLink className={classes.menuButton} to="/dashboard">Home</NavLink></Button>
       <Button><NavLink className={classes.menuButton} to="/activities">Activities</NavLink></Button>
       <Button variant="contained" color="primary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button>
@@ -151,13 +169,7 @@ let Navigation = (props) => {
 
       <AppBar color="secondary">
         <Container>
-          <Toolbar>
-            <Typography variant="h4" className={classes.title}>
-              <Link style={{ textDecoration: "none", color: "white" }} to="/">
-                <img className="logo" src="../images/logo.png" alt="TeamATC Challenge Logo" /> <span className={classes.titleText}>{name}</span>
-              </Link>
-            </Typography>
-            {navBar}
+          <Toolbar className={props.user.authUser ? classes.toolBarFlex : classes.nonAuthToolBarFlex} >
             <IconButton
               color="inherit"
               aria-label="Open drawer"
@@ -166,6 +178,15 @@ let Navigation = (props) => {
             >
               <MenuIcon />
             </IconButton>
+
+            <Typography variant="h4" className={props.user.authUser ? classes.title : classes.nonAuthTitle}>
+              <Link style={{ textDecoration: "none", color: "white" }} to="/">
+                <img className="logo" src="../images/logo.png" alt="TeamATC Challenge Logo" /> <span className={classes.titleText}>{name}</span>
+              </Link>
+            </Typography>
+
+            {navBar}
+
           </Toolbar>
         </Container>
       </AppBar >
