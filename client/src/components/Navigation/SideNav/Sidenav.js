@@ -1,16 +1,17 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Link } from 'react-router-dom'
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { Link, NavLink } from 'react-router-dom'
+import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
-import { Typography } from '@material-ui/core';
+import { Typography, Button } from '@material-ui/core';
+import PersonIcon from '@material-ui/icons/Person';
+import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 
 const drawerWidth = 240;
 
@@ -56,6 +57,14 @@ const useStyles = makeStyles(theme => ({
         flexGrow: 1,
         padding: theme.spacing(3),
     },
+    sideText: {
+        textDecoration: 'none',
+        color: "grey"
+    },
+    menuButton: {
+        color: 'white',
+        textDecoration: 'none',
+    },
 }));
 
 export default function MiniDrawer() {
@@ -95,14 +104,14 @@ export default function MiniDrawer() {
                 </div>
                 <Divider />
                 <List>
-                    {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItem>
-                    ))}
+                    <NavLink className={classes.sideText} to="/dashboard"> <ListItem button><ListItemIcon><DashboardIcon /></ListItemIcon><ListItemText>Home</ListItemText></ListItem></NavLink>
+                    <NavLink className={classes.sideText} to="/activities"><ListItem button><ListItemIcon><DirectionsRunIcon /></ListItemIcon><ListItemText>Activities</ListItemText></ListItem></NavLink>
+                    <NavLink className={classes.sideText} to="/account"><ListItem button><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText>Account</ListItemText></ListItem></NavLink>
+                    <Divider></Divider>
+                    <ListItem style={{ textAlign: 'center' }}>{open ? <ListItemText><Button variant="contained" color="primary" style={{ marginLeft: "3px" }}><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText> : null}</ListItem>
+
                 </List>
             </Drawer>
-        </div>
+        </div >
     );
 }

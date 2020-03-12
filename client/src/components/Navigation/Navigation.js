@@ -120,10 +120,9 @@ let Navigation = (props) => {
   const navigationAuth =
     <div className={classes.navButtonsHide}>
       <Sidenav></Sidenav>
-      <Button><NavLink className={classes.menuButton} to="/dashboard">Home</NavLink></Button>
-      <Button><NavLink className={classes.menuButton} to="/activities">Activities</NavLink></Button>
-      <Button variant="contained" color="primary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button>
-      <Button><AccountMenu /></Button>
+      <div style={{ textAlign: "right" }}>
+        <Button ><AccountMenu /></Button>
+      </div>
     </div>
     ;
 
