@@ -16,6 +16,15 @@ import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
 import ActivityCard from '../Activity/ActivityCard.jsx';
 import { Container, Box, Grid, CircularProgress, Tooltip } from '@material-ui/core'
 import Util from "../Util/Util";
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+    root: {
+        [theme.breakpoints.up('md')]: {
+            paddingLeft: "64px"
+        }
+    }
+});
 
 class Dashboard extends React.Component {
     state = {
@@ -26,7 +35,6 @@ class Dashboard extends React.Component {
         distanceTotal: 0,
         durationTotal: 0
     }
-
     activeListener = undefined;
     totals = {};
     activitiesUpdated = false;
@@ -615,6 +623,7 @@ class Dashboard extends React.Component {
     }
 
     render() {
+        const { classes } = this.props;
         if (this.state.loadingFlag) {
             return (<Grid container style={{ marginTop: '20px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
@@ -705,55 +714,15 @@ class Dashboard extends React.Component {
 
         if (this.props.user.authUser) {
             return (
-                <div>
+                <div className={classes.root}>
                     <Container style={{ marginTop: "20px" }}>
-                        {/*  OVERALL standings by user and TEAM */}
-                        <div className="row">
-                            {/* Team standings/results card */}
-                            <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={true}
-                            />
-                            <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={false}
-                            />
-                            {/* End Team standings/results card */}
-                        </div>
-                        {/*  END OVERALL standings by user and TEAM */}
-
-                        {/* Breakdowns */}
-                        <div className="row">
-                            <div className="col s12 m4">
-                                <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
-                                    {activityBreakdownTitleRow}
-                                    <ActivityTypeBreakdown
-                                        title={`All Athletes`}
-                                        currentTotalsShare={this.totals.all}
-                                    />
-                                </Box>
-                            </div>
-                            <div className="col s12 m4">
-                                <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
-                                    {activityBreakdownTitleRow}
-                                    <ActivityTypeBreakdown
-                                        title={`${this.props.user.displayName}`}
-                                        currentTotalsShare={this.totals.user}
-                                    />
-                                </Box>
-                            </div>
-                            <div className="col s12 m4" margin={2}>
-                                <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
-                                    {activityBreakdownTitleRow}
-                                    <ActivityTypeBreakdown
-                                        title={`Team ${this.props.user.teamName}`}
-                                        currentTotalsShare={this.totals.team}
-                                    />
-                                </Box>
-                            </div>
-                        </div>
-                        {/* End Breakdowns */}
-
-                        {/* My Activities and heatmap */}
-                        <div className="row">
-                            <div className="col s12 m6" margin={2}>
-                                <Box className="grey lighten-3" padding={2} margin={0} borderRadius={8} boxShadow={4}>
+                        <Grid container spacing={3}>
+                            {/*  OVERALL standings by user and TEAM */}
+                            <Grid item xs={12} md={6}>
+                                {/* Team standings/results card */}
+                                <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={true}
+                                />
+                                <Box className="grey lighten-3" style={{ marginTop: '10px' }} padding={1} margin={0} borderRadius={8} boxShadow={4}>
                                     {activityTitleRow}
                                     <Box className="white" margin={2} paddingLeft={1} paddingRight={1}>
                                         {activityCardHeaderRow}
@@ -769,8 +738,47 @@ class Dashboard extends React.Component {
                                         })}
                                     </Box>
                                 </Box>
-                            </div>
-                            <div className="col s12 m6" margin={2}>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={false}
+                                />
+                            </Grid>
+                            {/* End Team standings/results card */}
+                            {/*  END OVERALL standings by user and TEAM */}
+
+                            {/* Breakdowns */}
+                            <Grid item xs={12} md={4}>
+                                <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
+                                    {activityBreakdownTitleRow}
+                                    <ActivityTypeBreakdown
+                                        title={`All Athletes`}
+                                        currentTotalsShare={this.totals.all}
+                                    />
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
+                                    {activityBreakdownTitleRow}
+                                    <ActivityTypeBreakdown
+                                        title={`${this.props.user.displayName}`}
+                                        currentTotalsShare={this.totals.user}
+                                    />
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+
+                                <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
+                                    {activityBreakdownTitleRow}
+                                    <ActivityTypeBreakdown
+                                        title={`Team ${this.props.user.teamName}`}
+                                        currentTotalsShare={this.totals.team}
+                                    />
+                                </Box>
+                            </Grid>
+                            {/* End Breakdowns */}
+
+                            {/* My Activities and heatmap */}
+                            <Grid item xs={12}>
                                 <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
                                     <Box className="white" margin={2} paddingLeft={0} paddingRight={0}>
                                         <ActivityBubble
@@ -779,61 +787,57 @@ class Dashboard extends React.Component {
                                         />
                                     </Box>
                                 </Box>
-                            </div>
-                        </div>
-                        {/* END Activities by day and heatmap */}
+                            </Grid>
+                            {/* END Activities by day and heatmap */}
 
-                        {/* All User Totals Cards Stack Bar Graphs - Activities etc*/}
-                        <div className="row">
-                            <div className="col s12 m4">
+                            {/* All User Totals Cards Stack Bar Graphs - Activities etc*/}
+                            <Grid item xs={12} md={4}>
                                 <ActivityTotalsGraphs
                                     title={`All Totals (Adjusted)`}
                                     currentTotalsShare={this.totals.all} graphType="All"
                                 />
-                            </div>
-                            <div className="col s12 m4">
+                            </Grid>
+                            <Grid item xs={12} md={4}>
                                 <ActivityTotalsGraphs
                                     title={`${this.props.user.displayName} (Adjusted)`}
                                     currentTotalsShare={this.totals.user} graphType="User"
                                 />
-                            </div>
-                            <div className="col s12 m4">
+                            </Grid>
+                            <Grid item xs={12} md={4}>
                                 <ActivityTotalsGraphs
                                     title={`${this.props.user.teamName} (Adjusted)`}
                                     currentTotalsShare={this.totals.team} graphType="Team"
                                 />
-                            </div>
-                        </div>
-                        {/* End All User Totals Cards Stack Bar Graphs - Activities etc*/}
+                            </Grid>
+                            {/* End All User Totals Cards Stack Bar Graphs - Activities etc*/}
 
-                        {/*  Activities  by day*/}
-                        <div className="row">
-                            <div className="col s12 m6">
+                            {/*  Activities  by day*/}
+                            <Grid item xs={12} md={4}>
+
                                 <ActivityByDay
                                     title={"Activity By Day"}
                                     activities={this.state.activities}
                                 />
-                            </div>
-                        </div>
-                        {/* END Current User"s Activities */}
+                            </Grid>
+                            {/* END Current User"s Activities */}
 
-                        {/* Sumary Display */}
-                        <div className="row">
-                            <SummaryTotal
-                                nbrActivities={this.state.nbrActivities}
-                                distanceTotal={this.state.distanceTotal}
-                                durationTotal={this.state.durationTotal}
+                            {/* Sumary Display */}
+                            <Grid item xs={12} md={8}>
+                                <SummaryTotal
+                                    nbrActivities={this.state.nbrActivities}
+                                    distanceTotal={this.state.distanceTotal}
+                                    durationTotal={this.state.durationTotal}
 
-                                currentAllTotals={this.totals.all}
-                                currentTeamTotals={this.totals.team}
-                                currentUserTotals={this.totals.user}
-                            />
-                        </div>
-                        {/* END Sumary Display */}
-
+                                    currentAllTotals={this.totals.all}
+                                    currentTeamTotals={this.totals.team}
+                                    currentUserTotals={this.totals.user}
+                                />
+                                {/* END Sumary Display */}
+                            </Grid>
+                        </Grid>
                     </Container>
 
-                </div>
+                </div >
             );
         } else {
             return (
@@ -844,4 +848,4 @@ class Dashboard extends React.Component {
     }
 }
 
-export default withAuthUserContext(Dashboard);
+export default withAuthUserContext(withStyles(styles)(Dashboard));

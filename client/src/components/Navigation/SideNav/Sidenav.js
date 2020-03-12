@@ -41,14 +41,14 @@ const useStyles = makeStyles(theme => ({
         overflowX: 'hidden',
         width: theme.spacing(7) + 1,
         [theme.breakpoints.up('sm')]: {
-            width: theme.spacing(9) + 1,
+            width: theme.spacing(7) + 1,
         },
     },
     toolbar: {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        padding: theme.spacing(.75),
+        padding: '6px',
         color: 'white',
         backgroundColor: 'black',
         ...theme.mixins.toolbar,
