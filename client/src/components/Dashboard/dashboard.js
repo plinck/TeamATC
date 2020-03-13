@@ -21,7 +21,7 @@ import { withStyles } from '@material-ui/core/styles';
 const styles = theme => ({
     root: {
         [theme.breakpoints.up('md')]: {
-            paddingLeft: "64px"
+            width: 'calc(100% - 60px)'
         }
     }
 });
