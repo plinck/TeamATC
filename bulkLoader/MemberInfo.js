@@ -62,6 +62,15 @@ class MemberInfo {
             if (firstName === "steph") {
                 firstName = "Stephanie";
             }
+            if (firstName === "susa" && lastName === "miller") {
+                firstName = "Susan";
+            }
+            if (lastName === "miler") {
+                lastName = "Miller";
+            }
+            if (lastName === "h0ward") {
+                lastName = "Howard";
+            }
             if (firstName === "jennie") {
                 firstName = "Jennifer";
                 lastName = "McClellan";
