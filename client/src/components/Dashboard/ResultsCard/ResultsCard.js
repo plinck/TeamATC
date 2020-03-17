@@ -2,9 +2,9 @@ import React from 'react';
 import Box from '@material-ui/core/Box';
 import { Link } from "react-router-dom";
 import Tooltip from '@material-ui/core/Tooltip';
-
+import LaunchIcon from '@material-ui/icons/Launch';
 import './Result.css'
-import Result from "./Result";
+import { Table, TableHead, TableBody, TableCell, TableRow, Card, CardContent } from '@material-ui/core';
 import TeamResultsModal from './TeamResultsModal';
 
 class ResultsCard extends React.Component {
@@ -20,84 +20,68 @@ class ResultsCard extends React.Component {
     render() {
         // wait for props
         if (!this.props.teamTotals) {
-            return(null);
+            return (null);
         }
 
         let teamTotals = this.props.teamTotals;
         let userTotals = this.props.userTotals;
         let onlyTeams = this.props.onlyTeams;
 
-        const leaderboardTitleRow = 
-        <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" marginTop={1}>
-            <Link className="col s9 m9" to={{
-                pathname: "/activities",
-                state: {
-                    filterByString: "Mine"
-                }
-                }}>Leaderboard 
+        const leaderboardTitleRow =
+            <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold">
+                <Link style={{ textDecoration: "none", color: "grey" }}
+                    to={{
+                        pathname: "/activities",
+                        state: {
+                            filterByString: "Mine"
+                        }
+                    }}>Leaderboard
             </Link>
-            <div className="col s2 offset-s1 m2 offset-m1">
-                <Tooltip title="Show Results">
-                    <div onClick={this.handleClickTeamResults.bind(this)}>
-                        <i style={{cursor: 'pointer', marginTop: 1, marginRight: 1}}
-                            className="material-icons indigo-text text-darken-4" >launch
-                        </i>{" "}
-                    </div>
-                </Tooltip>
-            </div>
-        </Box>
-
-        const leaderBoardHeaderRow = 
-        <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1} margin={0}>
-            <div className="col s1 m1">
-            </div>
-            <div className="col s3 m3 truncate">
-                Name
-            </div>
-            <div className="black-text col m2 m2 truncate">
-                Total
-            </div>
-            <div className="blue-text col m2 m2 truncate">
-                Swim
-            </div>
-            <div className="red-text col m2 m2 truncate">
-                Bike
-            </div>
-            <div className="green-text col m2 m2 truncate">
-                Run
-            </div>
-        </Box>
+                <div style={{ float: 'right' }}>
+                    <Tooltip title="Show Results">
+                        <div onClick={this.handleClickTeamResults.bind(this)}>
+                            <LaunchIcon />
+                        </div>
+                    </Tooltip>
+                </div>
+            </Box>
 
         let totals = userTotals;
         if (onlyTeams) {
             totals = teamTotals;
         }
-        
+
         return (
-            <div>
-                <TeamResultsModal id="TeamResultsModal" open={this.state.openTeamResults} teamTotals={teamTotals} userTotals={userTotals}/>
-                
-                <div className="col s12 m6" margin={2}>
-                    <Box className="grey lighten-3" padding={2} margin={0} borderRadius={8} boxShadow={4}>
-                        {leaderboardTitleRow}
-                        <Box className="white" margin={2} paddingLeft={1} paddingRight={1}> 
-                            {leaderBoardHeaderRow}            
-                            {totals.map((result, index) => {
-                                return (
-                                    <div key={index}>
-                                        {(index > 9) ?
-                                            ""
-                                        :
-                                            <Result result={result} index={index} onlyTeams={onlyTeams}
-                                        />
-                                        }
-                                    </div>
-                                );
-                            })}
-                        </Box>
-                    </Box>
-                </div>    
-            </div>
+            <Card>
+                <CardContent>
+                    <TeamResultsModal id="TeamResultsModal" open={this.state.openTeamResults} teamTotals={teamTotals} userTotals={userTotals} />
+                    {leaderboardTitleRow}
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell style={{ fontWeight: "bold" }}>Name</TableCell>
+                                <TableCell style={{ fontWeight: "bold" }}>Total</TableCell>
+                                <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Swim</TableCell>
+                                <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Bike</TableCell>
+                                <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Run</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {totals.slice(0, 10).map((result, index) => (
+                                <TableRow key={index}>
+                                    <TableCell component="th" scope="row">
+                                        {result.userOrTeamName}
+                                    </TableCell>
+                                    <TableCell>{result.pointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
+                                    <TableCell padding="none" align="right">{result.swimPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
+                                    <TableCell padding="none" align="right">{result.bikePointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
+                                    <TableCell padding="none" align="right">{result.runPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
         )
     }
 }
