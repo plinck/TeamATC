@@ -33,9 +33,6 @@ class Dashboard extends React.Component {
         loadingFlag: true,
         activities: [],
         myActivities: [],
-        nbrActivities: 0,
-        distanceTotal: 0,
-        durationTotal: 0
     }
     activeListener = undefined;
     totals = {};
@@ -52,9 +49,6 @@ class Dashboard extends React.Component {
             .orderBy("activityDateTime", "desc");
         this.activeListener = ref.onSnapshot((querySnapshot) => {
             let activities = this.state.activities;
-            let nbrActivities = this.state.nbrActivities;
-            let distanceTotal = this.state.distanceTotal;
-            let durationTotal = this.state.durationTotal;
 
             let activity = {};
             querySnapshot.docChanges().forEach(change => {
@@ -63,48 +57,17 @@ class Dashboard extends React.Component {
                     activity.id = change.doc.id;
                     activity.activityDateTime = activity.activityDateTime.toDate();
                     activities.push(activity);
-                    nbrActivities += 1;
-                    if (activity.distanceUnits && activity.distanceUnits === "Yards") {
-                        distanceTotal += activity.distance;
-                    } else {
-                        distanceTotal += activity.distance;
-                    }
-                    if (activity.durationUnits && activity.durationUnits === "Minutes") {
-                        durationTotal += activity.duration / 60;
-                    } else {
-                        durationTotal += activity.duration;
-                    }
                 }
                 if (change.type === "modified") {
-                    // console.log(`Changed Activity: ${change.doc.id}`);
                     activity = change.doc.data();
                     activity.id = change.doc.id;
                     activity.activityDateTime = activity.activityDateTime.toDate();
 
-                    // Delete activity from array and update totals
+                    // swap activity in array with new
                     let oldActivityAndIndex = this.searchForActivity(activity.id, "id", activities);
                     if (oldActivityAndIndex) {
                         // replace current activity in array with new one
                         activities[oldActivityAndIndex.index] = activity;
-                        let oldActivity = oldActivityAndIndex.activity; // extract object from returned object 
-
-                        // Subtract old and add new distance
-                        let oldDistanceInMiles = (oldActivity.distanceUnits && oldActivity.distanceUnits === "Yards")
-                            ? (oldActivity.distance)
-                            : (oldActivity.distance);
-                        let newDistanceInMiles = (activity.distanceUnits && activity.distanceUnits === "Yards")
-                            ? (activity.distance)
-                            : (activity.distance);
-                        distanceTotal = distanceTotal - oldDistanceInMiles + newDistanceInMiles;
-
-                        // Subtract old and add new duration
-                        let oldDurationInHours = (oldActivity.durationUnits && oldActivity.durationUnits === "Minutes")
-                            ? (oldActivity.duration) / 60
-                            : (oldActivity.duration);
-                        let newDurationInHours = (activity.durationUnits && activity.durationUnits === "Minutes")
-                            ? (activity.duration) / 60
-                            : (activity.duration);
-                        durationTotal = durationTotal - oldDurationInHours + newDurationInHours;
                     }
                 }
                 if (change.type === "removed") {
@@ -113,32 +76,17 @@ class Dashboard extends React.Component {
                     activity.id = change.doc.id;
                     activity.activityDateTime = activity.activityDateTime.toDate();
 
-                    // Delete activity from array and update totals
+                    // Delete activity from array 
                     let oldActivityAndIndex = this.searchForActivity(activity.id, "id", activities);
                     if (oldActivityAndIndex) {
                         // remove it
                         activities.splice(oldActivityAndIndex.index, 1);
-
-                        nbrActivities -= 1;
-                        if (activity.distanceUnits && activity.distanceUnits === "Yards") {
-                            distanceTotal -= activity.distance;
-                        } else {
-                            distanceTotal -= activity.distance;
-                        }
-                        if (activity.durationUnits && activity.durationUnits === "Minutes") {
-                            durationTotal -= activity.duration / 60;
-                        } else {
-                            durationTotal -= activity.duration;
-                        }
                     }
                 }
             });
             this.activitiesUpdated = true;
             this.setState({
-                loadingFlag: false,
-                nbrActivities: nbrActivities,
-                distanceTotal: distanceTotal,
-                durationTotal: durationTotal
+                loadingFlag: false
             });
         }, (error) => {
             console.error(`Error attaching listener: ${error}`);
@@ -330,9 +278,9 @@ class Dashboard extends React.Component {
                             {/* Sumary Display */}
                             <Grid item xs={12} md={8}>
                                 <SummaryTotal
-                                    nbrActivities={this.state.nbrActivities}
-                                    distanceTotal={this.state.distanceTotal}
-                                    durationTotal={this.state.durationTotal}
+                                    nbrActivities={this.totals.all.nbrActivities}
+                                    distanceTotal={this.totals.all.distanceTotal}
+                                    durationTotal={this.totals.all.durationTotal}
 
                                     currentAllTotals={this.totals.all}
                                     currentTeamTotals={this.totals.team}
