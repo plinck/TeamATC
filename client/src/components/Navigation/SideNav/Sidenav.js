@@ -67,7 +67,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function MiniDrawer() {
+export default function MiniDrawer(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
 
@@ -104,9 +104,9 @@ export default function MiniDrawer() {
                 </div>
                 <Divider />
                 <List>
-                    <NavLink className={classes.sideText} to="/dashboard"> <ListItem button><ListItemIcon><DashboardIcon /></ListItemIcon><ListItemText>Home</ListItemText></ListItem></NavLink>
-                    <NavLink className={classes.sideText} to="/activities"><ListItem button><ListItemIcon><DirectionsRunIcon /></ListItemIcon><ListItemText>Activities</ListItemText></ListItem></NavLink>
-                    <NavLink className={classes.sideText} to="/account"><ListItem button><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText>Account</ListItemText></ListItem></NavLink>
+                    <NavLink className={classes.sideText} to="/dashboard"> <ListItem selected={window.location.pathname == "/dashboard"} button><ListItemIcon><DashboardIcon /></ListItemIcon><ListItemText>Home</ListItemText></ListItem></NavLink>
+                    <NavLink className={classes.sideText} to="/activities"><ListItem selected={window.location.pathname == "/activities"} button><ListItemIcon><DirectionsRunIcon /></ListItemIcon><ListItemText>Activities</ListItemText></ListItem></NavLink>
+                    <NavLink className={classes.sideText} to="/account"><ListItem selected={window.location.pathname == "/account"} button><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText>Account</ListItemText></ListItem></NavLink>
                     <Divider></Divider>
                     <ListItem style={{ textAlign: 'center' }}>{open ? <ListItemText><Button variant="contained" color="primary" style={{ marginLeft: "3px" }}><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText> : null}</ListItem>
 

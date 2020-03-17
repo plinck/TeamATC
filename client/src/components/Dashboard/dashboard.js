@@ -21,7 +21,7 @@ import { withStyles } from '@material-ui/core/styles';
 const styles = theme => ({
     root: {
         [theme.breakpoints.up('md')]: {
-            width: 'calc(100% - 60px)'
+            marginLeft: "60px"
         }
     }
 });
@@ -715,7 +715,7 @@ class Dashboard extends React.Component {
         if (this.props.user.authUser) {
             return (
                 <div className={classes.root}>
-                    <Container style={{ marginTop: "20px" }}>
+                    <Container maxWidth="xl" style={{ marginTop: "20px" }}>
                         <Grid container spacing={3}>
                             {/*  OVERALL standings by user and TEAM */}
                             <Grid item xs={12} md={6}>
