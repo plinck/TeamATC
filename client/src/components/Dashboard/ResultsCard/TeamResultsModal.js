@@ -22,7 +22,7 @@ class TeamResultsModal extends React.Component {
     //    }
     //    else return null;
     //  }
-         
+
     componentWillReceiveProps(nextProps) {
         if (nextProps.open === true) {
             this.setState({ open: true });
@@ -49,7 +49,7 @@ class TeamResultsModal extends React.Component {
     }
 
     sortByTeam(results) {
-        results.sort((a,b) => {
+        results.sort((a, b) => {
             const teamA = a.teamName;
             const teamB = b.teamName;
 
@@ -72,30 +72,30 @@ class TeamResultsModal extends React.Component {
         let teamTotals = this.props.teamTotals;
         let userTotals = this.props.userTotals;
 
-        let leaderBoardHeaderRow = 
-        <Box className="row"  fontStyle="oblique" fontWeight="fontWeightBold" border={1} margin={0}>
-            <div className="col s1 m1">
+        let leaderBoardHeaderRow =
+            <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" border={1} margin={0}>
+                <div className="col s1 m1">
+                </div>
+                <div className="col s3 m3 truncate">
+                    Name
             </div>
-            <div className="col s3 m3 truncate">
-                Name
+                <div className="black-text col m2 m2 truncate">
+                    Total
             </div>
-            <div className="black-text col m2 m2 truncate">
-                Total
+                <div className="blue-text col m2 m2 truncate">
+                    Swim
             </div>
-            <div className="blue-text col m2 m2 truncate">
-                Swim
+                <div className="red-text col m2 m2 truncate">
+                    Bike
             </div>
-            <div className="red-text col m2 m2 truncate">
-                Bike
+                <div className="green-text col m2 m2 truncate">
+                    Run
             </div>
-            <div className="green-text col m2 m2 truncate">
-                Run
-            </div>
-        </Box>
-        
+            </Box>
+
         // Combine teams
         let combinedResults = [];
-        for (let i =0; i < teamTotals.length; i++) {
+        for (let i = 0; i < teamTotals.length; i++) {
             combinedResults.push(teamTotals[i]);
             let userResultsForThisTeam = this.filterByTeam(userTotals, teamTotals[i].userOrTeamName);
             combinedResults = [...combinedResults, ...userResultsForThisTeam]
@@ -103,30 +103,30 @@ class TeamResultsModal extends React.Component {
 
         return (
             <div>
-                <Dialog       
-                    fullWidth={"fullWidth"}
+                <Dialog
+                    fullWidth={true}
                     maxWidth={"md"}
-             
+
                     open={this.state.open}
                     onClose={this.handleClose}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description">
                     <DialogTitle id="alert-dialog-title">{"Team Results"}</DialogTitle>
-                        <DialogContent>
-                            {/* Team standings/results card */}
-                            <Box className="white" margin={1} paddingLeft={1} paddingRight={1}> 
-                                {leaderBoardHeaderRow}
-                                {combinedResults.map((combinedResult, index) => {
-                                    return (
-                                        <div key={index}>
-                                            <Result result={combinedResult} index={index}
-                                            />
-                                        </div>
-                                    );
-                                })}
-                            </Box>
-                            {/* End Team standings/results card */}          
-                        </DialogContent>
+                    <DialogContent>
+                        {/* Team standings/results card */}
+                        <Box className="white" margin={1} paddingLeft={1} paddingRight={1}>
+                            {leaderBoardHeaderRow}
+                            {combinedResults.map((combinedResult, index) => {
+                                return (
+                                    <div key={index}>
+                                        <Result result={combinedResult} index={index}
+                                        />
+                                    </div>
+                                );
+                            })}
+                        </Box>
+                        {/* End Team standings/results card */}
+                    </DialogContent>
                     <DialogActions>
                         <Button onClick={this.handleClose} className="waves-effect waves-light dash-btn blue darken-4 btn white-text" autoFocus>
                             Close
