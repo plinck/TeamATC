@@ -104,9 +104,9 @@ export default function MiniDrawer(props) {
                 </div>
                 <Divider />
                 <List>
-                    <NavLink className={classes.sideText} to="/dashboard"> <ListItem selected={window.location.pathname == "/dashboard"} button><ListItemIcon><DashboardIcon /></ListItemIcon><ListItemText>Home</ListItemText></ListItem></NavLink>
-                    <NavLink className={classes.sideText} to="/activities"><ListItem selected={window.location.pathname == "/activities"} button><ListItemIcon><DirectionsRunIcon /></ListItemIcon><ListItemText>Activities</ListItemText></ListItem></NavLink>
-                    <NavLink className={classes.sideText} to="/account"><ListItem selected={window.location.pathname == "/account"} button><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText>Account</ListItemText></ListItem></NavLink>
+                    <NavLink className={classes.sideText} to="/dashboard"> <ListItem selected={window.location.pathname === "/dashboard"} button><ListItemIcon><DashboardIcon /></ListItemIcon><ListItemText>Home</ListItemText></ListItem></NavLink>
+                    <NavLink className={classes.sideText} to="/activities"><ListItem selected={window.location.pathname === "/activities"} button><ListItemIcon><DirectionsRunIcon /></ListItemIcon><ListItemText>Activities</ListItemText></ListItem></NavLink>
+                    <NavLink className={classes.sideText} to="/account"><ListItem selected={window.location.pathname === "/account"} button><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText>Account</ListItemText></ListItem></NavLink>
                     <Divider></Divider>
                     <ListItem style={{ textAlign: 'center' }}>{open ? <ListItemText><Button variant="contained" color="primary" style={{ marginLeft: "3px" }}><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText> : null}</ListItem>
 
