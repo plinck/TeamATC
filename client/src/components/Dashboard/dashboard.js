@@ -7,6 +7,7 @@ import { Redirect } from "react-router";
 
 import SummaryTotal from "./SummaryTotal/SummaryTotal";
 import ResultsCard from "./ResultsCard/ResultsCard";
+import ActivitiesCard from './ActivitiesCard/ActivitiesCard';
 import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
 import ActivityTotalsGraphs from "./Graphs/ActivityTotalsGraphs";
@@ -14,7 +15,7 @@ import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
 
 //Reports
 import ActivityCard from '../Activity/ActivityCard.jsx';
-import { Container, Box, Grid, CircularProgress, Tooltip } from '@material-ui/core'
+import { Container, Box, Grid, CircularProgress, Tooltip, CardContent } from '@material-ui/core'
 import Util from "../Util/Util";
 import { withStyles } from '@material-ui/core/styles';
 
@@ -664,82 +665,21 @@ class Dashboard extends React.Component {
                 </div>
             </Box>
 
-        const activityTitleRow =
-            <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" marginTop={1}>
-                <Link className="col s9 m9" to={{
-                    pathname: "/activities",
-                    state: {
-                        filterByString: "Mine"
-                    }
-                }}>Latest Activities ({"Mine"}) : {this.props.user.displayName}
-                </Link>
-                <div className="col s2 offset-s1 m2 offset-m1">
-                    <Tooltip title="Add Activity">
-                        <Link to="/activityform">
-                            <i style={{ cursor: 'pointer', marginTop: 1, marginRight: 1 }}
-                                className="material-icons indigo-text text-darken-4">add
-                            </i>{" "}
-                        </Link>
-                    </Tooltip>
-                    <Tooltip title="Show Activities">
-                        <Link to={{
-                            pathname: "/activities",
-                            state: { filterByString: "Mine" }
-                        }}>
-                            <i style={{ cursor: 'pointer', marginTop: 1, marginRight: 1 }}
-                                className="material-icons indigo-text text-darken-4">launch
-                            </i>{" "}
-                        </Link>
-                    </Tooltip>
-                </div>
-            </Box>
-
-        const activityCardHeaderRow =
-            <Box className="row" fontStyle="oblique" bgcolor={"white"} fontWeight="fontWeightBold" border={1} margin={0} padding={0}>
-                <div className="col s1 m1">
-                </div>
-                <div className="col s4 m4 truncate">
-                    Name
-                </div>
-                <div className="black-text col m2 m2 truncate">
-                    Date
-                </div>
-                <div className="blue-text col s2 offset-s1 m2 offset-m1 truncate">
-                    Time
-                </div>
-                <div className="red-text col s2 m2 fontWeight=fontWeightBold truncate">
-                    Distance
-                </div>
-            </Box>
-
         if (this.props.user.authUser) {
             return (
                 <div className={classes.root}>
                     <Container maxWidth="xl" style={{ marginTop: "20px" }}>
-                        <Grid container spacing={3}>
+                        <Grid container spacing={2}>
                             {/*  OVERALL standings by user and TEAM */}
-                            <Grid item xs={12} md={6}>
+                            <Grid item xs={12} md={4}>
                                 {/* Team standings/results card */}
                                 <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={true}
                                 />
-                                <Box className="grey lighten-3" style={{ marginTop: '10px' }} padding={1} margin={0} borderRadius={8} boxShadow={4}>
-                                    {activityTitleRow}
-                                    <Box className="white" margin={2} paddingLeft={1} paddingRight={1}>
-                                        {activityCardHeaderRow}
-                                        {myActivities.map((activity, index) => {
-                                            return (
-                                                (index > 14) ?
-                                                    ""
-                                                    :
-                                                    <ActivityCard
-                                                        key={activity.id} activity={activity} index={index}
-                                                    />
-                                            )
-                                        })}
-                                    </Box>
-                                </Box>
                             </Grid>
-                            <Grid item xs={12} md={6}>
+                            <Grid item xs={12} md={4}>
+                                <ActivitiesCard name={this.props.user.displayName} activity={myActivities} />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
                                 <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={false}
                                 />
                             </Grid>
