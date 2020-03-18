@@ -35,8 +35,8 @@ class ResultsCard extends React.Component {
                         state: {
                             filterByString: "Mine"
                         }
-                    }}>Leaderboard
-            </Link>
+                    }}>{onlyTeams ? "Team Leaderboard" : "Individual Leaders"}
+                </Link>
                 <div style={{ float: 'right' }}>
                     <Tooltip title="Show Results">
                         <div onClick={this.handleClickTeamResults.bind(this)}>

@@ -3,6 +3,7 @@ import Plot from 'react-plotly.js';
 import { Redirect } from 'react-router';
 import { withRouter } from 'react-router-dom';
 import ActivityBubbleModal from './ActivityBubbleModal';
+import { Card, CardContent, Box } from '@material-ui/core';
 
 
 import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
@@ -44,11 +45,10 @@ class ActivityBubble extends React.Component {
                     stepmode: 'backward',
                     count: 1,
                     label: '1y'
-                }, {
-                    step: 'all',
                 }]
         };
 
+        console.log(this.props)
         let activities = this.props.activities;
         let adjustedActivites = activities.map(activity => {
             let distance = activity.distance;
@@ -65,7 +65,7 @@ class ActivityBubble extends React.Component {
                 default:
                     break;
             }
-            return {distance: distance, duration: activity.duration, displayName: activity.displayName};
+            return { distance: distance, duration: activity.duration, displayName: activity.displayName };
         })
 
         let xData = activities.map(activity => new Date(activity.activityDateTime));
@@ -75,43 +75,59 @@ class ActivityBubble extends React.Component {
 
         let size = adjustedActivites.map(activity => (activity.distance * 1));
         let hover = adjustedActivites.map(activity => `${activity.displayName} ${activity.distance.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
-        let groups = activities.map(activity => activity.email);
+        let groups = activities.map(activity => activity.activityType);
         // let groups = activities.map(activity => {
         //     const userInitials = activity.displayName.length > 1 ? activity.displayName.substring(0, 2) : "NN";
         //     return(userInitials);
         // });
 
+        const latestDate = new Date().toISOString().split('T')[0];
+        var d = new Date();
+        d.setDate(d.getDate() - 30);
+        let earliestDate = d.toISOString().split('T')[0];
+
+
         return (
             <div>
-                <ActivityBubbleModal open={this.state.open} displayInfo={this.state.clickedDistance} date={this.state.clickedDate}/>
+                <ActivityBubbleModal open={this.state.open} displayInfo={this.state.clickedDistance} date={this.state.clickedDate} />
                 <Plot
                     data={[
                         {
                             type: 'scatter',
                             mode: 'markers',
                             x: xData,
-                            y: yData,
+                            y: size,
                             text: hover,
                             "hoverinfo": "text",
                             marker: {
-                                size: size,
+                                size: yData,
                                 sizemode: "area",
-                                sizeref: .7
+                                sizeref: .09
                             },
                             transforms: [{
                                 type: 'groupby',
                                 groups: groups,
-                            }]
+                                styles: [
+                                    { target: 'Bike', value: { marker: { color: '#ff0000' } } },
+                                    { target: 'Swim', value: { marker: { color: '#0099ff' } } },
+                                    { target: 'Run', value: { marker: { color: '#33cc32' } } },
+
+                                ]
+                            },]
                         }]}
                     layout={
                         {
                             autosize: true,
                             xaxis: {
-                                autorange: true,
+                                autorange: false,
+                                range: [earliestDate, latestDate],
                                 rangeselector: selectorOptions,
+
                             },
-                            hoverMode: "closest",
-                            showlegend: false,
+                            yaxis: {
+                                autorange: true
+                            },
+                            showlegend: true,
                             margin: {
                                 l: 30,
                                 r: 30,
@@ -158,14 +174,14 @@ class ActivityBubble extends React.Component {
 
         if (this.props.user.authUser) {
             return (
-                <div>
-                    <div className="card">
-                        <div className="card-content pCard">
-                            <span className="card-title">{this.props.title ? this.props.title : 'Activity Heat Map'}</span>
-                            {this.plotActivities()}
-                        </div>
-                    </div>
-                </div>
+                <Card>
+                    <CardContent>
+                        <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold">
+                            <span style={{ color: 'grey' }}>{this.props.title ? this.props.title : 'Activity Heat Map'}</span>
+                        </Box>
+                        {this.plotActivities()}
+                    </CardContent>
+                </Card>
             );
         } else {
             return (

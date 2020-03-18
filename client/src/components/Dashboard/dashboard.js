@@ -14,7 +14,7 @@ import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
 import ActivityTotalsGraphs from "./Graphs/ActivityTotalsGraphs";
 import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
-
+import PointsBreakdownGraph from './Graphs/PointsBreakdown';
 //Reports
 import { Container, Box, Grid, CircularProgress, Tooltip } from '@material-ui/core'
 import Util from "../Util/Util";
@@ -23,7 +23,7 @@ import { withStyles } from '@material-ui/core/styles';
 const styles = theme => ({
     root: {
         [theme.breakpoints.up('md')]: {
-            marginLeft: "60px"
+            marginLeft: "60px",
         }
     }
 });
@@ -162,26 +162,10 @@ class Dashboard extends React.Component {
 
         let myActivities = this.state.myActivities;
 
-        const activityBreakdownTitleRow =
-            <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" marginTop={1}>
-                <div className="col s9 m9">Activity Type Breakdown</div>
-                <div className="col s2 offset-s1 m2 offset-m1">
-                    <Tooltip title="Show Activities">
-                        <Link to={{
-                            pathname: "/activities",
-                            state: { filterByString: "Mine" }
-                        }}>
-                            <i style={{ cursor: 'pointer', marginTop: 1, marginRight: 1 }}
-                                className="material-icons indigo-text text-darken-4">launch
-                        </i>{" "}
-                        </Link>
-                    </Tooltip>
-                </div>
-            </Box>
 
         if (this.props.user.authUser) {
             return (
-                <div className={classes.root}>
+                <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
                     <Container maxWidth="xl" style={{ marginTop: "20px" }}>
                         <Grid container spacing={2}>
                             {/*  OVERALL standings by user and TEAM */}
@@ -202,65 +186,47 @@ class Dashboard extends React.Component {
 
                             {/* Breakdowns */}
                             <Grid item xs={12} md={4}>
-                                <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
-                                    {activityBreakdownTitleRow}
-                                    <ActivityTypeBreakdown
-                                        title={`All Athletes`}
-                                        currentTotalsShare={this.totals.all}
-                                    />
-                                </Box>
+                                <ActivityTypeBreakdown
+                                    title={`All Athletes`}
+                                    currentTotalsShare={this.totals.all}
+                                />
                             </Grid>
                             <Grid item xs={12} md={4}>
-                                <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
-                                    {activityBreakdownTitleRow}
-                                    <ActivityTypeBreakdown
-                                        title={`${this.props.user.displayName}`}
-                                        currentTotalsShare={this.totals.user}
-                                    />
-                                </Box>
+                                <ActivityTypeBreakdown
+                                    title={`${this.props.user.displayName}`}
+                                    currentTotalsShare={this.totals.user}
+                                />
                             </Grid>
                             <Grid item xs={12} md={4}>
-
-                                <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
-                                    {activityBreakdownTitleRow}
-                                    <ActivityTypeBreakdown
-                                        title={`Team ${this.props.user.teamName}`}
-                                        currentTotalsShare={this.totals.team}
-                                    />
-                                </Box>
+                                <ActivityTypeBreakdown
+                                    title={`Team ${this.props.user.teamName}`}
+                                    currentTotalsShare={this.totals.team}
+                                />
                             </Grid>
                             {/* End Breakdowns */}
 
                             {/* My Activities and heatmap */}
                             <Grid item xs={12}>
-                                <Box className="grey lighten-3" padding={1} margin={0} borderRadius={8} boxShadow={4}>
-                                    <Box className="white" margin={2} paddingLeft={0} paddingRight={0}>
-                                        <ActivityBubble
-                                            title={"Heatmap (All Athletes)"}
-                                            activities={this.state.activities}
-                                        />
-                                    </Box>
-                                </Box>
+                                <ActivityBubble
+                                    title={"Heatmap (All Athletes)"}
+                                    activities={this.state.activities}
+                                />
                             </Grid>
                             {/* END Activities by day and heatmap */}
 
                             {/* All User Totals Cards Stack Bar Graphs - Activities etc*/}
                             <Grid item xs={12} md={4}>
-                                <ActivityTotalsGraphs
-                                    title={`All Totals (Adjusted)`}
-                                    currentTotalsShare={this.totals.all} graphType="All"
+                                <PointsBreakdownGraph
+                                    title={`Points by Team`}
+                                    graphType="Team"
+                                    totals={this.totals}
                                 />
                             </Grid>
                             <Grid item xs={12} md={4}>
-                                <ActivityTotalsGraphs
-                                    title={`${this.props.user.displayName} (Adjusted)`}
-                                    currentTotalsShare={this.totals.user} graphType="User"
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <ActivityTotalsGraphs
-                                    title={`${this.props.user.teamName} (Adjusted)`}
-                                    currentTotalsShare={this.totals.team} graphType="Team"
+                                <PointsBreakdownGraph
+                                    title={`Top Members`}
+                                    graphType="User"
+                                    totals={this.totals}
                                 />
                             </Grid>
                             {/* End All User Totals Cards Stack Bar Graphs - Activities etc*/}
@@ -276,7 +242,7 @@ class Dashboard extends React.Component {
                             {/* END Current User"s Activities */}
 
                             {/* Sumary Display */}
-                            <Grid item xs={12} md={8}>
+                            <Grid item xs={12}>
                                 <SummaryTotal
                                     nbrActivities={this.totals.all.nbrActivities}
                                     distanceTotal={this.totals.all.distanceTotal}

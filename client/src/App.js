@@ -9,6 +9,7 @@ import LandingPage from './components/Landing/Landing';
 import Dashboard from './components/Dashboard/dashboard';
 import Account from './components/Account/Account';
 import Admin from './components/Admin/Admin';
+import Results from './components/Results/Results';
 import Activities from './components/Activity/Activities';
 import ActivityPage from './components/Activity/ActivityPage';
 import ActivityForm from './components/Activity/ActivityForm';
@@ -36,6 +37,7 @@ class App extends React.Component {
           <Route exact path="/signin" component={SignInForm} />
           <Route exact path="/pw-forget" component={PasswordForgetPage} />
           <Route exact path="/dashboard" component={Dashboard} />
+          <Route exact path="/results" component={Results} />
           <Route exact path="/account" component={Account} />
           <Route exact path="/admin" component={Admin} />
           <Route exact path="/activities" component={Activities} />
