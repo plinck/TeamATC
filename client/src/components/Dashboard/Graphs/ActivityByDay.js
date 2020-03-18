@@ -6,6 +6,7 @@ import { Redirect } from "react-router";
 import { withRouter } from "react-router-dom";
 
 import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
+import { Card, CardContent, Box } from "@material-ui/core";
 
 class ActivityByDay extends React.Component {
     plotActivities = (uid) => {
@@ -36,8 +37,6 @@ class ActivityByDay extends React.Component {
                     stepmode: "backward",
                     count: 1,
                     label: "1y"
-                }, {
-                    step: "all",
                 }]
         };
 
@@ -58,8 +57,8 @@ class ActivityByDay extends React.Component {
                     break;
             }
             return {
-                distance : distance,
-                activityDateTime : activity.activityDateTime
+                distance: distance,
+                activityDateTime: activity.activityDateTime
             };
         })
 
@@ -101,8 +100,12 @@ class ActivityByDay extends React.Component {
             return [year, month, day].join("-");
         });
 
-        const latestDate = new Date();
-        const earliestDate = latestDate.setDate(latestDate.getDate()- 30);
+        const latestDate = new Date().toISOString().split('T')[0];
+        var d = new Date();
+        d.setDate(d.getDate() - 7);
+        let earliestDate = d.toISOString().split('T')[0];
+
+
 
         const distances = dayActivities.map((activity) => {
             return (activity.total);
@@ -172,14 +175,14 @@ class ActivityByDay extends React.Component {
 
         if (this.props.user.authUser) {
             return (
-                <div>                    
-                    <div className="card">
-                        <div className="card-content pCard">
-                            <span className="card-title">{this.props.title ? this.props.title : "ActivityByDay"}</span>
-                            {this.plotActivities()}
-                        </div>
-                    </div>
-                </div>
+                <Card>
+                    <CardContent>
+                        <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold">
+                            <span style={{ color: 'grey' }}>{this.props.title ? this.props.title : 'ActivityByDay'}</span>
+                        </Box>
+                        {this.plotActivities()}
+                    </CardContent>
+                </Card>
             );
         } else {
             return (

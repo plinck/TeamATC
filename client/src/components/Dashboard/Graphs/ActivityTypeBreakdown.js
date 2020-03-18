@@ -88,10 +88,10 @@ class ActivityTypeBreakdown extends React.Component {
             annotations: [
                 {
                     font: {
-                        size: 16
+                        size: 14
                     },
                     showarrow: false,
-                    text: 'Points',
+                    text: `Points`,
                     x: 0.5,
                     y: 0.5
                 },
