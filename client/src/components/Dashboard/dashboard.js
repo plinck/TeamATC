@@ -242,7 +242,7 @@ class Dashboard extends React.Component {
                             {/* END Current User"s Activities */}
 
                             {/* Sumary Display */}
-                            <Grid item xs={12} md={8}>
+                            <Grid item xs={12}>
                                 <SummaryTotal
                                     nbrActivities={this.totals.all.nbrActivities}
                                     distanceTotal={this.totals.all.distanceTotal}
