@@ -23,7 +23,7 @@ import { withStyles } from '@material-ui/core/styles';
 const styles = theme => ({
     root: {
         [theme.breakpoints.up('md')]: {
-            marginLeft: "60px",
+            marginLeft: "57px",
         }
     }
 });
@@ -139,7 +139,7 @@ class Dashboard extends React.Component {
     render() {
         const { classes } = this.props;
         if (this.state.loadingFlag) {
-            return (<Grid container style={{ marginTop: '20px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
+            return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
 
         // Some props take time to get ready so return null when uid not avaialble
@@ -166,7 +166,7 @@ class Dashboard extends React.Component {
         if (this.props.user.authUser) {
             return (
                 <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
-                    <Container maxWidth="xl" style={{ marginTop: "20px" }}>
+                    <Container maxWidth="xl" style={{ marginTop: "10px" }}>
                         <Grid container spacing={2}>
                             {/*  OVERALL standings by user and TEAM */}
                             <Grid item xs={12} md={4}>

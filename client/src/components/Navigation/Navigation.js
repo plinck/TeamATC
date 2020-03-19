@@ -7,7 +7,7 @@ import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
 import { withRouter } from 'react-router-dom';
 import AccountMenu from "../Account/AccountMenu";
 import './Navigation.css';
-import { Button, Typography, Container, Toolbar, IconButton, SwipeableDrawer, ListItem, ListItemText, List, ListItemIcon } from '@material-ui/core';
+import { Button, Typography, Container, Toolbar, IconButton, SwipeableDrawer, ListItem, ListItemText, List, ListItemIcon, Divider } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import HomeIcon from '@material-ui/icons/Home'
 import PersonIcon from '@material-ui/icons/Person';
@@ -15,6 +15,8 @@ import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Sidenav from './SideNav/Sidenav';
+import TimerIcon from '@material-ui/icons/Timer';
+import EqualizerIcon from '@material-ui/icons/Equalizer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -109,6 +111,10 @@ let Navigation = (props) => {
       <ListItem><ListItemIcon><DashboardIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/dashboard">Home</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><DirectionsRunIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/activities">Activities</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/account">Account</NavLink></ListItemText></ListItem>
+      <ListItem><ListItemIcon><TimerIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/challenges">Challenges</NavLink></ListItemText></ListItem>
+      <Divider></Divider>
+      <ListItem><ListItemIcon><EqualizerIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/results">Full Results</NavLink></ListItemText></ListItem>
+      <Divider></Divider>
       <ListItem><ListItemText><Button variant="contained" color="primary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText></ListItem>
       <ListItem><ListItemText> <SignOutButton /></ListItemText></ListItem>
     </List>
@@ -147,7 +153,7 @@ let Navigation = (props) => {
   let navBar, navBarMobile;
   if (props.user.authUser && props.user.isAdmin) {
     navBar = navigationAdmin;
-    navBarMobile = navigationAdminMobile;
+    navBarMobile = navigationAuthMobile;
   } else if (props.user.authUser) {
     navBar = navigationAuth;
     navBarMobile = navigationAuthMobile;
@@ -168,7 +174,7 @@ let Navigation = (props) => {
 
       <AppBar color="secondary">
         <Container>
-          <Toolbar className={props.user.authUser ? classes.toolBarFlex : classes.nonAuthToolBarFlex} >
+          <Toolbar style={{ minHeight: "64px" }} className={props.user.authUser ? classes.toolBarFlex : classes.nonAuthToolBarFlex} >
             <IconButton
               color="inherit"
               aria-label="Open drawer"

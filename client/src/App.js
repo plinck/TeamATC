@@ -16,6 +16,7 @@ import ActivityForm from './components/Activity/ActivityForm';
 import UserPage from './components/User/UserPage';
 import UserForm from './components/User/UserForm';
 import Register from './components/Auth/Register/Register';
+import Challenges from './components/Challenges/Challenges';
 import { Toolbar } from '@material-ui/core';
 
 // Auth components
@@ -32,12 +33,13 @@ class App extends React.Component {
       <Router>
         <div>
           <Navigation />
-          <Toolbar />
+          <Toolbar style={{ minHeight: "64px" }} />
           <Route exact path="/" component={LandingPage} />
           <Route exact path="/signin" component={SignInForm} />
           <Route exact path="/pw-forget" component={PasswordForgetPage} />
           <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/results" component={Results} />
+          <Route exact path="/challenges" component={Challenges} />
           <Route exact path="/account" component={Account} />
           <Route exact path="/admin" component={Admin} />
           <Route exact path="/activities" component={Activities} />
