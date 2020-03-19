@@ -25,6 +25,16 @@ const Challenge = (props) => {
     const [creating, setCreating] = useState();
     const [selection, setSelection] = useState(false);
 
+    const handleJoin = () => {
+        setCreating(false)
+        setSelection(true)
+    }
+
+    const handleCreate = () => {
+        setCreating(true)
+        setSelection(true)
+    }
+
     return (
         <div className={classes.main}>
             <div className={classes.root}>
@@ -42,9 +52,9 @@ const Challenge = (props) => {
                                 <Card>
                                     <CardContent style={{ textAlign: "center" }}>
                                         <Typography variant="h5">Challenges</Typography>
-                                        <Button className={classes.button} variant="contained" color="primary">Join Challenge</Button>
+                                        <Button onClick={handleJoin} className={classes.button} variant="contained" color="primary">Join Challenge</Button>
                                         <Divider></Divider>
-                                        <Button className={classes.button} variant="contained" color="primary">Create New Challenge</Button>
+                                        <Button onClick={handleCreate} className={classes.button} variant="contained" color="primary">Create New Challenge</Button>
                                     </CardContent>
                                 </Card>
                             </Grid>
