@@ -60,6 +60,23 @@ const CreateChallenge = (props) => {
         setSelectedDate(date);
     };
 
+    const [teams, setTeams] = useState([])
+    const [team, setTeam] = useState('');
+    const handleTeamChange = (e) => {
+        setTeam(e.target.value)
+    }
+
+    const keyPress = (e) => {
+        if (e.keyCode == 13) {
+            setTeams([...teams, e.target.value]);
+            setTeam('');
+        }
+    }
+
+    const handleDelete = teamToDelete => () => {
+        setTeams(teams => teams.filter(team => team !== teamToDelete));
+    };
+
     return (
         <Card>
             <CardContent>
@@ -138,10 +155,34 @@ const CreateChallenge = (props) => {
                             }}
                         />
                     </MuiPickersUtilsProvider>
+                    <TextField
+                        className={classes.fullWidth}
+                        id="teams"
+                        label="Create Teams"
+                        variant="outlined"
+                        onChange={handleTeamChange}
+                        value={team}
+                        onKeyDown={keyPress}
+                        inputProps={{
+                            style: { padding: '18px' }
+                        }} />
+                    <div>
+                        {teams.map((team, index) => {
+                            return (
+                                <Chip
+                                    key={index}
+                                    color="primary"
+                                    label={team}
+                                    className={classes.chip}
+                                    onDelete={handleDelete(team)}
+                                />
+                            )
+                        })}
+                    </div>
                 </form>
             </CardContent>
             <CardActions>
-                <Button variant="contained" color="primary" type="submit">Submit</Button>
+                <Button variant="contained" color="primary" type="submit">Next</Button>
             </CardActions>
         </Card>
     )
