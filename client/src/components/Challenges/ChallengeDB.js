@@ -11,7 +11,7 @@ class ChallengeDB {
                 .add({
                     description: challenge.description,
                     endDate: challenge.endDate,
-                    isCurrentChallenge: challenge.isCurrentChallenge ? challenge.isCurrentChallenge : false;
+                    isCurrentChallenge: challenge.isCurrentChallenge ? challenge.isCurrentChallenge : false,
                     name: challenge.name,
                     startDate: challenge.startDate,
                 })
@@ -35,7 +35,7 @@ class ChallengeDB {
                 .set({
                     description: challenge.description,
                     endDate: challenge.endDate,
-                    isCurrentChallenge: challenge.isCurrentChallenge ? challenge.isCurrentChallenge : false;
+                    isCurrentChallenge: challenge.isCurrentChallenge ? challenge.isCurrentChallenge : false,
                     name: challenge.name,
                     startDate: challenge.startDate,
                 }, {merge: true})

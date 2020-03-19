@@ -4,6 +4,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 
+import ChallengeDB from "./ChallengeDB"
+
 
 const useStyles = makeStyles(theme => ({
     fullWidth: {
@@ -44,6 +46,8 @@ const MenuProps = {
 const CreateChallenge = (props) => {
     const classes = useStyles();
 
+    const [message, setMessage] = React.useState("");
+
     const events = ["Swim", "Bike", "Run"]
     const [selectedEvents, setSelectedEvents] = useState([]);
     const handleChange = event => {
@@ -55,14 +59,29 @@ const CreateChallenge = (props) => {
         setScoring(event.target.value);
     };
 
-    const [selectedBeginDate, setSelectedBeginDate] = React.useState(new Date());
+    const [selectedStartDate, setSelectedStartDate] = React.useState(new Date());
     const handleBeginDateChange = date => {
-        setSelectedBeginDate(date);
+        setSelectedStartDate(date);
     };
 
     const [selectedEndDate, setSelectedEndDate] = React.useState(new Date('2020-08-18T21:11:54'));
     const handleEndDateChange = date => {
         setSelectedEndDate(date);
+    };
+
+    const [description, setDescription] = React.useState("");
+    const handleDescriptionChange = event => {
+        setDescription(event.target.value);
+    };
+
+    const [name, setName] = React.useState("");
+    const handleNameChange = event => {
+        setName(event.target.value);
+    };
+
+    const [isCurrentChallenge, setIsCurrentChallenge] = React.useState(false);
+    const handleIsCurrentChallengeChange = isCurrent => {
+        setIsCurrentChallenge(isCurrent);
     };
 
     const [teams, setTeams] = useState([])
@@ -82,16 +101,45 @@ const CreateChallenge = (props) => {
         setTeams(teams => teams.filter(team => team !== teamToDelete));
     };
 
+    const onSubmitHandler = (event) => {
+        event.preventDefault();
+        let challenge = {};             // This should be part of state - i.e. the challenge objet is the state, not thr fields
+        challenge.description = description;
+        challenge.endDate = selectedEndDate;
+        challenge.isCurrentChallenge =  isCurrentChallenge ? isCurrentChallenge : false;
+        challenge.name = name;
+        challenge.startDate = selectedStartDate;
+        
+        if (props.id) {
+            challenge.id = props.id;
+            ChallengeDB.update(challenge).then(res => {
+                setMessage(`Challenge Successfully Updated`);
+            }).catch(err => {
+                setMessage(`Error updating challenge ${err}`);
+            });  
+        } else {
+            ChallengeDB.create(challenge).then(res => {
+                setMessage(`Challenge Successfully Created`);
+            }).catch(err => {
+                setMessage(`Error creating challenge ${err}`);
+            });   
+        } 
+    }
+
     return (
         <Card>
             <CardContent>
+                {message != null ? <p>{message}</p> : ""}
                 <Typography variant="h5">Create a New Challenge</Typography>
                 <form noValidate autoComplete="off">
                     <TextField
                         className={classes.fullWidth}
-                        id="challenge-name"
+                        id="name"
                         label="Challenge Name"
                         variant="outlined"
+                        value={name}
+                        onChange={handleNameChange}
+
                         inputProps={{
                             style: { padding: '18px' }
                         }} />
@@ -101,6 +149,9 @@ const CreateChallenge = (props) => {
                         label="Description"
                         variant="outlined"
                         multiline
+                        value={description}
+                        onChange={handleDescriptionChange}
+
                         placeholder="Tell your competitors about the challenge."
                         inputProps={{
                             style: { padding: '18px' }
@@ -142,7 +193,7 @@ const CreateChallenge = (props) => {
                             id="begin-date-picker-dialog"
                             label="Select a Challenge Begin Date"
                             format="MM/dd/yyyy"
-                            value={selectedBeginDate}
+                            value={selectedStartDate}
                             onChange={handleBeginDateChange}
                             KeyboardButtonProps={{
                                 'aria-label': 'change date',
@@ -166,7 +217,13 @@ const CreateChallenge = (props) => {
                 </form>
             </CardContent>
             <CardActions>
-                <Button variant="contained" color="primary" type="submit">Next</Button>
+                <Button 
+                    variant="contained"
+                    color="primary" 
+                    type="submit"
+                    onClick={onSubmitHandler}
+                    >{props.id ? "Update" : "Create"}
+                </Button>
             </CardActions>
         </Card>
     )

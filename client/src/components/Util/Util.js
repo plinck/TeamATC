@@ -43,6 +43,7 @@ class Util {
     const dbUsersRef = firebase.db.collection(ORG).doc(ENV).collection(`users`);
     const dbATCMembersRef = firebase.db.collection(ORG).doc(ENV).collection(`ATCMembers`);
 
+    const dbChallengesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges");        
     const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`challengemembers`);        
     const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`activities`);
     const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`teams`);
@@ -51,7 +52,9 @@ class Util {
       dbATCMembersRef: dbATCMembersRef,
       dbChallengeMembersRef: dbChallengeMembersRef,
       dbActivitiesRef: dbActivitiesRef,
-      dbTeamsRef: dbTeamsRef}
+      dbTeamsRef: dbTeamsRef,
+      dbChallengesRef: dbChallengesRef
+    }
   }
 
   static getChallengesRef () {
