@@ -55,9 +55,14 @@ const CreateChallenge = (props) => {
         setScoring(event.target.value);
     };
 
-    const [selectedDate, setSelectedDate] = React.useState(new Date('2020-08-18T21:11:54'));
-    const handleDateChange = date => {
-        setSelectedDate(date);
+    const [selectedBeginDate, setSelectedBeginDate] = React.useState(new Date());
+    const handleBeginDateChange = date => {
+        setSelectedBeginDate(date);
+    };
+
+    const [selectedEndDate, setSelectedEndDate] = React.useState(new Date('2020-08-18T21:11:54'));
+    const handleEndDateChange = date => {
+        setSelectedEndDate(date);
     };
 
     const [teams, setTeams] = useState([])
@@ -101,6 +106,8 @@ const CreateChallenge = (props) => {
                             style: { padding: '18px' }
                         }} />
 
+                    {/*  I cut this out for now as it has a lot of implications that we are
+                        not ready to deal with.  This will have to come in a later version
                     <FormControl className={classes.formControl}>
                         <InputLabel id="select-events-label">Select Events</InputLabel>
                         <Select
@@ -126,59 +133,36 @@ const CreateChallenge = (props) => {
                             ))}
                         </Select>
                     </FormControl>
+                    */}
 
-                    <FormControl variant="outlined" className={classes.formControl}>
-                        <InputLabel id="scoring-label">Scoring Metric</InputLabel>
-                        <Select
-                            labelId="scoring-label"
-                            id="scoring-select"
-                            value={scoring}
-                            onChange={handleScoringChange}
-                            label="Scoring Metric"
-                        >
-                            <MenuItem value='Points'>Points</MenuItem>
-                            <MenuItem value='Distance'>Distance</MenuItem>
-                            <MenuItem value='Duration'>Duration</MenuItem>
-                        </Select>
-                    </FormControl>
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                         <KeyboardDatePicker
                             className={classes.formControl}
                             margin="normal"
-                            id="date-picker-dialog"
-                            label="Select a Challenge End Date"
+                            id="begin-date-picker-dialog"
+                            label="Select a Challenge Begin Date"
                             format="MM/dd/yyyy"
-                            value={selectedDate}
-                            onChange={handleDateChange}
+                            value={selectedBeginDate}
+                            onChange={handleBeginDateChange}
                             KeyboardButtonProps={{
                                 'aria-label': 'change date',
                             }}
                         />
                     </MuiPickersUtilsProvider>
-                    <TextField
-                        className={classes.fullWidth}
-                        id="teams"
-                        label="Create Teams"
-                        variant="outlined"
-                        onChange={handleTeamChange}
-                        value={team}
-                        onKeyDown={keyPress}
-                        inputProps={{
-                            style: { padding: '18px' }
-                        }} />
-                    <div>
-                        {teams.map((team, index) => {
-                            return (
-                                <Chip
-                                    key={index}
-                                    color="primary"
-                                    label={team}
-                                    className={classes.chip}
-                                    onDelete={handleDelete(team)}
-                                />
-                            )
-                        })}
-                    </div>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <KeyboardDatePicker
+                            className={classes.formControl}
+                            margin="normal"
+                            id="end-date-picker-dialog"
+                            label="Select a Challenge End Date"
+                            format="MM/dd/yyyy"
+                            value={selectedEndDate}
+                            onChange={handleEndDateChange}
+                            KeyboardButtonProps={{
+                                'aria-label': 'change date',
+                            }}
+                        />
+                    </MuiPickersUtilsProvider>
                 </form>
             </CardContent>
             <CardActions>
