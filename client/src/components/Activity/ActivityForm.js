@@ -1,6 +1,11 @@
 import React from "react";
 import { withRouter } from 'react-router';
 
+// Date picker component
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+
 import M from "materialize-css/dist/js/materialize.min.js";
 import ActivityModal from "./ActivityModal";
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
@@ -84,6 +89,8 @@ class ActivityForm extends React.Component {
 
         //set the date field to be current date by default
         let jsDate = new Date();
+        this.state.activityDateTime = jsDate;
+
         const dateTimeString = moment(jsDate).format("MM-DD-YYYY");
         this.state.activityDateTimeString = dateTimeString;
     }
@@ -107,7 +114,7 @@ class ActivityForm extends React.Component {
     }
 
     enableButton = () => {
-        if (this.state.activityName && this.state.activityDateTimeString && this.state.activityType && this.state.distance && this.state.duration) {
+        if (this.state.activityName && this.state.activityDateTime && this.state.activityDateTimeString && this.state.activityType && this.state.distance && this.state.duration) {
             this.setState({ updateButtonDisabled: false });
         } else {
             this.setState({ updateButtonDisabled: true });
@@ -199,6 +206,14 @@ class ActivityForm extends React.Component {
             }, () => this.enableButton());
         }
     }
+
+    // Handle Date Picker Change
+    handleDateChange = date => {
+        this.setState({
+          activityDateTime: date
+        });
+      };
+
 
     saveFITFileToState(jsonData) {
         let activity = {
@@ -339,6 +354,7 @@ class ActivityForm extends React.Component {
         
             this.setState({
                 activityName: activity.activityName,
+                activityDateTime: activity.activityDateTime,
                 activityDateTimeString: dateTimeString,
                 activityType: activity.activityType,   
                 distance: activity.distance,
@@ -384,6 +400,7 @@ class ActivityForm extends React.Component {
 
     validateActivity() {
         // Deal with Date - convert MM/DD/YYYY to date object and then Firestore timestamp
+        /*
         let jsDateArray = [];
         let jsDateString = this.state.activityDateTimeString;
         if (jsDateString.length === 10) {
@@ -399,9 +416,14 @@ class ActivityForm extends React.Component {
         let dateString = this.state.activityDateTimeString;
         let momentObj = moment(dateString, 'MM-DD-YYYY');
         let jsDate = new Date(momentObj);
+        */
+
+        // Using date picker, so date is date -- create string from date
+
         
         let activity = this.state;
-        activity.activityDateTime = jsDate;
+        // activity.activityDateTime = jsDate;
+        activity.activityDateTimeString = moment(activity.activityDateTime ).format('MM-DD-YYYY');
         
         // If NEW activity, set the info to the current users info, if not use what is there so admiin can update
         if (!this.state.id) {
@@ -540,6 +562,7 @@ class ActivityForm extends React.Component {
             teamUid,
             teamName,
             activityName,
+            activityDateTime,
             activityDateTimeString,
             activityType,           // swim, bike, run
             distance,
@@ -570,31 +593,31 @@ class ActivityForm extends React.Component {
                     <div className="col s12">
                         <div className="card">
                             <div className="card-content pCard">
+                                {message != null ? <p className="blue-text">{message}</p> : ""}
                                 <span className="card-title">New Activity for {displayName} on Team "{teamName}"</span>
+                
+                                <label>Activity Date:
+                                <DatePicker
+                                    id="activityDateTime"
+                                    name="activityDateTime"
+                                    value={activityDateTime}
+
+                                    selected={activityDateTime}
+                                    onSelect={date => this.handleDateChange(date)} //when day is clicked
+                                    onChange={date => this.handleDateChange(date)} //only when value has changed
+
+                                    showTimeSelect
+                                    timeFormat="HH:mm"
+                                    timeIntervals={15}
+                                    timeCaption="time"
+                                    dateFormat="MMMM d, yyyy h:mm aa"
+                                />
+                                </label>
+
                                 <div className="row">
                                     <div className="col s12">
-                                        {message != null ? <p className="blue-text">{message}</p> : ""}
                                         <form className={classes.container} noValidate autoComplete="off">
 
-                                        {/* Dont show name input field 
-                                        <TextField
-                                            disabled
-                                            id="displayName"
-                                            name="displayName"
-                                            label="Name"
-                                            placeholder="John"
-                                            inputProps={{
-                                                style: {padding: 18} 
-                                            }}                              
-                                            className={classes.textField}
-                                            variant="outlined"
-                                            autoComplete="text"
-                                            margin="normal"
-                                            value={displayName}
-                                            onChange={this.onChange}
-                                        />        
-                                        */}
-                          
                                         <TextField
                                             id="activityName"
                                             name="activityName"
@@ -610,7 +633,8 @@ class ActivityForm extends React.Component {
                                             margin="normal"
                                             onChange={this.onChange}
                                         />        
-                          
+                                                
+                                        {/*
                                         <TextField
                                             id="activityDateTimeString"
                                             name="activityDateTimeString"
@@ -625,7 +649,8 @@ class ActivityForm extends React.Component {
                                             autoComplete="date"
                                             margin="normal"
                                             onChange={this.dateNumberOnChange}
-                                        />     
+                                        />  
+                                        */}   
 
                                         <Autocomplete
                                         id="activityType"
