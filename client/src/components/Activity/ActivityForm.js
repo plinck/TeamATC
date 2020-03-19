@@ -593,29 +593,30 @@ class ActivityForm extends React.Component {
                     <div className="col s12">
                         <div className="card">
                             <div className="card-content pCard">
+                                {message != null ? <p className="blue-text">{message}</p> : ""}
                                 <span className="card-title">New Activity for {displayName} on Team "{teamName}"</span>
+                
+                                <label>Activity Date:
+                                <DatePicker
+                                    id="activityDateTime"
+                                    name="activityDateTime"
+                                    value={activityDateTime}
+
+                                    selected={activityDateTime}
+                                    onSelect={date => this.handleDateChange(date)} //when day is clicked
+                                    onChange={date => this.handleDateChange(date)} //only when value has changed
+
+                                    showTimeSelect
+                                    timeFormat="HH:mm"
+                                    timeIntervals={15}
+                                    timeCaption="time"
+                                    dateFormat="MMMM d, yyyy h:mm aa"
+                                />
+                                </label>
+
                                 <div className="row">
                                     <div className="col s12">
-                                        {message != null ? <p className="blue-text">{message}</p> : ""}
                                         <form className={classes.container} noValidate autoComplete="off">
-                                        <DatePicker
-                                            id="activityDateTime"
-                                            name="activityDateTime"
-                                            value={activityDateTime}
-                                            label="Date"
-                                            placeholder="12-09-2019"
-                                            inputProps={{
-                                                style: {padding: 18} 
-                                            }}                              
-                                            className={classes.textField}
-                                            variant="outlined"
-                                            autoComplete="date"
-                                            margin="normal"
-
-                                            selected={activityDateTime}
-                                            onSelect={date => this.handleDateChange(date)} //when day is clicked
-                                            onChange={date => this.handleDateChange(date)} //only when value has changed
-                                        />
 
                                         <TextField
                                             id="activityName"
