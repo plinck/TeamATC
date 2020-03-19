@@ -20,7 +20,7 @@ class Util {
         const dbUsersRef = db.collection(ORG).doc(ENV).collection(`users`);
         const dbATCMembersRef = db.collection(ORG).doc(ENV).collection(`ATCMembers`);
         const dbChallengesRef = db.collection(ORG).doc(ENV).collection(`Challenges`);
-        const dbATCChallengeMemberRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`atcchallengemembers`);        
+        const dbChallengeMembersRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`challengemembers`);        
         const dbActivitiesRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`activities`);
         const dbTeamsRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`teams`);
 
@@ -28,7 +28,7 @@ class Util {
         const dbProdUsersRef = db.collection(ORG).doc(PROD_ENV).collection(`users`);
         const dbProdATCMembersRef = db.collection(ORG).doc(PROD_ENV).collection(`ATCMembers`);
         const dbProdChallengesRef = db.collection(ORG).doc(PROD_ENV).collection(`challenges`);
-        const dbProdATCChallengeMemberRef = db.collection(ORG).doc(PROD_ENV).collection("challenges").doc(challengeId).collection(`atcchallengemembers`);        
+        const dbProdATCChallengeMemberRef = db.collection(ORG).doc(PROD_ENV).collection("challenges").doc(challengeId).collection(`challengemembers`);        
         const dbProdActivitiesRef = db.collection(ORG).doc(PROD_ENV).collection("challenges").doc(challengeId).collection(`activities`);
         const dbProdTeamsRef = db.collection(ORG).doc(PROD_ENV).collection("challenges").doc(challengeId).collection(`teams`);
         
@@ -36,7 +36,7 @@ class Util {
         const dbDevUsersRef = db.collection(ORG).doc(DEV_ENV).collection(`users`);
         const dbDevATCMembersRef = db.collection(ORG).doc(DEV_ENV).collection(`ATCMembers`);
         const dbDevChallengesRef = db.collection(ORG).doc(DEV_ENV).collection(`challenges`);
-        const dbDevATCChallengeMemberRef = db.collection(ORG).doc(DEV_ENV).collection("challenges").doc(challengeId).collection(`atcchallengemembers`);        
+        const dbDevATCChallengeMemberRef = db.collection(ORG).doc(DEV_ENV).collection("challenges").doc(challengeId).collection(`challengemembers`);        
         const dbDevActivitiesRef = db.collection(ORG).doc(DEV_ENV).collection("challenges").doc(challengeId).collection(`activities`);
         const dbDevTeamsRef = db.collection(ORG).doc(DEV_ENV).collection("challenges").doc(challengeId).collection(`teams`);
     
@@ -44,7 +44,7 @@ class Util {
           dbUsersRef: dbUsersRef,
           dbATCMembersRef: dbATCMembersRef,
           dbChallengesRef: dbChallengesRef,
-          dbATCChallengeMemberRef: dbATCChallengeMemberRef,
+          dbChallengeMembersRef: dbChallengeMembersRef,
           dbActivitiesRef: dbActivitiesRef,
           dbTeamsRef: dbTeamsRef,
 

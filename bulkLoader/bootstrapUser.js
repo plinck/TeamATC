@@ -279,7 +279,7 @@ async function copyUsersToDev() {
     const dbTeamsRef = dbALLRefs.dbTeamsRef
     const dbATCMembersRef = dbALLRefs.dbATCMembersRef
     const dbActivitiesRef = dbALLRefs.dbActivitiesRef
-    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
+    const dbChallengeMembersRef = dbALLRefs.dbChallengeMembersRef
 
     console.log(`Copying users from ${dbCollSource} to ${dbCollDest}`);
     return new Promise(async (resolve, reject) => {
@@ -322,7 +322,7 @@ async function deleteATCMembers() {
     const dbTeamsRef = dbALLRefs.dbTeamsRef
     const dbATCMembersRef = dbALLRefs.dbATCMembersRef
     const dbActivitiesRef = dbALLRefs.dbActivitiesRef
-    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
+    const dbChallengeMembersRef = dbALLRefs.dbChallengeMembersRef
 
     dbATCMembersRef.listDocuments().then(val => {
         val.map((val) => {
@@ -338,7 +338,7 @@ async function uploadATCMembers(fileToUpload) {
     const dbTeamsRef = dbALLRefs.dbTeamsRef
     const dbATCMembersRef = dbALLRefs.dbATCMembersRef
     const dbActivitiesRef = dbALLRefs.dbActivitiesRef
-    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
+    const dbChallengeMembersRef = dbALLRefs.dbChallengeMembersRef
 
     if (!fileToUpload) {
         fileToUpload = "ATCMembers.csv";
@@ -400,7 +400,7 @@ function updateClaimsInFirestore(uid, claims, authClaims) {
     const dbTeamsRef = dbALLRefs.dbTeamsRef
     const dbATCMembersRef = dbALLRefs.dbATCMembersRef
     const dbActivitiesRef = dbALLRefs.dbActivitiesRef
-    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
+    const dbChallengeMembersRef = dbALLRefs.dbChallengeMembersRef
 
     return new Promise(async (resolve, reject) => {
 
@@ -514,7 +514,7 @@ async function createFirestoreUserBootstrap(user) {
     const dbTeamsRef = dbALLRefs.dbTeamsRef
     const dbATCMembersRef = dbALLRefs.dbATCMembersRef
     const dbActivitiesRef = dbALLRefs.dbActivitiesRef
-    const dbATCChallengeMemberRef = dbALLRefs.dbATCChallengeMemberRef
+    const dbChallengeMembersRef = dbALLRefs.dbChallengeMembersRef
 
     //console.log(`trying to update user in fb: ${user}`);
     return new Promise(async (resolve, reject) => {

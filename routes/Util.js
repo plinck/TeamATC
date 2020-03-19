@@ -13,13 +13,13 @@ class Util {
         const dbUsersRef = db.collection(ORG).doc(ENV).collection(`users`);
         const dbATCMembersRef = db.collection(ORG).doc(ENV).collection(`ATCMembers`);
     
-        const dbATCChallengeMemberRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`atcchallengemembers`);        
+        const dbChallengeMembersRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`challengemembers`);        
         const dbActivitiesRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`activities`);
         const dbTeamsRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`teams`);
     
         return {dbUsersRef: dbUsersRef,
           dbATCMembersRef: dbATCMembersRef,
-          dbATCChallengeMemberRef: dbATCChallengeMemberRef,
+          dbChallengeMembersRef: dbChallengeMembersRef,
           dbActivitiesRef: dbActivitiesRef,
           dbTeamsRef: dbTeamsRef
         }

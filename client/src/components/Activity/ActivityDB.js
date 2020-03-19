@@ -134,6 +134,80 @@ class ActivityDB {
         });
     }
 
+
+    // TODO: - This is NOT working flly yet and it also will be slow so it needs complete reworking.
+    // Need to sue promise all
+    // Listener for all activities for all users in one challenge (NEW WORLD OF ACTIVITIES UNDER USERS)
+    static getAllActivitiesInChallenge = (challengeId) => {
+        if (!challengeId) {
+            challengeId = "9uxEvhpHM2cqCcn1ESZg";
+          }
+        
+        const dbChallengesRef = Util.getChallengesRef()        
+        const dbChallengeMembersRef = Util.getChallengeMembersRef(challengeId)        
+        const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+
+        let dbActivitiesRefOrderByDate = dbActivitiesRef
+            .orderBy("activityDateTime", "desc");
+
+        let challenge = {};
+        let challengeMembers = [];
+        let activities = [];
+
+        // How can you send back promise and listener?
+        return new Promise((resolve, reject) => {
+            dbChallengesRef.doc(challengeId).get().then( doc => {
+                if (doc.exists) {
+                    challenge = doc.data();
+                    challenge.startDate = challenge.startDate.toDate();
+                    challenge.endDate = challenge.endDate.toDate();
+                    challengeId.id = doc.id;
+                    return challenge;
+                } else {
+                    console.error(`Error getting challenge`);
+                    return(reject(`Error getting challenge, ${challengeId} not found`));  
+                }
+            }).then ( challenge => {
+                // after etting challenge, get all users in that challenge
+                dbChallengeMembersRef.get().then( snapshot => {
+                    challengeMembers = [];
+                    snapshot.forEach(doc => {
+                        let challengeMember = {};
+                        challengeMember = doc.data();
+                        challengeMember.id = doc.id;
+                        challengeMember.startDate = challenge.startDate
+                        challengeMember.endDate = challenge.endDate
+                        challengeMembers.push(challengeMember);
+                    });
+                    return (challengeMembers);
+            }).then (challengeMembers => {
+                // Now get all acvitieis for all users
+                activities = [];
+                challengeMembers.forEach(member => {
+                    dbActivitiesRefOrderByDate.where("uid", "==", member.uid)
+                        .where("activitiyDateTime", ">=", member.startDate)
+                        .where("activitiyDateTime", "<=", member.endDate)
+                        .get().then (activitySnap => {
+                            activitySnap.forEach(doc => {
+                                let activity = {};
+                                activity = doc.data();
+                                activity.id = doc.id;
+                                activity.activityDateTime = activity
+                                    .activityDateTime
+                                    .toDate();
+                                activities.push(activity);        
+                            })
+                    })
+                })
+            })
+            }).catch (err => {
+                console.error(`Error getting activities for challenge`);
+                reject(err)
+            })
+                
+        }); // Promise
+    }
+
     // -----------------------------------------------------------------------------
     // -------------------- Activities : getUserWithActivity - get all actiities
     // with their firstName lastName This isnt SUPER effecient since it gets all

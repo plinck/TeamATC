@@ -43,15 +43,34 @@ class Util {
     const dbUsersRef = firebase.db.collection(ORG).doc(ENV).collection(`users`);
     const dbATCMembersRef = firebase.db.collection(ORG).doc(ENV).collection(`ATCMembers`);
 
-    const dbATCChallengeMemberRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`atcchallengemembers`);        
+    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`challengemembers`);        
     const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`activities`);
     const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`teams`);
 
     return {dbUsersRef: dbUsersRef,
       dbATCMembersRef: dbATCMembersRef,
-      dbATCChallengeMemberRef: dbATCChallengeMemberRef,
+      dbChallengeMembersRef: dbChallengeMembersRef,
       dbActivitiesRef: dbActivitiesRef,
       dbTeamsRef: dbTeamsRef}
+  }
+
+  static getChallengesRef () {
+    const firebase = new Firebase();
+
+    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges");        
+
+    return dbChallengeMembersRef;
+  }
+
+  static getChallengeMembersRef (challengeId) {
+    if (!challengeId) {
+      challengeId = "9uxEvhpHM2cqCcn1ESZg";
+    }
+    const firebase = new Firebase();
+
+    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`challengemembers`);        
+
+    return dbChallengeMembersRef;
   }
 
   static getCurrentAuthUser = async () => {

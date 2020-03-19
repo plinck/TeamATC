@@ -19,7 +19,7 @@ const provideAuthUserContext = Component => {
             const dbUsersRef = allDBRefs.dbUsersRef;
             const dbATCMembersRef = allDBRefs.dbATCMembersRef;
 
-            const dbATCChallengeMemberRef = allDBRefs.dbATCChallengeMemberRef;
+            const dbChallengeMembersRef = allDBRefs.dbChallengeMembersRef;
             const dbActivitiesRef = allDBRefs.dbActivitiesRef;
             const dbTeamsRef = allDBRefs.dbTeamsRef;
             
@@ -28,7 +28,7 @@ const provideAuthUserContext = Component => {
                 dbActivitiesRef: dbActivitiesRef,
                 dbTeamsRef: dbTeamsRef,
                 dbATCMembersRef: dbATCMembersRef,
-                dbATCChallengeMemberRef: dbATCChallengeMemberRef,
+                dbChallengeMembersRef: dbChallengeMembersRef,
 
                 authUser: null,
                 token: null,
