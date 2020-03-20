@@ -7,6 +7,9 @@ import DateFnsUtils from '@date-io/date-fns';
 import ChallengeDB from "./ChallengeDB"
 
 const useStyles = makeStyles(theme => ({
+    buttonStyles: {    
+        margin: '5px',   
+    },
     fullWidth: {
         margin: `${theme.spacing(1)}px 0px`,
         width: "100%",
@@ -96,6 +99,12 @@ const ChallengeForm = (props) => {
         } 
     }
 
+    const handleCreateNew = (event) => {
+        event.preventDefault();
+        
+        setChallenge({...CHALLENGE_INITIAL_VALUES, id: undefined})
+    }
+
     return (
         <Card>
             <CardContent>
@@ -166,13 +175,23 @@ const ChallengeForm = (props) => {
                     >{challenge.id ? "Update" : "Create"}
                 </Button>
                 {challenge.id ? 
-                    <Button 
-                        variant="contained"
-                        color="primary" 
-                        type="submit"
-                        onClick={handleDelete}
-                        >Delete
-                    </Button>
+                    <div>
+                        <Button 
+                            variant="contained"
+                            color="primary" 
+                            type="submit"
+                            onClick={handleDelete}
+                            >Delete
+                        </Button>
+                        <Button 
+                            className={classes.buttonStyles}
+                            variant="contained"
+                            color="primary" 
+                            type="submit"
+                            onClick={handleCreateNew}
+                            >Create New
+                        </Button>
+                    </div>
                     : ""
                 }
             </CardActions>
