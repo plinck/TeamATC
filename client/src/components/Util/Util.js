@@ -38,17 +38,17 @@ class Util {
   static getDBRefs = () => {
     const firebase = new Firebase();
 
-    const user = Session.getUser();
-    const challengeId = user && user.challengeId ? user.challengeId : CHALLENGE;
-    console.log(`challengeId: ${challengeId}`)
+    const user = Session.user;
+    const challengeUid = user && user.challengeUid ? user.challengeUid : CHALLENGE;
+    console.log(`challengeUid: ${challengeUid}`)
 
     const dbUsersRef = firebase.db.collection(ORG).doc(ENV).collection(`users`);
     const dbATCMembersRef = firebase.db.collection(ORG).doc(ENV).collection(`ATCMembers`);
     const dbChallengesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges");  
 
-    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`challengemembers`);        
-    const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`activities`);
-    const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`teams`);
+    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);        
+    const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
+    const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`teams`);
 
     return {dbUsersRef: dbUsersRef,
       dbATCMembersRef: dbATCMembersRef,
@@ -62,13 +62,13 @@ class Util {
   static getChallengesRef = () => {
     const firebase = new Firebase();
 
-    const user = Session.getUser();
-    const challengeId = user && user.challengeId ? user.challengeId : CHALLENGE;
-    console.log(`challengeId: ${challengeId}`)
+    const user = Session.user;
+    const challengeUid = user && user.challengeUid ? user.challengeUid : CHALLENGE;
+    console.log(`challengeUid: ${challengeUid}`)
 
-    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`challengemembers`);        
-    const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`activities`);
-    const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`teams`);
+    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);        
+    const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
+    const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`teams`);
 
     return {dbChallengeMembersRef: dbChallengeMembersRef,
       dbActivitiesRef: dbActivitiesRef,

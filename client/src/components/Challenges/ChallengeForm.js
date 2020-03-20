@@ -104,8 +104,8 @@ const ChallengeForm = (props) => {
 
     // MAIN START : --
     // get challenges at load - this is like compnent
-    const fetchData = (challengeId) => {
-        ChallengeDB.get(challengeId).then (challenge => {
+    const fetchData = (challengeUid) => {
+        ChallengeDB.get(challengeUid).then (challenge => {
             setChallenge(challenge);
         }).catch(err => setMessage(err));
     }

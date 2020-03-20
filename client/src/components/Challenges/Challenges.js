@@ -56,12 +56,12 @@ const Challenges = (props) => {
         } 
     }
 
-    const handleJoinChallenge = (challengeId) => {
-        UserDB.updateChallenge(props.user.uid, challengeId).then ( () => {
+    const handleJoinChallenge = (challengeUid) => {
+        UserDB.updateChallenge(props.user.uid, challengeUid).then ( () => {
             // User now assigned to new challenge
-            setMessage(`joined challenge with ID ${challengeId}`);
+            setMessage(`joined challenge with ID ${challengeUid}`);
         }).catch (err => {
-            console.error(`Error joining challenge: ${challengeId} for user: ${props.uid}`);
+            console.error(`Error joining challenge: ${challengeUid} for user: ${props.uid}`);
         });
     }
 

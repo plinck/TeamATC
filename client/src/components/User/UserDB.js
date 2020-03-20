@@ -75,7 +75,7 @@ class UserDB {
                 console.log("completed");
                 resolve();
             }).catch(err => {
-                console.error(`error updating users challengeId: ${err}`);
+                console.error(`error updating users challengeUid: ${err}`);
                 reject(err);
             });
         });

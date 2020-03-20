@@ -134,8 +134,9 @@ const provideAuthUserContext = Component => {
                         isUser: user.isUser ? user.isUser : false
                     });
                     // Update my fake session object
-                    Session.setUser(user);
-                    
+                    Session.user = user;
+                    console.log(`Session.user: ${JSON.stringify(Session.user)}`)
+
                     // update firebase auth profile if this user's info changed
                     UserAPI.updateCurrentUserAuthProfile(user).then (() => {
                         // OK, no harm done

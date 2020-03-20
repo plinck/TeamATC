@@ -1,6 +1,6 @@
 class Session {
   // Formats a display money field 
-  user = {};
+  static user = {};
 
   static setUser =  (userInfo) => {
     Session.user = userInfo;
