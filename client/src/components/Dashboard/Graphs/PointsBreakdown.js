@@ -55,7 +55,17 @@ const PointsBreakdownGraph = (props) => {
         };
 
         let data = [trace1, trace2, trace3];
-        let layout = { barmode: 'stack' };
+        let layout = {
+            barmode: 'stack', autosize: true,
+            height: 300,
+            margin: {
+                l: 20,
+                r: 4,
+                b: 60,
+                t: 0,
+                pad: 0
+            },
+        };
 
         return (
             <Plot
@@ -75,7 +85,7 @@ const PointsBreakdownGraph = (props) => {
 
     if (props.user.authUser) {
         return (
-            <Card>
+            <Card style={{ height: "100%" }}>
                 <CardContent>
                     <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold">
                         <span style={{ color: 'grey' }}>{props.title ? props.title : 'Totals'}</span>

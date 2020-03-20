@@ -9,10 +9,9 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
     tableCell: {
-        whiteSpace: "nowrap",
-        overflow: "hidden",
         textOverflow: "ellipsis",
-        maxWidth: '80px'
+        maxWidth: "100%",
+        minWidth: "55px"
     }
 }))
 
@@ -43,7 +42,7 @@ const ActivitiesCard = (props) => {
             </div>
         </Box>
     return (
-        <Card>
+        <Card style={{ height: "100%" }}>
             <CardContent>
                 {activityTitleRow}
                 <Table size="small">
@@ -90,10 +89,10 @@ const ActivitiesCard = (props) => {
                             }
                             return (
                                 <TableRow key={index}>
-                                    <TableCell className={classes.tableCell} component="th" scope="row">
+                                    <TableCell padding="none" className={classes.tableCell} component="th" scope="row">
                                         <Tooltip className={classes.tableCell} title={displayActivityName}>
                                             <div>
-                                                <img style={{ maxHeight: '20px' }} src={activityIcon} alt={activityType} />
+                                                <img style={{ maxHeight: '18px' }} src={activityIcon} alt={activityType} />
                                                 {displayActivityName}
                                             </div>
                                         </Tooltip>
