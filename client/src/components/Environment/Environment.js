@@ -1,5 +1,6 @@
 const ORG=process.env.REACT_APP_FIREBASE_ORG ? process.env.REACT_APP_FIREBASE_ORG : "ATC";
 const ENV=process.env.REACT_APP_FIREBASE_ENVIRONMENT ? process.env.REACT_APP_FIREBASE_ENVIRONMENT : "dev";
+const CHALLENGE="9uxEvhpHM2cqCcn1ESZg";
 
 console.log(`Using global environment ORG: ${ORG}, ENV: ${ENV}`);  
 
@@ -16,4 +17,4 @@ class globalEnv {
 }
 
 export default globalEnv;
-export { ORG, ENV };
+export { ORG, ENV, CHALLENGE };

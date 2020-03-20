@@ -59,6 +59,28 @@ class UserDB {
             });
         });
     }
+
+    static updateChallenge (userId, challengeUid) {
+        console.log(`trying to update challenge; ${challengeUid}, for user ${userId}`);
+
+        return new Promise(async (resolve, reject) => {
+
+            // update
+            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            dbUsersRef.doc(userId).set({
+                challengeUid: challengeUid ? challengeUid  : ""
+            }, {
+                merge: true
+            }).then(() => {
+                console.log("completed");
+                resolve();
+            }).catch(err => {
+                console.error(`error updating users challengeUid: ${err}`);
+                reject(err);
+            });
+        });
+
+    }
 }
 
 export default UserDB;

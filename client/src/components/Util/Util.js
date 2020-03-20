@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { ORG, ENV } from "../Environment/Environment";
+import { ORG, ENV, CHALLENGE} from "../Environment/Environment";
 import Firebase from "../Auth/Firebase/firebase";
+import Session from "../Util/Session.js";
 
 // Util is used for various common functions
 // It is not a REACT component but rather one thatg can be used
@@ -34,52 +35,60 @@ class Util {
   }
 
   // need to get dbRefs based in on current infomratkjon so no hardocding
-  static getDBRefs = (challengeId) => {
-    if (!challengeId) {
-      challengeId = "9uxEvhpHM2cqCcn1ESZg";
-    }
+  static getDBRefs = () => {
     const firebase = new Firebase();
+
+    const user = Session.user;
+    const challengeUid = user && user.challengeUid ? user.challengeUid : CHALLENGE;
+    console.log(`challengeUid: ${challengeUid}`)
 
     const dbUsersRef = firebase.db.collection(ORG).doc(ENV).collection(`users`);
     const dbATCMembersRef = firebase.db.collection(ORG).doc(ENV).collection(`ATCMembers`);
+    const dbChallengesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges");  
 
-    const dbChallengesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges");        
-    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`challengemembers`);        
-    const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`activities`);
-    const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`teams`);
+    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);        
+    const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
+    const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`teams`);
 
     return {dbUsersRef: dbUsersRef,
       dbATCMembersRef: dbATCMembersRef,
+      dbChallengesRef: dbChallengesRef,
       dbChallengeMembersRef: dbChallengeMembersRef,
       dbActivitiesRef: dbActivitiesRef,
       dbTeamsRef: dbTeamsRef,
-      dbChallengesRef: dbChallengesRef
     }
   }
 
-  static getChallengesRef () {
+  static getChallengesRef = () => {
     const firebase = new Firebase();
 
-    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges");        
+    const user = Session.user;
+    const challengeUid = user && user.challengeUid ? user.challengeUid : CHALLENGE;
+    console.log(`challengeUid: ${challengeUid}`)
 
-    return dbChallengeMembersRef;
-  }
+    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);        
+    const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
+    const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`teams`);
 
-  static getChallengeMembersRef (challengeId) {
-    if (!challengeId) {
-      challengeId = "9uxEvhpHM2cqCcn1ESZg";
+    return {dbChallengeMembersRef: dbChallengeMembersRef,
+      dbActivitiesRef: dbActivitiesRef,
+      dbTeamsRef: dbTeamsRef,
     }
-    const firebase = new Firebase();
-
-    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeId).collection(`challengemembers`);        
-
-    return dbChallengeMembersRef;
   }
 
   static getCurrentAuthUser = async () => {
     const firebase = new Firebase();
     const currentAuthUser = await firebase.auth.currentUser;
     return currentAuthUser;
+  }
+
+  static getCurrentUser = async () => {
+    const firebase = new Firebase();
+    const dbUsersRef = Util.getDBRefs.dbUsersRef;
+    
+    const currentAuthUser = await firebase.auth.currentUser;
+    const user = await dbUsersRef.doc(currentAuthUser.uid);
+    return user;
   }
 
   static getFirestoreDB = () => {

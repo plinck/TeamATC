@@ -138,14 +138,10 @@ class ActivityDB {
     // TODO: - This is NOT working flly yet and it also will be slow so it needs complete reworking.
     // Need to sue promise all
     // Listener for all activities for all users in one challenge (NEW WORLD OF ACTIVITIES UNDER USERS)
-    static getAllActivitiesInChallenge = (challengeId) => {
-        if (!challengeId) {
-            challengeId = "9uxEvhpHM2cqCcn1ESZg";
-          }
-        
-        const dbChallengesRef = Util.getChallengesRef()        
-        const dbChallengeMembersRef = Util.getChallengeMembersRef(challengeId)        
-        const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+    static getAllActivitiesInChallenge = (challengeUid) => {
+        const dbChallengesRef = Util.getDBRefs().dbChallengesRef;       
+        const dbChallengeMembersRef = Util.getChallengesRef(challengeUid).dbChallengeMembersRef;        
+        const dbActivitiesRef = Util.getChallengesRef(challengeUid)().dbActivitiesRef;
 
         let dbActivitiesRefOrderByDate = dbActivitiesRef
             .orderBy("activityDateTime", "desc");
@@ -156,16 +152,16 @@ class ActivityDB {
 
         // How can you send back promise and listener?
         return new Promise((resolve, reject) => {
-            dbChallengesRef.doc(challengeId).get().then( doc => {
+            dbChallengesRef.doc(challengeUid).get().then( doc => {
                 if (doc.exists) {
                     challenge = doc.data();
                     challenge.startDate = challenge.startDate.toDate();
                     challenge.endDate = challenge.endDate.toDate();
-                    challengeId.id = doc.id;
+                    challengeUid.id = doc.id;
                     return challenge;
                 } else {
                     console.error(`Error getting challenge`);
-                    return(reject(`Error getting challenge, ${challengeId} not found`));  
+                    return(reject(`Error getting challenge, ${challengeUid} not found`));  
                 }
             }).then ( challenge => {
                 // after etting challenge, get all users in that challenge

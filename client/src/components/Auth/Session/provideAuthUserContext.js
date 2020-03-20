@@ -3,6 +3,7 @@ import Util from "../../Util/Util";
 import AuthUserContext from './AuthUserContext';
 import { withFirebase } from '../Firebase/FirebaseContext';
 import UserAPI from '../../User/UserAPI';
+import Session from "../../Util/Session.js";
 
 // This component WRAPS Firebase and Authentication Context togtehr in 
 // a HOC - Higher Order Component.
@@ -19,6 +20,7 @@ const provideAuthUserContext = Component => {
             const dbUsersRef = allDBRefs.dbUsersRef;
             const dbATCMembersRef = allDBRefs.dbATCMembersRef;
 
+            const dbChallengesRef = allDBRefs.dbChallengesRef;
             const dbChallengeMembersRef = allDBRefs.dbChallengeMembersRef;
             const dbActivitiesRef = allDBRefs.dbActivitiesRef;
             const dbTeamsRef = allDBRefs.dbTeamsRef;
@@ -29,6 +31,7 @@ const provideAuthUserContext = Component => {
                 dbTeamsRef: dbTeamsRef,
                 dbATCMembersRef: dbATCMembersRef,
                 dbChallengeMembersRef: dbChallengeMembersRef,
+                dbChallengesRef: dbChallengesRef,
 
                 authUser: null,
                 token: null,
@@ -42,6 +45,8 @@ const provideAuthUserContext = Component => {
                 lastName: null,
                 teamUid: null,
                 teamName: null,
+
+                challengeUid: null,
 
                 primaryRole: "user",
                 isAdmin: false,
@@ -120,12 +125,18 @@ const provideAuthUserContext = Component => {
                         teamUid: user.teamUid,
                         teamName: user.teamName,
 
+                        challengeUid: user.challengeUid ? user.challengeUid : null,
+
                         primaryRole: user.primaryRole ? user.primaryRole : "",
                         isAdmin: user.isAdmin ? user.isAdmin : false,
                         isTeamLead: user.isTeamLead ? user.isTeamLead : false,
                         isModerator: user.isModerator ? user.isModerator : false,
                         isUser: user.isUser ? user.isUser : false
                     });
+                    // Update my fake session object
+                    Session.user = user;
+                    console.log(`Session.user: ${JSON.stringify(Session.user)}`)
+
                     // update firebase auth profile if this user's info changed
                     UserAPI.updateCurrentUserAuthProfile(user).then (() => {
                         // OK, no harm done

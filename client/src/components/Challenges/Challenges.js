@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Container, makeStyles, Grid } from '@material-ui/core';
 import ChallengeDB from "./ChallengeDB"
 import ChallengeForm from './ChallengeForm';
 import Challenge from "./Challenge"
+import UserDB from "../User/UserDB.js"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -18,7 +20,11 @@ const useStyles = makeStyles(theme => ({
     },
     button: {
         margin: '15px'
+    },
+    messages: {
+        color: 'red'
     }
+
 }))
 
 const Challenges = (props) => {
@@ -28,18 +34,6 @@ const Challenges = (props) => {
 
     const [currentChallengeId, setCurrentChallengeId] = useState();
     const [message, setMessage] = useState();
-    const [creating, setCreating] = useState();
-    const [selection, setSelection] = useState(false);
-
-    const handleJoin = () => {
-        setCreating(false)
-        setSelection(true)
-    }
-
-    const handleCreate = () => {
-        setCreating(true)
-        setSelection(true)
-    }
 
     // When editting. make sure you set the id to ensure form gets proper record.
     const handleEditChallenge = (id) => {
@@ -62,6 +56,16 @@ const Challenges = (props) => {
         } 
     }
 
+    const handleJoinChallenge = (challengeUid) => {
+        UserDB.updateChallenge(props.user.uid, challengeUid).then ( () => {
+            // User now assigned to new challenge
+            setMessage(`joined challenge with ID ${challengeUid}`);
+        }).catch (err => {
+            console.error(`Error joining challenge: ${challengeUid} for user: ${props.uid}`);
+        });
+    }
+
+
     // MAIN START : --
     // get challenges at load - this is like compnent
     const fetchData = () => {
@@ -79,7 +83,7 @@ const Challenges = (props) => {
     return (
         <div className={classes.main}>
             <div className={classes.root}>
-                <Container maxWidth="xl">
+                <Container maxWidth="xl">{message ? <h5 className={classes.messages}>{message}</h5> : ""}
                     <Grid container style={{ minHeight: "75vh" }} spacing={2} justify="center" alignItems="center">
                         <Grid item xs={12} md={5}>
                             <ChallengeForm id={currentChallengeId}
@@ -90,6 +94,7 @@ const Challenges = (props) => {
                             return (<Challenge challenge={challenge} 
                                 handleEditChallenge={handleEditChallenge}
                                 handleDeleteChallenge={handleDeleteChallenge}
+                                handleJoinChallenge={handleJoinChallenge}
                                 />)
                             })
                         }
@@ -100,4 +105,4 @@ const Challenges = (props) => {
     )
 }
 
-export default Challenges;
+export default withAuthUserContext(Challenges);
