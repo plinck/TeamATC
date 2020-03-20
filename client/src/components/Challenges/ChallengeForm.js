@@ -81,7 +81,7 @@ const ChallengeForm = (props) => {
             ChallengeDB.update(challenge).then(res => {
                 setMessage(`Challenge Successfully Updated`);
                 setChallenge({...CLEAR_CHALLENGE_VALUES})
-                props.fetchData(); 
+                props.handleUpdateChallenge(); 
             }).catch(err => {
                 setMessage(`Error updating challenge ${err}`);
             });  
@@ -89,7 +89,7 @@ const ChallengeForm = (props) => {
             ChallengeDB.create(challenge).then(id => {
                 setMessage(`Challenge Successfully Created`);
                 setChallenge({...CLEAR_CHALLENGE_VALUES})
-                props.fetchData(); 
+                props.handleUpdateChallenge(); 
             }).catch(err => {
                 setMessage(`Error creating challenge ${err}`);
             });   

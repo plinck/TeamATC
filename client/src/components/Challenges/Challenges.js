@@ -41,8 +41,15 @@ const Challenges = (props) => {
         setSelection(true)
     }
 
+    // When editting. make sure you set the id to ensure form gets proper record.
     const handleEditChallenge = (id) => {
         setCurrentChallengeId(id); 
+    }
+
+    // When an update occurs you must also clear the current challnge ID since it needs to be NULL/undefined
+    const handleUpdateChallenge = (id) => {
+        setCurrentChallengeId(undefined); 
+        fetchData();
     }
 
     const handleDeleteChallenge = (id) => {        
@@ -60,6 +67,7 @@ const Challenges = (props) => {
     const fetchData = () => {
         ChallengeDB.getFiltered().then (challenges => {
             setChallenges(challenges);
+            // Each time you refresh, make sure the currnt id is cleared
         })
           .catch(err => setMessage(err));
     }
@@ -75,7 +83,7 @@ const Challenges = (props) => {
                     <Grid container style={{ minHeight: "75vh" }} spacing={2} justify="center" alignItems="center">
                         <Grid item xs={12} md={5}>
                             <ChallengeForm id={currentChallengeId}
-                                fetchData={fetchData}
+                                handleUpdateChallenge={handleUpdateChallenge}
                             />
                         </Grid> : ""
                         {challenges.map( challenge => {
