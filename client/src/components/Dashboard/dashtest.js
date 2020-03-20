@@ -1,59 +1,59 @@
 import React from "react";
-import RGL, { WidthProvider } from "react-grid-layout";
+import { WidthProvider, Responsive } from "react-grid-layout";
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { withStyles } from '@material-ui/core/styles';
 import CalculateTotals from "./CalculateTotals/CalculateTotals.js"
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Redirect } from "react-router";
-import SummaryTotal from "./SummaryTotal/SummaryTotal";
 import ResultsCard from "./ResultsCard/ResultsCard";
 import ActivitiesCard from './ActivitiesCard/ActivitiesCard';
 import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
-import ActivityTotalsGraphs from "./Graphs/ActivityTotalsGraphs";
 import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
 import PointsBreakdownGraph from './Graphs/PointsBreakdown';
 //Reports
-import { Container, Card, CardContent, Grid, CircularProgress } from '@material-ui/core'
+import { Container, Grid, CircularProgress } from '@material-ui/core'
 import Util from "../Util/Util";
+
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
+const originalLayouts = getFromLS("layouts") || {};
 
 const styles = theme => ({
     root: {
         [theme.breakpoints.up('md')]: {
             marginLeft: "57px",
-        }
+        },
+        paddingTop: "10px"
+    },
+    bubble: {
+        [theme.breakpoints.down('md')]: {
+            display: "none"
+        },
     },
     card: {
         height: "100%"
     }
 });
 
-const ReactGridLayout = WidthProvider(RGL);
-const originalLayout = getFromLS("layout") || [];
-/**
- * This layout demonstrates how to sync to localstorage.
- */
 class Dashboard extends React.PureComponent {
-    static defaultProps = {
-        className: "layout",
-        cols: 12,
-        rowHeight: 30,
-        onLayoutChange: function () { }
-    };
-
     constructor(props) {
         super(props);
 
         this.state = {
-            layout: JSON.parse(JSON.stringify(originalLayout)),
+            layouts: JSON.parse(JSON.stringify(originalLayouts)),
             loadingFlag: true,
             activities: [],
             myActivities: [],
         };
+    }
 
-        this.onLayoutChange = this.onLayoutChange.bind(this);
-        this.resetLayout = this.resetLayout.bind(this);
+    static get defaultProps() {
+        return {
+            className: "layout",
+            cols: { lg: 12, md: 12, sm: 4, xs: 4, xxs: 2 },
+            rowHeight: 30
+        };
     }
 
     activeListener = undefined;
@@ -61,22 +61,19 @@ class Dashboard extends React.PureComponent {
     activitiesUpdated = false;
 
     resetLayout() {
-        this.setState({
-            layout: []
-        });
+        this.setState({ layouts: {} })
     }
 
-    onLayoutChange(layout) {
-        /*eslint no-console: 0*/
-        saveToLS("layout", layout);
-        this.setState({ layout });
-        this.props.onLayoutChange(layout); // updates status display
+
+    onLayoutChange(layout, layouts) {
+        saveToLS("layouts", layouts);
+        this.setState({ layouts });
     }
 
     componentDidMount() {
         this._mounted = true;
-        let layout = getFromLS("layout")
-        this.setState({ loadingFlag: true, layout: JSON.parse(JSON.stringify(layout)) });
+        let layouts = getFromLS("layouts") || {};
+        this.setState({ loadingFlag: true, layouts: JSON.parse(JSON.stringify(layouts)) });
 
         let allDBRefs = Util.getDBRefs();
         const dbActivitiesRef = allDBRefs.dbActivitiesRef;
@@ -201,12 +198,16 @@ class Dashboard extends React.PureComponent {
         if (this.props.user.authUser) {
             return (
                 <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
-                    <Container maxWidth="xl" style={{ marginTop: "10px" }}>
-                        {/* <button onClick={this.resetLayout}>Reset Layout</button> */}
-                        <ReactGridLayout
-                            {...this.props}
-                            layout={this.state.layout}
-                            onLayoutChange={this.onLayoutChange}
+                    <Container maxWidth="xl">
+                        {/* <button onClick={() => this.resetLayout()}>Reset Layout</button> */}
+                        <ResponsiveReactGridLayout
+                            cols={{ lg: 12, md: 12, sm: 4, xs: 4, xxs: 2 }}
+                            className="layout"
+                            rowHeight={30}
+                            layouts={this.state.layouts}
+                            onLayoutChange={(layout, layouts) =>
+                                this.onLayoutChange(layout, layouts)
+                            }
                         >
                             <div key="1" data-grid={{ w: 4, h: 6, x: 0, y: 0, minW: 4, minH: 6, maxW: 6 }}>
                                 <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={true} />
@@ -237,33 +238,33 @@ class Dashboard extends React.PureComponent {
                             </div>
                             <div key="7" data-grid={{ w: 8, h: 10, x: 0, y: 4, minW: 6, minH: 10, maxW: 12, maxH: 10 }}>
                                 <ActivityBubble
-                                    title={"Heatmap (All Athletes)"}
-                                    activities={this.state.activities}
-                                />
+                                title={"Heatmap (All Athletes)"}
+                                activities={this.state.activities}
+                            />
                             </div>
-                            <div key="8" data-grid={{ w: 4, h: 9, x: 8, y: 4, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
-                                <PointsBreakdownGraph
-                                    title={`Points by Team`}
-                                    graphType="Team"
-                                    totals={this.totals}
-                                />
-                            </div>
-                            <div key="9" data-grid={{ w: 4, h: 9, x: 0, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
-                                <PointsBreakdownGraph
-                                    title={`Top Members`}
-                                    graphType="User"
-                                    totals={this.totals}
-                                />
-                            </div>
-                            <div key="10" data-grid={{ w: 4, h: 9, x: 4, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
-                                <ActivityByDay
-                                    title={"Activity By Day"}
-                                    activities={this.state.activities}
-                                />
-                            </div>
-                        </ReactGridLayout>
+                        <div key="8" data-grid={{ w: 4, h: 9, x: 8, y: 4, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
+                            <PointsBreakdownGraph
+                                title={`Points by Team`}
+                                graphType="Team"
+                                totals={this.totals}
+                            />
+                        </div>
+                        <div key="9" data-grid={{ w: 4, h: 9, x: 0, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
+                            <PointsBreakdownGraph
+                                title={`Top Members`}
+                                graphType="User"
+                                totals={this.totals}
+                            />
+                        </div>
+                        <div key="10" data-grid={{ w: 4, h: 9, x: 4, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
+                            <ActivityByDay
+                                title={"Activity By Day"}
+                                activities={this.state.activities}
+                            />
+                        </div>
+                        </ResponsiveReactGridLayout>
                     </Container>
-                </div>
+                </div >
             );
         } else {
             return (
@@ -277,7 +278,7 @@ function getFromLS(key) {
     let ls = {};
     if (global.localStorage) {
         try {
-            ls = JSON.parse(global.localStorage.getItem("rgl-7")) || {};
+            ls = JSON.parse(global.localStorage.getItem("rgl-8")) || {};
         } catch (e) {
             /*Ignore*/
         }
@@ -288,7 +289,7 @@ function getFromLS(key) {
 function saveToLS(key, value) {
     if (global.localStorage) {
         global.localStorage.setItem(
-            "rgl-7",
+            "rgl-8",
             JSON.stringify({
                 [key]: value
             })
