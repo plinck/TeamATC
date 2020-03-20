@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { makeStyles, Grid, Card, CardContent, Typography, Button, Divider } from '@material-ui/core';
 import moment from "moment";
 
@@ -19,8 +19,17 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
+
 const Challenge = (props) => {
     const classes = useStyles();
+
+    const handleEditChallenge = (id) => {
+        props.handleEditChallenge(id); 
+    }    
+
+    const handleDeleteChallenge = (id) => {
+        props.handleDeleteChallenge(id); 
+    }    
 
     return (
             <Grid item xs={12} md={5}>
@@ -32,6 +41,21 @@ const Challenge = (props) => {
                         <Typography variant="h5">Start: {moment(props.challenge.startDate).format("MM-DD-YYYY")}</Typography>
                         <Typography variant="h5">End: {moment(props.challenge.endDate).format("MM-DD-YYYY")}</Typography>
                         <Divider></Divider>
+                        <Button 
+                            className={classes.button}
+                            variant="contained"
+                            color="primary" 
+                            onClick={() => {handleEditChallenge(props.challenge.id)}}
+                            >Edit
+                        </Button>
+                        <Button 
+                            className={classes.button}
+                            variant="contained"
+                            color="primary" 
+                            onClick={() => {handleDeleteChallenge(props.challenge.id)}}
+                            >Delete
+                        </Button>
+
                     </CardContent>
                 </Card>
             </Grid>

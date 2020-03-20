@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Container, makeStyles, Grid, Card, CardContent, Typography, Button, Divider } from '@material-ui/core';
+import { Container, makeStyles, Grid } from '@material-ui/core';
 import ChallengeDB from "./ChallengeDB"
 import ChallengeForm from './ChallengeForm';
-import JoinChallenge from './JoinChallenge';
 import Challenge from "./Challenge"
 
 const useStyles = makeStyles(theme => ({
@@ -27,6 +26,7 @@ const Challenges = (props) => {
 
     const [challenges, setChallenges] = useState([{}]);
 
+    const [currentChallengeId, setCurrentChallengeId] = useState();
     const [message, setMessage] = useState();
     const [creating, setCreating] = useState();
     const [selection, setSelection] = useState(false);
@@ -41,15 +41,23 @@ const Challenges = (props) => {
         setSelection(true)
     }
 
-    // MAIN START : --
-    // get challenges at load - this is like compnent
-    const test = () => {
-        ChallengeDB.getFiltered().then (challenges => {
-            setChallenges(challenges);
-        })
+    const handleEditChallenge = (id) => {
+        setCurrentChallengeId(id); 
     }
 
-    async function fetchData() {
+    const handleDeleteChallenge = (id) => {        
+        if (id) {
+            ChallengeDB.delete(id).then(res => {
+                fetchData();
+            }).catch(err => {
+                setMessage(`Error deleting challenge with id: ${id}, error: ${err}`);
+            });  
+        } 
+    }
+
+    // MAIN START : --
+    // get challenges at load - this is like compnent
+    const fetchData = () => {
         ChallengeDB.getFiltered().then (challenges => {
             setChallenges(challenges);
         })
@@ -58,7 +66,7 @@ const Challenges = (props) => {
     
     useEffect(() => {
         fetchData();
-    });
+    }, []);
 
     return (
         <div className={classes.main}>
@@ -66,10 +74,15 @@ const Challenges = (props) => {
                 <Container maxWidth="xl">
                     <Grid container style={{ minHeight: "75vh" }} spacing={2} justify="center" alignItems="center">
                         <Grid item xs={12} md={5}>
-                            <ChallengeForm />
+                            <ChallengeForm id={currentChallengeId}
+                                fetchData={fetchData}
+                            />
                         </Grid> : ""
                         {challenges.map( challenge => {
-                            return (<Challenge challenge={challenge} />)
+                            return (<Challenge challenge={challenge} 
+                                handleEditChallenge={handleEditChallenge}
+                                handleDeleteChallenge={handleDeleteChallenge}
+                                />)
                             })
                         }
                     </Grid>

@@ -23,7 +23,35 @@ class ChallengeDB {
                         challenge.endDate = challenge.endDate.toDate();
                         challenges.push(challenge);
                     });
-                    return resolve(challenges);
+                    resolve(challenges);
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
+
+    // get one based on ID challenges
+    static get = (id) => {
+        // default ref gets all
+        const dbChallengesRef = Util.getDBRefs().dbChallengesRef;
+
+        const ref = dbChallengesRef.doc(id)
+
+        return new Promise((resolve, reject) => {
+            ref
+                .get()
+                .then((doc) => {
+                    let challenge = {};
+                    if (doc.exists) {
+                        challenge = doc.data();
+                        challenge.id = doc.id;
+                        challenge.startDate = challenge.startDate.toDate();
+                        challenge.endDate = challenge.endDate.toDate();
+                        resolve(challenge);
+                    } else {
+                        reject(`Challenge not found with id: ${id}`);
+                    }
                 })
                 .catch(err => {
                     reject(err);
