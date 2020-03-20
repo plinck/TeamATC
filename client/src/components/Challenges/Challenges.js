@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, makeStyles, Grid, Card, CardContent, Typography, Button, Divider } from '@material-ui/core';
-import CreateChallenge from './CreateChallenge';
+import ChallengeForm from './ChallengeForm';
 import JoinChallenge from './JoinChallenge';
 
 const useStyles = makeStyles(theme => ({
@@ -41,7 +41,7 @@ const Challenge = (props) => {
                 <Container maxWidth="xl">
                     <Grid container style={{ minHeight: "75vh" }} spacing={2} justify="center" alignItems="center">
                         {selection ? creating ? <Grid item xs={12} md={5}>
-                            <CreateChallenge />
+                            <ChallengeForm />
                         </Grid>
                             :
                             <Grid item xs={12} md={5}>

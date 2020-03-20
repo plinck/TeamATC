@@ -15,9 +15,9 @@ class ChallengeDB {
                     name: challenge.name,
                     startDate: challenge.startDate,
                 })
-                .then(() => {
+                .then((doc) => {
                     console.log("Firestore challenge successfully added");
-                    return resolve();
+                    return resolve(doc.id);
                 })
                 .catch((error) => {
                     console.error("Firestore challenge add failed");

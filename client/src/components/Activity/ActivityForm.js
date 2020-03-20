@@ -563,7 +563,6 @@ class ActivityForm extends React.Component {
             teamName,
             activityName,
             activityDateTime,
-            activityDateTimeString,
             activityType,           // swim, bike, run
             distance,
             distanceUnits,
