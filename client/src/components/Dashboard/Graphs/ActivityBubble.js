@@ -118,6 +118,7 @@ class ActivityBubble extends React.Component {
                     layout={
                         {
                             autosize: true,
+                            height: 290,
                             xaxis: {
                                 autorange: false,
                                 range: [earliestDate, latestDate],
@@ -142,7 +143,7 @@ class ActivityBubble extends React.Component {
                     }
                     useResizeHandler={true}
                     style={{ width: "100%", height: "100%" }}
-                    config={{ displayModeBar: false }}
+                    config={{ displayModeBar: false, responsive: true }}
                     onClick={('plotly_click', (data) => {
 
                         this.setState({
@@ -174,8 +175,8 @@ class ActivityBubble extends React.Component {
 
         if (this.props.user.authUser) {
             return (
-                <Card>
-                    <CardContent>
+                <Card style={{ height: "100%" }}>
+                    <CardContent style={{ height: "100%" }}>
                         <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold">
                             <span style={{ color: 'grey' }}>{this.props.title ? this.props.title : 'Activity Heat Map'}</span>
                         </Box>

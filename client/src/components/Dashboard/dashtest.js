@@ -72,9 +72,11 @@ class Dashboard extends React.PureComponent {
         this.setState({ layout });
         this.props.onLayoutChange(layout); // updates status display
     }
+
     componentDidMount() {
         this._mounted = true;
-        this.setState({ loadingFlag: true });
+        let layout = getFromLS("layout")
+        this.setState({ loadingFlag: true, layout: JSON.parse(JSON.stringify(layout)) });
 
         let allDBRefs = Util.getDBRefs();
         const dbActivitiesRef = allDBRefs.dbActivitiesRef;
@@ -200,7 +202,7 @@ class Dashboard extends React.PureComponent {
             return (
                 <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
                     <Container maxWidth="xl" style={{ marginTop: "10px" }}>
-                        <button onClick={this.resetLayout}>Reset Layout</button>
+                        {/* <button onClick={this.resetLayout}>Reset Layout</button> */}
                         <ReactGridLayout
                             {...this.props}
                             layout={this.state.layout}
@@ -215,18 +217,49 @@ class Dashboard extends React.PureComponent {
                             <div key="3" data-grid={{ w: 4, h: 11, x: 8, y: 0, minW: 4, minH: 6, maxW: 6 }}>
                                 <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={false} />
                             </div>
-                            <div key="4" data-grid={{ w: 4, h: 6, x: 0, y: 1, minW: 4, minH: 6, maxW: 6 }}>
+                            <div key="4" data-grid={{ w: 4, h: 8, x: 0, y: 1, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
                                     title={`All Athletes`}
                                     currentTotalsShare={this.totals.all}
                                 />
                             </div>
-                            <div key="5" data-grid={{ w: 2, h: 3, x: 4, y: 1 }}>
-                                <Card className={classes.card}>
-                                    <CardContent>
-                                        <span className="text">5</span>
-                                    </CardContent>
-                                </Card>
+                            <div key="5" data-grid={{ w: 4, h: 8, x: 4, y: 1, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
+                                <ActivityTypeBreakdown
+                                    title={`${this.props.user.displayName}`}
+                                    currentTotalsShare={this.totals.user}
+                                />
+                            </div>
+                            <div key="6" data-grid={{ w: 4, h: 8, x: 8, y: 1, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
+                                <ActivityTypeBreakdown
+                                    title={`Team ${this.props.user.teamName}`}
+                                    currentTotalsShare={this.totals.team}
+                                />
+                            </div>
+                            <div key="7" data-grid={{ w: 8, h: 10, x: 0, y: 4, minW: 6, minH: 10, maxW: 12, maxH: 10 }}>
+                                <ActivityBubble
+                                    title={"Heatmap (All Athletes)"}
+                                    activities={this.state.activities}
+                                />
+                            </div>
+                            <div key="8" data-grid={{ w: 4, h: 9, x: 8, y: 4, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
+                                <PointsBreakdownGraph
+                                    title={`Points by Team`}
+                                    graphType="Team"
+                                    totals={this.totals}
+                                />
+                            </div>
+                            <div key="9" data-grid={{ w: 4, h: 9, x: 0, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
+                                <PointsBreakdownGraph
+                                    title={`Top Members`}
+                                    graphType="User"
+                                    totals={this.totals}
+                                />
+                            </div>
+                            <div key="10" data-grid={{ w: 4, h: 9, x: 4, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
+                                <ActivityByDay
+                                    title={"Activity By Day"}
+                                    activities={this.state.activities}
+                                />
                             </div>
                         </ReactGridLayout>
                     </Container>

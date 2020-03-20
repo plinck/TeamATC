@@ -133,6 +133,7 @@ class ActivityByDay extends React.Component {
                 layout={
                     {
                         autosize: true,
+                        height: 300,
                         /* title: "Activities By User" */
                         xaxis: {
                             autorange: false,
@@ -175,7 +176,7 @@ class ActivityByDay extends React.Component {
 
         if (this.props.user.authUser) {
             return (
-                <Card>
+                <Card style={{ height: "100%" }}>
                     <CardContent>
                         <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold">
                             <span style={{ color: 'grey' }}>{this.props.title ? this.props.title : 'ActivityByDay'}</span>
