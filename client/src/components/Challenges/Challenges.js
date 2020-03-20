@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Container, makeStyles, Grid, Card, CardContent, Typography, Button, Divider } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
+import { Container, makeStyles, Grid } from '@material-ui/core';
+import ChallengeDB from "./ChallengeDB"
 import ChallengeForm from './ChallengeForm';
-import JoinChallenge from './JoinChallenge';
+import Challenge from "./Challenge"
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -20,8 +21,13 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-const Challenge = (props) => {
+const Challenges = (props) => {
     const classes = useStyles();
+
+    const [challenges, setChallenges] = useState([{}]);
+
+    const [currentChallengeId, setCurrentChallengeId] = useState();
+    const [message, setMessage] = useState();
     const [creating, setCreating] = useState();
     const [selection, setSelection] = useState(false);
 
@@ -35,32 +41,58 @@ const Challenge = (props) => {
         setSelection(true)
     }
 
+    // When editting. make sure you set the id to ensure form gets proper record.
+    const handleEditChallenge = (id) => {
+        setCurrentChallengeId(id); 
+    }
+
+    // When an update occurs you must also clear the current challnge ID since it needs to be NULL/undefined
+    const handleUpdateChallenge = (id) => {
+        setCurrentChallengeId(undefined); 
+        fetchData();
+    }
+
+    const handleDeleteChallenge = (id) => {        
+        if (id) {
+            ChallengeDB.delete(id).then(res => {
+                fetchData();
+            }).catch(err => {
+                setMessage(`Error deleting challenge with id: ${id}, error: ${err}`);
+            });  
+        } 
+    }
+
+    // MAIN START : --
+    // get challenges at load - this is like compnent
+    const fetchData = () => {
+        ChallengeDB.getFiltered().then (challenges => {
+            setChallenges(challenges);
+            // Each time you refresh, make sure the currnt id is cleared
+        })
+          .catch(err => setMessage(err));
+    }
+    
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     return (
         <div className={classes.main}>
             <div className={classes.root}>
                 <Container maxWidth="xl">
                     <Grid container style={{ minHeight: "75vh" }} spacing={2} justify="center" alignItems="center">
-                        {selection ? creating ? <Grid item xs={12} md={5}>
-                            <ChallengeForm />
-                        </Grid>
-                            :
-                            <Grid item xs={12} md={5}>
-                                <JoinChallenge />
-                            </Grid>
-                            :
-                            <Grid item xs={12} md={5}>
-                                <Card>
-                                    <CardContent style={{ textAlign: "center" }}>
-                                        <Typography variant="h5">Challenges</Typography>
-                                        <Button onClick={handleJoin} className={classes.button} variant="contained" color="primary">Join Challenge</Button>
-                                        <Divider></Divider>
-                                        <Button onClick={handleCreate} className={classes.button} variant="contained" color="primary">Create New Challenge</Button>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
+                        <Grid item xs={12} md={5}>
+                            <ChallengeForm id={currentChallengeId}
+                                handleUpdateChallenge={handleUpdateChallenge}
+                            />
+                        </Grid> : ""
+                        {challenges.map( challenge => {
+                            return (<Challenge challenge={challenge} 
+                                handleEditChallenge={handleEditChallenge}
+                                handleDeleteChallenge={handleDeleteChallenge}
+                                />)
+                            })
                         }
-
-
                     </Grid>
                 </Container>
             </div>
@@ -68,4 +100,4 @@ const Challenge = (props) => {
     )
 }
 
-export default Challenge;
+export default Challenges;

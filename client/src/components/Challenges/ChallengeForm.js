@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, TextField, Typography, Button, CardActions } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
@@ -7,6 +7,9 @@ import DateFnsUtils from '@date-io/date-fns';
 import ChallengeDB from "./ChallengeDB"
 
 const useStyles = makeStyles(theme => ({
+    buttonStyles: {    
+        margin: '5px',   
+    },
     fullWidth: {
         margin: `${theme.spacing(1)}px 0px`,
         width: "100%",
@@ -37,6 +40,14 @@ const ChallengeForm = (props) => {
     // This object holds the actual state for this objct
     // The other state vars are used for managing flow etc and not
     // directly tied to the actual domain object.  This keeps things cleaner, IMO
+    const CLEAR_CHALLENGE_VALUES = {
+        id : undefined,
+        description : "",
+        endDate : new Date(),
+        isCurrentChallenge : false,
+        name : "",
+        startDate : new Date() 
+    }
     const CHALLENGE_INITIAL_VALUES = {
         id : props.id,
         description : "",
@@ -45,8 +56,7 @@ const ChallengeForm = (props) => {
         name : "",
         startDate : new Date() 
     }
-    const [challenge, setChallenge] = React.useState(CHALLENGE_INITIAL_VALUES);
-
+    const [challenge, setChallenge] = useState(CHALLENGE_INITIAL_VALUES);
 
     const [message, setMessage] = React.useState("");
 
@@ -70,31 +80,44 @@ const ChallengeForm = (props) => {
         if (challenge.id) {
             ChallengeDB.update(challenge).then(res => {
                 setMessage(`Challenge Successfully Updated`);
+                setChallenge({...CLEAR_CHALLENGE_VALUES})
+                props.handleUpdateChallenge(); 
             }).catch(err => {
                 setMessage(`Error updating challenge ${err}`);
             });  
         } else {
             ChallengeDB.create(challenge).then(id => {
-                setChallenge({...challenge, id: id})
                 setMessage(`Challenge Successfully Created`);
+                setChallenge({...CLEAR_CHALLENGE_VALUES})
+                props.handleUpdateChallenge(); 
             }).catch(err => {
                 setMessage(`Error creating challenge ${err}`);
             });   
         } 
     }
 
-    const handleDelete = (event) => {
+    const handleCreateNew = (event) => {
         event.preventDefault();
         
-        if (challenge.id) {
-            ChallengeDB.delete(challenge.id).then(res => {
-                setChallenge({...challenge, id: undefined})
-                setMessage(`Challenge Successfully Deleted`);
-            }).catch(err => {
-                setMessage(`Error deleting challenge ${err}`);
-            });  
-        } 
+        setChallenge({...CLEAR_CHALLENGE_VALUES})
     }
+
+    // MAIN START : --
+    // get challenges at load - this is like compnent
+    const fetchData = (challengeId) => {
+        ChallengeDB.get(challengeId).then (challenge => {
+            setChallenge(challenge);
+        }).catch(err => setMessage(err));
+    }
+    
+    useEffect(() => {
+        // if an id is present, get the data from firestore for updating
+        if (props.id) {
+            fetchData(props.id);
+        }
+    }, [props.id]);
+
+    console.log(`Challenge: ${JSON.stringify(challenge)}`);
 
     return (
         <Card>
@@ -166,13 +189,16 @@ const ChallengeForm = (props) => {
                     >{challenge.id ? "Update" : "Create"}
                 </Button>
                 {challenge.id ? 
-                    <Button 
-                        variant="contained"
-                        color="primary" 
-                        type="submit"
-                        onClick={handleDelete}
-                        >Delete
-                    </Button>
+                    <div>
+                        <Button 
+                            className={classes.buttonStyles}
+                            variant="contained"
+                            color="primary" 
+                            type="submit"
+                            onClick={handleCreateNew}
+                            >Create New
+                        </Button>
+                    </div>
                     : ""
                 }
             </CardActions>

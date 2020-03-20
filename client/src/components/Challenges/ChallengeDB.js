@@ -2,7 +2,64 @@ import Util from "../Util/Util";
 
 class ChallengeDB {
     
-    // Add a single challenge based on id
+    // get all challenges
+    static getFiltered = () => {
+        // default ref gets all
+        const dbChallengesRef = Util.getDBRefs().dbChallengesRef;
+
+        const ref = dbChallengesRef
+            .orderBy("startDate", "desc")
+
+        return new Promise((resolve, reject) => {
+            ref
+                .get()
+                .then((querySnapshot) => {
+                    let challenges = [];
+                    querySnapshot.forEach(doc => {
+                        let  challenge = {};
+                        challenge = doc.data();
+                        challenge.id = doc.id;
+                        challenge.startDate = challenge.startDate.toDate();
+                        challenge.endDate = challenge.endDate.toDate();
+                        challenges.push(challenge);
+                    });
+                    resolve(challenges);
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
+
+    // get one based on ID challenges
+    static get = (id) => {
+        // default ref gets all
+        const dbChallengesRef = Util.getDBRefs().dbChallengesRef;
+
+        const ref = dbChallengesRef.doc(id)
+
+        return new Promise((resolve, reject) => {
+            ref
+                .get()
+                .then((doc) => {
+                    let challenge = {};
+                    if (doc.exists) {
+                        challenge = doc.data();
+                        challenge.id = doc.id;
+                        challenge.startDate = challenge.startDate.toDate();
+                        challenge.endDate = challenge.endDate.toDate();
+                        resolve(challenge);
+                    } else {
+                        reject(`Challenge not found with id: ${id}`);
+                    }
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
+    }
+
+// Add a single challenge based on id
     static create = (challenge) => {
         return new Promise((resolve, reject) => {
             const dbChallengesRef = Util.getDBRefs().dbChallengesRef;
