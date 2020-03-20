@@ -139,13 +139,9 @@ class ActivityDB {
     // Need to sue promise all
     // Listener for all activities for all users in one challenge (NEW WORLD OF ACTIVITIES UNDER USERS)
     static getAllActivitiesInChallenge = (challengeId) => {
-        if (!challengeId) {
-            challengeId = "9uxEvhpHM2cqCcn1ESZg";
-          }
-        
-        const dbChallengesRef = Util.getChallengesRef()        
-        const dbChallengeMembersRef = Util.getChallengeMembersRef(challengeId)        
-        const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+        const dbChallengesRef = Util.getDBRefs().dbChallengesRef;       
+        const dbChallengeMembersRef = Util.getChallengesRef(challengeId).dbChallengeMembersRef;        
+        const dbActivitiesRef = Util.getChallengesRef(challengeId)().dbActivitiesRef;
 
         let dbActivitiesRefOrderByDate = dbActivitiesRef
             .orderBy("activityDateTime", "desc");
