@@ -93,7 +93,7 @@ const ActivitiesCard = (props) => {
                                     <TableCell className={classes.tableCell} component="th" scope="row">
                                         <Tooltip className={classes.tableCell} title={displayActivityName}>
                                             <div>
-                                                <img style={{ maxHeight: '20px' }} src={activityIcon} alt={activityType} />
+                                                <img style={{ maxHeight: '18px' }} src={activityIcon} alt={activityType} />
                                                 {displayActivityName}
                                             </div>
                                         </Tooltip>

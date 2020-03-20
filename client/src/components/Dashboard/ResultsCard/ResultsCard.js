@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Tooltip from '@material-ui/core/Tooltip';
 import LaunchIcon from '@material-ui/icons/Launch';
 import './Result.css'
-import { Table, TableHead, TableBody, TableCell, TableRow, Card, CardContent } from '@material-ui/core';
+import { Table, TableHead, TableBody, TableCell, TableRow, Card, CardContent, Grid } from '@material-ui/core';
 import TeamResultsModal from './TeamResultsModal';
 
 class ResultsCard extends React.Component {
@@ -52,7 +52,7 @@ class ResultsCard extends React.Component {
         }
 
         return (
-            <Card>
+            <Card style={{ height: '100%' }}>
                 <CardContent>
                     <TeamResultsModal id="TeamResultsModal" open={this.state.openTeamResults} teamTotals={teamTotals} userTotals={userTotals} />
                     {leaderboardTitleRow}

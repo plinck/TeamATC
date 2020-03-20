@@ -55,7 +55,7 @@ const PointsBreakdownGraph = (props) => {
         };
 
         let data = [trace1, trace2, trace3];
-        let layout = { barmode: 'stack' };
+        let layout = { barmode: 'stack', autosize: true };
 
         return (
             <Plot

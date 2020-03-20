@@ -70,8 +70,6 @@ class ActivityTypeBreakdown extends React.Component {
         ];
 
         let layout = {
-            height: 275,
-            width: 275,
             autosize: true,
             margin: {
                 l: 4,
@@ -141,7 +139,7 @@ class ActivityTypeBreakdown extends React.Component {
 
         if (this.props.user.authUser) {
             return (
-                <Card>
+                <Card style={{ height: '100%' }}>
                     <CardContent>
                         {activityBreakdownTitleRow}
                         <Grid container justify="center">
