@@ -60,6 +60,8 @@ class UserDB {
         });
     }
 
+    // Switch the challenge the user is in.
+    // For now, delete the assigned team since teams are based on challenge
     static updateChallenge (userId, challengeUid) {
         console.log(`trying to update challenge; ${challengeUid}, for user ${userId}`);
 
@@ -68,7 +70,9 @@ class UserDB {
             // update
             const dbUsersRef = Util.getDBRefs().dbUsersRef;
             dbUsersRef.doc(userId).set({
-                challengeUid: challengeUid ? challengeUid  : ""
+                challengeUid: challengeUid ? challengeUid  : "",
+                teamUid: null,
+                teamName: ""
             }, {
                 merge: true
             }).then(() => {
