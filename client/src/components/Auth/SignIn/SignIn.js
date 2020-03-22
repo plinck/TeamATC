@@ -13,7 +13,7 @@ import { Redirect } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
 import { withFirebase } from '../Firebase/FirebaseContext';
 import AuthUserContext from '../Session/AuthUserContext';
-import UserAPI from "../../User/UserAPI";
+import UserDB from "../../User/UserDB.js";
 
 const INITIAL_STATE = {
     email: '',
@@ -101,7 +101,7 @@ class SignInFormBase extends React.Component {
             .doSignInWithGoogle()
             .then((authUser) => {
                 console.log("Logged in with google to firebase");
-                return (UserAPI.addAuthUserToFirestore(authUser));
+                return (UserDB.addAuthUserToFirestore(authUser));
             })
             .then(() => {
                 console.log("Added to firebase");

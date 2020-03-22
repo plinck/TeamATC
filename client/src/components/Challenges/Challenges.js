@@ -76,20 +76,27 @@ const Challenges = (props) => {
           .catch(err => setMessage(err));
     }
     
+    // Make sure useEffect only gets called once --
+    // i.e. if you dont use optional parameter (array of properities to watch), it
+    // will fire this function every single time the component is refreshed which isnt cool.
     useEffect(() => {
         fetchData();
     }, []);
+
+    const userCanUpdateChallenge = (props.user && props.user.isAdmin) ? true : false;
 
     return (
         <div className={classes.main}>
             <div className={classes.root}>
                 <Container maxWidth="xl">{message ? <h5 className={classes.messages}>{message}</h5> : ""}
                     <Grid container style={{ minHeight: "75vh" }} spacing={2} justify="center" alignItems="center">
-                        <Grid item xs={12} md={5}>
+                        {userCanUpdateChallenge ?
+                            <Grid item xs={12} md={5}>
                             <ChallengeForm id={currentChallengeId}
                                 handleUpdateChallenge={handleUpdateChallenge}
                             />
-                        </Grid> : ""
+                            </Grid> : ""
+                        }
                         {challenges.map( challenge => {
                             return (<Challenge challenge={challenge} 
                                 handleEditChallenge={handleEditChallenge}

@@ -20,7 +20,8 @@ import Select from "@material-ui/core/Select";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { withFirebase } from '../Auth/Firebase/FirebaseContext';
-import UserAPI from "./UserAPI";
+import UserAuthAPI from "./UserAuthAPI";
+import UserDB from "./UserDB"
 import TeamAPI from "../Team/TeamAPI";
   
 const styles = theme => ({
@@ -96,7 +97,7 @@ class UserForm extends React.Component {
   }
 
   fetchUser = (id) => {
-    UserAPI.get(id)
+    UserDB.get(id)
     .then(user => {
       this.setState({
         firstName: user.firstName || "",
@@ -167,7 +168,7 @@ class UserForm extends React.Component {
 
     // First, create the auth user in firebase
     // must be done on server for security reasons
-    UserAPI.createAuthUser(user)
+    UserAuthAPI.createAuthUser(user)
       .then(response => {
         const authUser = {};
         authUser.user = response.data;
@@ -175,7 +176,7 @@ class UserForm extends React.Component {
         authUser.user.phoneNumber = user.phoneNumber;
         authUser.user.photoURL = user.photoURL;
         // Now Create the user in firestore
-        UserAPI.addAuthUserToFirestore(authUser, user).then( (id) => {
+        UserDB.addAuthUserToFirestore(authUser, user).then( (id) => {
           this.props.firebase.doPasswordReset(user.email).then(() => {
             this.setState({
               message: "New User Added.  Password reset Link sent - user must reset password login",
@@ -200,7 +201,7 @@ class UserForm extends React.Component {
     // set team name from ID
     user.teamName = this.state.teamLookup[this.state.teamUid]
 
-    UserAPI.update(user).then (user => {
+    UserDB.update(user).then (user => {
       this.setState({message: "User Updated"});
       // should we go to user list page??  Passing message??
       this.props.history.push({
@@ -236,7 +237,7 @@ class UserForm extends React.Component {
   // Make Admin
   userMakeAdmin = (id) => {
 
-    UserAPI.makeAdmin( id )
+    UserDB.makeAdmin( id )
     .then(res => {
         console.log(`Made User ${id} Admin`);
         this.setState({message: `Made User Admin`});
@@ -250,7 +251,7 @@ class UserForm extends React.Component {
   
   // Make TeamLead
   userMakeTeamLead = (id) => {
-      UserAPI.makeTeamLead( id )
+      UserDB.makeTeamLead( id )
       .then(res => {
           console.log(`Made User ${id} TeamLead`);
           this.setState({message: `Made user a TeamLead`});
@@ -264,7 +265,7 @@ class UserForm extends React.Component {
 
   // Make User - essentailly dispables the user
   userMakeUser = (id) => {
-      UserAPI.makeUser( id )
+      UserDB.makeUser( id )
       .then(res => {
           console.log(`Made User ${id} Athlete`);
           this.setState({message: `Made user an Athlete`});
@@ -278,7 +279,7 @@ class UserForm extends React.Component {
 
   // Make Moderator
   userMakeModerator = (id) => {
-      UserAPI.makeModerator( id )
+      UserDB.makeModerator( id )
       .then(res => {
           console.log(`Made User ${id} Moderator`);
           this.setState({message: `Made user a Moderator`});

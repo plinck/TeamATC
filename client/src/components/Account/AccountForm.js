@@ -16,7 +16,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import UserAPI from "../User/UserAPI";
+import UserDB from "../User/UserDB";
 import TeamAPI from "../Team/TeamAPI";
 
 const styles = theme => ({
@@ -92,8 +92,7 @@ class AccountForm extends React.Component {
     }
 
     fetchUser = (uid) => {
-        UserAPI
-            .get(uid)
+        UserDB.get(uid)
             .then(user => {
                 this.setState({
                     firstName: user.firstName || "",
@@ -158,13 +157,10 @@ class AccountForm extends React.Component {
         // set team name from ID
         user.teamName = this.state.teamLookup[this.state.teamUid]
     
-        UserAPI
-            .updateCurrent(user)
-            .then(user => {
+        UserDB.updateCurrent(user).then(user => {
                 // set message to show update
                 this.setState({message: "Account Updated"});
-            })
-            .catch(err => {
+            }).catch(err => {
                 // set message to show update
                 this.setState({message: `Error updating account ${err}`});
             });

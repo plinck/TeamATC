@@ -5,7 +5,7 @@ import { Redirect } from 'react-router';
 
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import User from './User';
-import UserAPI from "./UserAPI";
+import UserDB from "./UserDB";
 
 class Users extends React.Component {
     constructor(props) {
@@ -20,7 +20,7 @@ class Users extends React.Component {
 
     refreshPage = () => {
         // Get with security
-        UserAPI.getUsers()
+        UserDB.getUsers()
         .then(users => {
             for (let i in users) {
                 users[i].firstName = users[i].firstName || "First";
@@ -43,7 +43,7 @@ class Users extends React.Component {
 
     // Delete this article from MongoDB
     userDelete = (id) => {
-        UserAPI.delete( id )
+        UserDB.delete( id )
         .then(res => {
             console.log("Deleted user");
             this.refreshPage();
@@ -59,7 +59,7 @@ class Users extends React.Component {
 
         console.log(`Trying to make User ${id} Admin`);
 
-        UserAPI.makeAdmin( id )
+        UserDB.makeAdmin( id )
         .then(res => {
             console.log(`Made User ${id} Admin`);
             this.setState({message: `Made User Admin`});
@@ -73,7 +73,7 @@ class Users extends React.Component {
     
     // Make TeamLead
     userMakeTeamLead = (id) => {
-        UserAPI.makeTeamLead( id )
+        UserDB.makeTeamLead( id )
         .then(res => {
             console.log(`Made User ${id} TeamLead`);
             this.setState({message: `Made User TeamLead`});
@@ -87,7 +87,7 @@ class Users extends React.Component {
 
     // Make User - essentailly dispables the user
     userMakeUser = (id) => {
-        UserAPI.makeUser( id )
+        UserDB.makeUser( id )
         .then(res => {
             console.log(`Made User ${id} User`);
             this.setState({message: `Disabled User (i.e. made them a user)`});
@@ -101,7 +101,7 @@ class Users extends React.Component {
 
     // Make Moderator
     userMakeModerator = (id) => {
-        UserAPI.makeModerator( id )
+        UserDB.makeModerator( id )
         .then(res => {
             console.log(`Made User ${id} Moderator`);
             this.setState({message: `Made User Moderator`});
