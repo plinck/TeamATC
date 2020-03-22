@@ -31,7 +31,7 @@ import moment from "moment";
 
 import TeamAPI from "../Team/TeamAPI"
 import ActivityDB from "./ActivityDB"
-import UserAPI from "../User/UserAPI"
+import UserDB from "../User/UserDB"
 
 // For upload fit file
 import EasyFit from "easy-fit";
@@ -371,7 +371,7 @@ class ActivityForm extends React.Component {
 
     // Get the users info
     fetchUser() {
-        UserAPI.getCurrentUser().then(user => {
+        UserDB.getCurrentUser().then(user => {
             this.setState({
                 teamName: user.teamName
             });

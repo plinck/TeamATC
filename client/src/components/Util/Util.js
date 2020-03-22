@@ -82,15 +82,6 @@ class Util {
     return currentAuthUser;
   }
 
-  static getCurrentUser = async () => {
-    const firebase = new Firebase();
-    const dbUsersRef = Util.getDBRefs.dbUsersRef;
-    
-    const currentAuthUser = await firebase.auth.currentUser;
-    const user = await dbUsersRef.doc(currentAuthUser.uid);
-    return user;
-  }
-
   static getFirestoreDB = () => {
     const firebase = new Firebase();
     const db = firebase.db;

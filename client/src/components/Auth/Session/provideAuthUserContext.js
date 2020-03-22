@@ -2,7 +2,7 @@ import React from 'react';
 import Util from "../../Util/Util";
 import AuthUserContext from './AuthUserContext';
 import { withFirebase } from '../Firebase/FirebaseContext';
-import UserAPI from '../../User/UserAPI';
+import UserAuthAPI from '../../User/UserAuthAPI';
 import Session from "../../Util/Session.js";
 
 // This component WRAPS Firebase and Authentication Context togtehr in 
@@ -138,7 +138,7 @@ const provideAuthUserContext = Component => {
                     console.log(`Session.user: ${JSON.stringify(Session.user)}`)
 
                     // update firebase auth profile if this user's info changed
-                    UserAPI.updateCurrentUserAuthProfile(user).then (() => {
+                    UserAuthAPI.updateCurrentUserAuthProfile(user).then (() => {
                         // OK, no harm done
                     }).catch(err => {
                         // OK, no harm done

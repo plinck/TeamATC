@@ -8,7 +8,8 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import { InputAdornment, Container, Card, CardContent, Grid, Typography, Divider } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
-import UserAPI from "../../User/UserAPI";
+import UserAuthAPI from "../../User/UserAuthAPI";
+import UserDB from "../../User/UserDB";
 import MemberDB from "../../User/MemberDB";
 
 // TODO: Remove input props once materialize is removed.
@@ -108,9 +109,9 @@ class Register extends React.Component {
         MemberDB.getByEmail(user.email).then(_ => {
             // First, create the auth user in firebase
             // Should actually update auth profile after this is done but not 100% needed as user stuff comes from firestore
-            UserAPI.registerNewUser(user).then(authUser => {
+            UserAuthAPI.registerNewUser(user).then(authUser => {
                 // Now Create the user in firestore
-                UserAPI.addAuthUserToFirestore(authUser, user).then((id) => {
+                UserDB.addAuthUserToFirestore(authUser, user).then((id) => {
                     this.setState({ message: "New User Added. " });
                     this.props.history.push("/dashboard");
                 }).catch(err => {
