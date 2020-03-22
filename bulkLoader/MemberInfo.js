@@ -51,6 +51,9 @@ class MemberInfo {
             } else if (nameArray[0].trim() === "carolina") {
                 firstName = "Carolina";
                 lastName = "Pinheiro";
+            } else if (nameArray[0].trim() === "carolna") {
+                firstName = "Carolina";
+                lastName = "Pinheiro";
             } else if (nameArray[0].trim() === "tonytoson") {
                 firstName = "Tony";
                 lastName = "Toson";
@@ -94,6 +97,9 @@ class MemberInfo {
                 firstName = "Eugene";
             }
             if (firstName === "carolina" && lastName === "p") {
+                firstName = "Carolina";
+                lastName = "Pinheiro";
+            } else if (nameArray[0].trim() === "carolna") {
                 firstName = "Carolina";
                 lastName = "Pinheiro";
             }
