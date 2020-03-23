@@ -110,7 +110,7 @@ class UserDB {
         const dbUsersRef = Util.getDBRefs().dbUsersRef;
 
         return new Promise((resolve, reject) => {
-            Util.apiPost(`/api/auth/deleteUser/${uid}`, {
+            Util.apiPostNoToken(`/api/auth/deleteUser/${uid}`, {
                     id: uid
                 }).then(() => {
                     console.log("Auth for User successfully deleted!");
