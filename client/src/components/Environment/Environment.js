@@ -1,5 +1,5 @@
 const ORG=process.env.REACT_APP_FIREBASE_ORG ? process.env.REACT_APP_FIREBASE_ORG : "ATC";
-const ENV=process.env.REACT_APP_FIREBASE_ENVIRONMENT ? process.env.REACT_APP_FIREBASE_ENVIRONMENT : "prod";
+const ENV=process.env.REACT_APP_FIREBASE_ENV ? process.env.REACT_APP_FIREBASE_ENV : "prod";
 const CHALLENGE="9uxEvhpHM2cqCcn1ESZg";
 
 console.log(`Using global environment ORG: ${ORG}, ENV: ${ENV}`);  

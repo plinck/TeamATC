@@ -3,7 +3,7 @@ const app = express();
 const path = require('path');
 require("dotenv").config();
 const ORG = process.env.REACT_APP_FIREBASE_ORG;
-const ENV = process.env.REACT_APP_FIREBASE_ENVIRONMENT;
+const ENV = process.env.REACT_APP_FIREBASE_ENV;
 
 const port = process.env.PORT || 5000;
 
