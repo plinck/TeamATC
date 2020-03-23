@@ -15,16 +15,11 @@ const GoogleMap = (props) => {
                         <Map
                             id="myMap"
                             options={{
-                                center: { lat: 41.0082, lng: 28.9784 },
+                                center: { lat: 37.0902, lng: -95.7129 },
                                 zoom: 8
                             }}
-                            onMapLoad={map => {
-                                var marker = new window.google.maps.Marker({
-                                    position: { lat: 41.0082, lng: 28.9784 },
-                                    map: map,
-                                    title: 'Hello Istanbul!'
-                                });
-                            }}
+                            start={props.start}
+                            end={props.end}
                         />
                     </Grid>
                 </Grid>

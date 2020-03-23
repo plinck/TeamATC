@@ -267,7 +267,7 @@ class Dashboard extends React.PureComponent {
                                 />
                             </div>
                             <div key="11" data-grid={{ w: 8, h: 12, x: 0, y: 14, minW: 6, minH: 9, maxW: 12, maxH: 12, isDraggable: false }}>
-                                <GoogleMap callbackParent={() => this.onChildChanged()} />
+                                <GoogleMap start='Seattle, Washington' end='Haines City, FL' callbackParent={() => this.onChildChanged()} />
                             </div>
                         </ResponsiveReactGridLayout>
                     </Container>
