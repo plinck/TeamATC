@@ -3,7 +3,7 @@ const admin = require("./authServerCommon");
 
 module.exports = async (req, res, next) => {
     let token = req.header('FIREBASE_AUTH_TOKEN');
-    // console.log(`requires login token: ${token}`);
+    console.log(`requires login token: ${token}`);
 
     // Firebase token is encrypted when sent for security
     // https://firebase.google.com/docs/reference/admin/node/admin.auth.DecodedIdToken

@@ -263,51 +263,24 @@ class UserDB {
 
         return new Promise((resolve, reject) => {
             const dbUsersRef = Util.getDBRefs().dbUsersRef;
-            let docRef = dbUsersRef.doc(authUser.user.uid);
-            docRef.get().then((doc) => {
-                if (doc.exists) {
-                    // update
-                    dbUsersRef.doc(authUser.user.uid).update({
-                        displayName: user.displayName,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        phoneNumber: user.phoneNumber,
-                        uid: user.uid,
-                        email: user.email,
-                        photoURL: user.photoURL,
-                        teamName: user.teamName,
-                        teamUid: user.teamUid    
-                    },{ merge: true }).then((doc) => {
-                        console.log("Document updated with ID: ", doc.id);
-                        resolve(doc.id);
-                    }).catch(err => {
-                        console.error(`Error creating user from authUser: ${err}`);
-                        reject(`Error in addAuthUserToFirestore.update creating user from authUser: ${err}`);    
-                    });
-                } else {
-                    // cretae if not existing
-                    dbUsersRef.doc(authUser.user.uid).set({
-                        displayName: user.displayName,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        phoneNumber: user.phoneNumber,
-                        uid: user.uid,
-                        email: user.email,
-                        photoURL: user.photoURL,
-                        teamName: user.teamName,
-                        teamUid: user.teamUid
+                    // update if exists, create if not existing
+            dbUsersRef.doc(authUser.user.uid).set({
+                displayName: user.displayName,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                phoneNumber: user.phoneNumber,
+                uid: user.uid,
+                email: user.email,
+                photoURL: user.photoURL,
+                teamName: user.teamName,
+                teamUid: user.teamUid
 
-                    }).then(() => {
-                        console.log("Document added with ID: ", authUser.user.uid);
-                        resolve(authUser.user.uid);
-                    }).catch(err => {
-                        console.error(`error creating user from authUser: ${err}`);
-                        reject(`error in addAuthUserToFirestore.add creating user from authUser: ${err}`);    
-                    });
-                }
+            }).then(() => {
+                console.log("Users updated with ID: ", authUser.user.uid);
+                resolve(authUser.user.uid);
             }).catch(err => {
                 console.error(`error creating user from authUser: ${err}`);
-                reject(`error in addAuthUserToFirestore.docRef.get creating user from authUser: ${err}`);
+                reject(`error in addAuthUserToFirestore.set creating user from authUser: ${err}`);    
             });
         });
     }

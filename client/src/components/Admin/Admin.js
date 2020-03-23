@@ -30,7 +30,7 @@ class Admin extends React.Component {
                     <button className="btn center-align blue darken-4" onClick={this.createUser}>Create User</button>{" "}
                 </div>
                 <Users />
-                <div>{message}</div>``
+                <div>{message}</div>
             </div>
             );
         } else if (this.props.user.authUser) {                

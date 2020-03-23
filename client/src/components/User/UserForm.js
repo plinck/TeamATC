@@ -182,7 +182,7 @@ class UserForm extends React.Component {
               id: id
             });
           }).catch(err => {
-            console.error(`Error resettting user pw in rops.firebase.doPasswordReset ${err}`);
+            console.error(`Error resettting user pw in firebase.doPasswordReset ${err}`);
             this.setState({ message: err.message });
           });    
         }).catch(err => {
