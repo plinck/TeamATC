@@ -173,7 +173,7 @@ let Navigation = (props) => {
       </SwipeableDrawer>
 
       <AppBar color="secondary">
-        <Container>
+        <Container maxWidth="xl">
           <Toolbar style={{ minHeight: "64px" }} className={props.user.authUser ? classes.toolBarFlex : classes.nonAuthToolBarFlex} >
             <IconButton
               color="inherit"
