@@ -2,7 +2,8 @@ const express = require('express');
 const app = express();
 const path = require('path');
 require("dotenv").config();
-const {ORG, ENV} = require("./ServerEnvironment");
+const ORG = process.env.REACT_APP_FIREBASE_ORG;
+const ENV = process.env.REACT_APP_FIREBASE_ENVIRONMENT;
 
 const port = process.env.PORT || 5000;
 
@@ -18,8 +19,6 @@ app.use(express.json());
 // });
 
 require("./routes/api-auth-routes.js")(app);
-require("./routes/api-user-routes.js")(app);
-require("./routes/api-activity-routes.js")(app);
 
 //app.use(express.static(path.join(__dirname, 'client', 'build')));
 // //production mode - serve from build dir, else serve from public
