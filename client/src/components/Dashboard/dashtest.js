@@ -177,7 +177,7 @@ class Dashboard extends React.PureComponent {
         }
 
         // Some props take time to get ready so return null when uid not avaialble
-        if (this.props.user.uid === null || this.props.user.teamUid === null) {
+        if (this.props.user.uid === null) {
             return null;
         }
 
