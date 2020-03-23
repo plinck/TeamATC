@@ -79,7 +79,7 @@ module.exports = function (app) {
     }); // Route    
 
     // Route for Creating a new user with email and random password
-    app.post("/api/auth/createNoTokenUser", (req, res) => {
+    app.post("/api/auth/createAuthUserNoToken", (req, res) => {
         let user = req.body;
         
         // Generate random password if no password exists (meaning its created by someone else)
