@@ -177,10 +177,10 @@ class Dashboard extends React.PureComponent {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
 
-        // // Some props take time to get ready so return null when uid not avaialble
-        // if (this.props.user.uid === null || this.props.user.teamUid === null) {
-        //     return null;
-        // }
+        // Some props take time to get ready so return null when uid not avaialble
+        if (this.props.user.uid === null) {
+            return null;
+        }
 
         // if the listener updated the state
         if (this.activitiesUpdated) {
