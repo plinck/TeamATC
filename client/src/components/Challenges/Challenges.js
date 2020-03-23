@@ -37,30 +37,30 @@ const Challenges = (props) => {
 
     // When editting. make sure you set the id to ensure form gets proper record.
     const handleEditChallenge = (id) => {
-        setCurrentChallengeId(id); 
+        setCurrentChallengeId(id);
     }
 
     // When an update occurs you must also clear the current challnge ID since it needs to be NULL/undefined
     const handleUpdateChallenge = (id) => {
-        setCurrentChallengeId(undefined); 
+        setCurrentChallengeId(undefined);
         fetchData();
     }
 
-    const handleDeleteChallenge = (id) => {        
+    const handleDeleteChallenge = (id) => {
         if (id) {
             ChallengeDB.delete(id).then(res => {
                 fetchData();
             }).catch(err => {
                 setMessage(`Error deleting challenge with id: ${id}, error: ${err}`);
-            });  
-        } 
+            });
+        }
     }
 
     const handleJoinChallenge = (challengeUid) => {
-        UserDB.updateChallenge(props.user.uid, challengeUid).then ( () => {
+        UserDB.updateChallenge(props.user.uid, challengeUid).then(() => {
             // User now assigned to new challenge
             setMessage(`joined challenge with ID ${challengeUid}`);
-        }).catch (err => {
+        }).catch(err => {
             console.error(`Error joining challenge: ${challengeUid} for user: ${props.uid}`);
         });
     }
@@ -69,13 +69,13 @@ const Challenges = (props) => {
     // MAIN START : --
     // get challenges at load - this is like compnent
     const fetchData = () => {
-        ChallengeDB.getFiltered().then (challenges => {
+        ChallengeDB.getFiltered().then(challenges => {
             setChallenges(challenges);
             // Each time you refresh, make sure the currnt id is cleared
         })
-          .catch(err => setMessage(err));
+            .catch(err => setMessage(err));
     }
-    
+
     // Make sure useEffect only gets called once --
     // i.e. if you dont use optional parameter (array of properities to watch), it
     // will fire this function every single time the component is refreshed which isnt cool.
@@ -92,18 +92,18 @@ const Challenges = (props) => {
                     <Grid container style={{ minHeight: "75vh" }} spacing={2} justify="center" alignItems="center">
                         {userCanUpdateChallenge ?
                             <Grid item xs={12} md={5}>
-                            <ChallengeForm id={currentChallengeId}
-                                handleUpdateChallenge={handleUpdateChallenge}
-                            />
+                                <ChallengeForm id={currentChallengeId}
+                                    handleUpdateChallenge={handleUpdateChallenge}
+                                />
                             </Grid> : ""
                         }
-                        {challenges.map( challenge => {
-                            return (<Challenge challenge={challenge} 
+                        {challenges.map((challenge, index) => {
+                            return (<Challenge key={index} challenge={challenge}
                                 handleEditChallenge={handleEditChallenge}
                                 handleDeleteChallenge={handleDeleteChallenge}
                                 handleJoinChallenge={handleJoinChallenge}
-                                />)
-                            })
+                            />)
+                        })
                         }
                     </Grid>
                 </Container>

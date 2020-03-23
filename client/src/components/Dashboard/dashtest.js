@@ -12,9 +12,9 @@ import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
 import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
 import PointsBreakdownGraph from './Graphs/PointsBreakdown';
-//Reports
 import { Container, Grid, CircularProgress } from '@material-ui/core'
 import Util from "../Util/Util";
+import GoogleMap from './GoogleMap/GoogleMap';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
@@ -171,15 +171,16 @@ class Dashboard extends React.PureComponent {
 
 
     render() {
+        console.log(this.props)
         const { classes } = this.props;
         if (this.state.loadingFlag) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
 
-        // Some props take time to get ready so return null when uid not avaialble
-        if (this.props.user.uid === null || this.props.user.teamUid === null) {
-            return null;
-        }
+        // // Some props take time to get ready so return null when uid not avaialble
+        // if (this.props.user.uid === null || this.props.user.teamUid === null) {
+        //     return null;
+        // }
 
         // if the listener updated the state
         if (this.activitiesUpdated) {
@@ -238,30 +239,33 @@ class Dashboard extends React.PureComponent {
                             </div>
                             <div key="7" data-grid={{ w: 8, h: 10, x: 0, y: 4, minW: 6, minH: 10, maxW: 12, maxH: 10 }}>
                                 <ActivityBubble
-                                title={"Heatmap (All Athletes)"}
-                                activities={this.state.activities}
-                            />
+                                    title={"Heatmap (All Athletes)"}
+                                    activities={this.state.activities}
+                                />
                             </div>
-                        <div key="8" data-grid={{ w: 4, h: 9, x: 8, y: 4, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
-                            <PointsBreakdownGraph
-                                title={`Points by Team`}
-                                graphType="Team"
-                                totals={this.totals}
-                            />
-                        </div>
-                        <div key="9" data-grid={{ w: 4, h: 9, x: 0, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
-                            <PointsBreakdownGraph
-                                title={`Top Members`}
-                                graphType="User"
-                                totals={this.totals}
-                            />
-                        </div>
-                        <div key="10" data-grid={{ w: 4, h: 9, x: 4, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
-                            <ActivityByDay
-                                title={"Activity By Day"}
-                                activities={this.state.activities}
-                            />
-                        </div>
+                            <div key="8" data-grid={{ w: 4, h: 9, x: 8, y: 4, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
+                                <PointsBreakdownGraph
+                                    title={`Points by Team`}
+                                    graphType="Team"
+                                    totals={this.totals}
+                                />
+                            </div>
+                            <div key="9" data-grid={{ w: 4, h: 9, x: 0, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
+                                <PointsBreakdownGraph
+                                    title={`Top Members`}
+                                    graphType="User"
+                                    totals={this.totals}
+                                />
+                            </div>
+                            <div key="10" data-grid={{ w: 4, h: 9, x: 4, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
+                                <ActivityByDay
+                                    title={"Activity By Day"}
+                                    activities={this.state.activities}
+                                />
+                            </div>
+                            <div key="11" data-grid={{ w: 8, h: 12, x: 0, y: 14, minW: 6, minH: 9, maxW: 12, maxH: 12 }}>
+                                <GoogleMap />
+                            </div>
                         </ResponsiveReactGridLayout>
                     </Container>
                 </div >
