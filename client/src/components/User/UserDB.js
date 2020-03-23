@@ -6,7 +6,7 @@ class UserDB {
     static getUsers = () => {
         return new Promise((resolve, reject) => {
             const dbUsersRef = Util.getDBRefs().dbUsersRef;
-            dbUsersRef.get().then((querySnapshot) => {
+            dbUsersRef.orderBy("lastName").get().then((querySnapshot) => {
                 let users = [];
                 querySnapshot.forEach(doc => {
                     let user = {};
