@@ -168,13 +168,12 @@ class UserForm extends React.Component {
 
     // First, create the auth user in firebase
     // must be done on server for security reasons
-    UserAuthAPI.createAuthUser(user)
-      .then(response => {
+    UserAuthAPI.createAuthUserNoToken(user).then(response => {
         const authUser = {};
         authUser.user = response.data;
         // Temp override these due to errors in stroing null values.
         authUser.user.phoneNumber = user.phoneNumber;
-        authUser.user.photoURL = user.photoURL;
+        authUser.user.photoURL = user.photoURL ? user.photoUR : "";
         // Now Create the user in firestore
         UserDB.addAuthUserToFirestore(authUser, user).then( (id) => {
           this.props.firebase.doPasswordReset(user.email).then(() => {
@@ -183,14 +182,16 @@ class UserForm extends React.Component {
               id: id
             });
           }).catch(err => {
+            console.error(`Error resettting user pw in firebase.doPasswordReset ${err}`);
             this.setState({ message: err.message });
           });    
         }).catch(err => {
-            this.setState({ message: `Error adding user ${err}` });
+            console.error(`Error adding user in UserDB.addAuthUserToFirestore ${err}, msg: ${err.message}`);
+            this.setState({ message: `Error adding user in UserDB.addAuthUserToFirestore ${err}, msg: ${err.message}` });
         });  
-      })
-      .catch(err => {
-        this.setState({ message: `Error adding user ${err}` });
+    }).catch(err => {
+      console.error(`Error adding user in UserAuthAPI.createAuthUserNoToken(user) ${err}`);
+      this.setState({ message: `Error adding auth user in UserAuthAPI.createAuthUserNoToken msg: ${err}` });
     });  
   }
 
@@ -334,6 +335,7 @@ class UserForm extends React.Component {
         <div className="card">
           <div className="card-content">
             <span className="card-title">User (Role: {primaryRole})</span>
+            <p>{message}</p>
             <form onSubmit={this.saveUser} >
 
             <FormControl variant="outlined" required className={classes.formControl}>
@@ -488,7 +490,6 @@ class UserForm extends React.Component {
                   {buttonText}
                 </Button>
             </div>
-            <p>{message}</p>
 
           </div>
         </div>

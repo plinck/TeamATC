@@ -16,8 +16,8 @@ class UserAuthAPI {
     }
 
     // This calls the backend to allow admins to create an auth user securely abd not change login
-    static createNoTokenUser = (authUser) => {
-        return(Util.apiPostNoToken("/api/auth/createNoTokenUser", authUser));
+    static createAuthUserNoToken = (authUser) => {
+        return(Util.apiPostNoToken("/api/auth/createAuthUserNoToken", authUser));
     }
 
     // This calls the backend to allow admins to create an auth user securely abd not change login
