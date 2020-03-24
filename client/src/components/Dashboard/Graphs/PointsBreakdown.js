@@ -59,10 +59,10 @@ const PointsBreakdownGraph = (props) => {
             barmode: 'stack', autosize: true,
             height: 300,
             margin: {
-                l: 20,
+                l: 30,
                 r: 4,
                 b: 60,
-                t: 0,
+                t: 20,
                 pad: 0
             },
         };

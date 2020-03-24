@@ -1,46 +1,82 @@
 import React from "react";
-import { Link } from "react-router-dom";
-
+import { WidthProvider, Responsive } from "react-grid-layout";
+import 'react-grid-layout/css/styles.css'
+import 'react-resizable/css/styles.css'
+import { withStyles } from '@material-ui/core/styles';
 import CalculateTotals from "./CalculateTotals/CalculateTotals.js"
-
-import "./dashboard.css";
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Redirect } from "react-router";
-
-import SummaryTotal from "./SummaryTotal/SummaryTotal";
 import ResultsCard from "./ResultsCard/ResultsCard";
 import ActivitiesCard from './ActivitiesCard/ActivitiesCard';
 import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
-import ActivityTotalsGraphs from "./Graphs/ActivityTotalsGraphs";
 import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
 import PointsBreakdownGraph from './Graphs/PointsBreakdown';
-//Reports
-import { Container, Box, Grid, CircularProgress, Tooltip } from '@material-ui/core'
+import { Container, Grid, CircularProgress } from '@material-ui/core'
 import Util from "../Util/Util";
-import { withStyles } from '@material-ui/core/styles';
+import GoogleMap from './GoogleMap/GoogleMap';
+
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
+const originalLayouts = getFromLS("layouts") || {};
 
 const styles = theme => ({
     root: {
         [theme.breakpoints.up('md')]: {
             marginLeft: "57px",
-        }
+        },
+        paddingTop: "10px"
+    },
+    bubble: {
+        [theme.breakpoints.down('md')]: {
+            display: "none"
+        },
+    },
+    card: {
+        height: "100%"
     }
 });
 
-class Dashboard extends React.Component {
-    state = {
-        loadingFlag: true,
-        activities: [],
-        myActivities: [],
+class Dashboard extends React.PureComponent {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            layouts: JSON.parse(JSON.stringify(originalLayouts)),
+            loadingFlag: true,
+            activities: [],
+            myActivities: [],
+        };
     }
+
+    static get defaultProps() {
+        return {
+            className: "layout",
+            cols: { lg: 12, md: 12, sm: 4, xs: 4, xxs: 2 },
+            rowHeight: 30
+        };
+    }
+    onChildChanged() {
+        this.setState({ isDraggable: false })
+    }
+
     activeListener = undefined;
     totals = {};
     activitiesUpdated = false;
 
+    resetLayout() {
+        this.setState({ layouts: {} })
+    }
+
+
+    onLayoutChange(layout, layouts) {
+        saveToLS("layouts", layouts);
+        this.setState({ layouts });
+    }
+
     componentDidMount() {
         this._mounted = true;
-        this.setState({ loadingFlag: true });
+        let layouts = getFromLS("layouts") || {};
+        this.setState({ loadingFlag: true, layouts: JSON.parse(JSON.stringify(layouts)) });
 
         let allDBRefs = Util.getDBRefs();
         const dbActivitiesRef = allDBRefs.dbActivitiesRef;
@@ -136,6 +172,7 @@ class Dashboard extends React.Component {
         this.setState({ myActivities: myActivities });
     }
 
+
     render() {
         const { classes } = this.props;
         if (this.state.loadingFlag) {
@@ -161,102 +198,83 @@ class Dashboard extends React.Component {
         }
 
         let myActivities = this.state.myActivities;
-
-
         if (this.props.user.authUser) {
             return (
                 <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
-                    <Container maxWidth="xl" style={{ marginTop: "10px" }}>
-                        <Grid container spacing={2}>
-                            {/*  OVERALL standings by user and TEAM */}
-                            <Grid item xs={12} md={4}>
-                                {/* Team standings/results card */}
-                                <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={true}
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={4}>
+                    <Container maxWidth="xl">
+                        {/* <button onClick={() => this.resetLayout()}>Reset Layout</button> */}
+                        <ResponsiveReactGridLayout
+                            cols={{ lg: 12, md: 12, sm: 4, xs: 4, xxs: 2 }}
+                            className="layout"
+                            rowHeight={30}
+                            layouts={this.state.layouts}
+                            onLayoutChange={(layout, layouts) =>
+                                this.onLayoutChange(layout, layouts)
+                            }
+                        >
+                            <div key="1" data-grid={{ w: 4, h: 6, x: 0, y: 1, minW: 4, minH: 6, maxW: 6 }}>
+                                <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={true} />
+                            </div>
+                            <div key="2" data-grid={{ w: 4, h: 6, x: 4, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                 <ActivitiesCard name={this.props.user.displayName} activity={myActivities} />
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={false}
-                                />
-                            </Grid>
-                            {/* End Team standings/results card */}
-                            {/*  END OVERALL standings by user and TEAM */}
-
-                            {/* Breakdowns */}
-                            <Grid item xs={12} md={4}>
+                            </div>
+                            <div key="3" data-grid={{ w: 4, h: 11, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
+                                <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={false} />
+                            </div>
+                            <div key="4" data-grid={{ w: 4, h: 8, x: 0, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
                                     title={`All Athletes`}
                                     currentTotalsShare={this.totals.all}
                                 />
-                            </Grid>
-                            <Grid item xs={12} md={4}>
+                            </div>
+                            <div key="5" data-grid={{ w: 4, h: 8, x: 4, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
                                     title={`${this.props.user.displayName}`}
                                     currentTotalsShare={this.totals.user}
                                 />
-                            </Grid>
-                            <Grid item xs={12} md={4}>
+                            </div>
+                            <div key="6" data-grid={{ w: 4, h: 8, x: 8, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
                                     title={`Team ${this.props.user.teamName}`}
                                     currentTotalsShare={this.totals.team}
                                 />
-                            </Grid>
-                            {/* End Breakdowns */}
-
-                            {/* My Activities and heatmap */}
-                            <Grid item xs={12}>
+                            </div>
+                            <div key="7" data-grid={{ w: 8, h: 10, x: 0, y: 4, minW: 6, minH: 10, maxW: 12, maxH: 10 }}>
                                 <ActivityBubble
                                     title={"Heatmap (All Athletes)"}
                                     activities={this.state.activities}
                                 />
-                            </Grid>
-                            {/* END Activities by day and heatmap */}
-
-                            {/* All User Totals Cards Stack Bar Graphs - Activities etc*/}
-                            <Grid item xs={12} md={4}>
+                            </div>
+                            <div key="8" data-grid={{ w: 4, h: 9, x: 8, y: 4, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
                                 <PointsBreakdownGraph
                                     title={`Points by Team`}
                                     graphType="Team"
                                     totals={this.totals}
                                 />
-                            </Grid>
-                            <Grid item xs={12} md={4}>
+                            </div>
+                            <div key="9" data-grid={{ w: 4, h: 9, x: 0, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
                                 <PointsBreakdownGraph
                                     title={`Top Members`}
                                     graphType="User"
                                     totals={this.totals}
                                 />
-                            </Grid>
-                            {/* End All User Totals Cards Stack Bar Graphs - Activities etc*/}
-
-                            {/*  Activities  by day*/}
-                            <Grid item xs={12} md={4}>
-
+                            </div>
+                            <div key="10" data-grid={{ w: 4, h: 9, x: 4, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
                                 <ActivityByDay
                                     title={"Activity By Day"}
                                     activities={this.state.activities}
                                 />
-                            </Grid>
-                            {/* END Current User"s Activities */}
-
-                            {/* Sumary Display */}
-                            <Grid item xs={12}>
-                                <SummaryTotal
-                                    nbrActivities={this.totals.all.nbrActivities}
-                                    distanceTotal={this.totals.all.distanceTotal}
-                                    durationTotal={this.totals.all.durationTotal}
-
-                                    currentAllTotals={this.totals.all}
-                                    currentTeamTotals={this.totals.team}
-                                    currentUserTotals={this.totals.user}
-                                />
-                                {/* END Sumary Display */}
-                            </Grid>
-                        </Grid>
+                            </div>
+                            <div key="11" data-grid={{ w: 12, h: 12, x: 0, y: 0, minW: 6, minH: 9, maxW: 12, maxH: 18 }}>
+                                <GoogleMap
+                                    title="Haynes City for Bethany"
+                                    start='Seattle, Washington'
+                                    end='Haines City, FL'
+                                    teamTotals={this.totals.teamR}
+                                    callbackParent={() => this.onChildChanged()} />
+                            </div>
+                        </ResponsiveReactGridLayout>
                     </Container>
-
                 </div >
             );
         } else {
@@ -264,8 +282,31 @@ class Dashboard extends React.Component {
                 <Redirect to="/signin" />
             );
         }
-
     }
 }
+
+function getFromLS(key) {
+    let ls = {};
+    if (global.localStorage) {
+        try {
+            ls = JSON.parse(global.localStorage.getItem("rgl-8")) || {};
+        } catch (e) {
+            /*Ignore*/
+        }
+    }
+    return ls[key];
+}
+
+function saveToLS(key, value) {
+    if (global.localStorage) {
+        global.localStorage.setItem(
+            "rgl-8",
+            JSON.stringify({
+                [key]: value
+            })
+        );
+    }
+}
+
 
 export default withAuthUserContext(withStyles(styles)(Dashboard));
