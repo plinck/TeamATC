@@ -42,12 +42,12 @@ const GoogleMap = (props) => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {props.teamTotals.sort((x, y) => y.bikePointsTotal - x.bikePointsTotal).map((result, index) => (
+                                {props.teamTotals.sort((x, y) => y.bikeDistanceTotal - x.bikeDistanceTotal).map((result, index) => (
                                     <TableRow key={index}>
                                         <TableCell component="th" scope="row">
                                             {result.userOrTeamName}
                                         </TableCell>
-                                        <TableCell>{result.bikePointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
+                                        <TableCell>{result.bikeDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import createEpoly from './eploy.js';
 import { render } from 'react-dom';
 import { Card, CardContent } from '@material-ui/core';
 
@@ -9,7 +10,7 @@ class GoogleMap extends Component {
         // this.computeTotalDistance = this.computeTotalDistance.bind(this);
         this.state = {
             totalDist: 0,
-            marker: null,
+            markers: [],
             map: null,
             directionsDisplay: null,
             directionsService: null
@@ -30,24 +31,17 @@ class GoogleMap extends Component {
         for (let i = 0; i < myroute.legs.length; i++) {
             totalDist += myroute.legs[i].distance.value;
         }
-        totalDist = totalDist / 1000.
+        totalDist = totalDist / 1000 / 1.609344  //km to miles
         this.setState({ totalDist })
     }
 
-    putMarkerOnRoute(distance, team, time) {
+    putMarkerOnRoute(polyline, distance, team) {
+        console.log("team: " + team + " distance: " + distance)
         if (distance > this.state.totalDist) {
             distance = this.state.totalDist
         }
-
-        if (!this.state.marker) {
-            this.state.marker = this.createMarker(this.state.polyline.GetPointAtDistance(distance), "time: " + time, team);
-        } else {
-            let marker = this.state.marker
-            marker.setPosition(this.state.polyline.GetPointAtDistance(distance));
-            marker.setTitle("time:" + time);
-            marker.contentString = "<b>time: " + time + "</b><br>distance: " + (distance / 1000).toFixed(2) + " km<br>marker";
-            window.google.maps.event.trigger(marker, "click");
-        }
+        let meters = distance * 1000 * 1.609344
+        this.createMarker(polyline.GetPointAtDistance(meters), "distance: " + parseInt(distance), team)
     }
 
     calcRoute() {
@@ -96,7 +90,8 @@ class GoogleMap extends Component {
                     polyline.setMap(map);
 
                     this.computeTotalDistance(response);
-                    // putMarkerOnRoute(parseFloat(document.getElementById('time').value));
+                    this.props.teamTotals.forEach(total => this.putMarkerOnRoute(polyline, total.bikeDistanceTotal, total.userOrTeamName))
+                    // this.putMarkerOnRoute(polyline, 1200, "Testy")
                 } else {
                     alert("directions response " + status);
                 }
@@ -104,9 +99,10 @@ class GoogleMap extends Component {
         }
     }
 
-    createMarker(latlng, label, map, infowindow) {
-        // alert("createMarker("+latlng+","+label+","+html+","+color+")");
-        var contentString = '<b>' + label + '</b><br>';
+    createMarker(latlng, label, team) {
+        let map = this.state.map
+        let infowindow = this.state.infowindow
+        var contentString = '<b>' + label + '</b><br><b>' + team + '</b>';
         var marker = new window.google.maps.Marker({
             position: latlng,
             map: map,
@@ -136,13 +132,14 @@ class GoogleMap extends Component {
     }
 
     onScriptLoad() {
+        createEpoly()
         const infowindow = new window.google.maps.InfoWindow();
         let directionsService = new window.google.maps.DirectionsService();
         this.setState({ directionsService })
         const map = new window.google.maps.Map(
             document.getElementById(this.props.id),
             this.props.options);
-        this.setState({ map: map })
+        this.setState({ map, infowindow })
         this.onMapLoad(map, infowindow)
     }
 
@@ -150,7 +147,7 @@ class GoogleMap extends Component {
         if (!window.google) {
             var s = document.createElement('script');
             s.type = 'text/javascript';
-            s.src = `https://maps.google.com/maps/api/js?key=AIzaSyD-d6RgZojUTghWcqpTxicyCN5MdgEYFTI`;
+            s.src = `https://maps.google.com/maps/api/js?key=AIzaSyBmeZVx6YKWwqMP8FvsEyoG0eIxcinHYc4`;
             var x = document.getElementsByTagName('script')[0];
             x.parentNode.insertBefore(s, x);
             // Below is important. 
