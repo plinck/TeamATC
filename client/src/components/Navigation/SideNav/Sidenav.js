@@ -10,6 +10,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Typography, Button } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
+import PeopleIcon from '@material-ui/icons/People';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
@@ -110,6 +111,7 @@ export default function MiniDrawer(props) {
                     <NavLink className={classes.sideText} to="/activities"><ListItem selected={window.location.pathname === "/activities"} button><ListItemIcon><DirectionsRunIcon /></ListItemIcon><ListItemText>Activities</ListItemText></ListItem></NavLink>
                     <NavLink className={classes.sideText} to="/account"><ListItem selected={window.location.pathname === "/account"} button><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText>Account</ListItemText></ListItem></NavLink>
                     <NavLink className={classes.sideText} to="/challenges"><ListItem selected={window.location.pathname === "/challenges"} button><ListItemIcon><TimerIcon /></ListItemIcon><ListItemText>Challenges</ListItemText></ListItem></NavLink>
+                    <NavLink className={classes.sideText} to="/teams"><ListItem selected={window.location.pathname === "/teams"} button><ListItemIcon><PeopleIcon /></ListItemIcon><ListItemText>Teams</ListItemText></ListItem></NavLink>
                     <Divider></Divider>
                     <NavLink className={classes.sideText} to="/results"><ListItem selected={window.location.pathname === "/results"} button><ListItemIcon><EqualizerIcon /></ListItemIcon><ListItemText>Full Results</ListItemText></ListItem></NavLink>
                     <Divider></Divider>
