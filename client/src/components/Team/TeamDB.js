@@ -90,6 +90,9 @@ class TeamDB {
     // TODO : - Fix this - the users promise isnt done when team is returned so this wont work as expected
     // TODO:  Test this as I dont think it works.  I need to get chaining better as lots of uses
     static getTeamUsers = (id) => {
+        let team = {};
+        let userArray = [];
+
         // its a promise so return
         return new Promise((resolve, reject) => {
             // then get from firestore
@@ -99,29 +102,25 @@ class TeamDB {
             docRef.get().then((doc) => {
                 if (doc.exists) {
                     // update
-                    let team = doc.data();
+                    team = doc.data();
                     team.id = doc.id;
-                    resolve(team);
+                    const dbUsersRef = Util.getDBRefs().dbUsersRef;
+                    const docRef = dbUsersRef.where("teamUid", "==", team.id).orderBy("lastName", "desc");
+                    return(docRef.get());
                 } else {
-                    reject(`Team not found`);
+                    throw new Error(`Team not found`);
                 }
-            }).then(team => {
-                let userArray = []
-                const dbUsersRef = Util.getDBRefs().dbUsersRef;
-                const docRef = dbUsersRef.where("teamUid", "==", team.id).orderBy("lastName", "desc");
-                docRef.get().then((docSnaps) => {
-                    docSnaps.forEach((doc) => {
-                        const user = doc.data();
-                        user.id = doc.id;
+            }).then(docSnaps => {
+                docSnaps.forEach((doc) => {
+                    const user = doc.data();
+                    user.id = doc.id;
 
-                        user.teamUid = team.id;
-                        user.teamName = team.name;
-                        
-                        userArray.push(user);
-                    });
-                    team.users = userArray;
-                    resolve(team);
-            }).then(team)
+                    user.teamUid = team.id;
+                    user.teamName = team.name;
+                    
+                    userArray.push(user);
+                });
+                team.users = userArray;
                 console.log(`Team with users ${JSON.stringify(team)}`);
                 resolve(team);
             }).catch(err => {
