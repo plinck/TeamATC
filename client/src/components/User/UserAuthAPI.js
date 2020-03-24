@@ -1,5 +1,4 @@
 import Util from "../Util/Util";
-import UserDB from "./UserDB";
 
 class UserAuthAPI {
     // geths the current auth user info from firestore auth service

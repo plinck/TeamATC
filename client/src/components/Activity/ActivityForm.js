@@ -6,7 +6,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 
-import M from "materialize-css/dist/js/materialize.min.js";
 import ActivityModal from "./ActivityModal";
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Redirect } from "react-router";
@@ -24,14 +23,12 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import AddIcon from "@material-ui/icons/Add";
 import { Fab } from "@material-ui/core";
 
-
-
-
 import moment from "moment";
 
-import TeamAPI from "../Team/TeamAPI"
+import TeamDB from "../Team/TeamDB"
 import ActivityDB from "./ActivityDB"
 import UserDB from "../User/UserDB"
+import ChallengeDB from "../Challenges/ChallengeDB"
 
 // For upload fit file
 import EasyFit from "easy-fit";
@@ -51,6 +48,8 @@ const INITIAL_STATE = {
     distance: "",
     distanceUnits: "",
     duration: "",
+
+    challenge: undefined,
 
     teams: null,
     teamLookup: null,
@@ -102,6 +101,8 @@ class ActivityForm extends React.Component {
     componentDidMount() {
         this._mounted = true;
         this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
+        // Get current challenge info - should be part of state maybe eventually
+        this.fetchCurrentChallenge();
         
         // only get activity if its an update, otherwise assume new
         if (this.state.id) {
@@ -109,8 +110,6 @@ class ActivityForm extends React.Component {
         } else {
         }
     
-        let elem = document.querySelector(".modal");
-        M.Modal.init(elem);
     }
 
     enableButton = () => {
@@ -380,7 +379,7 @@ class ActivityForm extends React.Component {
 
     // get available teams for select list
     fetchTeams() {
-        TeamAPI.getTeams().then(teams => {
+        TeamDB.getTeams().then(teams => {
             // Convert array of teams to key value unqie pairs for easy lookup on primary key
             let teamLookup = {}
             teams.forEach(team => {
@@ -398,32 +397,44 @@ class ActivityForm extends React.Component {
         });
     }
 
+    // get current challenge for this user
+    fetchCurrentChallenge() {
+        console.log(`Current challengeUid: ${this.props.user.challengeUid}`);
+        ChallengeDB.get(this.props.user.challengeUid).then(challenge => {
+            this.setState({
+                challenge: challenge
+            });
+        })
+        .catch(err => {
+            console.error(`Error getting current challenge ${err}`);
+            this.setState({message: `Error getting current challenge ${err}`});
+        });
+    }
+
     validateActivity() {
-        // Deal with Date - convert MM/DD/YYYY to date object and then Firestore timestamp
-        /*
-        let jsDateArray = [];
-        let jsDateString = this.state.activityDateTimeString;
-        if (jsDateString.length === 10) {
-            jsDateArray = jsDateString.split("-");
-            if (jsDateArray.length < 3) {
-                this.setState({ message: `Bad Date - Activity Update Failed: ${this.state.activityDateTimeString}`});
-                return false;
-            }
-        } else {
-            this.setState({ message: `Bad Date - Activity Update Failed: ${this.state.activityDateTimeString}`});
-            return false;
-        }
-        let dateString = this.state.activityDateTimeString;
-        let momentObj = moment(dateString, 'MM-DD-YYYY');
-        let jsDate = new Date(momentObj);
-        */
-
         // Using date picker, so date is date -- create string from date
-
-        
         let activity = this.state;
         // activity.activityDateTime = jsDate;
         activity.activityDateTimeString = moment(activity.activityDateTime ).format('MM-DD-YYYY');
+
+        // Validate Date to be no later than today and within the range of the challenge
+        let now = new Date().getTime();
+        let endOfDay = moment(now).endOf("day").toDate(); 
+        if (activity.activityDateTime > endOfDay) {
+            this.setState({ message: `Activity Date can not be later than today`});
+            return false;
+        } 
+
+        endOfDay = moment(this.state.challenge.endDate).endOf("day").toDate(); 
+        if (activity.activityDateTime > endOfDay) {
+            this.setState({ message: `Activity Date can not be later than end of challenge`});
+            return false;
+        } 
+        if (activity.activityDateTime < this.state.challenge.startDate) {
+            this.setState({ message: `Activity Date can not be earlier than beginning of challenge`});
+            return false;
+        } 
+
         
         // If NEW activity, set the info to the current users info, if not use what is there so admiin can update
         if (!this.state.id) {
@@ -532,7 +543,7 @@ class ActivityForm extends React.Component {
         event.preventDefault();
 
         if (!this.validateActivity()) {
-            console.error(`${this.state.message}`);
+            console.error(`Error validating activity --- not saved`);
         };
     }
 

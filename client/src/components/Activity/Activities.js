@@ -5,9 +5,7 @@ import { Link } from 'react-router-dom';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Box from "@material-ui/core/Box";
-import SearchIcon from "@material-ui/icons/Search";
-import TextField from '@material-ui/core/TextField';
-import { InputAdornment, Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 
 // For select input field
 import FormControl from '@material-ui/core/FormControl';
@@ -67,8 +65,8 @@ class Activities extends React.Component {
             activities: null,
             lastActivityDoc: undefined,
             searchBy: "",
-            filterByString: "All",
-            filterBy: "All",
+            filterByString: "Mine",
+            filterBy: "Mine",
             orderBy: "None",
             isLoading: true
         };
@@ -76,8 +74,6 @@ class Activities extends React.Component {
 
     // Get All Activities on Mount - check if anything passed
     componentDidMount() {
-        // check to see if we already have activities passed
-        // if so, dont go get them again
         let filterByString = undefined;
 
         filterByString = this.props.location && this.props.location.state ? this.props.location.state.filterByString : undefined;
@@ -127,7 +123,8 @@ class Activities extends React.Component {
                 filterObj.filterValue = this.props.user.uid;
                 break;
             default:
-                filterObj = undefined;
+                filterObj.filterName = "uid";
+                filterObj.filterValue = this.props.user.uid;
             }     
 
         this.setState({isLoading: true});
@@ -281,9 +278,9 @@ class Activities extends React.Component {
         } 
 
         // Search and filter
-        let searchBy = this.state.searchBy;
+        //let searchBy = this.state.searchBy;
         let filterBy = this.state.filterBy;
-        let orderBy = this.state.orderBy;
+        //let orderBy = this.state.orderBy;
         let activities = this.state.activities;
         
         const sortFilterRow = 
@@ -307,6 +304,7 @@ class Activities extends React.Component {
                     </Select>
                 </FormControl>
 
+                {/*  Get rid of order by for now.  
                 <FormControl variant="filled" className={`${classes.formControl} col s3 m3`}>
                     <InputLabel id="orderByLabel">Order By</InputLabel>
                     <Select
@@ -323,7 +321,9 @@ class Activities extends React.Component {
                         <MenuItem value={"Type"}>Type</MenuItem>
                     </Select>
                 </FormControl>
+                */}
 
+                {/* Get rid of seacrh until we can implement it 
                 <div className="col s3 m3 blue-text input-field inline align-right">
                         <TextField
                         id="searchBy"
@@ -349,6 +349,7 @@ class Activities extends React.Component {
                         onChange={this.handleChange}
                         />
                 </div>
+                */}
                 
                 <div className="col s2 m2">
                     <Link to="/activityform">

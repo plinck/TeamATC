@@ -22,7 +22,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { withFirebase } from '../Auth/Firebase/FirebaseContext';
 import UserAuthAPI from "./UserAuthAPI";
 import UserDB from "./UserDB"
-import TeamAPI from "../Team/TeamAPI";
+import TeamDB from "../Team/TeamDB";
   
 const styles = theme => ({
   container: {
@@ -123,7 +123,7 @@ class UserForm extends React.Component {
 
   // get available teams for select list
   fetchTeams() {
-    TeamAPI.getTeams()
+    TeamDB.getTeams()
     .then(teams => {
       
       // Convert array of teams to key value unqie pairs for easy lookup on primary key

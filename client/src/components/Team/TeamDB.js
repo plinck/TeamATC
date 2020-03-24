@@ -1,6 +1,6 @@
 import Util from "../Util/Util";
 
-class TeamAPI {
+class TeamDB {
 
     // Everything from top down must be async or awaits do NOT wait
     static getTeams = () => {
@@ -54,8 +54,8 @@ class TeamAPI {
                     });
                     resolve(activityArray);
                 }).catch((err) => {
-                    console.error("Error in TeamAPI.getTeamsWithActivities(): ", err);
-                    reject(`Error in TeamAPI.getTeamsWithActivities(): ${err}`);
+                    console.error("Error in TeamDB.getTeamsWithActivities(): ", err);
+                    reject(`Error in TeamDB.getTeamsWithActivities(): ${err}`);
                 });
             }).catch((err) => {
                 console.error("Error in ActivityDB.getUserWithActivity user : ", err);
@@ -81,7 +81,7 @@ class TeamAPI {
                 console.error("Team not found in firestore");
                 return(resolve());
             }).catch(err => {
-                reject(`Error getting team in TeamAPI.get ${err}`);
+                reject(`Error getting team in TeamDB.get ${err}`);
             });
         });
     }
@@ -116,8 +116,8 @@ class TeamAPI {
                         });
                         resolve(userArray);
                     }).catch((err) => {
-                        console.error("Error in TeamAPI.getTeamsWithActivities(): ", err);
-                        reject(`Error in TeamAPI.getTeamsWithActivities(): ${err}`);
+                        console.error("Error in TeamDB.getTeamsWithActivities(): ", err);
+                        reject(`Error in TeamDB.getTeamsWithActivities(): ${err}`);
                     });
                     return(resolve(team));
                 }
@@ -125,7 +125,7 @@ class TeamAPI {
                 return(resolve());
 
             }).catch(err => {
-                reject(`Error getting team in TeamAPI.get ${err}`);
+                reject(`Error getting team in TeamDB.get ${err}`);
             });
         });
     }
@@ -139,7 +139,7 @@ class TeamAPI {
                 console.log("Firestore Team successfully deleted!");
                 return resolve();
             }).catch((err) => {
-                console.error("Error deleting firestore team in TeamAPI.delete(:uid:) ", err);
+                console.error("Error deleting firestore team in TeamDB.delete(:uid:) ", err);
                 return reject(err);
             });
 
@@ -169,4 +169,4 @@ class TeamAPI {
     }
 }//class
 
-export default TeamAPI;
+export default TeamDB;

@@ -17,7 +17,7 @@ import Select from "@material-ui/core/Select";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import UserDB from "../User/UserDB";
-import TeamAPI from "../Team/TeamAPI";
+import TeamDB from "../Team/TeamDB";
 
 const styles = theme => ({
     container: {
@@ -120,7 +120,7 @@ class AccountForm extends React.Component {
 
     // get available teams for select list
     fetchTeams() {
-        TeamAPI.getTeams()
+        TeamDB.getTeams()
         .then(teams => {
         
         // Convert array of teams to key value unqie pairs for easy lookup on primary key
