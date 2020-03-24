@@ -7,16 +7,14 @@ import Challenge from "./Challenge"
 import UserDB from "../User/UserDB.js"
 
 const useStyles = makeStyles(theme => ({
-    main: {
-        background: 'url(/images/ATC-repeating-background.png) center center fixed',
-        backgroundSize: "cover",
-        height: 'calc(100vh - 64px)',
-        overflow: "hidden"
-    },
     root: {
         [theme.breakpoints.up('md')]: {
             marginLeft: "57px",
+            height: "calc(100vh - 56px)"
         },
+        background: 'url(/images/ATC-repeating-background.png) center center fixed',
+        backgroundSize: "cover",
+        height: 'calc(100vh + 50px)',
     },
     button: {
         margin: '15px'
@@ -86,28 +84,26 @@ const Challenges = (props) => {
     const userCanUpdateChallenge = (props.user && props.user.isAdmin) ? true : false;
 
     return (
-        <div className={classes.main}>
-            <div className={classes.root}>
-                <Container maxWidth="xl">{message ? <h5 className={classes.messages}>{message}</h5> : ""}
-                    <Grid container style={{ minHeight: "75vh" }} spacing={2} justify="center" alignItems="center">
-                        {userCanUpdateChallenge ?
-                            <Grid item xs={12} md={5}>
-                                <ChallengeForm id={currentChallengeId}
-                                    handleUpdateChallenge={handleUpdateChallenge}
-                                />
-                            </Grid> : ""
-                        }
-                        {challenges.map((challenge, index) => {
-                            return (<Challenge key={index} challenge={challenge}
-                                handleEditChallenge={handleEditChallenge}
-                                handleDeleteChallenge={handleDeleteChallenge}
-                                handleJoinChallenge={handleJoinChallenge}
-                            />)
-                        })
-                        }
-                    </Grid>
-                </Container>
-            </div>
+        <div className={classes.root}>
+            <Container maxWidth="xl">{message ? <h5 className={classes.messages}>{message}</h5> : ""}
+                <Grid container style={{ minHeight: "100vh - 56px" }} spacing={2} justify="center" alignItems="center">
+                    {userCanUpdateChallenge ?
+                        <Grid item xs={12} md={5}>
+                            <ChallengeForm id={currentChallengeId}
+                                handleUpdateChallenge={handleUpdateChallenge}
+                            />
+                        </Grid> : ""
+                    }
+                    {challenges.map((challenge, index) => {
+                        return (<Challenge key={index} challenge={challenge}
+                            handleEditChallenge={handleEditChallenge}
+                            handleDeleteChallenge={handleDeleteChallenge}
+                            handleJoinChallenge={handleJoinChallenge}
+                        />)
+                    })
+                    }
+                </Grid>
+            </Container>
         </div>
     )
 }

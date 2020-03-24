@@ -243,6 +243,7 @@ class Dashboard extends React.PureComponent {
                                 <ActivityBubble
                                     title={"Heatmap (All Athletes)"}
                                     activities={this.state.activities}
+                                    callbackParent={() => this.onChildChanged()} 
                                 />
                             </div>
                             <div key="8" data-grid={{ w: 4, h: 9, x: 8, y: 4, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
