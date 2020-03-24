@@ -29,9 +29,7 @@ import TeamDB from "../Team/TeamDB"
 import ActivityDB from "./ActivityDB"
 import UserDB from "../User/UserDB"
 import ChallengeDB from "../Challenges/ChallengeDB"
-
-// For upload fit file
-import EasyFit from "easy-fit";
+import FitActivity from "./FitActivity.js"
 
 
 const INITIAL_STATE = {
@@ -214,118 +212,6 @@ class ActivityForm extends React.Component {
       };
 
 
-    saveFITFileToState(jsonData) {
-        let activity = {
-            uid: this.props.user.authUser.uid,
-            email: this.props.user.authUser.email,
-            displayName: this.props.user.displayName,
-            teamName: this.props.user.teamName,
-            teamUid: this.props.user.teamUid,
-
-            activityName: "",
-            activityDateTime: null,
-            activityDateTimeString: "",
-            activityType: "",   
-            distance: 0,
-            distanceUnits: "Miles",
-            duration: 0
-        }
-
-        var activityDateEST = new Date(jsonData.activity.timestamp).toLocaleString("en-US", {timeZone: "America/New_York"});
-        activityDateEST = new Date(activityDateEST); 
-        activity.activityDateTime = activityDateEST;
-        activity.activityDateTimeString = moment(activityDateEST).format("MM-DD-YYYY");
-
-        const sport = jsonData.sport.sport;
-
-        activity.activityType = "Other";
-        if (sport.toLowerCase() === "cycling") {
-            activity.activityType ="Bike";
-        } else if (sport.toLowerCase() === "running") {
-            activity.activityType = "Run";
-        } else if (sport.toLowerCase() === "swimming") {
-            activity.activityType = "Swim";
-        }
-        // No name on Fit File???
-        activity.activityName = `${activity.activityType} on ${activity.activityDateTimeString}`;
-        
-        const total_distance = jsonData.activity.sessions[0].total_distance;
-        activity.distance = Number(total_distance).toFixed(2);
-        activity.distanceUnits = "Miles";
-        
-        const total_timer_time = jsonData.activity.total_timer_time;
-        activity.duration = (Number(total_timer_time) / 3600).toFixed(2);
-        
-        // const sub_sport = jsonData.sport["sub_sport"];
-        // const total_calories = jsonData.activity.sessions[0].total_calories;
-        // const avg_speed = jsonData.activity.sessions[0].avg_speed;
-        // const avg_power = jsonData.activity.sessions[0].avg_power;
-        // const normalized_power = jsonData.activity.sessions[0].normalized_power;
-        // const training_stress_score = jsonData.activity.sessions[0].training_stress_score;
-        // const intensity_factor = jsonData.activity.sessions[0].intensity_factor;
-        // const avg_heart_rate = jsonData.activity.sessions[0].avg_heart_rate;
-        // const max_heart_rate = jsonData.activity.sessions[0].max_heart_rate;
-        // const avg_cadence = jsonData.activity.sessions[0].avg_cadence;
-        // const max_cadence = jsonData.activity.sessions[0].max_cadence;
-      
-        console.log(`Ready to upload activity: ${JSON.stringify(activity, null, 4)}`);
-        this.setState({
-            uid: activity.uid,
-            email: activity.email,
-            displayName: activity.displayName,
-            teamName: activity.teamName,
-            teamUid: activity.teamUid,
-
-            activityName: activity.activityName,
-            activityDateTime: activity.activityDateTime,
-            activityDateTimeString: activity.activityDateTimeString,
-            activityType:activity.activityType,   
-            distance: activity.distance,
-            distanceUnits: activity.distanceUnits,
-            duration: activity.duration,
-            message: `Uploaded FIT file, make any changes and hit <CREATE> to save`
-        }, () => this.enableButton());
-
-        // for now, set the state so user cn name it and fix errors
-        // this.createActivity(activity);
-    }
-
-    readFitFile(fileToUpload) {
-        //let fileToUpload = this.state.fitFileToUpload;
-        if (fileToUpload) {
-            let reader = new FileReader();
-            reader.readAsArrayBuffer(fileToUpload, "UTF-8");
-            reader.onload = (evt) => {
-                let content = evt.target.result;
-
-                var easyFit = new EasyFit({
-                    force: true,
-                    speedUnit: 'mph',
-                    lengthUnit: 'mi',
-                    temperatureUnit: 'farhenheit',
-                    elapsedRecordField: true,
-                    mode: 'cascade',
-                  });
-                  
-                  // Parse your file
-                  easyFit.parse(content,  (error, data) => {
-                    // Handle result of parse method
-                    if (error) {
-                      console.error(error);
-                      this.setState({message: `error loading fit file ${error}`}, () => this.enableButton());
-                    } else {
-                      // console.log(JSON.stringify(data));
-                      this.saveFITFileToState(data);
-                    }
-                  });
-            }
-            reader.onerror = function (evt) {
-                console.error(`error reading file ${evt.error}`);
-                this.setState({message: `error reading file ${evt.error}`}, () => this.enableButton());
-            }
-        }
-    }
-    
     fitFileChange = (event) => {
         event.preventDefault();
 
@@ -341,7 +227,29 @@ class ActivityForm extends React.Component {
             }
 
             console.log(`Uploading file ${fitFileToUpload.name}... `);
-            this.readFitFile(fitFileToUpload);  // use direct for now
+            let fitData = new FitActivity(fitFileToUpload);
+            fitData.processFitFile().then(activity => {
+                // add the additional fields from state/props
+                this.setState({
+                    uid: this.props.user.authUser.uid,
+                    email: this.props.user.authUser.email,
+                    displayName: this.props.user.displayName,
+                    teamName: this.props.user.teamName,
+                    teamUid: this.props.user.teamUid,
+            
+                    activityName: activity.activityName,
+                    activityDateTime: activity.activityDateTime,
+                    activityDateTimeString: activity.activityDateTimeString,
+                    activityType:activity.activityType,   
+                    distance: activity.distance,
+                    distanceUnits: activity.distanceUnits,
+                    duration: activity.duration,
+                    message: `Uploaded FIT file, make any changes and hit <CREATE> to save`
+                }, () => this.enableButton());
+            }).catch (err => {
+                this.setState({message: `Error processing fit file ${err}`});
+                return;
+            });  
         }
     }
        
