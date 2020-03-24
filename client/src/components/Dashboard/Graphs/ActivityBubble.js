@@ -48,7 +48,6 @@ class ActivityBubble extends React.Component {
                 }]
         };
 
-        console.log(this.props)
         let activities = this.props.activities;
         let adjustedActivites = activities.map(activity => {
             let distance = activity.distance;

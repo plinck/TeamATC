@@ -174,7 +174,6 @@ class Dashboard extends React.PureComponent {
 
 
     render() {
-        console.log(this.props)
         const { classes } = this.props;
         if (this.state.loadingFlag) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
@@ -213,28 +212,28 @@ class Dashboard extends React.PureComponent {
                                 this.onLayoutChange(layout, layouts)
                             }
                         >
-                            <div key="1" data-grid={{ w: 4, h: 6, x: 0, y: 0, minW: 4, minH: 6, maxW: 6 }}>
+                            <div key="1" data-grid={{ w: 4, h: 6, x: 0, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                 <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={true} />
                             </div>
-                            <div key="2" data-grid={{ w: 4, h: 6, x: 4, y: 0, minW: 4, minH: 6, maxW: 6 }}>
+                            <div key="2" data-grid={{ w: 4, h: 6, x: 4, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                 <ActivitiesCard name={this.props.user.displayName} activity={myActivities} />
                             </div>
-                            <div key="3" data-grid={{ w: 4, h: 11, x: 8, y: 0, minW: 4, minH: 6, maxW: 6 }}>
+                            <div key="3" data-grid={{ w: 4, h: 11, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                 <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={false} />
                             </div>
-                            <div key="4" data-grid={{ w: 4, h: 8, x: 0, y: 1, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
+                            <div key="4" data-grid={{ w: 4, h: 8, x: 0, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
                                     title={`All Athletes`}
                                     currentTotalsShare={this.totals.all}
                                 />
                             </div>
-                            <div key="5" data-grid={{ w: 4, h: 8, x: 4, y: 1, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
+                            <div key="5" data-grid={{ w: 4, h: 8, x: 4, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
                                     title={`${this.props.user.displayName}`}
                                     currentTotalsShare={this.totals.user}
                                 />
                             </div>
-                            <div key="6" data-grid={{ w: 4, h: 8, x: 8, y: 1, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
+                            <div key="6" data-grid={{ w: 4, h: 8, x: 8, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
                                     title={`Team ${this.props.user.teamName}`}
                                     currentTotalsShare={this.totals.team}
@@ -266,8 +265,13 @@ class Dashboard extends React.PureComponent {
                                     activities={this.state.activities}
                                 />
                             </div>
-                            <div key="11" data-grid={{ w: 8, h: 12, x: 0, y: 14, minW: 6, minH: 9, maxW: 12, maxH: 12, isDraggable: false }}>
-                                <GoogleMap start='Seattle, Washington' end='Haines City, FL' callbackParent={() => this.onChildChanged()} />
+                            <div key="11" data-grid={{ w: 12, h: 12, x: 0, y: 0, minW: 6, minH: 9, maxW: 12, maxH: 18 }}>
+                                <GoogleMap
+                                    title="Haynes City for Bethany"
+                                    start='Seattle, Washington'
+                                    end='Haines City, FL'
+                                    teamTotals={this.totals.teamR}
+                                    callbackParent={() => this.onChildChanged()} />
                             </div>
                         </ResponsiveReactGridLayout>
                     </Container>
