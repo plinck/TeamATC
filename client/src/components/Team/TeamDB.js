@@ -87,7 +87,12 @@ class TeamDB {
     }
 
     // Get Users for a team
+    // TODO : - Fix this - the users promise isnt done when team is returned so this wont work as expected
+    // TODO:  Test this as I dont think it works.  I need to get chaining better as lots of uses
     static getTeamUsers = (id) => {
+        let team = {};
+        let userArray = [];
+
         // its a promise so return
         return new Promise((resolve, reject) => {
             // then get from firestore
@@ -97,33 +102,27 @@ class TeamDB {
             docRef.get().then((doc) => {
                 if (doc.exists) {
                     // update
-                    let team = doc.data();
-                    let teamUid = doc.id;
-                    let userArray = []
-
+                    team = doc.data();
+                    team.id = doc.id;
                     const dbUsersRef = Util.getDBRefs().dbUsersRef;
-                    const docRef = dbUsersRef.orderBy("lastName", "desc");
-                    docRef.get().then((docSnaps) => {
-                        docSnaps.forEach((doc) => {
-                            const user = doc.data();
-                            user.id = doc.id;
-
-                            user.teamUid = teamUid;
-                            user.teamName = team.name;
-                            user.teamDescription = team.description;
-                            
-                            userArray.push(user);
-                        });
-                        resolve(userArray);
-                    }).catch((err) => {
-                        console.error("Error in TeamDB.getTeamsWithActivities(): ", err);
-                        reject(`Error in TeamDB.getTeamsWithActivities(): ${err}`);
-                    });
-                    return(resolve(team));
+                    const docRef = dbUsersRef.where("teamUid", "==", team.id).orderBy("lastName", "desc");
+                    return(docRef.get());
+                } else {
+                    throw new Error(`Team not found`);
                 }
-                console.error("Team not found in firestore");
-                return(resolve());
+            }).then(docSnaps => {
+                docSnaps.forEach((doc) => {
+                    const user = doc.data();
+                    user.id = doc.id;
 
+                    user.teamUid = team.id;
+                    user.teamName = team.name;
+                    
+                    userArray.push(user);
+                });
+                team.users = userArray;
+                console.log(`Team with users ${JSON.stringify(team)}`);
+                resolve(team);
             }).catch(err => {
                 reject(`Error getting team in TeamDB.get ${err}`);
             });
@@ -131,18 +130,42 @@ class TeamDB {
     }
 
     // delete team
-    static delete = (uid) => {
-        return new Promise((resolve, reject) => {
-            const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
+    // Do NOT allow delete if team is part of any activity or user
+    static delete = (teamId) => {
+        let anyUsers = false;
+        let anyActivities = false;
 
-            dbTeamsRef.doc(uid).delete().then(() => {
+        return new Promise((resolve, reject) => {
+
+            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            const docRef = dbUsersRef.where("teamUid", "==", teamId).limit(1);
+            docRef.get()
+            .then((docSnaps) => {
+                docSnaps.forEach((doc) => {
+                    anyUsers = true;
+                });
+                if (anyUsers) {
+                    throw new Error(`Cant delete, users assigned to this team`);
+                } 
+                const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+                const docRef = dbActivitiesRef.where("teamUid", "==", teamId).limit(1);
+                return(docRef.get());
+            }).then((docSnaps) => {
+                docSnaps.forEach((doc) => {
+                    anyActivities = true;
+                });
+                if (anyActivities) {
+                    throw new Error(`Cant delete, activities assigned to this team`);
+                } 
+                const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
+                return(dbTeamsRef.doc(teamId).delete());
+            }).then(() => {
                 console.log("Firestore Team successfully deleted!");
-                return resolve();
+                resolve();    
             }).catch((err) => {
                 console.error("Error deleting firestore team in TeamDB.delete(:uid:) ", err);
-                return reject(err);
+                reject(err);
             });
-
         });
     }
 
