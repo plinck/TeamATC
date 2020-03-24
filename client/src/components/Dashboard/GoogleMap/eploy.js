@@ -94,7 +94,7 @@ export default function createEpoly() {
         var y = point.lat();
         for (var i = 0; i < this.getPath().getLength(); i++) {
             j++;
-            if (j == this.getPath().getLength()) { j = 0; }
+            if (j === this.getPath().getLength()) { j = 0; }
             if (((this.getPath().getAt(i).lat() < y) && (this.getPath().getAt(j).lat() >= y))
                 || ((this.getPath().getAt(j).lat() < y) && (this.getPath().getAt(i).lat() >= y))) {
                 if (this.getPath().getAt(i).lng() + (y - this.getPath().getAt(i).lat())
@@ -118,7 +118,7 @@ export default function createEpoly() {
         var y0 = b.getSouthWest().lat();
         for (var i = 0; i < this.getPath().getLength(); i++) {
             j++;
-            if (j == this.getPath().getLength()) { j = 0; }
+            if (j === this.getPath().getLength()) { j = 0; }
             var x1 = this.getPath().getAt(i).distanceFrom(new window.google.maps.LatLng(this.getPath().getAt(i).lat(), x0));
             var x2 = this.getPath().getAt(j).distanceFrom(new window.google.maps.LatLng(this.getPath().getAt(j).lat(), x0));
             var y1 = this.getPath().getAt(i).distanceFrom(new window.google.maps.LatLng(y0, this.getPath().getAt(i).lng()));
@@ -150,7 +150,7 @@ export default function createEpoly() {
     // === Returns null if the path is shorter than the specified distance ===
     window.google.maps.Polygon.prototype.GetPointAtDistance = function (metres) {
         // some awkward special cases
-        if (metres == 0) return this.getPath().getAt(0);
+        if (metres === 0) return this.getPath().getAt(0);
         if (metres < 0) return null;
         if (this.getPath().getLength() < 2) return null;
         var dist = 0;

@@ -79,7 +79,6 @@ class ActivityTypeBreakdown extends React.Component {
                 pad: 0
             },
             height: 220,
-            autosize: true,
             // paper_bgcolor: '#7f7f7f',
             // plot_bgcolor: '#c7c7c7',
 

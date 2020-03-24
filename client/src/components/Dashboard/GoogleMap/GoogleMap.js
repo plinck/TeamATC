@@ -9,7 +9,6 @@ const GoogleMap = (props) => {
         props.callbackParent({ isDraggable: false });
     }
 
-    console.log(props)
     return (
         <Card style={{ height: '100%' }}>
             <CardContent style={{ height: '100%' }} >

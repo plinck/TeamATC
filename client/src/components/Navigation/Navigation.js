@@ -7,7 +7,7 @@ import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
 import { withRouter } from 'react-router-dom';
 import AccountMenu from "../Account/AccountMenu";
 import './Navigation.css';
-import { Button, Typography, Container, Toolbar, IconButton, SwipeableDrawer, ListItem, ListItemText, List, ListItemIcon, Divider } from '@material-ui/core';
+import { Fab, Button, Typography, Container, Toolbar, IconButton, SwipeableDrawer, ListItem, ListItemText, List, ListItemIcon, Divider } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import HomeIcon from '@material-ui/icons/Home'
 import PersonIcon from '@material-ui/icons/Person';
@@ -17,6 +17,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import Sidenav from './SideNav/Sidenav';
 import TimerIcon from '@material-ui/icons/Timer';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
+import AddIcon from '@material-ui/icons/Add';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -88,19 +89,26 @@ let Navigation = (props) => {
       <ListItem><ListItemIcon><DashboardIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/dashboard">Home</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><DirectionsRunIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/activities">Activities</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/account">Account</NavLink></ListItemText></ListItem>
-      <ListItem><ListItemText><Button variant="contained" color="secondary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText></ListItem>
+      <ListItem><ListItemIcon><TimerIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/challenges">Challenges</NavLink></ListItemText></ListItem>
+      <Divider></Divider>
+      <ListItem><ListItemIcon><EqualizerIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/results">Full Results</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><SettingsIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/admin">Admin</NavLink></ListItemText></ListItem>
+      <Divider></Divider>
+      <ListItem><ListItemText><Button variant="contained" color="primary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText></ListItem>
       <ListItem><ListItemText> <SignOutButton /></ListItemText></ListItem>
-      {/* this.props.user.isModerator ? <li><NavLink onClick={this.forceCloseSideNav} to="/moderator">Moderator</NavLink></li> : "" */}
-    </List >
+    </List>
     ;
 
   const navigationAdmin =
     <div className={classes.navButtonsHide}>
       <Sidenav></Sidenav>
-      <Button><NavLink className={classes.menuButton} to="/dashboard">Home</NavLink></Button>
-      <Button><NavLink className={classes.menuButton} to="/activities">Activities</NavLink></Button>
-      <Button variant="contained" color="primary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button>
+
+      <NavLink className={classes.menuButton} to="/activitypage" >
+        <Fab size="small" color="primary" aria-label="add">
+          <AddIcon />
+        </Fab>
+      </NavLink>
+
       <Button><AccountMenu /></Button>
       <Button><NavLink className={classes.menuButton} to="/admin">Admin</NavLink></Button>
     </div>
@@ -128,6 +136,11 @@ let Navigation = (props) => {
       <Sidenav></Sidenav>
       <div style={{ textAlign: "right" }}>
         <Button ><AccountMenu /></Button>
+        <NavLink className={classes.menuButton} to="/activitypage" >
+          <Fab size="small" color="primary" aria-label="add">
+            <AddIcon />
+          </Fab>
+        </NavLink>
       </div>
     </div>
     ;
@@ -153,7 +166,7 @@ let Navigation = (props) => {
   let navBar, navBarMobile;
   if (props.user.authUser && props.user.isAdmin) {
     navBar = navigationAdmin;
-    navBarMobile = navigationAuthMobile;
+    navBarMobile = navigationAdminMobile;
   } else if (props.user.authUser) {
     navBar = navigationAuth;
     navBarMobile = navigationAuthMobile;
