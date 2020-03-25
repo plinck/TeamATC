@@ -122,7 +122,7 @@ const provideAuthUserContext = Component => {
                         teamUid: user.teamUid,
                         teamName: user.teamName,
 
-                        challengeUid: user.challengeUid ? user.challengeUid : null,
+                        challengeUid: user.challengeUid ? user.challengeUid : CHALLENGE,
 
                         primaryRole: user.primaryRole ? user.primaryRole : "",
                         isAdmin: user.isAdmin ? user.isAdmin : false,
