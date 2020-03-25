@@ -135,13 +135,13 @@ class ActivityDB {
     }
 
 
-    // TODO: - This is NOT working flly yet and it also will be slow so it needs complete reworking.
+    // TODO: - This is NOT working fully yet and it also will be slow so it needs complete reworking.
     // Need to sue promise all
     // Listener for all activities for all users in one challenge (NEW WORLD OF ACTIVITIES UNDER USERS)
     static getAllActivitiesInChallenge = (challengeUid) => {
         const dbChallengesRef = Util.getDBRefs().dbChallengesRef;       
-        const dbChallengeMembersRef = Util.getChallengesRef(challengeUid).dbChallengeMembersRef;        
-        const dbActivitiesRef = Util.getChallengesRef(challengeUid)().dbActivitiesRef;
+        const dbChallengeMembersRef = Util.getDBRefs().dbChallengeMembersRef;        
+        const dbActivitiesRef = Util.getDBRefs()().dbActivitiesRef;
 
         let dbActivitiesRefOrderByDate = dbActivitiesRef
             .orderBy("activityDateTime", "desc");

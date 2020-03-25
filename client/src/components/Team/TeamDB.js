@@ -168,6 +168,26 @@ class TeamDB {
             });
         });
     }
+    // Add a single team 
+    static create = (team) => {
+        return new Promise((resolve, reject) => {
+            const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
+            
+            dbTeamsRef
+                .add({
+                    description: team.description,
+                    name: team.name,
+                })
+                .then((doc) => {
+                    console.log("Firestore team successfully added");
+                    return resolve(doc.id);
+                })
+                .catch((error) => {
+                    console.error("Firestore team add failed");
+                    return reject(error);
+                });
+        });
+    }
 
     // Update Existing team
     // NOTE: - I purposely do not update uid since that is essentially the primary key

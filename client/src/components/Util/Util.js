@@ -59,11 +59,11 @@ class Util {
     }
   }
 
-  static getChallengesRef = () => {
+  // This gets DBRefs based on the challengeUid passed vs the one in session to use for dealing
+  // with challenges other than the one in the session
+  static getChallengesRef = (challengeUid) => {
     const firebase = new Firebase();
 
-    const user = Session.user;
-    const challengeUid = user && user.challengeUid ? user.challengeUid : CHALLENGE;
     console.log(`challengeUid: ${challengeUid}`)
 
     const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);        

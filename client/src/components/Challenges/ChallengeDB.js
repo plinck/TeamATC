@@ -126,6 +126,62 @@ class ChallengeDB {
         });
     }
 
+    // delete challenge
+    // Do NOT allow delete if team or actitivity or user is part of challenge
+    // right now, activity and team do NOT have challengeUid field but since
+    // they are subcollections of challenge you can test
+    static delete = (challengeId) => {
+        let anyUsers = false;
+        let anyActivities = false;
+        let anyTeams = false;
+
+        return new Promise((resolve, reject) => {
+
+            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            const docRef = dbUsersRef.where("challengeUid", "==", challengeId).limit(1);
+            docRef.get()
+            .then((docSnaps) => {
+                docSnaps.forEach((doc) => {
+                    anyUsers = true;
+                });
+                if (anyUsers) {
+                    throw new Error(`Cant delete, users assigned to this challenge`);
+                } 
+                const dbActivitiesRef = Util.getChallengesRef(challengeId).dbActivitiesRef;
+                // const docRef = dbActivitiesRef.where("challengeUid", "==", challengeId).limit(1);
+                const docRef = dbActivitiesRef.limit(1);
+                return(docRef.get());
+            }).then((docSnaps) => {
+                docSnaps.forEach((doc) => {
+                    anyActivities = true;
+                });
+                if (anyActivities) {
+                    throw new Error(`Cant delete, activities assigned to this challenge`);
+                } 
+                const dbTeamsRef = Util.getChallengesRef(challengeId).dbTeamsRef;
+                const docRef = dbTeamsRef.limit(1);
+                return(docRef.get());
+            }).then((docSnaps) => {
+                docSnaps.forEach((doc) => {
+                    anyTeams = true;
+                });
+                if (anyTeams) {
+                    throw new Error(`Cant delete, teams assigned to this challenge`);
+                } 
+                const dbChallengesRef = Util.getDBRefs().dbChallengesRef;
+                return(dbChallengesRef.doc(challengeId).delete());
+            }).then(() => {
+                console.log("Firestore Challenge successfully deleted!");
+                resolve();    
+            }).catch((err) => {
+                console.error("Error deleting firestore challenge in ChallengeDB.delete(:uid:) ", err);
+                reject(err);
+            });
+        });
+    }
+
+
+
 }
 
 export default ChallengeDB;

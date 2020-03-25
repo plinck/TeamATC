@@ -46,11 +46,10 @@ const Challenge = (props) => {
             <Grid item xs={12} md={5}>
                 <Card>
                     <CardContent style={{ textAlign: "center" }}>
-                        <Typography variant="h5">Challenge</Typography>
                         <Typography variant="h5">{props.challenge.name}</Typography>
-                        <Typography variant="h5">{props.challenge.description}</Typography>
-                        <Typography variant="h5">Start: {moment(props.challenge.startDate).format("MM-DD-YYYY")}</Typography>
-                        <Typography variant="h5">End: {moment(props.challenge.endDate).format("MM-DD-YYYY")}</Typography>
+                        <Typography>{props.challenge.description}</Typography>
+                        <Typography>Start: {moment(props.challenge.startDate).format("MM-DD-YYYY")}</Typography>
+                        <Typography>End: {moment(props.challenge.endDate).format("MM-DD-YYYY")}</Typography>
                         <Divider></Divider>
                         {enableEdit ?
                             <div>
