@@ -147,7 +147,7 @@ class ChallengeDB {
                 if (anyUsers) {
                     throw new Error(`Cant delete, users assigned to this challenge`);
                 } 
-                const dbActivitiesRef = Util.getChallengesRef(challengeId).dbActivitiesRef;
+                const dbActivitiesRef = Util.getChallengeDependentRefs(challengeId).dbActivitiesRef;
                 // const docRef = dbActivitiesRef.where("challengeUid", "==", challengeId).limit(1);
                 const docRef = dbActivitiesRef.limit(1);
                 return(docRef.get());
@@ -158,7 +158,7 @@ class ChallengeDB {
                 if (anyActivities) {
                     throw new Error(`Cant delete, activities assigned to this challenge`);
                 } 
-                const dbTeamsRef = Util.getChallengesRef(challengeId).dbTeamsRef;
+                const dbTeamsRef = Util.getChallengeDependentRefs(challengeId).dbTeamsRef;
                 const docRef = dbTeamsRef.limit(1);
                 return(docRef.get());
             }).then((docSnaps) => {

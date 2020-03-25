@@ -1,5 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import TextField from '@material-ui/core/TextField';
 import NumberFormat from 'react-number-format';
 import localStyles from './Account.module.css';
@@ -217,7 +218,7 @@ class AccountForm extends React.Component {
             <div className="container">
             <div className="card">
                 <div className="card-content">
-                    <span className="card-title">User Profile (Role: {primaryRole})</span>
+                    <span className="card-title">User Profile (Role: {primaryRole}, challenge: {this.props.user.challengeName})</span>
                     <form className={classes.container} onSubmit={this.updateUser} >
 
                         <FormControl variant="outlined" required className={classes.formControl}>
@@ -381,4 +382,4 @@ class AccountForm extends React.Component {
     }
 }
 
-export default  withStyles(styles)(AccountForm);
+export default  withStyles(styles)(withAuthUserContext(AccountForm));

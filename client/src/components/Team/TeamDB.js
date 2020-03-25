@@ -5,7 +5,9 @@ class TeamDB {
     // Everything from top down must be async or awaits do NOT wait
     static getTeams = () => {
         return new Promise((resolve, reject) => {
-            const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
+            const allRefs = Util.getDBRefs();
+            const dbTeamsRef = allRefs.dbTeamsRef;
+            console.log(`TeamDB.getTeams.ChallengeUid: ${allRefs.ChallengeUid}`);
 
             dbTeamsRef.orderBy("name").get().then((querySnapshot) => {
                 let teams = [];

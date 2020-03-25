@@ -1,5 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+
 
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -19,7 +21,6 @@ import Select from "@material-ui/core/Select";
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { withFirebase } from '../Auth/Firebase/FirebaseContext';
 import UserAuthAPI from "./UserAuthAPI";
 import UserDB from "./UserDB"
 import TeamDB from "../Team/TeamDB";
@@ -334,7 +335,7 @@ class UserForm extends React.Component {
       <div className="container">
         <div className="card">
           <div className="card-content">
-            <span className="card-title">User (Role: {primaryRole})</span>
+            <span className="card-title">User (Role: {primaryRole}, challenge: {this.props.user.challengeName})</span>
             <p>{message}</p>
             <form onSubmit={this.saveUser} >
 
@@ -498,4 +499,4 @@ class UserForm extends React.Component {
   }
 }
 
-export default withFirebase(withRouter(withStyles(styles)(UserForm)));
+export default withAuthUserContext(withRouter(withStyles(styles)(UserForm)));

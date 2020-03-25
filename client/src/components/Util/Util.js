@@ -56,12 +56,13 @@ class Util {
       dbChallengeMembersRef: dbChallengeMembersRef,
       dbActivitiesRef: dbActivitiesRef,
       dbTeamsRef: dbTeamsRef,
+      challengeUid: challengeUid
     }
   }
 
   // This gets DBRefs based on the challengeUid passed vs the one in session to use for dealing
   // with challenges other than the one in the session
-  static getChallengesRef = (challengeUid) => {
+  static getChallengeDependentRefs = (challengeUid) => {
     const firebase = new Firebase();
 
     console.log(`challengeUid: ${challengeUid}`)
