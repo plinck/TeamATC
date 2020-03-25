@@ -1,5 +1,9 @@
 import axios from 'axios';
-import { ORG, ENV, CHALLENGE} from "../Environment/Environment";
+import {
+  ORG,
+  ENV,
+  CHALLENGE
+} from "../Environment/Environment";
 import Firebase from "../Auth/Firebase/firebase";
 import Session from "../Util/Session.js";
 
@@ -44,13 +48,14 @@ class Util {
 
     const dbUsersRef = firebase.db.collection(ORG).doc(ENV).collection(`users`);
     const dbATCMembersRef = firebase.db.collection(ORG).doc(ENV).collection(`ATCMembers`);
-    const dbChallengesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges");  
+    const dbChallengesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges");
 
-    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);        
+    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);
     const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
     const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`teams`);
 
-    return {dbUsersRef: dbUsersRef,
+    return {
+      dbUsersRef: dbUsersRef,
       dbATCMembersRef: dbATCMembersRef,
       dbChallengesRef: dbChallengesRef,
       dbChallengeMembersRef: dbChallengeMembersRef,
@@ -60,18 +65,54 @@ class Util {
     }
   }
 
+  // need to get dbRefs based in on current so no hardocding
+  static altGetDBRefs = () => {
+    const firebase = new Firebase();
+
+    return new Promise((resolve, reject) => {
+
+        Util.getCurrentUser().then(user => {
+            const challengeUid = user.challengeUid ? user.challengeUid : CHALLENGE;
+            console.log(`challengeUid: ${challengeUid}`)
+
+            const dbUsersRef = firebase.db.collection(ORG).doc(ENV).collection(`users`);
+            const dbATCMembersRef = firebase.db.collection(ORG).doc(ENV).collection(`ATCMembers`);
+            const dbChallengesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges");
+
+            const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);
+            const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
+            const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`teams`);
+
+            resolve({
+                dbUsersRef: dbUsersRef,
+                dbATCMembersRef: dbATCMembersRef,
+                dbChallengesRef: dbChallengesRef,
+                dbChallengeMembersRef: dbChallengeMembersRef,
+                dbActivitiesRef: dbActivitiesRef,
+                dbTeamsRef: dbTeamsRef,
+                challengeUid: challengeUid
+            })
+        }).catch (err => {
+            console.error(`Error getting user: ${err}`);
+            reject(err);
+        });
+    });
+  }
+
   // This gets DBRefs based on the challengeUid passed vs the one in session to use for dealing
   // with challenges other than the one in the session
   static getChallengeDependentRefs = (challengeUid) => {
     const firebase = new Firebase();
 
+    challengeUid = challengeUid ? challengeUid : CHALLENGE;
     console.log(`challengeUid: ${challengeUid}`)
 
-    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);        
+    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);
     const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
     const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`teams`);
 
-    return {dbChallengeMembersRef: dbChallengeMembersRef,
+    return {
+      dbChallengeMembersRef: dbChallengeMembersRef,
       dbActivitiesRef: dbActivitiesRef,
       dbTeamsRef: dbTeamsRef,
     }
@@ -81,6 +122,27 @@ class Util {
     const firebase = new Firebase();
     const currentAuthUser = await firebase.auth.currentUser;
     return currentAuthUser;
+  }
+
+  static getCurrentUser = () => {
+    const firebase = new Firebase();
+    const dbUsersRef = firebase.db.collection(ORG).doc(ENV).collection(`users`);
+    // return a promise
+    return new Promise((resolve, reject) => {
+        let currentAuthUser = firebase.doGetCurrentUser();
+        if (currentAuthUser) {
+            dbUsersRef.doc(currentAuthUser.uid).get().then (doc => {
+                let user = doc.data();
+                user.id = doc.id; 
+                resolve(user);
+            }).catch(err => {
+                console.error(`Error getting current user: ${err}`)
+                reject(err)
+            });
+        } else {
+            reject(`User not logged in`);
+        }
+    });
   }
 
   static getFirestoreDB = () => {
@@ -105,7 +167,11 @@ class Util {
   static apiGet = async (api) => {
     const firebase = new Firebase();
     const token = await firebase.doRefreshToken(true);
-    return (axios.get(api, { headers: { "FIREBASE_AUTH_TOKEN": token } }));
+    return (axios.get(api, {
+      headers: {
+        "FIREBASE_AUTH_TOKEN": token
+      }
+    }));
   }
 
 
@@ -116,7 +182,11 @@ class Util {
   static apiPost = async (api, param) => {
     const firebase = new Firebase();
     const token = await firebase.doRefreshToken(true);
-    return (axios.post(api, param, { headers: { "FIREBASE_AUTH_TOKEN": token } }));
+    return (axios.post(api, param, {
+      headers: {
+        "FIREBASE_AUTH_TOKEN": token
+      }
+    }));
   }
 
   // This is to call backend when not authorixed

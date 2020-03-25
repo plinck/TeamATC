@@ -121,33 +121,29 @@ class AccountForm extends React.Component {
 
     // get available teams for select list
     fetchTeams() {
-        TeamDB.getTeams()
-        .then(teams => {
-        
-        // Convert array of teams to key value unqie pairs for easy lookup on primary key
-        let teamLookup = {}
-        teams.forEach(team => {
-            teamLookup[team.id] = team.name;
-        });
-        
-        this.setState({
-            teams: teams,
-            teamLookup: teamLookup
-        });
-
-        })
-        .catch(err => {
-        console.error(`Error getting teams ${err}`);
-        this.setState({error: `Error getting teams ${err}`});
+        TeamDB.getTeams().then(teams => {
+            // Convert array of teams to key value unqie pairs for easy lookup on primary key
+            let teamLookup = {}
+            teams.forEach(team => {
+                teamLookup[team.id] = team.name;
+            });
+            
+            this.setState({
+                teams: teams,
+                teamLookup: teamLookup
+            });
+        }).catch(err => {
+            console.error(`Error getting teams ${err}`);
+            this.setState({error: `Error getting teams ${err}`});
         });
     }
 
     componentDidMount() {
+        console.log(`authUser.uid: ${this.state.uid}`);
+        // since t hey are auth, uid == id
+        this.fetchUser(this.state.uid);
         this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
 
-        // since t hey are auth, uid == id
-        console.log(`authUser.uid: ${this.state.uid}`);
-        this.fetchUser(this.state.uid);
     }
 
     updateUser = (e) => {

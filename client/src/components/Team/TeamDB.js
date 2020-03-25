@@ -5,23 +5,25 @@ class TeamDB {
     // Everything from top down must be async or awaits do NOT wait
     static getTeams = () => {
         return new Promise((resolve, reject) => {
-            const allRefs = Util.getDBRefs();
-            const dbTeamsRef = allRefs.dbTeamsRef;
-            console.log(`TeamDB.getTeams.ChallengeUid: ${allRefs.ChallengeUid}`);
+            Util.altGetDBRefs().then ( allDBRefs => {
+                const dbTeamsRef = allDBRefs.dbTeamsRef;
 
-            dbTeamsRef.orderBy("name").get().then((querySnapshot) => {
-                let teams = [];
-                querySnapshot.forEach(doc => {
-                    let team = {};
-                    team = doc.data();
-                    team.id = doc.id;
-
-                    teams.push(team);
-                });
-                // console.log(users);
-                return (resolve(teams));
+                dbTeamsRef.orderBy("name").get().then((querySnapshot) => {
+                    let teams = [];
+                    querySnapshot.forEach(doc => {
+                        let team = {};
+                        team = doc.data();
+                        team.id = doc.id;
+    
+                        teams.push(team);
+                    });
+                    // console.log(users);
+                    return (resolve(teams));
+                }).catch(err => {
+                    reject(err);
+                });    
             }).catch(err => {
-                reject(err);
+                console.error(`Error in TeamDB.getTeams : ${err}`);
             });
         });
     }
