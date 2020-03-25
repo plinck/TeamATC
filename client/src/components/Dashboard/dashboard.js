@@ -75,7 +75,7 @@ class Dashboard extends React.PureComponent {
     }
 
     createListener(challengeUid) {
-        let allDBRefs = Util.getDBRefs(challengeUid);
+        let allDBRefs = Util.getChallengeDependentRefs(challengeUid);
         const dbActivitiesRef = allDBRefs.dbActivitiesRef;
 
         let ref = dbActivitiesRef

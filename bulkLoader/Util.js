@@ -9,7 +9,7 @@ const ENV="prod"
 
 class Util {
 
-    static getDBRefs (challengeUid) {
+    static getBaseDBRefs (challengeUid) {
         if (!challengeUid) {
           challengeUid = "9uxEvhpHM2cqCcn1ESZg";
         }

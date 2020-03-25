@@ -83,7 +83,7 @@ const provideAuthUserContext = Component => {
 
             // User listener for the current signed in user
             // Try to set state together
-            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
             let docRef = dbUsersRef.doc(authUser.uid);
             this.userListener = docRef.onSnapshot((doc) => {
                 const user = doc.data();
@@ -158,7 +158,7 @@ const provideAuthUserContext = Component => {
 
             // User listener for the current signed in user
             // Try to set state together
-            const dbChallengesRef = Util.getDBRefs().dbChallengesRef;
+            const dbChallengesRef = Util.getBaseDBRefs().dbChallengesRef;
             let docRef = dbChallengesRef.doc(challengeId);
             this.challengeListener = docRef.onSnapshot((doc) => {
                 const challenge = doc.data();

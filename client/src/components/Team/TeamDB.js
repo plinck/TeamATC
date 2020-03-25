@@ -5,7 +5,7 @@ class TeamDB {
     // Everything from top down must be async or awaits do NOT wait
     static getTeams = () => {
         return new Promise((resolve, reject) => {
-            Util.altGetDBRefs().then ( allDBRefs => {
+            Util.promiseGetChallengeDBRefs().then ( allDBRefs => {
                 const dbTeamsRef = allDBRefs.dbTeamsRef;
 
                 dbTeamsRef.orderBy("name").get().then((querySnapshot) => {
@@ -29,41 +29,45 @@ class TeamDB {
     }
 
     // -------------------------------------------------------------------------------------------------
-    // Activities : getUserWithActivity - get all actiities with their firstName lastName
+    // Activities : getTeamsWithActivities - get all actiities with their firstName lastName
     // This isnt SUPER effecient since it gets all users even if they havent had an activity
     static getTeamsWithActivities = () => {
         // its a promise so return
         return new Promise((resolve, reject) => {
-            let teams = {} ;
-            let activityArray = [];
-
-            const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
-
-            dbTeamsRef.orderBy("name").get().then((results) => {
-                results.forEach((doc) => {
-                    teams[doc.id] = doc.data();
-                });
+            Util.promiseGetChallengeDBRefs().then ( allDBRefs => {
+                const dbTeamsRef = allDBRefs.dbTeamsRef;
+                const dbActivitiesRef = allDBRefs.dbActivitiesRef;
                 
-                const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
+                let teams = {} ;
+                let activityArray = [];
 
-                const ref = dbActivitiesRef.orderBy("time", "desc");
-                ref.get().then((docSnaps) => {
-                    docSnaps.forEach((doc) => {
-                        const activity = doc.data();
-                        activity.id = doc.id;
-                        activity.activityDateTime = activity.activityDateTime.toDate();
-                        activity.teamName = teams[doc.data().uid].name;
-                        activity.teamDescription = teams[doc.data().uid].description;
-                        activityArray.push(activity);
+                dbTeamsRef.orderBy("name").get().then((results) => {
+                    results.forEach((doc) => {
+                        teams[doc.id] = doc.data();
                     });
-                    resolve(activityArray);
+                    
+                    const ref = dbActivitiesRef.orderBy("time", "desc");
+                    ref.get().then((docSnaps) => {
+                        docSnaps.forEach((doc) => {
+                            const activity = doc.data();
+                            activity.id = doc.id;
+                            activity.activityDateTime = activity.activityDateTime.toDate();
+                            activity.teamName = teams[doc.data().uid].name;
+                            activity.teamDescription = teams[doc.data().uid].description;
+                            activityArray.push(activity);
+                        });
+                        resolve(activityArray);
+                    }).catch((err) => {
+                        console.error("Error in TeamDB.getTeamsWithActivities(): ", err);
+                        reject(`Error in TeamDB.getTeamsWithActivities(): ${err}`);
+                    });
                 }).catch((err) => {
-                    console.error("Error in TeamDB.getTeamsWithActivities(): ", err);
-                    reject(`Error in TeamDB.getTeamsWithActivities(): ${err}`);
+                    console.error("Error in ActivityDB.getTeamsWithActivities user : ", err);
+                    reject(`Error in ActivityDB.getTeamsWithActivities user: ${err}`);
                 });
             }).catch((err) => {
-                console.error("Error in ActivityDB.getUserWithActivity user : ", err);
-                reject(`Error in ActivityDB.getUserWithActivity user: ${err}`);
+                console.error("Error in ActivityDB.getTeamsWithActivities: ", err);
+                reject(`Error in ActivityDB.getTeamsWithActivities getting dbRefs: ${err}`);
             });
         }); // promise
     }// method
@@ -72,20 +76,23 @@ class TeamDB {
     static get = (id) => {
         // its a promise so return
         return new Promise((resolve, reject) => {
-            // then get from firestore
-            const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
+            Util.promiseGetChallengeDBRefs().then ( allDBRefs => {
+                const dbTeamsRef = allDBRefs.dbTeamsRef;
 
-            let docRef = dbTeamsRef.doc(id);
-            docRef.get().then((doc) => {
-                if (doc.exists) {
-                    // update
-                    let team = doc.data();
-                    return(resolve(team));
-                }
-                console.error("Team not found in firestore");
-                return(resolve());
+                let docRef = dbTeamsRef.doc(id);
+                docRef.get().then((doc) => {
+                    if (doc.exists) {
+                        // update
+                        let team = doc.data();
+                        return(resolve(team));
+                    }
+                    console.error("Team not found in firestore");
+                    return(resolve());
+                }).catch(err => {
+                    reject(`Error getting team in TeamDB.get ${err}`);
+                });
             }).catch(err => {
-                reject(`Error getting team in TeamDB.get ${err}`);
+                reject(`Error getting team dbRefs in TeamDB.get ${err}`);
             });
         });
     }
@@ -99,36 +106,39 @@ class TeamDB {
 
         // its a promise so return
         return new Promise((resolve, reject) => {
-            // then get from firestore
-            const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
+            Util.promiseGetChallengeDBRefs().then ( allDBRefs => {
+                const dbTeamsRef = allDBRefs.dbTeamsRef;
+                const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
 
-            let docRef = dbTeamsRef.doc(id);
-            docRef.get().then((doc) => {
-                if (doc.exists) {
-                    // update
-                    team = doc.data();
-                    team.id = doc.id;
-                    const dbUsersRef = Util.getDBRefs().dbUsersRef;
-                    const docRef = dbUsersRef.where("teamUid", "==", team.id).orderBy("lastName", "desc");
-                    return(docRef.get());
-                } else {
-                    throw new Error(`Team not found`);
-                }
-            }).then(docSnaps => {
-                docSnaps.forEach((doc) => {
-                    const user = doc.data();
-                    user.id = doc.id;
+                let docRef = dbTeamsRef.doc(id);
+                docRef.get().then((doc) => {
+                    if (doc.exists) {
+                        // update
+                        team = doc.data();
+                        team.id = doc.id;
+                        const docRef = dbUsersRef.where("teamUid", "==", team.id).orderBy("lastName", "desc");
+                        return(docRef.get());
+                    } else {
+                        throw new Error(`Team not found`);
+                    }
+                }).then(docSnaps => {
+                    docSnaps.forEach((doc) => {
+                        const user = doc.data();
+                        user.id = doc.id;
 
-                    user.teamUid = team.id;
-                    user.teamName = team.name;
-                    
-                    userArray.push(user);
+                        user.teamUid = team.id;
+                        user.teamName = team.name;
+                        
+                        userArray.push(user);
+                    });
+                    team.users = userArray;
+                    console.log(`Team with users ${JSON.stringify(team)}`);
+                    resolve(team);
+                }).catch(err => {
+                    reject(`Error getting team in TeamDB.get ${err}`);
                 });
-                team.users = userArray;
-                console.log(`Team with users ${JSON.stringify(team)}`);
-                resolve(team);
             }).catch(err => {
-                reject(`Error getting team in TeamDB.get ${err}`);
+                reject(`Error getting team dbRefs in TeamDB.get ${err}`);
             });
         });
     }
@@ -140,34 +150,39 @@ class TeamDB {
         let anyActivities = false;
 
         return new Promise((resolve, reject) => {
-
-            const dbUsersRef = Util.getDBRefs().dbUsersRef;
-            const docRef = dbUsersRef.where("teamUid", "==", teamId).limit(1);
-            docRef.get()
-            .then((docSnaps) => {
-                docSnaps.forEach((doc) => {
-                    anyUsers = true;
+            Util.promiseGetChallengeDBRefs().then ( allDBRefs => {
+                const dbTeamsRef = allDBRefs.dbTeamsRef;
+                const dbActivitiesRef = allDBRefs.dbActivitiesRef;
+                const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
+                
+                const docRef = dbUsersRef.where("teamUid", "==", teamId).limit(1);
+                docRef.get()
+                .then((docSnaps) => {
+                    docSnaps.forEach((doc) => {
+                        anyUsers = true;
+                    });
+                    if (anyUsers) {
+                        throw new Error(`Cant delete, users assigned to this team`);
+                    } 
+                    const docRef = dbActivitiesRef.where("teamUid", "==", teamId).limit(1);
+                    return(docRef.get());
+                }).then((docSnaps) => {
+                    docSnaps.forEach((doc) => {
+                        anyActivities = true;
+                    });
+                    if (anyActivities) {
+                        throw new Error(`Cant delete, activities assigned to this team`);
+                    } 
+                    return(dbTeamsRef.doc(teamId).delete());
+                }).then(() => {
+                    console.log("Firestore Team successfully deleted!");
+                    resolve();    
+                }).catch((err) => {
+                    console.error("Error deleting firestore team in TeamDB.delete(:uid:) ", err);
+                    reject(err);
                 });
-                if (anyUsers) {
-                    throw new Error(`Cant delete, users assigned to this team`);
-                } 
-                const dbActivitiesRef = Util.getDBRefs().dbActivitiesRef;
-                const docRef = dbActivitiesRef.where("teamUid", "==", teamId).limit(1);
-                return(docRef.get());
-            }).then((docSnaps) => {
-                docSnaps.forEach((doc) => {
-                    anyActivities = true;
-                });
-                if (anyActivities) {
-                    throw new Error(`Cant delete, activities assigned to this team`);
-                } 
-                const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
-                return(dbTeamsRef.doc(teamId).delete());
-            }).then(() => {
-                console.log("Firestore Team successfully deleted!");
-                resolve();    
             }).catch((err) => {
-                console.error("Error deleting firestore team in TeamDB.delete(:uid:) ", err);
+                console.error("Error deleting firestore team getting dbRefs in TeamDB.delete(:uid:) ", err);
                 reject(err);
             });
         });
@@ -175,21 +190,24 @@ class TeamDB {
     // Add a single team 
     static create = (team) => {
         return new Promise((resolve, reject) => {
-            const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
+            Util.promiseGetChallengeDBRefs().then ( allDBRefs => {
+                const dbTeamsRef = allDBRefs.dbTeamsRef;
             
-            dbTeamsRef
-                .add({
-                    description: team.description,
-                    name: team.name,
-                })
-                .then((doc) => {
+                dbTeamsRef.add({
+                        description: team.description,
+                        name: team.name,
+                }).then((doc) => {
                     console.log("Firestore team successfully added");
                     return resolve(doc.id);
-                })
-                .catch((error) => {
+                }).catch((error) => {
                     console.error("Firestore team add failed");
                     return reject(error);
                 });
+
+            }).catch((error) => {
+                console.error("Firestore team add failed getting dbRefs");
+                return reject(error);
+            });
         });
     }
 
@@ -198,16 +216,20 @@ class TeamDB {
     // I think this will add if it does nort exist so use for add
     static update =  (team) => {
         console.log(`trying to update team in firestore: ${team}`);
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
+            Util.promiseGetChallengeDBRefs().then ( allDBRefs => {
+                const dbTeamsRef = allDBRefs.dbTeamsRef;
 
-            // we always want uid = id to keep auth and firestore in sync
-            const dbTeamsRef = Util.getDBRefs().dbTeamsRef;
+                dbTeamsRef.doc(team.uid).set({
+                    name: team.name ? team.name : "No Name",
+                    description: team.description ? team.description : ""
+                },{ merge: true }).then(() => {
+                    resolve();
+                }).catch(err => {
+                    console.error(`error updating team: ${err}`);
+                    reject(err);
+                });
 
-            dbTeamsRef.doc(team.uid).set({
-                name: team.name ? team.name : "No Name",
-                description: team.description ? team.description : ""
-            },{ merge: true }).then(() => {
-                resolve();
             }).catch(err => {
                 console.error(`error updating team: ${err}`);
                 reject(err);

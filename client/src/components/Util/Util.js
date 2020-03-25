@@ -1,5 +1,9 @@
 import axios from 'axios';
-import { ORG, ENV, CHALLENGE } from "../Environment/Environment";
+import {
+  ORG,
+  ENV,
+  CHALLENGE
+} from "../Environment/Environment";
 import Firebase from "../Auth/Firebase/firebase";
 import Session from "../Util/Session.js";
 
@@ -35,33 +39,26 @@ class Util {
   }
 
   // need to get dbRefs based in on current infomratkjon so no hardocding
-  static getDBRefs = (c) => {
+  static getBaseDBRefs = () => {
     const firebase = new Firebase();
-    console.log(c)
-    const user = c ? c : Session.user;
-    const challengeUid = user && user.challengeUid ? user.challengeUid : c ? c : CHALLENGE;
+
+    const user = Session.user;
+    const challengeUid = user && user.challengeUid ? user.challengeUid : CHALLENGE;
+    console.log(`challengeUid: ${challengeUid}`)
 
     const dbUsersRef = firebase.db.collection(ORG).doc(ENV).collection(`users`);
     const dbATCMembersRef = firebase.db.collection(ORG).doc(ENV).collection(`ATCMembers`);
     const dbChallengesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges");
 
-    const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);
-    const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
-    const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`teams`);
-
     return {
       dbUsersRef: dbUsersRef,
       dbATCMembersRef: dbATCMembersRef,
       dbChallengesRef: dbChallengesRef,
-      dbChallengeMembersRef: dbChallengeMembersRef,
-      dbActivitiesRef: dbActivitiesRef,
-      dbTeamsRef: dbTeamsRef,
-      challengeUid: challengeUid
     }
   }
 
   // need to get dbRefs based in on current so no hardocding
-  static altGetDBRefs = () => {
+  static promiseGetChallengeDBRefs = () => {
     const firebase = new Firebase();
 
     return new Promise((resolve, reject) => {
@@ -70,18 +67,11 @@ class Util {
             const challengeUid = user.challengeUid ? user.challengeUid : CHALLENGE;
             console.log(`challengeUid: ${challengeUid}`)
 
-            const dbUsersRef = firebase.db.collection(ORG).doc(ENV).collection(`users`);
-            const dbATCMembersRef = firebase.db.collection(ORG).doc(ENV).collection(`ATCMembers`);
-            const dbChallengesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges");
-
             const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);
             const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
             const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`teams`);
 
             resolve({
-                dbUsersRef: dbUsersRef,
-                dbATCMembersRef: dbATCMembersRef,
-                dbChallengesRef: dbChallengesRef,
                 dbChallengeMembersRef: dbChallengeMembersRef,
                 dbActivitiesRef: dbActivitiesRef,
                 dbTeamsRef: dbTeamsRef,
@@ -99,6 +89,8 @@ class Util {
   static getChallengeDependentRefs = (challengeUid) => {
     const firebase = new Firebase();
 
+    challengeUid = challengeUid ? challengeUid : CHALLENGE;
+    console.log(`challengeUid: ${challengeUid}`)
 
     const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);
     const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
