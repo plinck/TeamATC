@@ -15,24 +15,8 @@ const provideAuthUserContext = Component => {
     class ProvideAuthUserContext extends React.Component {
         constructor(props) {
             super(props);
-            let allDBRefs = Util.getDBRefs();
-
-            const dbUsersRef = allDBRefs.dbUsersRef;
-            const dbATCMembersRef = allDBRefs.dbATCMembersRef;
-
-            const dbChallengesRef = allDBRefs.dbChallengesRef;
-            const dbChallengeMembersRef = allDBRefs.dbChallengeMembersRef;
-            const dbActivitiesRef = allDBRefs.dbActivitiesRef;
-            const dbTeamsRef = allDBRefs.dbTeamsRef;
             
             this.state = {
-                dbUsersRef: dbUsersRef,
-                dbActivitiesRef: dbActivitiesRef,
-                dbTeamsRef: dbTeamsRef,
-                dbATCMembersRef: dbATCMembersRef,
-                dbChallengeMembersRef: dbChallengeMembersRef,
-                dbChallengesRef: dbChallengesRef,
-
                 authUser: null,
                 token: null,
 
@@ -47,6 +31,7 @@ const provideAuthUserContext = Component => {
                 teamName: null,
 
                 challengeUid: null,
+                challengeName: null,
 
                 primaryRole: "user",
                 isAdmin: false,
