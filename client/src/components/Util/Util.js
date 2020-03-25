@@ -1,9 +1,5 @@
 import axios from 'axios';
-import {
-  ORG,
-  ENV,
-  CHALLENGE
-} from "../Environment/Environment";
+import { ORG, ENV, CHALLENGE } from "../Environment/Environment";
 import Firebase from "../Auth/Firebase/firebase";
 import Session from "../Util/Session.js";
 
@@ -39,12 +35,11 @@ class Util {
   }
 
   // need to get dbRefs based in on current infomratkjon so no hardocding
-  static getDBRefs = () => {
+  static getDBRefs = (c) => {
     const firebase = new Firebase();
-
-    const user = Session.user;
-    const challengeUid = user && user.challengeUid ? user.challengeUid : CHALLENGE;
-    console.log(`challengeUid: ${challengeUid}`)
+    console.log(c)
+    const user = c ? c : Session.user;
+    const challengeUid = user && user.challengeUid ? user.challengeUid : c ? c : CHALLENGE;
 
     const dbUsersRef = firebase.db.collection(ORG).doc(ENV).collection(`users`);
     const dbATCMembersRef = firebase.db.collection(ORG).doc(ENV).collection(`ATCMembers`);
@@ -104,8 +99,6 @@ class Util {
   static getChallengeDependentRefs = (challengeUid) => {
     const firebase = new Firebase();
 
-    challengeUid = challengeUid ? challengeUid : CHALLENGE;
-    console.log(`challengeUid: ${challengeUid}`)
 
     const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);
     const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);

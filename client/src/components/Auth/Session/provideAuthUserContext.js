@@ -15,7 +15,7 @@ const provideAuthUserContext = Component => {
     class ProvideAuthUserContext extends React.Component {
         constructor(props) {
             super(props);
-            
+
             this.state = {
                 authUser: null,
                 token: null,
@@ -46,10 +46,10 @@ const provideAuthUserContext = Component => {
                 let token = await this.props.firebase.doRefreshToken();
                 this.setState({
                     token: token,
-                 });
+                });
             } catch {
                 console.error("Error refreshng token");
-                this.setState({token: null});
+                this.setState({ token: null });
             }
         }
 
@@ -61,7 +61,7 @@ const provideAuthUserContext = Component => {
             // Auth Listener
             this.listener = this.props.firebase.auth.onAuthStateChanged(
                 authUser => {
-                    if (authUser) {        
+                    if (authUser) {
                         // try to get userListener going
                         this.setupUserListener(authUser);
 
@@ -72,7 +72,7 @@ const provideAuthUserContext = Component => {
                         });
                     }
                 },
-            );        
+            );
         }
 
         setupUserListener(authUser) {
@@ -96,7 +96,7 @@ const provideAuthUserContext = Component => {
                         user.primaryRole = "moderator"
                     } else {
                         user.primaryRole = "athlete"
-                        user.isUser  = true;
+                        user.isUser = true;
                     }
                     // Update my fake session object
                     Session.user = user;
@@ -106,7 +106,7 @@ const provideAuthUserContext = Component => {
                     this.setupChallengeListener(user.challengeUid)
 
                     this.setState({
-                        authUser: authUser, 
+                        authUser: authUser,
                         uid: authUser.uid,
                         email: authUser.email,
 
@@ -125,23 +125,29 @@ const provideAuthUserContext = Component => {
                         isModerator: user.isModerator ? user.isModerator : false,
                         isUser: user.isUser ? user.isUser : false
                     });
+                    // Update my fake session object
+                    Session.user = user;
+
+                    // Listen to current challenge to get name, descirption for pages
+                    this.setupChallengeListener(user.challengeUid)
+
                     // update firebase auth profile if this user's info changed
-                    UserAuthAPI.updateCurrentUserAuthProfile(user).then (() => {
+                    UserAuthAPI.updateCurrentUserAuthProfile(user).then(() => {
                         // OK, no harm done
                     }).catch(err => {
                         // OK, no harm done
                     });
                 } else {            // If cant find *user* you still need to set authUser
                     this.setState({
-                        authUser: authUser, 
+                        authUser: authUser,
                         uid: authUser.uid,
                         displayName: authUser.displayName,
                         phoneNumber: authUser.phoneNumber,
-                        email: authUser.email    
+                        email: authUser.email
                     });
                 }
                 this.refreshToken();
-            });         
+            });
         }
 
         setupChallengeListener(challengeId) {
@@ -165,8 +171,9 @@ const provideAuthUserContext = Component => {
                         challengeName: challenge.name,
                     });
                     // Update my fake session object
+                    Session.challenge = challenge;
                 }
-            });         
+            });
         }
 
         // This deletes listener to clean things up and prevent mem leaks
@@ -186,9 +193,9 @@ const provideAuthUserContext = Component => {
         // it provides the state of this a-object to ant consumer
         // I am not 100% sure its cleaner and easier but I will go with it for now.
         render() {
-            return ( 
-                <AuthUserContext.Provider value = {this.state} >
-                    <Component {...this.props}/>  
+            return (
+                <AuthUserContext.Provider value={this.state} >
+                    <Component {...this.props} />
                 </AuthUserContext.Provider>
             );
         }

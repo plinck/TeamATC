@@ -47,6 +47,7 @@ class Dashboard extends React.PureComponent {
             loadingFlag: true,
             activities: [],
             myActivities: [],
+            totals: {},
         };
     }
 
@@ -62,8 +63,6 @@ class Dashboard extends React.PureComponent {
     }
 
     activeListener = undefined;
-    totals = {};
-    activitiesUpdated = false;
 
     resetLayout() {
         this.setState({ layouts: {} })
@@ -75,12 +74,8 @@ class Dashboard extends React.PureComponent {
         this.setState({ layouts });
     }
 
-    componentDidMount() {
-        this._mounted = true;
-        let layouts = getFromLS("layouts") || {};
-        this.setState({ loadingFlag: true, layouts: JSON.parse(JSON.stringify(layouts)) });
-
-        let allDBRefs = Util.getDBRefs();
+    createListener(challengeUid) {
+        let allDBRefs = Util.getDBRefs(challengeUid);
         const dbActivitiesRef = allDBRefs.dbActivitiesRef;
 
         let ref = dbActivitiesRef
@@ -122,13 +117,38 @@ class Dashboard extends React.PureComponent {
                     }
                 }
             });
-            this.activitiesUpdated = true;
+            const totals = CalculateTotals.totals(activities, this.props.user.teamUid, this.props.user.teamName,
+                this.props.user.uid, this.props.user.displayName);
+            let myActivities = this.myActivitiesFilter(activities);
             this.setState({
-                loadingFlag: false
+                loadingFlag: false,
+                activities,
+                totals,
+                myActivities
             });
         }, (error) => {
             console.error(`Error attaching listener: ${error}`);
         });
+    }
+
+    componentDidMount() {
+        this._mounted = true;
+        let layouts = getFromLS("layouts") || {};
+        this.setState({ loadingFlag: true, layouts: JSON.parse(JSON.stringify(layouts)) });
+        if (this.props.user.challengeUid) {
+            this.createListener(this.props.user.challengeUid)
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
+            if (this.activeListener) {
+                this.activeListener();
+                // console.log(`Detached listener`);
+            }
+            console.log(this.props.user.challengeUid)
+            this.createListener(this.props.user.challengeUid)
+        }
     }
     // Search for object in array based on key using uniqure ID
     searchForActivity(keyValue, keyName, searchArray) {
@@ -160,10 +180,8 @@ class Dashboard extends React.PureComponent {
         }
     }
 
-    async myActivitiesFilter() {
-        const activities = this.state.activities;
+    myActivitiesFilter(activities) {
         let myActivities = [];
-
         myActivities = activities.filter(activity => {
             if (activity.uid === this.props.user.uid) {
                 return activity;
@@ -171,7 +189,7 @@ class Dashboard extends React.PureComponent {
                 return false;
             }
         });
-        this.setState({ myActivities: myActivities });
+        return myActivities;
     }
 
 
@@ -181,24 +199,11 @@ class Dashboard extends React.PureComponent {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
 
-        // Some props take time to get ready so return null when uid not avaialble
-        if (this.props.user.uid === null) {
-            return null;
-        }
-
-        // if the listener updated the state
-        if (this.activitiesUpdated) {
-            this.totals = CalculateTotals.totals(this.state.activities, this.props.user.teamUid, this.props.user.teamName,
-                this.props.user.uid, this.props.user.displayName);
-            this.myActivitiesFilter();
-            this.activitiesUpdated = false;
-        }
 
         // Some need to catch up for some reason - I had to refresh browser after going to activities page
-        if (!this.totals || !this.totals.userR || !this.totals.teamR) {
+        if (!this.state.totals || !this.state.totals.userR || !this.state.totals.teamR) {
             return null;
         }
-        console.log(this.props)
 
         let myActivities = this.state.myActivities;
         if (this.props.user.authUser) {
@@ -220,40 +225,40 @@ class Dashboard extends React.PureComponent {
                                     title="Haynes City for Bethany"
                                     start='Seattle, Washington'
                                     end='Haines City, FL'
-                                    teamTotals={this.totals.teamR}
+                                    teamTotals={this.state.totals.teamR}
                                     callbackParent={() => this.onChildChanged()} />
                             </div>
                             <div key="12" data-grid={{ w: 4, h: 4, x: 0, y: 1, minW: 3, minH: 4, maxW: 4, maxH: 5 }}>
                                 <TeamWidget
                                     team={this.props.user.teamName}
-                                    challenge={this.props.user.challengeUid}
+                                    challenge={this.props.user.challengeName}
                                 />
                             </div>
                             <div key="1" data-grid={{ w: 4, h: 6, x: 4, y: 1, minW: 4, minH: 6, maxW: 6 }}>
-                                <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={true} />
+                                <ResultsCard teamTotals={this.state.totals.teamR} userTotals={this.state.totals.userR} onlyTeams={true} />
                             </div>
                             <div key="2" data-grid={{ w: 4, h: 6, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                 <ActivitiesCard name={this.props.user.displayName} activity={myActivities} />
                             </div>
                             <div key="3" data-grid={{ w: 4, h: 11, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
-                                <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={false} />
+                                <ResultsCard teamTotals={this.state.totals.teamR} userTotals={this.state.totals.userR} onlyTeams={false} />
                             </div>
                             <div key="4" data-grid={{ w: 4, h: 8, x: 0, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
                                     title={`All Athletes`}
-                                    currentTotalsShare={this.totals.all}
+                                    currentTotalsShare={this.state.totals.all}
                                 />
                             </div>
                             <div key="5" data-grid={{ w: 4, h: 8, x: 4, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
                                     title={`${this.props.user.displayName}`}
-                                    currentTotalsShare={this.totals.user}
+                                    currentTotalsShare={this.state.totals.user}
                                 />
                             </div>
                             <div key="6" data-grid={{ w: 4, h: 8, x: 8, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
                                     title={`Team ${this.props.user.teamName}`}
-                                    currentTotalsShare={this.totals.team}
+                                    currentTotalsShare={this.state.totals.team}
                                 />
                             </div>
                             <div key="7" data-grid={{ w: 8, h: 10, x: 0, y: 4, minW: 6, minH: 10, maxW: 12, maxH: 10 }}>
@@ -267,14 +272,14 @@ class Dashboard extends React.PureComponent {
                                 <PointsBreakdownGraph
                                     title={`Points by Team`}
                                     graphType="Team"
-                                    totals={this.totals}
+                                    totals={this.state.totals}
                                 />
                             </div>
                             <div key="9" data-grid={{ w: 4, h: 9, x: 0, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
                                 <PointsBreakdownGraph
                                     title={`Top Members`}
                                     graphType="User"
-                                    totals={this.totals}
+                                    totals={this.state.totals}
                                 />
                             </div>
                             <div key="10" data-grid={{ w: 4, h: 9, x: 4, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
