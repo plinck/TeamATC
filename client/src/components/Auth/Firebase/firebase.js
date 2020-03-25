@@ -43,6 +43,7 @@ class Firebase {
       }
     }
 
+    this.currentAuthUser = firebase.auth().currentUser;
     this.auth = firebase.auth();
     this.db = firebase.firestore();
     this.functions = firebase.functions();

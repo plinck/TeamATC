@@ -98,6 +98,13 @@ const provideAuthUserContext = Component => {
                         user.primaryRole = "athlete"
                         user.isUser = true;
                     }
+                    // Update my fake session object
+                    Session.user = user;
+                    console.log(`setupUserListener ==> Session.user: ${JSON.stringify(Session.user)}`)
+
+                    // Listen to current challenge to get name, descirption for pages
+                    this.setupChallengeListener(user.challengeUid)
+
                     this.setState({
                         authUser: authUser,
                         uid: authUser.uid,
@@ -118,12 +125,15 @@ const provideAuthUserContext = Component => {
                         isModerator: user.isModerator ? user.isModerator : false,
                         isUser: user.isUser ? user.isUser : false
                     });
+<<<<<<< HEAD
                     // Update my fake session object
                     Session.user = user;
 
                     // Listen to current challenge to get name, descirption for pages
                     this.setupChallengeListener(user.challengeUid)
 
+=======
+>>>>>>> master
                     // update firebase auth profile if this user's info changed
                     UserAuthAPI.updateCurrentUserAuthProfile(user).then(() => {
                         // OK, no harm done
@@ -157,12 +167,17 @@ const provideAuthUserContext = Component => {
                 const challenge = doc.data();
                 challenge.id = doc.id;
                 if (challenge) {
+                    Session.challenge = challenge;
+                    console.log(`Session.challenge: ${JSON.stringify(Session.challenge)}`)
+
                     this.setState({
-                        challengeUid: challenge.id,
                         challengeName: challenge.name,
                     });
                     // Update my fake session object
+<<<<<<< HEAD
                     Session.challenge = challenge;
+=======
+>>>>>>> master
                 }
             });
         }
