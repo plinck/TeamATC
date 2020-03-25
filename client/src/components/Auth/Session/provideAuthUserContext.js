@@ -137,6 +137,9 @@ const provideAuthUserContext = Component => {
                     Session.user = user;
                     console.log(`Session.user: ${JSON.stringify(Session.user)}`)
 
+                    // Listen to current challenge to get name, descirption for pages
+                    this.setupChallengeListener(user.challengeUid)
+
                     // update firebase auth profile if this user's info changed
                     UserAuthAPI.updateCurrentUserAuthProfile(user).then (() => {
                         // OK, no harm done
@@ -156,12 +159,40 @@ const provideAuthUserContext = Component => {
             });         
         }
 
+        setupChallengeListener(challengeId) {
+            // kill if listening to someone else
+            if (this.challengeListener) {
+                this.challengeListener();
+            }
+
+            // User listener for the current signed in user
+            // Try to set state together
+            const dbChallengesRef = Util.getDBRefs().dbChallengesRef;
+            let docRef = dbChallengesRef.doc(challengeId);
+            this.challengeListener = docRef.onSnapshot((doc) => {
+                const challenge = doc.data();
+                challenge.id = doc.id;
+                if (challenge) {
+                    this.setState({
+                        challengeUid: challenge.id,
+                        challengeName: challenge.name,
+                    });
+                    // Update my fake session object
+                    Session.challenge = challenge;
+                    console.log(`Session.challenge: ${JSON.stringify(Session.challenge)}`)
+                }
+            });         
+        }
+
         // This deletes listener to clean things up and prevent mem leaks
         componentWillUnmount() {
             this.listener();
 
             if (this.userListener) {
                 this.userListener();
+            }
+            if (this.challengeListener) {
+                this.challengeListener();
             }
         }
 

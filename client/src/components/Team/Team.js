@@ -45,7 +45,8 @@ const Team = (props) => {
             <Grid item xs={12} md={5}>
                 <Card>
                     <CardContent style={{ textAlign: "center" }}>
-                        <Typography variant="h4">{props.team.name}</Typography>
+                        <Typography variant="h5">Challenge: {props.user.challengeName}</Typography>
+                        <Typography variant="h5">Team: {props.team.name}</Typography>
                         <Typography>{props.team.description}</Typography>
                         <Divider></Divider>
                         {enableEdit ?

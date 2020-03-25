@@ -4,6 +4,7 @@
 class Session {
   // Formats a display money field 
   static user = {};
+  static challenge = {};
 
   static setUser =  (userInfo) => {
     Session.user = userInfo;
