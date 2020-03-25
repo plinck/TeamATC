@@ -5,7 +5,7 @@ class TeamDB {
     // Everything from top down must be async or awaits do NOT wait
     static getTeams = () => {
         return new Promise((resolve, reject) => {
-            Util.altGetDBRefs().then ( allDBRefs => {
+            Util.promiseGetChallengeDBRefs().then ( allDBRefs => {
                 const dbTeamsRef = allDBRefs.dbTeamsRef;
 
                 dbTeamsRef.orderBy("name").get().then((querySnapshot) => {
@@ -29,7 +29,7 @@ class TeamDB {
     }
 
     // -------------------------------------------------------------------------------------------------
-    // Activities : getUserWithActivity - get all actiities with their firstName lastName
+    // Activities : getTeamsWithActivities - get all actiities with their firstName lastName
     // This isnt SUPER effecient since it gets all users even if they havent had an activity
     static getTeamsWithActivities = () => {
         // its a promise so return
@@ -62,8 +62,8 @@ class TeamDB {
                     reject(`Error in TeamDB.getTeamsWithActivities(): ${err}`);
                 });
             }).catch((err) => {
-                console.error("Error in ActivityDB.getUserWithActivity user : ", err);
-                reject(`Error in ActivityDB.getUserWithActivity user: ${err}`);
+                console.error("Error in ActivityDB.getTeamsWithActivities user : ", err);
+                reject(`Error in ActivityDB.getTeamsWithActivities user: ${err}`);
             });
         }); // promise
     }// method
