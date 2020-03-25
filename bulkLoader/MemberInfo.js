@@ -141,7 +141,7 @@ class MemberInfo {
 
         // Get the ATC Members
         try {
-            let allATCMembersSnapshot = await Util.getDBRefs().dbATCMembersRef.get();
+            let allATCMembersSnapshot = await Util.getBaseDBRefs().dbATCMembersRef.get();
             allATCMembersSnapshot.forEach(doc => {
                 nbrATCMembers += 1;
                 //console.log(doc.id, '=>', JSON.stringify(doc.data()));
@@ -164,7 +164,7 @@ class MemberInfo {
 
         // Get teams
         try {
-            let allteamsSnapshot = await Util.getDBRefs().dbTeamsRef.get();
+            let allteamsSnapshot = await Util.getBaseDBRefs().dbTeamsRef.get();
             allteamsSnapshot.forEach(doc => {
                 nbrTeams += 1;
                 console.log(doc.id, '=>', JSON.stringify(doc.data()));

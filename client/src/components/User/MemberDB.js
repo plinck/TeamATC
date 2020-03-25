@@ -5,7 +5,7 @@ class MemberDB {
     static get() {
         return new Promise((resolve, reject) => {
 
-            const dbATCMembersRef = Util.getDBRefs().dbATCMembersRef;
+            const dbATCMembersRef = Util.getBaseDBRefs().dbATCMembersRef;
             dbATCMembersRef.get().then((querySnapshot) => {
                 let members = [];
                 querySnapshot.forEach(doc => {
@@ -32,7 +32,7 @@ class MemberDB {
             let member = {};
             let foundUser = false;
 
-            const dbATCMembersRef = Util.getDBRefs().dbATCMembersRef;
+            const dbATCMembersRef = Util.getBaseDBRefs().dbATCMembersRef;
             let docRef = dbATCMembersRef.where("email", "==", email.toLowerCase()).limit(1);
             docRef.get().then((querySnapshot) => {
                 querySnapshot.forEach(doc => {

@@ -39,7 +39,7 @@ class Util {
   }
 
   // need to get dbRefs based in on current infomratkjon so no hardocding
-  static getDBRefs = () => {
+  static getBaseDBRefs = () => {
     const firebase = new Firebase();
 
     const user = Session.user;

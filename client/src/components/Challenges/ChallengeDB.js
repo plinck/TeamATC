@@ -5,7 +5,7 @@ class ChallengeDB {
     // get all challenges
     static getFiltered = () => {
         // default ref gets all
-        const dbChallengesRef = Util.getDBRefs().dbChallengesRef;
+        const dbChallengesRef = Util.getBaseDBRefs().dbChallengesRef;
 
         const ref = dbChallengesRef
             .orderBy("startDate", "desc")
@@ -34,7 +34,7 @@ class ChallengeDB {
     // get one based on ID challenges
     static get = (id) => {
         // default ref gets all
-        const dbChallengesRef = Util.getDBRefs().dbChallengesRef;
+        const dbChallengesRef = Util.getBaseDBRefs().dbChallengesRef;
 
         const ref = dbChallengesRef.doc(id)
 
@@ -62,7 +62,7 @@ class ChallengeDB {
 // Add a single challenge based on id
     static create = (challenge) => {
         return new Promise((resolve, reject) => {
-            const dbChallengesRef = Util.getDBRefs().dbChallengesRef;
+            const dbChallengesRef = Util.getBaseDBRefs().dbChallengesRef;
             
             dbChallengesRef
                 .add({
@@ -85,7 +85,7 @@ class ChallengeDB {
 
     static update = (challenge) => {
         return new Promise((resolve, reject) => {
-            const dbChallengesRef = Util.getDBRefs().dbChallengesRef;
+            const dbChallengesRef = Util.getBaseDBRefs().dbChallengesRef;
             
             dbChallengesRef
                 .doc(challenge.id)
@@ -110,7 +110,7 @@ class ChallengeDB {
     // Delete a single activity based on id
     static delete = (id) => {
         return new Promise((resolve, reject) => {
-            const dbChallengesRef = Util.getDBRefs().dbChallengesRef;
+            const dbChallengesRef = Util.getBaseDBRefs().dbChallengesRef;
             
             dbChallengesRef
                 .doc(id)
@@ -137,7 +137,7 @@ class ChallengeDB {
 
         return new Promise((resolve, reject) => {
 
-            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
             const docRef = dbUsersRef.where("challengeUid", "==", challengeId).limit(1);
             docRef.get()
             .then((docSnaps) => {
@@ -168,7 +168,7 @@ class ChallengeDB {
                 if (anyTeams) {
                     throw new Error(`Cant delete, teams assigned to this challenge`);
                 } 
-                const dbChallengesRef = Util.getDBRefs().dbChallengesRef;
+                const dbChallengesRef = Util.getBaseDBRefs().dbChallengesRef;
                 return(dbChallengesRef.doc(challengeId).delete());
             }).then(() => {
                 console.log("Firestore Challenge successfully deleted!");

@@ -758,6 +758,6 @@ function mainMenu() {
 }
 
 // START
-dbALLRefs = Util.getDBRefs();
+dbALLRefs = Util.getBaseDBRefs();
 
 mainMenu();

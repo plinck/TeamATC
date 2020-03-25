@@ -5,7 +5,7 @@ class UserDB {
     // get al users
     static getUsers = () => {
         return new Promise((resolve, reject) => {
-            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
             dbUsersRef.orderBy("lastName").get().then((querySnapshot) => {
                 let users = [];
                 querySnapshot.forEach(doc => {
@@ -28,7 +28,7 @@ class UserDB {
         // its a promise so return
         return new Promise((resolve, reject) => {
             // then get from firestore
-            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
             let docRef = dbUsersRef.doc(id);
             docRef.get().then((doc) => {
                 if (doc.exists) {
@@ -52,7 +52,7 @@ class UserDB {
             let user = {};
             let foundUser = false;
 
-            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
             let docRef = dbUsersRef.where("email", "==", email.toLowerCase()).limit(1);
             docRef.get().then((querySnapshot) => {
                 querySnapshot.forEach(doc => {
@@ -83,7 +83,7 @@ class UserDB {
             Util.getCurrentAuthUser().then(autUser => {
                 const uid = autUser.uid;
 
-                const dbUsersRef = Util.getDBRefs().dbUsersRef;
+                const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
                 // then get from firestore
                 let docRef = dbUsersRef.doc(uid);
                 docRef.get().then((doc) => {
@@ -107,7 +107,7 @@ class UserDB {
     
     // delete later - MUST be done on server in secure admin/auth 
     static delete = (uid) => {
-        const dbUsersRef = Util.getDBRefs().dbUsersRef;
+        const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
 
         return new Promise((resolve, reject) => {
             Util.apiPostNoToken(`/api/auth/deleteUser/${uid}`, {
@@ -142,7 +142,7 @@ class UserDB {
             })
             .then(() => {
                 console.log("Auth Profile for User successfully updated!");
-                const dbUsersRef = Util.getDBRefs().dbUsersRef;
+                const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
                 // update
                 dbUsersRef.doc(user.id).set({
                     firstName: user.firstName,
@@ -174,7 +174,7 @@ class UserDB {
 
             // update
             console.log("User updated, user=", user);
-            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
             dbUsersRef.doc(user.uid).set({
                 firstName: user.firstName,
                 lastName: user.lastName,
@@ -205,7 +205,7 @@ class UserDB {
         return new Promise(async (resolve, reject) => {
 
             // update
-            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
             dbUsersRef.doc(userId).set({
                 challengeUid: challengeUid ? challengeUid  : "",
                 teamUid: null,
@@ -230,7 +230,7 @@ class UserDB {
         return new Promise(async (resolve, reject) => {
 
             // update
-            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
             dbUsersRef.doc(userId).set({
                 teamUid: teamUid,
                 teamName: teamName ? teamName : ""
@@ -286,7 +286,7 @@ class UserDB {
         }
 
         return new Promise((resolve, reject) => {
-            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
                     // update if exists, create if not existing
             dbUsersRef.doc(authUser.user.uid).set({
                 displayName: user.displayName,
@@ -316,7 +316,7 @@ class UserDB {
         return new Promise(async (resolve, reject) => {
             // Init claims for primary since you can be multiple
             // update claims
-            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
             dbUsersRef.doc(uid).set(claims,
                 { merge: true }
             ).then(() => {
