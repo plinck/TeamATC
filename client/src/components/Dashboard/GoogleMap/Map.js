@@ -24,7 +24,7 @@ class GoogleMap extends Component {
 
     putMarkerOnRoute(polyline, distance, team) {
         if (distance > this.props.totalDist) {
-            distance = this.props.totalDist + Math.random(25)
+            distance = this.props.totalDist
         }
         let meters = distance * 1000 * 1.609344
         let label = `<b>Dist: ${parseInt(distance)} </b><br><b> ${parseInt(distance / this.props.totalDist * 100)}% Complete </b>`
