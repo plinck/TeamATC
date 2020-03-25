@@ -4,6 +4,7 @@ import AuthUserContext from './AuthUserContext';
 import { withFirebase } from '../Firebase/FirebaseContext';
 import UserAuthAPI from '../../User/UserAuthAPI';
 import Session from "../../Util/Session.js";
+import {CHALLENGE} from "../../Environment/Environment";
 
 // This component WRAPS Firebase and Authentication Context togtehr in 
 // a HOC - Higher Order Component.
@@ -103,7 +104,11 @@ const provideAuthUserContext = Component => {
                     console.log(`setupUserListener ==> Session.user: ${JSON.stringify(Session.user)}`)
 
                     // Listen to current challenge to get name, descirption for pages
-                    this.setupChallengeListener(user.challengeUid)
+                    if (user.challengeUid) {
+                        this.setupChallengeListener(user.challengeUid)
+                    } else {
+                        this.setupChallengeListener(CHALLENGE)               
+                    }
 
                     this.setState({
                         authUser: authUser,
@@ -125,11 +130,6 @@ const provideAuthUserContext = Component => {
                         isModerator: user.isModerator ? user.isModerator : false,
                         isUser: user.isUser ? user.isUser : false
                     });
-                    // Update my fake session object
-                    Session.user = user;
-
-                    // Listen to current challenge to get name, descirption for pages
-                    this.setupChallengeListener(user.challengeUid)
 
                     // update firebase auth profile if this user's info changed
                     UserAuthAPI.updateCurrentUserAuthProfile(user).then(() => {
