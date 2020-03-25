@@ -215,7 +215,7 @@ class Dashboard extends React.PureComponent {
                                 this.onLayoutChange(layout, layouts)
                             }
                         >
-                            <div key="11" data-grid={{ w: 12, h: 12, x: 0, y: 0, minW: 6, minH: 9, maxW: 12, maxH: 18 }}>
+                            <div key="11" data-grid={{ w: 12, h: 12, x: 0, y: 0, minW: 6, minH: 11, maxW: 12, maxH: 18 }}>
                                 <GoogleMap
                                     title="Haynes City for Bethany"
                                     start='Seattle, Washington'
