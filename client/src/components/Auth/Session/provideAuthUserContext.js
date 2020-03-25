@@ -125,15 +125,12 @@ const provideAuthUserContext = Component => {
                         isModerator: user.isModerator ? user.isModerator : false,
                         isUser: user.isUser ? user.isUser : false
                     });
-<<<<<<< HEAD
                     // Update my fake session object
                     Session.user = user;
 
                     // Listen to current challenge to get name, descirption for pages
                     this.setupChallengeListener(user.challengeUid)
 
-=======
->>>>>>> master
                     // update firebase auth profile if this user's info changed
                     UserAuthAPI.updateCurrentUserAuthProfile(user).then(() => {
                         // OK, no harm done
@@ -174,10 +171,7 @@ const provideAuthUserContext = Component => {
                         challengeName: challenge.name,
                     });
                     // Update my fake session object
-<<<<<<< HEAD
                     Session.challenge = challenge;
-=======
->>>>>>> master
                 }
             });
         }

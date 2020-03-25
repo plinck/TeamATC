@@ -1,13 +1,5 @@
 import axios from 'axios';
-<<<<<<< HEAD
 import { ORG, ENV, CHALLENGE } from "../Environment/Environment";
-=======
-import {
-  ORG,
-  ENV,
-  CHALLENGE
-} from "../Environment/Environment";
->>>>>>> master
 import Firebase from "../Auth/Firebase/firebase";
 import Session from "../Util/Session.js";
 
@@ -107,11 +99,6 @@ class Util {
   static getChallengeDependentRefs = (challengeUid) => {
     const firebase = new Firebase();
 
-<<<<<<< HEAD
-=======
-    challengeUid = challengeUid ? challengeUid : CHALLENGE;
-    console.log(`challengeUid: ${challengeUid}`)
->>>>>>> master
 
     const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);
     const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
