@@ -15,6 +15,8 @@ import PointsBreakdownGraph from './Graphs/PointsBreakdown';
 import { Container, Grid, CircularProgress } from '@material-ui/core'
 import Util from "../Util/Util";
 import GoogleMap from './GoogleMap/GoogleMap';
+import TeamWidget from './TeamWidget/TeamWidget';
+
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
@@ -196,6 +198,7 @@ class Dashboard extends React.PureComponent {
         if (!this.totals || !this.totals.userR || !this.totals.teamR) {
             return null;
         }
+        console.log(this.props)
 
         let myActivities = this.state.myActivities;
         if (this.props.user.authUser) {
@@ -212,10 +215,24 @@ class Dashboard extends React.PureComponent {
                                 this.onLayoutChange(layout, layouts)
                             }
                         >
-                            <div key="1" data-grid={{ w: 4, h: 6, x: 0, y: 1, minW: 4, minH: 6, maxW: 6 }}>
+                            <div key="11" data-grid={{ w: 12, h: 12, x: 0, y: 0, minW: 6, minH: 9, maxW: 12, maxH: 18 }}>
+                                <GoogleMap
+                                    title="Haynes City for Bethany"
+                                    start='Seattle, Washington'
+                                    end='Haines City, FL'
+                                    teamTotals={this.totals.teamR}
+                                    callbackParent={() => this.onChildChanged()} />
+                            </div>
+                            <div key="12" data-grid={{ w: 4, h: 4, x: 0, y: 1, minW: 3, minH: 4, maxW: 4, maxH: 5 }}>
+                                <TeamWidget
+                                    team={this.props.user.teamName}
+                                    challenge={this.props.user.challengeUid}
+                                />
+                            </div>
+                            <div key="1" data-grid={{ w: 4, h: 6, x: 4, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                 <ResultsCard teamTotals={this.totals.teamR} userTotals={this.totals.userR} onlyTeams={true} />
                             </div>
-                            <div key="2" data-grid={{ w: 4, h: 6, x: 4, y: 1, minW: 4, minH: 6, maxW: 6 }}>
+                            <div key="2" data-grid={{ w: 4, h: 6, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                 <ActivitiesCard name={this.props.user.displayName} activity={myActivities} />
                             </div>
                             <div key="3" data-grid={{ w: 4, h: 11, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
@@ -243,7 +260,7 @@ class Dashboard extends React.PureComponent {
                                 <ActivityBubble
                                     title={"Heatmap (All Athletes)"}
                                     activities={this.state.activities}
-                                    callbackParent={() => this.onChildChanged()} 
+                                    callbackParent={() => this.onChildChanged()}
                                 />
                             </div>
                             <div key="8" data-grid={{ w: 4, h: 9, x: 8, y: 4, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
@@ -266,14 +283,7 @@ class Dashboard extends React.PureComponent {
                                     activities={this.state.activities}
                                 />
                             </div>
-                            <div key="11" data-grid={{ w: 12, h: 12, x: 0, y: 0, minW: 6, minH: 9, maxW: 12, maxH: 18 }}>
-                                <GoogleMap
-                                    title="Haynes City for Bethany"
-                                    start='Seattle, Washington'
-                                    end='Haines City, FL'
-                                    teamTotals={this.totals.teamR}
-                                    callbackParent={() => this.onChildChanged()} />
-                            </div>
+
                         </ResponsiveReactGridLayout>
                     </Container>
                 </div >
