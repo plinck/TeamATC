@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Map from './Map'
 import { Card, CardContent, Grid, Box, Typography, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
 
@@ -9,6 +9,18 @@ const GoogleMap = (props) => {
         props.callbackParent({ isDraggable: false });
     }
 
+    const [totalDist, setTotalDist] = useState(0)
+
+    const computeTotalDistance = (result) => {
+        let totalDist = 0;
+        var myroute = result.routes[0];
+        for (let i = 0; i < myroute.legs.length; i++) {
+            totalDist += myroute.legs[i].distance.value;
+        }
+        totalDist = totalDist / 1000 / 1.609344  //km to miles
+        setTotalDist(totalDist)
+    }
+
     return (
         <Card style={{ height: '100%' }}>
             <CardContent style={{ height: '100%' }} >
@@ -16,7 +28,7 @@ const GoogleMap = (props) => {
                     <span style={{ color: 'grey' }}>{props.title ? props.title : 'Challenge Map'}</span>
                 </Box>
                 <Grid container style={{ height: '100%' }} spacing={2}>
-                    <Grid style={{ height: "100%", padding: "5px 0px" }} item xs={9} onMouseDown={(e) => handlePress(e)}>
+                    <Grid style={{ height: "100%", padding: "5px 0px" }} item xs={12} sm={9} onMouseDown={(e) => handlePress(e)}>
                         <Map
                             id="myMap"
                             options={{
@@ -29,9 +41,11 @@ const GoogleMap = (props) => {
                             teamTotals={props.teamTotals}
                             start={props.start}
                             end={props.end}
+                            computeTotalDistance={computeTotalDistance}
+                            totalDist={totalDist}
                         />
                     </Grid>
-                    <Grid item xs style={{ textAlign: "center" }}>
+                    <Grid item xs={false} sm={3} style={{ textAlign: "center" }}>
                         <Typography variant="h5">Leaders</Typography>
                         <Table size="small">
                             <TableHead>
