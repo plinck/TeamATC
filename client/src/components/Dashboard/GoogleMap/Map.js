@@ -9,7 +9,6 @@ class GoogleMap extends Component {
         this.onScriptLoad = this.onScriptLoad.bind(this);
         // this.computeTotalDistance = this.computeTotalDistance.bind(this);
         this.state = {
-            totalDist: 0,
             markers: [],
             map: null,
             directionsDisplay: null,
@@ -23,24 +22,12 @@ class GoogleMap extends Component {
         height: "100%"
     }
 
-    contentString = null
-
-    computeTotalDistance(result) {
-        let totalDist = 0;
-        var myroute = result.routes[0];
-        for (let i = 0; i < myroute.legs.length; i++) {
-            totalDist += myroute.legs[i].distance.value;
-        }
-        totalDist = totalDist / 1000 / 1.609344  //km to miles
-        this.setState({ totalDist })
-    }
-
     putMarkerOnRoute(polyline, distance, team) {
-        if (distance > this.state.totalDist) {
-            distance = this.state.totalDist + Math.random(25)
+        if (distance > this.props.totalDist) {
+            distance = this.props.totalDist
         }
         let meters = distance * 1000 * 1.609344
-        let label = `<b>Dist: ${parseInt(distance)} </b><br><b> ${parseInt(distance / this.state.totalDist * 100)}% Complete </b>`
+        let label = `<b>Dist: ${parseInt(distance)} </b><br><b> ${parseInt(distance / this.props.totalDist * 100)}% Complete </b>`
         let title = `${team} - Dist: ${parseInt(distance)} `
         this.createMarker(polyline.GetPointAtDistance(meters), label, team, title)
     }
@@ -86,7 +73,7 @@ class GoogleMap extends Component {
 
                 polyline.setMap(map);
 
-                this.computeTotalDistance(response);
+                this.props.computeTotalDistance(response);
                 this.props.teamTotals.forEach(total => this.putMarkerOnRoute(polyline, total.bikeDistanceTotal, total.userOrTeamName))
                 // this.putMarkerOnRoute(polyline, 1200, "Testy")
             } else {

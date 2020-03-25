@@ -166,6 +166,11 @@ class ActivityBubble extends React.Component {
         });
     }
 
+    handlePress = (e) => {
+        e.stopPropagation();
+        this.props.callbackParent({ isDraggable: false });
+    }
+
     render() {
         // Some props take time to get ready so return null when uid not avaialble
         if (!this.props.user) {
@@ -179,7 +184,9 @@ class ActivityBubble extends React.Component {
                         <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold">
                             <span style={{ color: 'grey' }}>{this.props.title ? this.props.title : 'Activity Heat Map'}</span>
                         </Box>
-                        {this.plotActivities()}
+                        <div style={{ height: "100%" }} onMouseDown={(e) => this.handlePress(e)}>
+                            {this.plotActivities()}
+                        </div>
                     </CardContent>
                 </Card>
             );
