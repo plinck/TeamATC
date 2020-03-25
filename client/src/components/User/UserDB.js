@@ -222,6 +222,30 @@ class UserDB {
         });
 
     }
+    // Switch the challenge the user is in.
+    // For now, delete the assigned team since teams are based on challenge
+    static updateTeam (userId, teamUid, teamName) {
+        console.log(`trying to update team: ${teamUid}, for user ${userId}`);
+
+        return new Promise(async (resolve, reject) => {
+
+            // update
+            const dbUsersRef = Util.getDBRefs().dbUsersRef;
+            dbUsersRef.doc(userId).set({
+                teamUid: teamUid,
+                teamName: teamName ? teamName : ""
+            }, {
+                merge: true
+            }).then(() => {
+                console.log("completed");
+                resolve();
+            }).catch(err => {
+                console.error(`error updating users team: ${err}`);
+                reject(err);
+            });
+        });
+
+    }
 
         // Adds a user that has been authroized to the firestore collection
     // If userInfo is passed, add all that, otherwise, just add info from authUser 

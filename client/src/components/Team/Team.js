@@ -31,8 +31,8 @@ const Team = (props) => {
         props.handleDeleteTeam(id); 
     }   
 
-    const handleJoinTeam = (id) => {
-        props.handleJoinTeam(id); 
+    const handleJoinTeam = (id, name) => {
+        props.handleJoinTeam(id, name); 
     }    
 
     // dont ket non-admin delete or edit 
@@ -75,7 +75,7 @@ const Team = (props) => {
                         className={classes.button}
                         variant="contained"
                         color="primary" 
-                        onClick={() => {handleJoinTeam(props.team.id)}}
+                        onClick={() => {handleJoinTeam(props.team.id, props.team.name)}}
                         >Select/Join
                     </Button>
 

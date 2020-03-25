@@ -56,8 +56,8 @@ const Teams = (props) => {
         }
     }
 
-    const handleJoinTeam = (teamUid) => {
-        UserDB.updateTeam(props.user.uid, teamUid).then(() => {
+    const handleJoinTeam = (teamUid, teamName) => {
+        UserDB.updateTeam(props.user.uid, teamUid, teamName).then(() => {
             // User now assigned to new team
             setMessage(`joined team with ID ${teamUid}`);
         }).catch(err => {
