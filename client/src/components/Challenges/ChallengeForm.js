@@ -4,7 +4,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 
+import AddIcon from "@material-ui/icons/Add";
+import { Fab } from "@material-ui/core";
+
 import ChallengeDB from "./ChallengeDB"
+import Photo from "../Util/Photo.js"
 
 const useStyles = makeStyles(theme => ({
     buttonStyles: {    
@@ -46,7 +50,8 @@ const ChallengeForm = (props) => {
         endDate : new Date(),
         isCurrentChallenge : false,
         name : "",
-        startDate : new Date() 
+        photoObj : null,
+        startDate : new Date(),
     }
     const CHALLENGE_INITIAL_VALUES = {
         id : props.id,
@@ -54,11 +59,12 @@ const ChallengeForm = (props) => {
         endDate : new Date('2020-08-18T21:11:54'),
         isCurrentChallenge : false,
         name : "",
+        photoObj: null,
         startDate : new Date() 
     }
     const [challenge, setChallenge] = useState(CHALLENGE_INITIAL_VALUES);
-
     const [message, setMessage] = React.useState("");
+    const [photoFile, setPhotoFile] = React.useState(null);
 
     // Domain object handlers
     const handleDescriptionChange = event => {
@@ -74,32 +80,69 @@ const ChallengeForm = (props) => {
         setChallenge({...challenge, startDate: date})
     };
 
+    const handlePhotoUpload = (event) => {
+        event.preventDefault();
+
+        if (event.target.files.length > 0) {
+            console.log(event.target.files[0]);
+            const photoFile = event.target.files[0];
+            setPhotoFile(photoFile);
+        }
+    }
+
+    const uploadPhotoToGoogleStorage = () => {
+        return new Promise((resolve, reject) => {
+            if (photoFile) {
+                Photo.uploadPhoto(photoFile, "challenge").then(photoObj => {
+                    photoObj.fileTitle = "challenge";
+                }).catch(err => {
+                    setMessage(`Error uploading photo for challenge ${err}`);
+                    reject(err);
+                });
+            } else {
+                reject(`no file to upload`);
+            }
+        }); // Promise
+    }
+
     const handleSave = (event) => {
         event.preventDefault();
+
+        uploadPhotoToGoogleStorage().then (photoObj => {
+            console.log(`uploaded photo`);
+            // NOW chain promises to update or create challenge
+        }).catch(err => {
+            setMessage(`Error uploading photo for challenge ${err}`); 
+        })
         
+        /*
         if (challenge.id) {
             ChallengeDB.update(challenge).then(res => {
                 setMessage(`Challenge Successfully Updated`);
-                setChallenge({...CLEAR_CHALLENGE_VALUES})
-                props.handleUpdateChallenge(); 
+                setChallenge({...CLEAR_CHALLENGE_VALUES});
+                setPhotoFile(null);
+                props.handleUpdateChallenge(); // refresh parent
             }).catch(err => {
                 setMessage(`Error updating challenge ${err}`);
             });  
         } else {
             ChallengeDB.create(challenge).then(id => {
                 setMessage(`Challenge Successfully Created`);
-                setChallenge({...CLEAR_CHALLENGE_VALUES})
+                setChallenge({...CLEAR_CHALLENGE_VALUES});
+                setPhotoFile(null);
                 props.handleUpdateChallenge(); 
             }).catch(err => {
                 setMessage(`Error creating challenge ${err}`);
             });   
-        } 
+        }
+        */
     }
 
     const handleCreateNew = (event) => {
         event.preventDefault();
         
         setChallenge({...CLEAR_CHALLENGE_VALUES})
+        setPhotoFile(null)
     }
 
     // MAIN START : --
@@ -201,6 +244,25 @@ const ChallengeForm = (props) => {
                     </div>
                     : ""
                 }
+                <label htmlFor="file">
+                    <input
+                        id="file"
+                        name="file"
+                        type="file"
+                        accept="image/png, image/jpeg"
+                        onChange={handlePhotoUpload}
+                        style={{ display: 'none' }}
+                    />
+                    <Fab
+                        color="secondary"
+                        size="small"
+                        component="span"
+                        aria-label="add"
+                        variant="extended">
+                        <AddIcon /> Upload Image 
+                    </Fab>
+                </label>
+
             </CardActions>
         </Card>
     )
