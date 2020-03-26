@@ -64,6 +64,16 @@ const useStyles = makeStyles(theme => ({
   },
   nonAuthToolBarFlex: {
     justifyContent: 'space-between'
+  },
+  subHeader: {
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
+    },
+    minHeight: "20px !important",
+    maxHeight: "30px !important",
+    margin: "0px 0px 0px 30px",
+    display: 'flex',
+    justifyContent: "space-between"
   }
 }));
 
@@ -174,6 +184,7 @@ let Navigation = (props) => {
     navBar = navigationNonAuth;
     navBarMobile = navigationNonAuthMobile;
   }
+  console.log(props.user)
 
   return (
     <div>
@@ -207,6 +218,18 @@ let Navigation = (props) => {
 
           </Toolbar>
         </Container>
+        {props.user.authUser ?
+          <Container maxWidth="xl" style={{ backgroundColor: "red" }}>
+            <Toolbar className={classes.subHeader}>
+              <Typography variant="subtitle1">
+                Team: {props.user.teamName}
+              </Typography>
+              <Typography variant="subtitle1">
+                Challenge: {props.user.challengeName}
+              </Typography>
+            </Toolbar>
+          </Container>
+          : null}
       </AppBar >
 
     </div >
