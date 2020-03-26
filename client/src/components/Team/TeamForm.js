@@ -109,7 +109,7 @@ const TeamForm = (props) => {
         <Card>
             <CardContent>
                 {message != null ? <p>{message}</p> : ""}
-                <Typography variant="h5">Create a New Team</Typography>
+                <Typography variant="h5">Team</Typography>
                 <form noValidate autoComplete="off">
                     <TextField
                         className={classes.fullWidth}

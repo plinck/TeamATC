@@ -95,12 +95,13 @@ const ChallengeForm = (props) => {
             if (photoFile) {
                 Photo.uploadPhoto(photoFile, "challenge").then(photoObj => {
                     photoObj.fileTitle = "challenge";
+                    resolve(photoObj);
                 }).catch(err => {
                     setMessage(`Error uploading photo for challenge ${err}`);
                     reject(err);
                 });
             } else {
-                reject(`no file to upload`);
+                resolve(null);
             }
         }); // Promise
     }
@@ -111,31 +112,20 @@ const ChallengeForm = (props) => {
         uploadPhotoToGoogleStorage().then (photoObj => {
             console.log(`uploaded photo`);
             // NOW chain promises to update or create challenge
+            challenge.photoObj = photoObj ? photoObj : null;
+            if (challenge.id) {
+                ChallengeDB.update(challenge);
+            } else {
+                ChallengeDB.create(challenge);
+            }
+        }).then(res => {
+            setMessage(`Challenge Successfully Updated`);
+            setChallenge({...CLEAR_CHALLENGE_VALUES});
+            setPhotoFile(null);
+            props.handleUpdateChallenge(); // refresh parent
         }).catch(err => {
             setMessage(`Error uploading photo for challenge ${err}`); 
         })
-        
-        /*
-        if (challenge.id) {
-            ChallengeDB.update(challenge).then(res => {
-                setMessage(`Challenge Successfully Updated`);
-                setChallenge({...CLEAR_CHALLENGE_VALUES});
-                setPhotoFile(null);
-                props.handleUpdateChallenge(); // refresh parent
-            }).catch(err => {
-                setMessage(`Error updating challenge ${err}`);
-            });  
-        } else {
-            ChallengeDB.create(challenge).then(id => {
-                setMessage(`Challenge Successfully Created`);
-                setChallenge({...CLEAR_CHALLENGE_VALUES});
-                setPhotoFile(null);
-                props.handleUpdateChallenge(); 
-            }).catch(err => {
-                setMessage(`Error creating challenge ${err}`);
-            });   
-        }
-        */
     }
 
     const handleCreateNew = (event) => {
@@ -166,7 +156,7 @@ const ChallengeForm = (props) => {
         <Card>
             <CardContent>
                 {message != null ? <p>{message}</p> : ""}
-                <Typography variant="h5">Create a New Challenge</Typography>
+                <Typography variant="h5">Challenge</Typography>
                 <form noValidate autoComplete="off">
                     <TextField
                         className={classes.fullWidth}
@@ -259,8 +249,8 @@ const ChallengeForm = (props) => {
                         component="span"
                         aria-label="add"
                         variant="extended">
-                        <AddIcon /> Upload Image 
-                    </Fab>
+                        <AddIcon /> Select Image 
+                    </Fab>{photoFile ? photoFile.name : ""}
                 </label>
 
             </CardActions>

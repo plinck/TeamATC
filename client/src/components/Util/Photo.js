@@ -27,7 +27,7 @@ class Photo {
             const task = photoRef.put(file, metadata);
 
             task.then(snapshot => {
-                console.log(`${snapshot}`);
+                // console.log(`${snapshot}`);
                 console.log("Uploaded a blob or file!");
                 snapshot.ref.getDownloadURL().then(url => {
                     photoObj.url = url;
@@ -42,6 +42,24 @@ class Photo {
             });
         });
     }
+
+    static deletePhoto(fileName) {
+        // Create Promise for async call
+        return new Promise((resolve, reject) => {
+            const fb = new Firebase();
+            // Create a storage reference from our storage service
+
+            let folderRef = fb.storage.ref(fileName);
+            // Delete the file
+            folderRef.delete().then(function() {
+                resolve();
+            }).catch( err => {
+               resolve();
+            });
+  
+        }); //PROMISE
+    }
+
 }
 
 export default Photo;
