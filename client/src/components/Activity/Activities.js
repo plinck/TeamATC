@@ -274,13 +274,6 @@ class Activities extends React.Component {
             console.error("Fatal Error")
             return (<div> <p>FATAL ERROR Gettng activities ...</p> </div>)
         }
-<<<<<<< HEAD
-        if (this.state.activities === null) {
-            return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
-
-        }
-=======
->>>>>>> master
 
         // Search and filter
         //let searchBy = this.state.searchBy;
