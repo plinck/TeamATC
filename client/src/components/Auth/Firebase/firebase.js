@@ -2,6 +2,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/functions';
+import 'firebase/storage';
 
 // For the life of me I cant get REACT (when in client/) to read ENV vars and google isnt helping me ...
 // NOTE: GOT WORKING FEB 2020 -- Must have .env in client root dir (not public) and all must start with REACT_APP_
@@ -47,6 +48,7 @@ class Firebase {
     this.auth = firebase.auth();
     this.db = firebase.firestore();
     this.functions = firebase.functions();
+    this.storage = firebase.storage();
   }
 
   doGetCurrentUser = () => {
