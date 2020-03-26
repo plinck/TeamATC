@@ -34,7 +34,7 @@ class App extends React.Component {
       <Router>
         <div>
           <Navigation />
-          <Toolbar style={{ minHeight: "64px" }} />
+          <Toolbar style={{ minHeight: "95px" }} />
           <Route exact path="/" component={LandingPage} />
           <Route exact path="/signin" component={SignInForm} />
           <Route exact path="/pw-forget" component={PasswordForgetPage} />

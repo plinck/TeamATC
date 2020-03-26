@@ -223,8 +223,22 @@ class Dashboard extends React.PureComponent {
                             <div key="11" data-grid={{ w: 12, h: 12, x: 0, y: 0, minW: 6, minH: 11, maxW: 12, maxH: 18 }}>
                                 <GoogleMap
                                     title="Haynes City for Bethany"
-                                    start='Seattle, Washington'
+                                    start='San Francisco, CA'
                                     end='Haines City, FL'
+                                    waypoints={[{
+                                        location: "Coeur d'Alene, ID",
+                                        latlng: { lat: 47.6735, lng: -116.7812 }
+                                    },
+                                    {
+                                        location: "Houston, TX",
+                                        latlng: { lat: 29.7604, lng: -95.3698 }
+                                    },
+                                    {
+                                        location: "Panama City, FL",
+                                        latlng: { lat: 30.1588, lng: -85.6602 }
+
+                                    }
+                                    ]}
                                     teamTotals={this.state.totals.teamR}
                                     callbackParent={() => this.onChildChanged()} />
                             </div>
