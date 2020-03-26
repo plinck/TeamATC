@@ -49,17 +49,20 @@ class Photo {
             const fb = new Firebase();
             // Create a storage reference from our storage service
 
+            if (!fileName || fileName === "") {
+                resolve();
+            }
+
             let folderRef = fb.storage.ref(fileName);
             // Delete the file
-            folderRef.delete().then(function() {
+            folderRef.delete().then(() => {
                 resolve();
             }).catch( err => {
-               resolve();
+                resolve();
             });
   
         }); //PROMISE
     }
-
 }
 
 export default Photo;
