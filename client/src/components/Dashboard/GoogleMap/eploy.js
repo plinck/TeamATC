@@ -148,10 +148,17 @@ export default function createEpoly() {
 
     // === A method which returns a GLatLng of a point a given distance along the path ===
     // === Returns null if the path is shorter than the specified distance ===
-    window.google.maps.Polygon.prototype.GetPointAtDistance = function (metres) {
+    window.google.maps.Polygon.prototype.GetPointAtDistance = function (metres, total) {
         // some awkward special cases
         if (metres === 0) return this.getPath().getAt(0);
         if (metres < 0) return null;
+        if (total === metres) {
+            let dist = this.getPath().getLength() - parseInt(Math.random() * 5)
+            console.log(dist)
+            return (this.getPath().getAt(dist - 1));
+        }
+        // console.log(this.getPath().getLength())
+        console.log(total === metres)
         if (this.getPath().getLength() < 2) return null;
         var dist = 0;
         var olddist = 0;

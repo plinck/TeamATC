@@ -49,6 +49,7 @@ const GoogleMap = (props) => {
                             teamTotals={props.teamTotals}
                             start={props.start}
                             end={props.end}
+                            waypoints={props.waypoints}
                             computeTotalDistance={computeTotalDistance}
                             totalDist={totalDist}
                         />

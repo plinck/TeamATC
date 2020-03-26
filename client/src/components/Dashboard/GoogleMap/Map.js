@@ -27,9 +27,10 @@ class GoogleMap extends Component {
             distance = this.props.totalDist
         }
         let meters = distance * 1000 * 1.609344
+        let totalMeters = this.props.totalDist * 1000 * 1.609344
         let label = `<b>Dist: ${parseInt(distance)} </b><br><b> ${parseInt(distance / this.props.totalDist * 100)}% Complete </b>`
         let title = `${team} - Dist: ${parseInt(distance)} `
-        this.createMarker(polyline.GetPointAtDistance(meters), label, team, title)
+        this.createMarker(polyline.GetPointAtDistance(meters, totalMeters), label, team, title)
     }
 
     calcRoute() {
@@ -38,10 +39,16 @@ class GoogleMap extends Component {
         let map = this.state.map
         var start = this.props.start;
         var end = this.props.end;
+        let waypoints = this.props.waypoints.map(city => {
+            let newObj = {}
+            newObj.location = city.location
+            return newObj
+        })
         var travelMode = window.google.maps.DirectionsTravelMode.DRIVING
         var request = {
             origin: start,
             destination: end,
+            waypoints: waypoints,
             travelMode: travelMode
         };
         this.state.directionsService.route(request, (response, status) => {
@@ -102,6 +109,27 @@ class GoogleMap extends Component {
         return marker;
     }
 
+    addWaypointMarkers(waypoints) {
+        let map = this.state.map
+        let infowindow = this.state.infowindow
+        waypoints.forEach((waypoint, index) => {
+            var contentString = `<b>${index + 1}. ${waypoint.location}</>`;
+            var marker = new window.google.maps.Marker({
+                position: waypoint.latlng,
+                label: `${index + 1}`,
+                map: map,
+                title: waypoint.location,
+                // zIndex: Math.round(latlng.lat() * -100000) << 5,
+                contentString: contentString
+            });
+            window.google.maps.event.addListener(marker, 'click', function () {
+                infowindow.setContent(contentString);
+                infowindow.open(map, marker);
+            });
+        })
+
+    }
+
     async onMapLoad() {
         const [directionsDisplay, infowindow, directionsService, map, polyline] = await Promise.all([
             new window.google.maps.DirectionsRenderer({ suppressMarkers: true }),
@@ -116,6 +144,7 @@ class GoogleMap extends Component {
         ]);
         this.setState({ directionsDisplay, infowindow, directionsService, map, polyline })
         directionsDisplay.setMap(map);
+        this.addWaypointMarkers(this.props.waypoints)
         this.calcRoute();
 
     }
