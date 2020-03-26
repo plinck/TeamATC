@@ -63,7 +63,7 @@ class Activities extends React.Component {
         super(props);
 
         this.state = {
-            activities: null,
+            activities: [],
             lastActivityDoc: undefined,
             searchBy: "",
             filterByString: "Mine",
@@ -267,17 +267,20 @@ class Activities extends React.Component {
 
         // Some props take time to get ready so return null when uid not avaialble
         if (this.props.user.uid === null) {
-            return null;
+            return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
         }
 
-        if (typeof this.state.activities === 'undefined') {
+        if (!this.state.activities ||  this.state.activities === null) {
             console.error("Fatal Error")
             return (<div> <p>FATAL ERROR Gettng activities ...</p> </div>)
         }
+<<<<<<< HEAD
         if (this.state.activities === null) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
 
         }
+=======
+>>>>>>> master
 
         // Search and filter
         //let searchBy = this.state.searchBy;

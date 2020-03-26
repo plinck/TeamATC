@@ -44,12 +44,12 @@ const Challenges = (props) => {
         fetchData();
     }
 
-    const handleDeleteChallenge = (id) => {
-        if (id) {
-            ChallengeDB.delete(id).then(res => {
+    const handleDeleteChallenge = (challenge) => {
+        if (challenge) {
+            ChallengeDB.delete(challenge).then(res => {
                 fetchData();
             }).catch(err => {
-                setMessage(`Error deleting challenge with id: ${id}, error: ${err}`);
+                setMessage(`Error deleting challenge with id: ${challenge.id}, error: ${err}`);
             });
         }
     }
