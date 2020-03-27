@@ -20,7 +20,31 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { Grid } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+import { Grid, IconButton } from '@material-ui/core';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+
+const styles = theme => ({
+    text: {
+        marginBottom: "-10px"
+    },
+    noWrap: {
+        whiteSpace: "nowrap",
+        overflow: 'hidden',
+        [theme.breakpoints.down('sm')]: {
+            marginRight: "5px"
+        }
+    },
+    caption: {
+        fontStyle: "italic"
+    },
+    mobile: {
+        [theme.breakpoints.down('sm')]: {
+            display: "none"
+        }
+    }
+})
 
 class Activity extends React.Component {
     // State used for Dialog box to confirm delete
@@ -50,6 +74,7 @@ class Activity extends React.Component {
     };
 
     render() {
+        const { classes } = this.props
         // Deconstruct Props
         const {
             id,
@@ -112,7 +137,7 @@ class Activity extends React.Component {
                         justify="space-between"
                         alignItems="center"
                     >
-                        <Grid item xs={1}>
+                        <Grid item xs={3} md={1}>
                             {isThisMine ?
                                 <Tooltip title={"My Activity"}>
                                     <img style={{ maxHeight: '25px' }} src={"/images/me.png"} alt={"me"} />
@@ -123,27 +148,33 @@ class Activity extends React.Component {
                                 <img style={{ maxHeight: '25px' }} src={activityIcon} alt={activityType} />
                             </Tooltip>
                         </Grid>
-                        <Grid item xs={10} md={3}>
-                            <Typography>{activityNameAndType}</Typography>
+                        <Grid className={classes.noWrap} item xs md={3}>
+                            <Typography className={classes.text}>{activityNameAndType}</Typography>
+                            <Typography className={classes.caption} variant="caption">Activity Name</Typography>
                         </Grid>
-                        <Grid item xs={false} md={2}>
-                            <Typography>{`${teamName}`}</Typography>
+                        <Grid className={classes.mobile} item xs={false} md={2}>
+                            <Typography className={classes.text}>{`${teamName}`}</Typography>
+                            <Typography className={classes.caption} variant="caption">Team</Typography>
                         </Grid>
-                        <Grid item xs={false} md={2}>
-                            <Typography>{`${fullName}`}</Typography>
+                        <Grid className={classes.mobile} item xs={false} md={2}>
+                            <Typography className={classes.text}>{`${fullName}`}</Typography>
+                            <Typography className={classes.caption} variant="caption">Name</Typography>
                         </Grid>
-                        <Grid item xs={1} md={2}>
-                            <Typography>{activityDateTimeDisplay}</Typography>
+                        <Grid className={classes.mobile} item xs={1} md={2}>
+                            <Typography className={classes.text}>{activityDateTimeDisplay}</Typography>
+                            <Typography className={classes.caption} variant="caption">Date</Typography>
                         </Grid>
-                        <Grid item xs={false} md={1}>
-                            <Typography>
+                        <Grid className={classes.mobile} item xs={false} md={1}>
+                            <Typography className={classes.text}>
                                 {duration.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {"H"}
                             </Typography>
+                            <Typography className={classes.caption} variant="caption">Time</Typography>
                         </Grid>
                         <Grid item xs={false} md={1}>
-                            <Typography>
+                            <Typography className={classes.text}>
                                 {distance.toFixed(distanceDecimalPlaces).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {distanceUnits[0]}
                             </Typography>
+                            <Typography className={classes.caption} variant="caption">Distance</Typography>
                         </Grid>
                     </Grid>
 
@@ -152,26 +183,28 @@ class Activity extends React.Component {
 
                 <Box className="row" m={0}>
                     <ExpansionPanelDetails style={{ margin: '0px', padding: "0" }}>
-                        <Typography className="col s2 offset-s6 m2 offset-m6 truncate">AveS</Typography>
-                        <Typography className="col s2 m2 truncate">(NP)</Typography>
                         {deleteIsDisabled ? null :
-                            <Typography className="col s2 m2">
+                            <Grid
+                                container
+                                justify="flex-end"
+                                alignItems="center" justify="flex-end"
+                                alignItems="center">
                                 {editIsDisabled ? null :
-                                    <Tooltip title="Edit">
-                                        <i style={{ cursor: 'pointer' }}
-                                            disabled={editIsDisabled}
-                                            className="material-icons left indigo-text text-darken-4"
-                                            onClick={() => this.activityEdit(id)}>edit
-                                    </i>
-                                    </Tooltip>
+                                    <Grid item xs={2} md={1}>
+                                        <Tooltip title="Edit">
+                                            <IconButton onClick={() => this.activityEdit(id)}>
+                                                <EditIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Grid>
                                 }
-                                <Tooltip title="Delete">
-                                    <i style={{ cursor: 'pointer' }}
-                                        disabled={editIsDisabled}
-                                        className="material-icons left indigo-text text-darken-4"
-                                        onClick={this.handleClickOpen}>delete
-                                </i>
-                                </Tooltip>
+                                <Grid item xs={2} md={1}>
+                                    <Tooltip title="Delete">
+                                        <IconButton onClick={this.handleClickOpen}>
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                </Grid>
                                 <Dialog
                                     open={this.state.openConfirmDelete}
                                     onClose={this.handleClose}
@@ -192,7 +225,7 @@ class Activity extends React.Component {
                                     </Button>
                                     </DialogActions>
                                 </Dialog>
-                            </Typography>
+                            </Grid>
                         }
                     </ExpansionPanelDetails>
                 </Box>
@@ -201,4 +234,4 @@ class Activity extends React.Component {
     } // render()
 } // class
 
-export default withAuthUserContext(withRouter(Activity));
+export default withAuthUserContext(withRouter(withStyles(styles)(Activity)));

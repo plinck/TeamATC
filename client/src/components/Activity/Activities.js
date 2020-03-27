@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { ButtonGroup, Grid, CircularProgress, Box, Button, Container, FormControl, InputLabel, MenuItem, Select, Typography, Tooltip, IconButton } from '@material-ui/core'
+import { ButtonGroup, Grid, CircularProgress, Button, Container, FormControl, InputLabel, MenuItem, Select, Typography, Tooltip } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import PoolIcon from '@material-ui/icons/Pool';
@@ -175,8 +175,9 @@ class Activities extends React.Component {
         this.setState({ isLoading: true });
         ActivityDB.getFiltered(filterObj, undefined, lastActivityDoc)
             .then(res => {
-                let activities = res.activities;
-                this.setState({ activities: activities, lastActivityDoc: res.lastActivityDoc, isLoading: false });
+                let newActivities = res.activities;
+                let joined = this.state.activities.concat(newActivities)
+                this.setState({ activities: joined, lastActivityDoc: res.lastActivityDoc, isLoading: false });
             }).catch(err => {
                 this.setState({ isLoading: false });
                 console.error(err);
@@ -440,6 +441,9 @@ class Activities extends React.Component {
                                 </div>
                             );
                         })}
+                        {this.state.activities.length >= 100 ? <div style={{ textAlign: "center" }}>
+                            <Button disabled={this.state.isLoading} onClick={this.getNextPage} variant="contained" color="primary">{this.state.isLoading ? <CircularProgress size={14} /> : "Load More"}</Button>
+                        </div> : null}
                     </div>
                 </div>
 
