@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
 
 const Teams = (props) => {
     const classes = useStyles();
-
+    console.log(props)
     const [teams, setTeams] = useState([{}]);
 
     const [currentTeamId, setCurrentTeamId] = useState();
@@ -85,7 +85,7 @@ const Teams = (props) => {
     // will fire this function every single time the component is refreshed which isnt cool.
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [props.user]);
 
     const userCanUpdateTeam = (props.user && props.user.isAdmin) ? true : false;
 
