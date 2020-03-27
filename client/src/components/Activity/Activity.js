@@ -183,13 +183,12 @@ class Activity extends React.Component {
 
                 <Box className="row" m={0}>
                     <ExpansionPanelDetails style={{ margin: '0px', padding: "0" }}>
-                        {deleteIsDisabled ? null :
+                        {deleteIsDisabled ? "" :
                             <Grid
                                 container
                                 justify="flex-end"
-                                alignItems="center" justify="flex-end"
                                 alignItems="center">
-                                {editIsDisabled ? null :
+                                {editIsDisabled ? "" :
                                     <Grid item xs={2} md={1}>
                                         <Tooltip title="Edit">
                                             <IconButton onClick={() => this.activityEdit(id)}>

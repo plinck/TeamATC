@@ -77,7 +77,8 @@ class Activities extends React.Component {
             filterByString: "Mine",
             filterBy: "Mine",
             orderBy: "None",
-            isLoading: true
+            isLoading: true,
+            typeFilter: "All"
         };
     }
 
@@ -103,6 +104,17 @@ class Activities extends React.Component {
                 this.getFilteredActivities();
             }
         }
+    }
+
+    filterByType(type) {
+        this.setState({ typeFilter: type })
+    }
+
+    displayFilter(activities) {
+        if (this.state.typeFilter === "All") return activities
+        if (this.state.typeFilter === "Swim") return activities.filter(act => act.activityType === "Swim")
+        if (this.state.typeFilter === "Bike") return activities.filter(act => act.activityType === "Bike")
+        if (this.state.typeFilter === "Run") return activities.filter(act => act.activityType === "Run")
     }
 
     // ************************************************************
@@ -357,16 +369,16 @@ class Activities extends React.Component {
                         style={{ textAlign: "right" }}>
                         <ButtonGroup color="primary">
                             <Tooltip title="All">
-                                <Button variant="contained" >All</Button>
+                                <Button onClick={() => this.filterByType("All")} variant={this.state.typeFilter === "All" ? "contained" : "outlined"} >All</Button>
                             </Tooltip>
                             <Tooltip title="Swim">
-                                <Button><PoolIcon /></Button>
+                                <Button onClick={() => this.filterByType("Swim")} variant={this.state.typeFilter === "Swim" ? "contained" : "outlined"}><PoolIcon /></Button>
                             </Tooltip>
                             <Tooltip title="Bike">
-                                <Button><DirectionsBikeIcon /></Button>
+                                <Button onClick={() => this.filterByType("Bike")} variant={this.state.typeFilter === "Bike" ? "contained" : "outlined"}><DirectionsBikeIcon /></Button>
                             </Tooltip>
                             <Tooltip title="Run">
-                                <Button><DirectionsRunIcon /></Button>
+                                <Button onClick={() => this.filterByType("Run")} variant={this.state.typeFilter === "Run" ? "contained" : "outlined"}><DirectionsRunIcon /></Button>
                             </Tooltip>
                         </ButtonGroup>
                     </Grid>
@@ -431,7 +443,7 @@ class Activities extends React.Component {
                 <div>
                     {sortFilterRow}
                     <div className={classes.act}>
-                        {activities.map((activity, index) => {
+                        {this.displayFilter(activities).map((activity, index) => {
                             return (
                                 <div key={activity.id}>
                                     <Activity activity={activity}
