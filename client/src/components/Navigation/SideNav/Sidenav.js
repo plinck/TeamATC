@@ -15,6 +15,7 @@ import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 import TimerIcon from '@material-ui/icons/Timer';
+import MailIcon from '@material-ui/icons/Mail';
 
 const drawerWidth = 240;
 
@@ -113,9 +114,8 @@ export default function MiniDrawer(props) {
                     <NavLink className={classes.sideText} to="/challenges"><ListItem selected={window.location.pathname === "/challenges"} button><ListItemIcon><TimerIcon /></ListItemIcon><ListItemText>Challenges</ListItemText></ListItem></NavLink>
                     <NavLink className={classes.sideText} to="/teams"><ListItem selected={window.location.pathname === "/teams"} button><ListItemIcon><PeopleIcon /></ListItemIcon><ListItemText>Teams</ListItemText></ListItem></NavLink>
                     <Divider></Divider>
-                    <NavLink className={classes.sideText} to="/results"><ListItem selected={window.location.pathname === "/results"} button><ListItemIcon><EqualizerIcon /></ListItemIcon><ListItemText>Full Results</ListItemText></ListItem></NavLink>
-                    <Divider></Divider>
                     <ListItem style={{ textAlign: 'center' }}>{open ? <ListItemText><Button variant="contained" color="primary" style={{ marginLeft: "3px" }}><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText> : null}</ListItem>
+                    <a className={classes.mobileButton} href="mailto:info@atlantatriclub.com"><ListItem><ListItemIcon><MailIcon /></ListItemIcon><ListItemText>Contact Support</ListItemText></ListItem></a>
 
                 </List>
             </Drawer>

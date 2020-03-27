@@ -104,7 +104,6 @@ let Navigation = (props) => {
       <ListItem><ListItemIcon><TimerIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/challenges">Challenges</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><PeopleIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/teams">Teams</NavLink></ListItemText></ListItem>
       <Divider></Divider>
-      <ListItem><ListItemIcon><EqualizerIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/results">Full Results</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><SettingsIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/admin">Admin</NavLink></ListItemText></ListItem>
       <Divider></Divider>
       <ListItem><ListItemText><Button variant="contained" color="primary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText></ListItem>
@@ -135,8 +134,6 @@ let Navigation = (props) => {
       <ListItem><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/account">Account</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><TimerIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/challenges">Challenges</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><PeopleIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/teams">Teams</NavLink></ListItemText></ListItem>
-      <Divider></Divider>
-      <ListItem><ListItemIcon><EqualizerIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/results">Full Results</NavLink></ListItemText></ListItem>
       <Divider></Divider>
       <ListItem><ListItemText><Button variant="contained" color="primary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText></ListItem>
       <ListItem><ListItemIcon><MailIcon /></ListItemIcon><ListItemText><a className={classes.mobileButton} href="mailto:info@atlantatriclub.com">Contact Support</a></ListItemText></ListItem>
