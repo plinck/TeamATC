@@ -6,12 +6,13 @@ const DEV_ENV="dev"
 // const {ORG, ENV} = require("../ServerEnvironment");
 const ORG="ATC"
 const ENV="prod"
+const CHALLENGE="9uxEvhpHM2cqCcn1ESZg";
 
 class Util {
 
     static getBaseDBRefs (challengeUid) {
         if (!challengeUid) {
-          challengeUid = "9uxEvhpHM2cqCcn1ESZg";
+          challengeUid = CHALLENGE;
         }
         const db = admin.firestore();
 
