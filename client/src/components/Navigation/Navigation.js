@@ -184,7 +184,6 @@ let Navigation = (props) => {
     navBar = navigationNonAuth;
     navBarMobile = navigationNonAuthMobile;
   }
-  console.log(props.user)
 
   return (
     <div>

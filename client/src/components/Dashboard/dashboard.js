@@ -230,8 +230,24 @@ class Dashboard extends React.PureComponent {
                                         latlng: { lat: 47.6735, lng: -116.7812 }
                                     },
                                     {
+                                        location: "St George, UT",
+                                        latlng: { lat: 37.0965, lng: -113.5684 }
+                                    },
+                                    {
                                         location: "Houston, TX",
                                         latlng: { lat: 29.7604, lng: -95.3698 }
+                                    },
+                                    {
+                                        location: "Madison, WI",
+                                        latlng: { lat: 43.0731, lng: -89.4012 }
+                                    },
+                                    {
+                                        location: "Louisville, KY",
+                                        latlng: { lat: 38.2527, lng: -85.7585 }
+                                    },
+                                    {
+                                        location: "Chattanooga, TN",
+                                        latlng: { lat: 35.0456, lng: -85.3097 }
                                     },
                                     {
                                         location: "Panama City, FL",

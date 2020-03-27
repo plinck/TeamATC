@@ -19,6 +19,7 @@ import Register from './components/Auth/Register/Register';
 import Challenges from './components/Challenges/Challenges';
 import Teams from './components/Team/Teams';
 import { Toolbar } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 
 // Auth components
 import SignInForm from './components/Auth/SignIn/SignIn';
@@ -27,14 +28,27 @@ import PasswordForgetPage from './components/Auth/PasswordForget/PasswordForget'
 // Session/State Info for all components
 import provideAuthUserContext from './components/Auth/Session/provideAuthUserContext';
 
+const styles = theme => ({
+  toolbar: {
+    [theme.breakpoints.up('md')]: {
+      minHeight: "95px",
+    },
+    minHeight: "65px"
+  }
+});
+
+
 class App extends React.Component {
+
   render() {
+    const { classes } = this.props;
+
     return (
 
       <Router>
         <div>
           <Navigation />
-          <Toolbar style={{ minHeight: "95px" }} />
+          <Toolbar className={classes.toolbar} />
           <Route exact path="/" component={LandingPage} />
           <Route exact path="/signin" component={SignInForm} />
           <Route exact path="/pw-forget" component={PasswordForgetPage} />
@@ -57,4 +71,4 @@ class App extends React.Component {
   }
 }
 
-export default provideAuthUserContext(App);
+export default provideAuthUserContext(withStyles(styles)(App));
