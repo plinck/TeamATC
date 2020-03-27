@@ -21,7 +21,10 @@ const styles = theme => ({
     act: {
         width: '100%',
         overflow: "auto",
-        height: "77vh"
+        [theme.breakpoints.up('md')]: {
+            height: "79vh"
+        },
+        height: "74vh"
     },
     root: {
         [theme.breakpoints.up('md')]: {
@@ -34,7 +37,7 @@ const styles = theme => ({
         fontWeight: theme.typography.fontWeightRegular,
     },
     progress: {
-        margin: theme.spacing.unit * 2,
+        margin: theme.spacing(2),
     },
     container: {
         display: 'flex',
@@ -48,13 +51,18 @@ const styles = theme => ({
         marginTop: 50
     },
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         width: 200,
     },
     //style for font size
     resize: {
         fontSize: 200
+    },
+    csvButton: {
+        [theme.breakpoints.down('md')]: {
+            display: "none"
+        }
     }
 });
 
@@ -267,10 +275,11 @@ class Activities extends React.Component {
 
         // Some props take time to get ready so return null when uid not avaialble
         if (this.props.user.uid === null) {
-            return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
+            return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
+
         }
 
-        if (!this.state.activities ||  this.state.activities === null) {
+        if (!this.state.activities || this.state.activities === null) {
             console.error("Fatal Error")
             return (<div> <p>FATAL ERROR Gettng activities ...</p> </div>)
         }
@@ -307,6 +316,7 @@ class Activities extends React.Component {
                             </Tooltip>
                         </Link>
                         <CSVLink
+                            className={classes.csvButton}
                             data={activities}
                             filename={'teamatc-transactions.csv'}
                             target="_blank">
@@ -413,36 +423,12 @@ class Activities extends React.Component {
                 */}
             </Grid >
 
-        const headerRow =
-            <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold" border={1} m={0}>
-                <div className="col s1 m1">
-                </div>
-                <div className="col s4 m2 truncate">
-                    Team
-            </div>
-                <div className="black-text col s4 m2 truncate">
-                    Athlete
-            </div>
-                <div className="blue-text col s3 m2 truncate">
-                    Date
-            </div>
-                <div className="red-text col s4 m2 truncate">
-                    Name
-            </div>
-                <div className="green-text col s4 m1 truncate">
-                    Hrs
-            </div>
-                <div className="green-text col s4 m1 truncate">
-                    Distance
-            </div>
-            </Box>
 
         if (this.props.user.authUser) {
             // Conditional rendering
             let activityView =
                 <div>
                     {sortFilterRow}
-                    {headerRow}
                     <div className={classes.act}>
                         {activities.map((activity, index) => {
                             return (
