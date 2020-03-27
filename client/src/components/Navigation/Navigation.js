@@ -18,6 +18,7 @@ import Sidenav from './SideNav/Sidenav';
 import TimerIcon from '@material-ui/icons/Timer';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 import AddIcon from '@material-ui/icons/Add';
+import MailIcon from '@material-ui/icons/Mail';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -105,6 +106,7 @@ let Navigation = (props) => {
       <ListItem><ListItemIcon><SettingsIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/admin">Admin</NavLink></ListItemText></ListItem>
       <Divider></Divider>
       <ListItem><ListItemText><Button variant="contained" color="primary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText></ListItem>
+      <ListItem><ListItemIcon><MailIcon /></ListItemIcon><ListItemText><a className={classes.mobileButton} href="mailto:info@atlantatriclub.com">Contact Support</a></ListItemText></ListItem>
       <ListItem><ListItemText> <SignOutButton /></ListItemText></ListItem>
     </List>
     ;
@@ -134,11 +136,10 @@ let Navigation = (props) => {
       <ListItem><ListItemIcon><EqualizerIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/results">Full Results</NavLink></ListItemText></ListItem>
       <Divider></Divider>
       <ListItem><ListItemText><Button variant="contained" color="primary"><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText></ListItem>
+      <ListItem><ListItemIcon><MailIcon /></ListItemIcon><ListItemText><a className={classes.mobileButton} href="mailto:info@atlantatriclub.com">Contact Support</a></ListItemText></ListItem>
       <ListItem><ListItemText> <SignOutButton /></ListItemText></ListItem>
     </List>
     ;
-
-
 
 
   const navigationAuth =
