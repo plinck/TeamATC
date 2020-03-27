@@ -15,11 +15,10 @@ import FormLabel from '@material-ui/core/FormLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 // For select input field
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-
-import CircularProgress from '@material-ui/core/CircularProgress';
+// import InputLabel from "@material-ui/core/InputLabel";
+// import MenuItem from "@material-ui/core/MenuItem";
+// import Select from "@material-ui/core/Select";
+// import CircularProgress from '@material-ui/core/CircularProgress';
 
 import UserAuthAPI from "./UserAuthAPI";
 import UserDB from "./UserDB"
