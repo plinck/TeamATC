@@ -7,16 +7,19 @@ import Team from "./Team"
 import UserDB from "../User/UserDB.js"
 
 const useStyles = makeStyles(theme => ({
-    main: {
-        background: 'url(/images/ATC-repeating-background.png) center center fixed',
-        backgroundSize: "cover",
-        height: 'calc(100vh - 64px)',
-        overflow: "hidden"
-    },
     root: {
         [theme.breakpoints.up('md')]: {
             marginLeft: "57px",
+            height: "calc(100vh - 95px)"
         },
+        background: 'url(/images/ATC-repeating-background.png) center center fixed',
+        backgroundSize: "cover",
+        height: 'calc(100vh - 65px)',
+        overflow: "hidden"
+    },
+    container: {
+        height: "100%",
+        overflowY: "auto"
     },
     button: {
         margin: '15px'
@@ -29,7 +32,7 @@ const useStyles = makeStyles(theme => ({
 
 const Teams = (props) => {
     const classes = useStyles();
-
+    console.log(props)
     const [teams, setTeams] = useState([{}]);
 
     const [currentTeamId, setCurrentTeamId] = useState();
@@ -81,24 +84,24 @@ const Teams = (props) => {
     // i.e. if you dont use optional parameter (array of properities to watch), it
     // will fire this function every single time the component is refreshed which isnt cool.
     useEffect(() => {
-            fetchData();
-    }, []);
+        fetchData();
+    }, [props.user]);
 
     const userCanUpdateTeam = (props.user && props.user.isAdmin) ? true : false;
 
     return (
-        <div className={classes.main}>
-            <div className={classes.root}>
-                <Container maxWidth="xl">
-                    {message ? <Typography color="primary" variant="subtitle1" align="center">{message}</Typography> : ""}
-                    <Grid container style={{ minHeight: "75vh" }} spacing={2} justify="center" alignItems="center">
-                        {userCanUpdateTeam ?
-                            <Grid item xs={12} md={5}>
-                                <TeamForm id={currentTeamId}
-                                    handleUpdateTeam={handleUpdateTeam}
-                                />
-                            </Grid> : ""
-                        }
+        <div className={classes.root}>
+            <Container className={classes.container} maxWidth="xl">
+                {message ? <Typography color="primary" variant="subtitle1" align="center">{message}</Typography> : ""}
+                <Grid style={{ marginTop: '10px' }} container spacing={2} justify="center" alignItems="center">
+                    {userCanUpdateTeam ?
+                        <Grid item xs={12} md={5}>
+                            <TeamForm id={currentTeamId}
+                                handleUpdateTeam={handleUpdateTeam}
+                            />
+                        </Grid> : null
+                    }
+                    <Grid style={{ marginTop: '10px' }} container spacing={2} justify="center" alignItems="center">
                         {teams.map((team, index) => {
                             return (<Team key={index} team={team}
                                 handleEditTeam={handleEditTeam}
@@ -107,9 +110,10 @@ const Teams = (props) => {
                             />)
                         })
                         }
+
                     </Grid>
-                </Container>
-            </div>
+                </Grid>
+            </Container>
         </div>
     )
 }

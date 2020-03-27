@@ -23,7 +23,21 @@ const INITIAL_STATE = {
 };
 
 const styles = theme => ({
+    root: {
+        [theme.breakpoints.up('md')]: {
+            height: "calc(100vh - 64px)",
+            marginTop: "-31px"
+        },
+        background: 'url(/images/ATC-repeating-background.png) center center fixed',
+        backgroundSize: "cover",
+        height: 'calc(100vh - 65px)',
+        overflow: "hidden"
+    },
     container: {
+        height: "100%",
+        overflowY: "auto"
+    },
+    formContainer: {
         display: 'flex',
         flexWrap: 'wrap',
     },
@@ -132,7 +146,7 @@ class SignInFormBase extends React.Component {
                 <Card>
                     <CardContent>
                         <Typography variant="h5">Sign In</Typography>
-                        <form className={classes.container} onSubmit={this.signInUser} >
+                        <form className={classes.formContainer} onSubmit={this.signInUser} >
 
                             <TextField
                                 id="email"
@@ -186,7 +200,7 @@ class SignInFormBase extends React.Component {
                         <p>
                             <Link to="/pw-forget">Forgot Password?</Link>
                             <Typography variant="subtitle1">Having trouble signing in? <a href="mailto:info@atlantatriclub.com">Contact Support</a></Typography>
-                            </p>
+                        </p>
 
                     </CardContent>
                     <CardActions>
@@ -200,8 +214,8 @@ class SignInFormBase extends React.Component {
         }
 
         return (
-            <div className={classes.background}>
-                <Container>
+            <div className={classes.root}>
+                <Container className={classes.container}>
                     <AuthUserContext.Consumer>
                         {user => user.authUser ? <Redirect to="/dashboard" /> : null}
                     </AuthUserContext.Consumer>
