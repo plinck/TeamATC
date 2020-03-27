@@ -6,7 +6,7 @@ import NumberFormat from 'react-number-format';
 import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import { InputAdornment, Container, Card, CardContent, Grid, Typography, Divider } from '@material-ui/core';
+import { InputAdornment, Container, Card, CardContent, Grid, Typography, Box, Divider } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import UserAuthAPI from "../../User/UserAuthAPI";
 import UserDB from "../../User/UserDB";
@@ -122,7 +122,8 @@ class Register extends React.Component {
                 this.setState({ message: `Error adding user ${err}` });
             });
         }).catch(_ => {
-            this.setState({ message: `Can not register - Not a valid ATC Member - Please check with club admin` });
+            const message = <div>Can not register - Not a valid ATC Member <a href="mailto:info@atlantatriclub.com">Contact Support</a></div>
+            this.setState({ message: message });
         });
     }
 
@@ -139,8 +140,9 @@ class Register extends React.Component {
 
                             <Card>
                                 <CardContent>
+                                    {this.state.message ? <Typography variant="subtitle1"><Box fontWeight="fontWeightLight" color="warning.main" fontStyle="oblique">{this.state.message}</Box></Typography> : ""}
                                     <Typography variant="h5">Register Now</Typography>
-                                    {this.state.message ? <div className="red-text">{this.state.message}</div> : ""}
+                                    <Typography variant="subtitle1"><Box fontWeight="fontWeightLight" color="info.main" fontStyle="oblique">Use your ATC Member Email to register</Box></Typography>
 
                                     <TextField
                                         id="firstName"
@@ -256,8 +258,9 @@ class Register extends React.Component {
                                     <div style={{ textAlign: "center" }}>
                                         <Button disabled={this.state.disabled} onClick={this.registerUser} id="submit" variant="contained" color="primary" className={classes.button}>
                                             Register
-                                </Button>
+                                        </Button>
                                     </div>
+                                    <Typography variant="subtitle1">Having trouble registering? <a href="mailto:info@atlantatriclub.com">Contact Support</a></Typography>
                                 </CardContent>
                             </Card>
                         </Grid>

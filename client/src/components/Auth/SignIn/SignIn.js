@@ -185,7 +185,8 @@ class SignInFormBase extends React.Component {
                         {error && <p>{error.message}</p>}
                         <p>
                             <Link to="/pw-forget">Forgot Password?</Link>
-                        </p>
+                            <Typography variant="subtitle1">Having trouble signing in? <a href="mailto:info@atlantatriclub.com">Contact Support</a></Typography>
+                            </p>
 
                     </CardContent>
                     <CardActions>
