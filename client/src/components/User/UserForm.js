@@ -1,9 +1,9 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
-
-
+import { withFirebase } from '../Auth/Firebase/FirebaseContext';
 import { withStyles } from '@material-ui/core/styles';
+
 import TextField from '@material-ui/core/TextField';
 import NumberFormat from 'react-number-format';
 import localStyles from './User.module.css';
@@ -499,4 +499,4 @@ class UserForm extends React.Component {
   }
 }
 
-export default withAuthUserContext(withRouter(withStyles(styles)(UserForm)));
+export default withFirebase(withAuthUserContext(withRouter(withStyles(styles)(UserForm))));
