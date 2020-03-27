@@ -99,16 +99,19 @@ const Teams = (props) => {
                             <TeamForm id={currentTeamId}
                                 handleUpdateTeam={handleUpdateTeam}
                             />
-                        </Grid> : ""
+                        </Grid> : null
                     }
-                    {teams.map((team, index) => {
-                        return (<Team key={index} team={team}
-                            handleEditTeam={handleEditTeam}
-                            handleDeleteTeam={handleDeleteTeam}
-                            handleJoinTeam={handleJoinTeam}
-                        />)
-                    })
-                    }
+                    <Grid style={{ marginTop: '10px' }} container spacing={2} justify="center" alignItems="center">
+                        {teams.map((team, index) => {
+                            return (<Team key={index} team={team}
+                                handleEditTeam={handleEditTeam}
+                                handleDeleteTeam={handleDeleteTeam}
+                                handleJoinTeam={handleJoinTeam}
+                            />)
+                        })
+                        }
+
+                    </Grid>
                 </Grid>
             </Container>
         </div>

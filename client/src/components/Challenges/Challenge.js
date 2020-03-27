@@ -15,9 +15,6 @@ const useStyles = makeStyles(theme => ({
         [theme.breakpoints.up('md')]: {
             marginLeft: "57px",
         },
-    },
-    button: {
-        marginRight: '5px'
     }
 }))
 
@@ -62,14 +59,12 @@ const Challenge = (props) => {
                     {enableEdit ?
                         <>
                             <Button
-                                className={classes.button}
                                 color="primary"
                                 onClick={() => { handleEditChallenge(props.challenge.id) }}
                             >Edit
                                 </Button>
                             {allowDeleteChallenge ?
                                 <Button
-                                    className={classes.button}
                                     color="primary"
                                     onClick={() => { handleDeleteChallenge(props.challenge) }}
                                 >Delete
@@ -80,7 +75,6 @@ const Challenge = (props) => {
                         : ""
                     }
                     <Button
-                        className={classes.button}
                         color="primary"
                         onClick={() => { handleJoinChallenge(props.challenge) }}
                     >Select/Join
