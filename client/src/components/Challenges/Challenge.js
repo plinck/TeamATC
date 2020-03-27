@@ -1,8 +1,8 @@
 import React from 'react';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
-import { makeStyles, Grid, Card, CardContent, Typography, Button, Divider } from '@material-ui/core';
+import { makeStyles, Grid, Card, CardContent, Typography, Button, CardMedia, CardActions, Divider } from '@material-ui/core';
 import moment from "moment";
-import {CHALLENGE} from "../Environment/Environment";
+import { CHALLENGE } from "../Environment/Environment";
 
 const useStyles = makeStyles(theme => ({
     main: {
@@ -15,9 +15,6 @@ const useStyles = makeStyles(theme => ({
         [theme.breakpoints.up('md')]: {
             marginLeft: "57px",
         },
-    },
-    button: {
-        margin: '15px'
     }
 }))
 
@@ -26,16 +23,16 @@ const Challenge = (props) => {
     const classes = useStyles();
 
     const handleEditChallenge = (id) => {
-        props.handleEditChallenge(id); 
-    }    
+        props.handleEditChallenge(id);
+    }
 
     const handleDeleteChallenge = (challenge) => {
-        props.handleDeleteChallenge(challenge); 
-    }   
+        props.handleDeleteChallenge(challenge);
+    }
 
     const handleJoinChallenge = (challenge) => {
-        props.handleJoinChallenge(challenge); 
-    }    
+        props.handleJoinChallenge(challenge);
+    }
 
     // dont ket non-admin delete or edit 
     const enableEdit = (props.user && props.user.isAdmin) ? true : false;
@@ -43,52 +40,49 @@ const Challenge = (props) => {
     const allowDeleteChallenge = props.challenge.id !== CHALLENGE ? true : false;
 
     return (
-            <Grid item xs={12} md={5}>
-                <Card>
-                    <CardContent style={{ textAlign: "center" }}>
-                        <Typography variant="h5">{props.challenge.name}</Typography>
-                        <img style={{maxHeight: '200px'}} 
-                            src={props.challenge.photoObj ? props.challenge.photoObj.url : ""} 
-                            alt={props.challenge.photoObj ? props.challenge.photoObj.fileName : ""} />
-                        <Typography variant="subtitle1" align="left">{props.challenge.description}</Typography>
-                        <Typography variant="subtitle1" align="left">
-                            {moment(props.challenge.startDate).format("MM-DD-YYYY")}{` thru `}
-                            {moment(props.challenge.endDate).format("MM-DD-YYYY")}
-                        </Typography>
-                        <Divider></Divider>
-                        {enableEdit ?
-                            <div>
-                                <Button 
-                                    className={classes.button}
-                                    variant="contained"
-                                    color="primary" 
-                                    onClick={() => {handleEditChallenge(props.challenge.id)}}
-                                    >Edit
+        <Grid item xs={12} md={4}>
+            <Card style={{ height: "100%" }}>
+                <CardMedia
+                    style={{ height: '250px' }}
+                    image={props.challenge.photoObj ? props.challenge.photoObj.url : "/images/smallbusiness.jpg"}
+                    title={props.challenge.photoObj ? props.challenge.photoObj.fileName : ""}
+                />
+                <CardContent style={{ textAlign: "center" }}>
+                    <Typography variant="h5">{props.challenge.name}</Typography>
+                    <Typography variant="subtitle1" align="left">{props.challenge.description}</Typography>
+                    <Typography variant="subtitle1" align="left">
+                        {moment(props.challenge.startDate).format("MM-DD-YYYY")}{` thru `}
+                        {moment(props.challenge.endDate).format("MM-DD-YYYY")}
+                    </Typography>
+                </CardContent>
+                <CardActions>
+                    {enableEdit ?
+                        <>
+                            <Button
+                                color="primary"
+                                onClick={() => { handleEditChallenge(props.challenge.id) }}
+                            >Edit
                                 </Button>
-                                {allowDeleteChallenge ?
-                                    <Button 
-                                        className={classes.button}
-                                        variant="contained"
-                                        color="primary" 
-                                        onClick={() => {handleDeleteChallenge(props.challenge)}}
-                                        >Delete
+                            {allowDeleteChallenge ?
+                                <Button
+                                    color="primary"
+                                    onClick={() => { handleDeleteChallenge(props.challenge) }}
+                                >Delete
                                     </Button>
-                                    : ""
-                                }
-                            </div>
+                                : ""
+                            }
+                        </>
                         : ""
-                        }
-                        <Button 
-                        className={classes.button}
-                        variant="contained"
-                        color="primary" 
-                        onClick={() => {handleJoinChallenge(props.challenge)}}
-                        >Select/Join
+                    }
+                    <Button
+                        color="primary"
+                        onClick={() => { handleJoinChallenge(props.challenge) }}
+                    >Select/Join
                     </Button>
+                </CardActions>
 
-                    </CardContent>
-                </Card>
-            </Grid>
+            </Card>
+        </Grid>
     )
 }
 

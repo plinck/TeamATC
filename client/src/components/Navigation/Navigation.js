@@ -19,6 +19,7 @@ import TimerIcon from '@material-ui/icons/Timer';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 import AddIcon from '@material-ui/icons/Add';
 import MailIcon from '@material-ui/icons/Mail';
+import PeopleIcon from '@material-ui/icons/People';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -101,6 +102,7 @@ let Navigation = (props) => {
       <ListItem><ListItemIcon><DirectionsRunIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/activities">Activities</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/account">Account</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><TimerIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/challenges">Challenges</NavLink></ListItemText></ListItem>
+      <ListItem><ListItemIcon><PeopleIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/teams">Teams</NavLink></ListItemText></ListItem>
       <Divider></Divider>
       <ListItem><ListItemIcon><EqualizerIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/results">Full Results</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><SettingsIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/admin">Admin</NavLink></ListItemText></ListItem>
@@ -132,6 +134,7 @@ let Navigation = (props) => {
       <ListItem><ListItemIcon><DirectionsRunIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/activities">Activities</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><PersonIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/account">Account</NavLink></ListItemText></ListItem>
       <ListItem><ListItemIcon><TimerIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/challenges">Challenges</NavLink></ListItemText></ListItem>
+      <ListItem><ListItemIcon><PeopleIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/teams">Teams</NavLink></ListItemText></ListItem>
       <Divider></Divider>
       <ListItem><ListItemIcon><EqualizerIcon /></ListItemIcon><ListItemText><NavLink className={classes.mobileButton} to="/results">Full Results</NavLink></ListItemText></ListItem>
       <Divider></Divider>

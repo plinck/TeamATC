@@ -15,9 +15,19 @@ import MemberDB from "../../User/MemberDB";
 // TODO: Remove input props once materialize is removed.
 
 const styles = theme => ({
+    root: {
+        [theme.breakpoints.up('md')]: {
+            height: "calc(100vh - 64px)",
+            marginTop: "-31px"
+        },
+        background: 'url(/images/ATC-repeating-background.png) center center fixed',
+        backgroundSize: "cover",
+        height: 'calc(100vh - 65px)',
+        overflow: "hidden"
+    },
     container: {
-        display: 'flex',
-        flexWrap: 'wrap',
+        height: "100%",
+        overflowY: "auto"
     },
     textField: {
         margin: theme.spacing(1),
@@ -28,11 +38,6 @@ const styles = theme => ({
     },
     menu: {
         width: 200,
-    },
-    background: {
-        height: 'calc(100vh - 64px)',
-        backgroundSize: "cover",
-        background: 'url(./images/ATC-repeating-background.png) center center fixed'
     }
 });
 
@@ -132,8 +137,8 @@ class Register extends React.Component {
         const { showPassword } = this.state;
 
         return (
-            <div className={classes.background}>
-                <Container>
+            <div className={classes.root}>
+                <Container className={classes.container}>
                     <Grid container
                         justify="center">
                         <Grid style={{ marginTop: '70px' }} xs={11} md={6} item>
