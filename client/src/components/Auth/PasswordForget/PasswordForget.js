@@ -14,7 +14,21 @@ const PasswordForgetPage = () => (
 );
 
 const styles = theme => ({
+  root: {
+    [theme.breakpoints.up('md')]: {
+      height: "calc(100vh - 64px)",
+      marginTop: "-31px"
+    },
+    background: 'url(/images/ATC-repeating-background.png) center center fixed',
+    backgroundSize: "cover",
+    height: 'calc(100vh - 65px)',
+    overflow: "hidden"
+  },
   container: {
+    height: "100%",
+    overflowY: "auto"
+  },
+  formContainer: {
     display: 'flex',
     flexWrap: 'wrap',
   },
@@ -23,11 +37,6 @@ const styles = theme => ({
   },
   menu: {
     width: 200,
-  },
-  background: {
-    height: 'calc(100vh - 64px)',
-    backgroundSize: "cover",
-    background: 'url(./images/ATC-repeating-background.png) center center fixed'
   }
 });
 
@@ -72,8 +81,8 @@ class PasswordForgetFormBase extends Component {
 
     return (
 
-      <div className={classes.background}>
-        <Container>
+      <div className={classes.root}>
+        <Container className={classes.container}>
           <Grid container
             justify="center">
             <Grid style={{ marginTop: '70px' }} xs={11} md={6} item>
@@ -81,7 +90,7 @@ class PasswordForgetFormBase extends Component {
               <Card>
                 <CardContent>
                   <Typography variant="h5">Reset Password</Typography>
-                  <form className={classes.container}>
+                  <form className={classes.formContainer}>
                     <TextField
                       id="email"
                       label="Email"

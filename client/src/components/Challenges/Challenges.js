@@ -11,11 +11,16 @@ const useStyles = makeStyles(theme => ({
     root: {
         [theme.breakpoints.up('md')]: {
             marginLeft: "57px",
-            height: "calc(100vh - 56px)"
+            height: "calc(100vh - 95px)"
         },
         background: 'url(/images/ATC-repeating-background.png) center center fixed',
         backgroundSize: "cover",
-        height: 'calc(100vh + 50px)',
+        height: 'calc(100vh - 65px)',
+        overflow: "hidden"
+    },
+    container: {
+        height: "100%",
+        overflowY: "auto"
     },
     button: {
         margin: '15px'
@@ -89,16 +94,19 @@ const Challenges = (props) => {
 
     return (
         <div className={classes.root}>
-            <Container maxWidth="xl">
+            <Container className={classes.container} maxWidth="xl">
                 {message ? <Typography color="primary" variant="subtitle1" align="center">{message}</Typography> : ""}
-                <Grid container style={{ minHeight: "100vh - 56px" }} spacing={2} justify="center" alignItems="center">
+                <Grid style={{ marginTop: '10px' }} container spacing={2} justify="center" alignItems="center">
                     {userCanUpdateChallenge ?
                         <Grid item xs={12} md={5}>
                             <ChallengeForm id={currentChallengeId}
                                 handleUpdateChallenge={handleUpdateChallenge}
                             />
-                        </Grid> : ""
+                        </Grid> : null
                     }
+
+                </Grid>
+                <Grid container spacing={2} justify="center" alignItems="stretch">
                     {challenges.map((challenge, index) => {
                         return (<Challenge key={index} challenge={challenge}
                             handleEditChallenge={handleEditChallenge}

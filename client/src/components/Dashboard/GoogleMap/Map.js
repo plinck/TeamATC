@@ -39,11 +39,7 @@ class GoogleMap extends Component {
         let map = this.state.map
         var start = this.props.start;
         var end = this.props.end;
-        let waypoints = this.props.waypoints.map(city => {
-            let newObj = {}
-            newObj.location = city.location
-            return newObj
-        })
+        let waypoints = this.props.waypoints
         var travelMode = window.google.maps.DirectionsTravelMode.DRIVING
         var request = {
             origin: start,
@@ -82,7 +78,6 @@ class GoogleMap extends Component {
 
                 this.props.computeTotalDistance(response);
                 this.props.teamTotals.forEach(total => this.putMarkerOnRoute(polyline, total.bikeDistanceTotal, total.userOrTeamName))
-                // this.putMarkerOnRoute(polyline, 1200, "Testy")
             } else {
                 alert("directions response " + status);
             }
@@ -109,30 +104,30 @@ class GoogleMap extends Component {
         return marker;
     }
 
-    addWaypointMarkers(waypoints) {
-        let map = this.state.map
-        let infowindow = this.state.infowindow
-        waypoints.forEach((waypoint, index) => {
-            var contentString = `<b>${index + 1}. ${waypoint.location}</>`;
-            var marker = new window.google.maps.Marker({
-                position: waypoint.latlng,
-                label: `${index + 1}`,
-                map: map,
-                title: waypoint.location,
-                // zIndex: Math.round(latlng.lat() * -100000) << 5,
-                contentString: contentString
-            });
-            window.google.maps.event.addListener(marker, 'click', function () {
-                infowindow.setContent(contentString);
-                infowindow.open(map, marker);
-            });
-        })
+    // addWaypointMarkers(waypoints) {
+    //     let map = this.state.map
+    //     let infowindow = this.state.infowindow
+    //     waypoints.forEach((waypoint, index) => {
+    //         var contentString = `<b>${index + 1}. ${waypoint.location}</>`;
+    //         var marker = new window.google.maps.Marker({
+    //             position: waypoint.latlng,
+    //             label: `${index + 1}`,
+    //             map: map,
+    //             title: waypoint.location,
+    //             // zIndex: Math.round(latlng.lat() * -100000) << 5,
+    //             contentString: contentString
+    //         });
+    //         window.google.maps.event.addListener(marker, 'click', function () {
+    //             infowindow.setContent(contentString);
+    //             infowindow.open(map, marker);
+    //         });
+    //     })
 
-    }
+    // }
 
     async onMapLoad() {
         const [directionsDisplay, infowindow, directionsService, map, polyline] = await Promise.all([
-            new window.google.maps.DirectionsRenderer({ suppressMarkers: true }),
+            new window.google.maps.DirectionsRenderer({ suppressMarkers: false }),
             new window.google.maps.InfoWindow(),
             new window.google.maps.DirectionsService(),
             new window.google.maps.Map(document.getElementById(this.props.id), this.props.options),
@@ -144,7 +139,7 @@ class GoogleMap extends Component {
         ]);
         this.setState({ directionsDisplay, infowindow, directionsService, map, polyline })
         directionsDisplay.setMap(map);
-        this.addWaypointMarkers(this.props.waypoints)
+        // this.addWaypointMarkers(this.props.waypoints)
         this.calcRoute();
 
     }

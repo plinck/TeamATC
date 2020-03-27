@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(theme => ({
     container: {
         height: '95vh',
+        marginTop: "-31px",
         backgroundImage: 'url(/images/landingPageBackground2.jpg)',
         backgroundSize: "cover",
         [theme.breakpoints.down('md')]: {
