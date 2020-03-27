@@ -11,7 +11,7 @@ module.exports = function (app) {
     });
 
     // Delete User
-    app.post("/api/auth/deleteUser/:uid", requiresLogin, (req, res) => {
+    app.post("/api/auth/deleteUser/:uid", (req, res) => {
         let uid = req.params.uid;
         try {
             // delete the authUser

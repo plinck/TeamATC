@@ -84,13 +84,15 @@ class UserForm extends React.Component {
       phoneNumber: "",
       email: "",
       uid: "",
-      teamUid: "",
-      teamName: "",
       primaryRole: "noauth",
       isAdmin: false,
       isTeamLead: false,
       isModerator: false,
       isUser: false,
+      challengeUid: "",
+      teamUid: "",
+      teamName: "",
+
       message: "",
       teams: null,
       teamLookup: null
@@ -106,6 +108,7 @@ class UserForm extends React.Component {
         photoURL: user.photoURL || "",
         phoneNumber: user.phoneNumber || "",
         uid: user.uid,
+        challengeUid: user.challengeUid || "",
         teamUid: user.teamUid || "",
         teamName: user.teamName || "",    
         primaryRole: user.primaryRole,
@@ -123,6 +126,7 @@ class UserForm extends React.Component {
   };
 
   // get available teams for select list
+  // Dont use for now
   fetchTeams() {
     TeamDB.getTeams()
     .then(teams => {
@@ -147,7 +151,8 @@ class UserForm extends React.Component {
 
   componentDidMount() {
     // console.log(`id: ${this.state.id}`);
-    this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
+    // dont fetch teams for now since we need to based on challenge they are in so we need that first
+    // this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
 
     // only get user if its an update, otherwise assume new
     if (this.state.id) {
@@ -164,8 +169,9 @@ class UserForm extends React.Component {
   createUser = () => {  
     // eslint-disable-next-line no-unused-vars
     const user = this.state;
-    // set team name from ID
-    user.teamName = this.state.teamLookup[this.state.teamUid]
+
+    // set team name from ID - Save for later when callenge is also selected
+    // user.teamName = this.state.teamLookup[this.state.teamUid]
 
     // First, create the auth user in firebase
     // must be done on server for security reasons
@@ -200,8 +206,9 @@ class UserForm extends React.Component {
     console.log(`updating db with user.uid:${this.state.uid}`);
 
     const user = this.state;
-    // set team name from ID
-    user.teamName = this.state.teamLookup[this.state.teamUid]
+    // set team name from ID - SAVE THIS FOR LATER SINCE IT NEEDS TO BE BASED ON Selected Challenge
+    // remove team stuff when adding user
+    // user.teamName = this.state.teamLookup[this.state.teamUid]
 
     UserDB.update(user).then (user => {
       this.setState({message: "User Updated"});
@@ -304,8 +311,6 @@ class UserForm extends React.Component {
       email,
       primaryRole,
       message,
-      teamUid,
-      teams
       } = this.state;
 
     let buttonText, emailEnabled;
@@ -322,14 +327,14 @@ class UserForm extends React.Component {
       lastName !== "" &&
       phoneNumber !== "";
 
-    if (typeof this.state.teams === 'undefined') {
-        console.error("Fatal Error")
-        return (<div> <p>FATAL ERROR Gettng teams, something goofy going on ...</p> </div>)
-    }
-    if (this.state.teams === null) {
-        console.log("No teams yet")
-        return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
-    }
+    // if (typeof this.state.teams === 'undefined') {
+    //     console.error("Fatal Error")
+    //     return (<div> <p>FATAL ERROR Gettng teams, something goofy going on ...</p> </div>)
+    // }
+    // if (this.state.teams === null) {
+    //     console.log("No teams yet")
+    //     return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
+    // }
 
     return ( 
       <div className="container">
@@ -339,6 +344,7 @@ class UserForm extends React.Component {
             <p>{message}</p>
             <form onSubmit={this.saveUser} >
 
+            {/* Dont usee teams for now - wait unti l you have challenge properly integrated
             <FormControl variant="outlined" required className={classes.formControl}>
                 <InputLabel id="teamNameLabel">Team Name</InputLabel>
                 <Select
@@ -359,6 +365,7 @@ class UserForm extends React.Component {
                   })} 
                 </Select>
             </FormControl>
+            */}
 
             <TextField
               disabled={!emailEnabled}

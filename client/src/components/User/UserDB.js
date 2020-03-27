@@ -32,7 +32,6 @@ class UserDB {
             let docRef = dbUsersRef.doc(id);
             docRef.get().then((doc) => {
                 if (doc.exists) {
-                    // update
                     let user = doc.data();
                     return(resolve(user));
                 }
@@ -88,7 +87,6 @@ class UserDB {
                 let docRef = dbUsersRef.doc(uid);
                 docRef.get().then((doc) => {
                     if (doc.exists) {
-                        // update
                         let user = doc.data();
                         resolve(user);
                     } else {
@@ -143,7 +141,6 @@ class UserDB {
             .then(() => {
                 console.log("Auth Profile for User successfully updated!");
                 const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
-                // update
                 dbUsersRef.doc(user.id).set({
                     firstName: user.firstName,
                     lastName: user.lastName,
@@ -151,8 +148,8 @@ class UserDB {
                     phoneNumber: user.phoneNumber,
                     email: user.email.toLowerCase(),
                     photoURL: user.photoURL ? user.photoURL : "",
-                    teamName: user.teamName,
-                    teamUid: user.teamUid
+                    teamName: user.teamName ? user.teamName : "",
+                    teamUid: user.teamUid ? user.teamUid : ""
                 },{ merge: true }).then(() => {
                     console.log("completed");
                     resolve();
