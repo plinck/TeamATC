@@ -175,7 +175,7 @@ class UserDB {
             // update
             console.log("User updated, user=", user);
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
-            dbUsersRef.doc(user.uid).set({
+            dbUsersRef.doc(user.id).set({
                 firstName: user.firstName,
                 lastName: user.lastName,
                 displayName: `${user.firstName} ${user.lastName}`,

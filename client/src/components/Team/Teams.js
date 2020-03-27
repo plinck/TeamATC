@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
-import { Container, makeStyles, Grid } from '@material-ui/core';
+import { Container, Typography, makeStyles, Grid } from '@material-ui/core';
 import TeamDB from "./TeamDB"
 import TeamForm from './TeamForm';
 import Team from "./Team"
@@ -59,7 +59,10 @@ const Teams = (props) => {
     const handleJoinTeam = (teamUid, teamName) => {
         UserDB.updateTeam(props.user.uid, teamUid, teamName).then(() => {
             // User now assigned to new team
-            setMessage(`joined team with ID ${teamUid}`);
+            setMessage(`joined team ${teamName}`);
+            props.history.push({
+                pathname: '/dashboard'
+            });
         }).catch(err => {
             console.error(`Error joining team: ${teamUid} for user: ${props.uid}`);
         });
@@ -86,7 +89,8 @@ const Teams = (props) => {
     return (
         <div className={classes.main}>
             <div className={classes.root}>
-                <Container maxWidth="xl">{message ? <h5 className={classes.messages}>{message}</h5> : ""}
+                <Container maxWidth="xl">
+                    {message ? <Typography color="primary" variant="subtitle1" align="center">{message}</Typography> : ""}
                     <Grid container style={{ minHeight: "75vh" }} spacing={2} justify="center" alignItems="center">
                         {userCanUpdateTeam ?
                             <Grid item xs={12} md={5}>

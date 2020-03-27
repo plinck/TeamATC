@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { withRouter } from 'react-router';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
-import { Container, makeStyles, Grid } from '@material-ui/core';
+import { Container, Typography, makeStyles, Grid } from '@material-ui/core';
 import ChallengeDB from "./ChallengeDB"
 import ChallengeForm from './ChallengeForm';
 import Challenge from "./Challenge"
@@ -54,12 +55,15 @@ const Challenges = (props) => {
         }
     }
 
-    const handleJoinChallenge = (challengeUid) => {
-        UserDB.updateChallenge(props.user.uid, challengeUid).then(() => {
+    const handleJoinChallenge = (challenge) => {
+        UserDB.updateChallenge(props.user.uid, challenge.id).then(() => {
             // User now assigned to new challenge
-            setMessage(`joined challenge with ID ${challengeUid}`);
+            setMessage(`joined challenge ${challenge.name}`);
+            props.history.push({
+                pathname: '/teams'
+            });
         }).catch(err => {
-            console.error(`Error joining challenge: ${challengeUid} for user: ${props.uid}`);
+            console.error(`Error joining challenge: ${challenge.id} for user: ${props.uid}`);
         });
     }
 
@@ -85,7 +89,8 @@ const Challenges = (props) => {
 
     return (
         <div className={classes.root}>
-            <Container maxWidth="xl">{message ? <h5 className={classes.messages}>{message}</h5> : ""}
+            <Container maxWidth="xl">
+                {message ? <Typography color="primary" variant="subtitle1" align="center">{message}</Typography> : ""}
                 <Grid container style={{ minHeight: "100vh - 56px" }} spacing={2} justify="center" alignItems="center">
                     {userCanUpdateChallenge ?
                         <Grid item xs={12} md={5}>
@@ -108,4 +113,4 @@ const Challenges = (props) => {
     )
 }
 
-export default withAuthUserContext(Challenges);
+export default withAuthUserContext(withRouter(Challenges));
