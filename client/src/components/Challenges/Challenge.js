@@ -29,12 +29,12 @@ const Challenge = (props) => {
         props.handleEditChallenge(id); 
     }    
 
-    const handleDeleteChallenge = (id) => {
-        props.handleDeleteChallenge(id); 
+    const handleDeleteChallenge = (challenge) => {
+        props.handleDeleteChallenge(challenge); 
     }   
 
-    const handleJoinChallenge = (id) => {
-        props.handleJoinChallenge(id); 
+    const handleJoinChallenge = (challenge) => {
+        props.handleJoinChallenge(challenge); 
     }    
 
     // dont ket non-admin delete or edit 
@@ -50,9 +50,11 @@ const Challenge = (props) => {
                         <img style={{maxHeight: '200px'}} 
                             src={props.challenge.photoObj ? props.challenge.photoObj.url : ""} 
                             alt={props.challenge.photoObj ? props.challenge.photoObj.fileName : ""} />
-                        <Typography>{props.challenge.description}</Typography>
-                        <Typography>Start: {moment(props.challenge.startDate).format("MM-DD-YYYY")}</Typography>
-                        <Typography>End: {moment(props.challenge.endDate).format("MM-DD-YYYY")}</Typography>
+                        <Typography variant="subtitle1" align="left">{props.challenge.description}</Typography>
+                        <Typography variant="subtitle1" align="left">
+                            {moment(props.challenge.startDate).format("MM-DD-YYYY")}{` thru `}
+                            {moment(props.challenge.endDate).format("MM-DD-YYYY")}
+                        </Typography>
                         <Divider></Divider>
                         {enableEdit ?
                             <div>
@@ -80,7 +82,7 @@ const Challenge = (props) => {
                         className={classes.button}
                         variant="contained"
                         color="primary" 
-                        onClick={() => {handleJoinChallenge(props.challenge.id)}}
+                        onClick={() => {handleJoinChallenge(props.challenge)}}
                         >Select/Join
                     </Button>
 
