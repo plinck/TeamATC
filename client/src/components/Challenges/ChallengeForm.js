@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import LocationSearchBar from './LocationSearchBar';
-
+import Waypoints from './Waypoints';
 import AddIcon from "@material-ui/icons/Add";
 import { Fab } from "@material-ui/core";
 
@@ -22,9 +22,6 @@ const useStyles = makeStyles(theme => ({
     chips: {
         display: 'flex',
         flexWrap: 'wrap',
-    },
-    chip: {
-        margin: 2,
     },
     formControl: {
         [theme.breakpoints.up('md')]: {
@@ -53,6 +50,9 @@ const ChallengeForm = (props) => {
         name: "",
         photoObj: null,
         startDate: new Date(),
+        startCity: "",
+        endCity: "",
+        waypoints: []
     }
     const CHALLENGE_INITIAL_VALUES = {
         id: props.id,
@@ -61,7 +61,10 @@ const ChallengeForm = (props) => {
         isCurrentChallenge: false,
         name: "",
         photoObj: null,
-        startDate: new Date()
+        startDate: new Date(),
+        startCity: "",
+        endCity: "",
+        waypoints: []
     }
     const [challenge, setChallenge] = useState(CHALLENGE_INITIAL_VALUES);
     const [message, setMessage] = React.useState("");
@@ -87,6 +90,21 @@ const ChallengeForm = (props) => {
     const handleEndCityChange = city => {
         setChallenge({ ...challenge, endCity: city })
     }
+
+    const handleAddWaypoint = city => {
+        let newWaypoint = {
+            location: city
+        }
+        let newWaypoints = challenge.waypoints
+        newWaypoints.push(newWaypoint)
+        setChallenge({ ...challenge, waypoints: newWaypoints })
+    }
+
+    const handleDelete = chipToDelete => () => {
+        console.log(chipToDelete)
+        let filtered = challenge.waypoints.filter(loc => loc.location !== chipToDelete.location);
+        setChallenge({ ...challenge, waypoints: filtered })
+    };
 
     const handlePhotoUpload = (event) => {
         event.preventDefault();
@@ -219,11 +237,13 @@ const ChallengeForm = (props) => {
                             }}
                         />
                     </MuiPickersUtilsProvider>
+                    <br />
                     <Divider />
-                    <Typography variant="h5">Create Route</Typography>
+                    <br />
+                    <Typography variant="h5">Create Route (Not Required)</Typography>
                     <LocationSearchBar title="Start City" id="startCity" handleStartCityChange={handleStartCityChange} />
                     <LocationSearchBar title="End City" id="endCity" handleStartCityChange={handleEndCityChange} />
-
+                    <Waypoints handleAddWaypoint={handleAddWaypoint} handleDelete={handleDelete} waypoints={challenge.waypoints} />
                 </form>
             </CardContent>
             <CardActions>
