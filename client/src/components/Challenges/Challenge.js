@@ -1,6 +1,6 @@
 import React from 'react';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
-import { makeStyles, Grid, Card, CardContent, Typography, Button, CardMedia, CardActions, Divider } from '@material-ui/core';
+import { makeStyles, Grid, Card, CardContent, Typography, Button, CardMedia, CardActions } from '@material-ui/core';
 import moment from "moment";
 import { CHALLENGE } from "../Environment/Environment";
 

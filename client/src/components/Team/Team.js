@@ -1,6 +1,6 @@
 import React from 'react';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
-import { makeStyles, Grid, Card, CardContent, Typography, Button, Divider, CardActions } from '@material-ui/core';
+import { makeStyles, Grid, Card, CardContent, Typography, Button, CardActions } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
     main: {

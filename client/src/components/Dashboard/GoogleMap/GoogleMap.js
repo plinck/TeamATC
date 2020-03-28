@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Map from './Map'
 import { Card, CardContent, Grid, Box, Typography, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+import moment from "moment";
 
 
 const GoogleMap = (props) => {
@@ -61,7 +62,7 @@ const GoogleMap = (props) => {
                                 <li>Start Point: {props.start} </li>
                                 <li>End Point: {props.end} </li>
                                 <li>Total Distance: {totalDist.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} mi</li>
-                                <li>Challenge Ends: {props.endDate ? props.endDate : "N/A"}</li>
+                                <li>Challenge Ends: {props.endDate ? moment(props.endDate).format("MM-DD-YYYY") : "N/A"}</li>
                             </ul>
                         </Grid>
                         <Grid item xs={12} style={{ textAlign: "center" }}>

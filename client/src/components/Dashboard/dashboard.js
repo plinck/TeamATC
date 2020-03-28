@@ -16,7 +16,7 @@ import { Container, Grid, CircularProgress } from '@material-ui/core'
 import Util from "../Util/Util";
 import GoogleMap from './GoogleMap/GoogleMap';
 import TeamWidget from './TeamWidget/TeamWidget';
-
+import ChallengeDB from '../Challenges/ChallengeDB';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
@@ -48,6 +48,7 @@ class Dashboard extends React.PureComponent {
             activities: [],
             myActivities: [],
             totals: {},
+            challenge: {}
         };
     }
 
@@ -130,6 +131,14 @@ class Dashboard extends React.PureComponent {
             console.error(`Error attaching listener: ${error}`);
         });
     }
+    fetchData(uid) {
+        ChallengeDB.getFiltered().then(challenges => {
+            let currentChallenge = challenges.filter(challenge => challenge.id === uid)
+            console.log(currentChallenge[0])
+            this.setState({ challenge: currentChallenge[0] })
+        })
+            .catch(err => console.log(err));
+    }
 
     componentDidMount() {
         this._mounted = true;
@@ -137,6 +146,7 @@ class Dashboard extends React.PureComponent {
         this.setState({ loadingFlag: true, layouts: JSON.parse(JSON.stringify(layouts)) });
         if (this.props.user.challengeUid) {
             this.createListener(this.props.user.challengeUid)
+            this.fetchData(this.props.user.challengeUid)
         }
     }
 
@@ -148,6 +158,7 @@ class Dashboard extends React.PureComponent {
             }
             console.log(this.props.user.challengeUid)
             this.createListener(this.props.user.challengeUid)
+            this.fetchData(this.props.user.challengeUid)
         }
     }
     // Search for object in array based on key using uniqure ID
@@ -220,37 +231,17 @@ class Dashboard extends React.PureComponent {
                                 this.onLayoutChange(layout, layouts)
                             }
                         >
-                            <div key="11" data-grid={{ w: 12, h: 12, x: 0, y: 0, minW: 6, minH: 11, maxW: 12, maxH: 18 }}>
-                                <GoogleMap
-                                    title="Haynes City for Bethany"
-                                    start='San Francisco, CA'
-                                    end='Haines City, FL'
-                                    waypoints={[{
-                                        location: "Coeur d'Alene, ID",
-                                    },
-                                    {
-                                        location: "St George, UT",
-                                    },
-                                    {
-                                        location: "Houston, TX",
-                                    },
-                                    {
-                                        location: "Madison, WI",
-                                    },
-                                    {
-                                        location: "Louisville, KY",
-                                    },
-                                    {
-                                        location: "Chattanooga, TN",
-                                    },
-                                    {
-                                        location: "Panama City, FL",
-
-                                    }
-                                    ]}
-                                    teamTotals={this.state.totals.teamR}
-                                    callbackParent={() => this.onChildChanged()} />
-                            </div>
+                            {this.state.challenge && this.state.challenge.startCity ?
+                                <div key="11" data-grid={{ w: 12, h: 12, x: 0, y: 0, minW: 6, minH: 11, maxW: 12, maxH: 18 }}>
+                                    <GoogleMap
+                                        title={this.state.challenge.name}
+                                        start={this.state.challenge.startCity}
+                                        end={this.state.challenge.endCity}
+                                        waypoints={this.state.challenge.waypoints}
+                                        teamTotals={this.state.totals.teamR}
+                                        endDate={this.state.challenge.endDate}
+                                        callbackParent={() => this.onChildChanged()} />
+                                </div> : <></>}
                             <div key="12" data-grid={{ w: 4, h: 4, x: 0, y: 1, minW: 3, minH: 4, maxW: 4, maxH: 5 }}>
                                 <TeamWidget
                                     team={this.props.user.teamName}
