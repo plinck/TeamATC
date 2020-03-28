@@ -22,7 +22,7 @@ class Users {
                 return (users);
             }).then (users => {
                 users.forEach (user => {
-                    dbUsersRef.doc(user.id).set({challengeUid: challengeUid}, {merge: true}).then ( () => {
+                    dbUsersRef.doc(user.id).set({challengeUid: challengeUid, teamUid: "", teamName: ""}, {merge: true}).then ( () => {
                         //console.log(`Updated user : ${JSON.stringify(user, null, 2)}`);
                     }).catch (err =>  {
                         console.error(`Error updating User: ${user.displayName} with error ${err}`);

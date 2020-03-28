@@ -5,8 +5,8 @@ const DEV_ENV="dev"
 
 // const {ORG, ENV} = require("../ServerEnvironment");
 const ORG="ATC"
-const ENV="dev"
-const CHALLENGE="mFpSMP7oWvriDwIehwzB";
+const ENV="prod"
+const CHALLENGE="ndqmG6qixVYrSoek4qJL";
 
 class Util {
 
