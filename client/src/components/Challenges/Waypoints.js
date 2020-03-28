@@ -87,7 +87,7 @@ class Waypoints extends Component {
                         <Chip
                             key={index}
                             label={data.location}
-                            // onDelete={this.props.handleDelete(data)}
+                            onDelete={this.props.handleDelete(data)}
                             style={{ margin: '2px' }}
                         />
                     );

@@ -2,7 +2,7 @@ import Util from "../Util/Util.js";
 import Photo from "../Util/Photo.js"
 
 class ChallengeDB {
-    
+
     // get all challenges
     static getFiltered = () => {
         // default ref gets all
@@ -17,7 +17,7 @@ class ChallengeDB {
                 .then((querySnapshot) => {
                     let challenges = [];
                     querySnapshot.forEach(doc => {
-                        let  challenge = {};
+                        let challenge = {};
                         challenge = doc.data();
                         challenge.id = doc.id;
                         challenge.startDate = challenge.startDate.toDate();
@@ -60,7 +60,7 @@ class ChallengeDB {
         });
     }
 
-// Add a single challenge based on id
+    // Add a single challenge based on id
     static create = (challenge) => {
         return new Promise((resolve, reject) => {
             const dbChallengesRef = Util.getBaseDBRefs().dbChallengesRef;
@@ -70,6 +70,9 @@ class ChallengeDB {
                 isCurrentChallenge: challenge.isCurrentChallenge ? challenge.isCurrentChallenge : false,
                 name: challenge.name,
                 startDate: challenge.startDate,
+                startCity: challenge.startCity ? challenge.startCity : false,
+                endCity: challenge.endCity ? challenge.endCity : false,
+                waypoints: challenge.waypoints ? challenge.waypoints : false
             }
             // do NOT overwrite existing photoOBj
             if (challenge.photoObj && challenge.photoObj != null) {
@@ -95,13 +98,16 @@ class ChallengeDB {
                 isCurrentChallenge: challenge.isCurrentChallenge ? challenge.isCurrentChallenge : false,
                 name: challenge.name,
                 startDate: challenge.startDate,
+                startCity: challenge.startCity ? challenge.startCity : false,
+                endCity: challenge.endCity ? challenge.endCity : false,
+                waypoints: challenge.waypoints ? challenge.waypoints : false
             }
             // do NOT overwrite existing photoOBj
             if (challenge.photoObj && challenge.photoObj != null) {
                 challengeNew.photoObj = challenge.photoObj;
             }
-            
-            dbChallengesRef.doc(challenge.id).set(challengeNew, {merge: true}).then(() => {
+
+            dbChallengesRef.doc(challenge.id).set(challengeNew, { merge: true }).then(() => {
                 console.log("Firestore challenge successfully updated");
                 return resolve();
             }).catch((error) => {
@@ -128,43 +134,43 @@ class ChallengeDB {
 
             const docRef = dbUsersRef.where("challengeUid", "==", challenge.id).limit(1);
             docRef.get()
-            .then((docSnaps) => {
-                docSnaps.forEach((doc) => {
-                    anyUsers = true;
+                .then((docSnaps) => {
+                    docSnaps.forEach((doc) => {
+                        anyUsers = true;
+                    });
+                    if (anyUsers) {
+                        throw new Error(`Cant delete, users assigned to this challenge`);
+                    }
+                    // const docRef = dbActivitiesRef.where("challengeUid", "==", challenge.id).limit(1);
+                    const docRef = dbActivitiesRef.limit(1);
+                    return (docRef.get());
+                }).then((docSnaps) => {
+                    docSnaps.forEach((doc) => {
+                        anyActivities = true;
+                    });
+                    if (anyActivities) {
+                        throw new Error(`Cant delete, activities assigned to this challenge`);
+                    }
+                    const docRef = dbTeamsRef.limit(1);
+                    return (docRef.get());
+                }).then((docSnaps) => {
+                    docSnaps.forEach((doc) => {
+                        anyTeams = true;
+                    });
+                    if (anyTeams) {
+                        throw new Error(`Cant delete, teams assigned to this challenge`);
+                    }
+                    // DELETE THE PHOTO
+                    return (Photo.deletePhoto(challenge.photoObj ? challenge.photoObj.fileName : ""));
+                }).then(() => {
+                    return (dbChallengesRef.doc(challenge.id).delete());
+                }).then(() => {
+                    console.log("Firestore Challenge successfully deleted!");
+                    resolve();
+                }).catch((err) => {
+                    console.error("Error deleting firestore challenge in ChallengeDB.delete(:uid:) ", err);
+                    reject(err);
                 });
-                if (anyUsers) {
-                    throw new Error(`Cant delete, users assigned to this challenge`);
-                } 
-                // const docRef = dbActivitiesRef.where("challengeUid", "==", challenge.id).limit(1);
-                const docRef = dbActivitiesRef.limit(1);
-                return(docRef.get());
-            }).then((docSnaps) => {
-                docSnaps.forEach((doc) => {
-                    anyActivities = true;
-                });
-                if (anyActivities) {
-                    throw new Error(`Cant delete, activities assigned to this challenge`);
-                } 
-                const docRef = dbTeamsRef.limit(1);
-                return(docRef.get());
-            }).then((docSnaps) => {
-                docSnaps.forEach((doc) => {
-                    anyTeams = true;
-                });
-                if (anyTeams) {
-                    throw new Error(`Cant delete, teams assigned to this challenge`);
-                } 
-                // DELETE THE PHOTO
-                return(Photo.deletePhoto(challenge.photoObj ? challenge.photoObj.fileName : ""));
-            }).then(() => {
-                return(dbChallengesRef.doc(challenge.id).delete());
-            }).then(() => {
-                console.log("Firestore Challenge successfully deleted!");
-                resolve();    
-            }).catch((err) => {
-                console.error("Error deleting firestore challenge in ChallengeDB.delete(:uid:) ", err);
-                reject(err);
-            });
         });
     }
 

@@ -95,7 +95,7 @@ const ChallengeForm = (props) => {
         let newWaypoint = {
             location: city
         }
-        let newWaypoints = challenge.waypoints
+        let newWaypoints = challenge.waypoints ? challenge.waypoints : []
         newWaypoints.push(newWaypoint)
         setChallenge({ ...challenge, waypoints: newWaypoints })
     }
