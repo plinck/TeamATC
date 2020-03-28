@@ -16,7 +16,7 @@ import { Container, Grid, CircularProgress } from '@material-ui/core'
 import Util from "../Util/Util";
 import GoogleMap from './GoogleMap/GoogleMap';
 import TeamWidget from './TeamWidget/TeamWidget';
-
+import ChallengeDB from '../Challenges/ChallengeDB';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
@@ -130,9 +130,17 @@ class Dashboard extends React.PureComponent {
             console.error(`Error attaching listener: ${error}`);
         });
     }
+    fetchData() {
+        ChallengeDB.getFiltered().then(challenges => {
+            console.log(challenges);
+            // Each time you refresh, make sure the currnt id is cleared
+        })
+            .catch(err => console.log(err));
+    }
 
     componentDidMount() {
         this._mounted = true;
+        this.fetchData()
         let layouts = getFromLS("layouts") || {};
         this.setState({ loadingFlag: true, layouts: JSON.parse(JSON.stringify(layouts)) });
         if (this.props.user.challengeUid) {
