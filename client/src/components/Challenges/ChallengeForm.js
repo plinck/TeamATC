@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, TextField, Typography, Button, CardActions } from '@material-ui/core';
+import { Card, CardContent, TextField, Typography, Button, CardActions, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-
+import LocationSearchBar from './LocationSearchBar';
+import Waypoints from './Waypoints';
 import AddIcon from "@material-ui/icons/Add";
 import { Fab } from "@material-ui/core";
 
@@ -11,8 +12,8 @@ import ChallengeDB from "./ChallengeDB"
 import Photo from "../Util/Photo.js"
 
 const useStyles = makeStyles(theme => ({
-    buttonStyles: {    
-        margin: '5px',   
+    buttonStyles: {
+        margin: '5px',
     },
     fullWidth: {
         margin: `${theme.spacing(1)}px 0px`,
@@ -21,9 +22,6 @@ const useStyles = makeStyles(theme => ({
     chips: {
         display: 'flex',
         flexWrap: 'wrap',
-    },
-    chip: {
-        margin: 2,
     },
     formControl: {
         [theme.breakpoints.up('md')]: {
@@ -45,22 +43,28 @@ const ChallengeForm = (props) => {
     // The other state vars are used for managing flow etc and not
     // directly tied to the actual domain object.  This keeps things cleaner, IMO
     const CLEAR_CHALLENGE_VALUES = {
-        id : undefined,
-        description : "",
-        endDate : new Date(),
-        isCurrentChallenge : false,
-        name : "",
-        photoObj : null,
-        startDate : new Date(),
+        id: undefined,
+        description: "",
+        endDate: new Date(),
+        isCurrentChallenge: false,
+        name: "",
+        photoObj: null,
+        startDate: new Date(),
+        startCity: "",
+        endCity: "",
+        waypoints: []
     }
     const CHALLENGE_INITIAL_VALUES = {
-        id : props.id,
-        description : "",
-        endDate : new Date('2020-08-18T21:11:54'),
-        isCurrentChallenge : false,
-        name : "",
+        id: props.id,
+        description: "",
+        endDate: new Date('2020-08-18T21:11:54'),
+        isCurrentChallenge: false,
+        name: "",
         photoObj: null,
-        startDate : new Date() 
+        startDate: new Date(),
+        startCity: "",
+        endCity: "",
+        waypoints: []
     }
     const [challenge, setChallenge] = useState(CHALLENGE_INITIAL_VALUES);
     const [message, setMessage] = React.useState("");
@@ -68,16 +72,38 @@ const ChallengeForm = (props) => {
 
     // Domain object handlers
     const handleDescriptionChange = event => {
-        setChallenge({...challenge, description: event.target.value})
+        setChallenge({ ...challenge, description: event.target.value })
     };
     const handleEndDateChange = date => {
-        setChallenge({...challenge, endDate: date})
+        setChallenge({ ...challenge, endDate: date })
     };
     const handleNameChange = event => {
-        setChallenge({...challenge, name: event.target.value})
+        setChallenge({ ...challenge, name: event.target.value })
     };
     const handleStartDateChange = date => {
-        setChallenge({...challenge, startDate: date})
+        setChallenge({ ...challenge, startDate: date })
+    };
+
+    const handleStartCityChange = city => {
+        setChallenge({ ...challenge, startCity: city })
+    }
+    const handleEndCityChange = city => {
+        setChallenge({ ...challenge, endCity: city })
+    }
+
+    const handleAddWaypoint = city => {
+        let newWaypoint = {
+            location: city
+        }
+        let newWaypoints = challenge.waypoints ? challenge.waypoints : []
+        newWaypoints.push(newWaypoint)
+        setChallenge({ ...challenge, waypoints: newWaypoints })
+    }
+
+    const handleDelete = chipToDelete => () => {
+        console.log(chipToDelete)
+        let filtered = challenge.waypoints.filter(loc => loc.location !== chipToDelete.location);
+        setChallenge({ ...challenge, waypoints: filtered })
     };
 
     const handlePhotoUpload = (event) => {
@@ -109,7 +135,7 @@ const ChallengeForm = (props) => {
     const handleSave = (event) => {
         event.preventDefault();
 
-        uploadPhotoToGoogleStorage().then (photoObj => {
+        uploadPhotoToGoogleStorage().then(photoObj => {
             console.log(`uploaded photo`);
             // NOW chain promises to update or create challenge
             challenge.photoObj = photoObj ? photoObj : null;
@@ -120,29 +146,29 @@ const ChallengeForm = (props) => {
             }
         }).then(res => {
             setMessage(`Challenge Successfully Updated`);
-            setChallenge({...CLEAR_CHALLENGE_VALUES});
+            setChallenge({ ...CLEAR_CHALLENGE_VALUES });
             setPhotoFile(null);
             props.handleUpdateChallenge(); // refresh parent
         }).catch(err => {
-            setMessage(`Error uploading photo for challenge ${err}`); 
+            setMessage(`Error uploading photo for challenge ${err}`);
         })
     }
 
     const handleCreateNew = (event) => {
         event.preventDefault();
-        
-        setChallenge({...CLEAR_CHALLENGE_VALUES})
+
+        setChallenge({ ...CLEAR_CHALLENGE_VALUES })
         setPhotoFile(null)
     }
 
     // MAIN START : --
     // get challenges at load - this is like compnent
     const fetchData = (challengeUid) => {
-        ChallengeDB.get(challengeUid).then (challenge => {
+        ChallengeDB.get(challengeUid).then(challenge => {
             setChallenge(challenge);
         }).catch(err => setMessage(err));
     }
-    
+
     useEffect(() => {
         // if an id is present, get the data from firestore for updating
         if (props.id) {
@@ -211,25 +237,32 @@ const ChallengeForm = (props) => {
                             }}
                         />
                     </MuiPickersUtilsProvider>
+                    <br />
+                    <Divider />
+                    <br />
+                    <Typography variant="h5">Create Route (Not Required)</Typography>
+                    <LocationSearchBar title="Start City" id="startCity" handleStartCityChange={handleStartCityChange} />
+                    <LocationSearchBar title="End City" id="endCity" handleStartCityChange={handleEndCityChange} />
+                    <Waypoints handleAddWaypoint={handleAddWaypoint} handleDelete={handleDelete} waypoints={challenge.waypoints} />
                 </form>
             </CardContent>
             <CardActions>
-                <Button 
+                <Button
                     variant="contained"
-                    color="primary" 
+                    color="primary"
                     type="submit"
                     onClick={handleSave}
-                    >{challenge.id ? "Update" : "Create"}
+                >{challenge.id ? "Update" : "Create"}
                 </Button>
-                {challenge.id ? 
+                {challenge.id ?
                     <div>
-                        <Button 
+                        <Button
                             className={classes.buttonStyles}
                             variant="contained"
-                            color="primary" 
+                            color="primary"
                             type="submit"
                             onClick={handleCreateNew}
-                            >Create New
+                        >Create New
                         </Button>
                     </div>
                     : ""
@@ -249,7 +282,7 @@ const ChallengeForm = (props) => {
                         component="span"
                         aria-label="add"
                         variant="extended">
-                        <AddIcon /> Select Image 
+                        <AddIcon /> Select Image
                     </Fab>{photoFile ? photoFile.name : ""}
                 </label>
 
