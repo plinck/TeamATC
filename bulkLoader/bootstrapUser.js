@@ -10,6 +10,7 @@ let dbALLRefs = {};
 const Util = require("./Util.js");
 const MemberInfo = require("./MemberInfo.js");
 const Activities = require("./Activities.js");
+const Users = require("./Users.js");
 
 function exitProgram() {
     console.log("BYE!");
@@ -629,6 +630,10 @@ async function seedDatabase() {
     exitProgram();
     return;
 }
+async function setUsersChallenge() {
+    let nbrUsers = await Users.updateAll();
+    console.log(`Update: ${nbrUsers} users`);
+}
 
 async function copyDevToProd() {
     const dbDevUsersRef = dbALLRefs.dbDevUsersRef;
@@ -731,6 +736,47 @@ async function copyDevToProd() {
 
 
 }
+async function copyDevUsersToProd() {
+    const dbDevUsersRef = dbALLRefs.dbDevUsersRef;
+    
+    const dbProdUsersRef = dbALLRefs.dbProdUsersRef;
+
+    console.log("Copying users from dev to prod ...")
+    dbDevUsersRef.get().then(snap => {
+        snap.forEach(doc => {
+            let docData = doc.data();
+            dbProdUsersRef.doc(doc.id).set(docData).then(newDoc => {
+                return;
+            });
+        });
+    }).then( () => {
+        console.log(`Copied all users from dev to prod`);
+    }).catch(err => {
+        console.error(`error updating user: ${err}`);
+    });
+
+}
+
+async function copyProdUsersToDev() {
+    const dbDevUsersRef = dbALLRefs.dbDevUsersRef;
+    
+    const dbProdUsersRef = dbALLRefs.dbProdUsersRef;
+
+    console.log("Copying users from dev to prod ...")
+    dbProdUsersRef.get().then(snap => {
+        snap.forEach(doc => {
+            let docData = doc.data();
+            dbDevUsersRef.doc(doc.id).set(docData).then(newDoc => {
+                return;
+            });
+        });
+    }).then( () => {
+        console.log(`Copied all users from dev to prod`);
+    }).catch(err => {
+        console.error(`error updating user: ${err}`);
+    });
+
+}
 
 
 // Main menu
@@ -741,7 +787,9 @@ function mainMenu() {
         uploadATCMembers: uploadATCMembers,
         createUsersFromGoogleActivities: createUsersFromGoogleActivities,
         createActivitiesFromGoogleDoc: createActivitiesFromGoogleDoc,
-        copyDevToProd: copyDevToProd,
+        setUsersChallenge: setUsersChallenge,
+        copyProdUsersToDev: copyProdUsersToDev,
+        //copyDevToProd: copyDevToProd,
         QUIT: exitProgram
     };
 

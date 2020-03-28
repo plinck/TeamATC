@@ -5,8 +5,8 @@ const DEV_ENV="dev"
 
 // const {ORG, ENV} = require("../ServerEnvironment");
 const ORG="ATC"
-const ENV="prod"
-const CHALLENGE="9uxEvhpHM2cqCcn1ESZg";
+const ENV="dev"
+const CHALLENGE="mFpSMP7oWvriDwIehwzB";
 
 class Util {
 
@@ -16,7 +16,7 @@ class Util {
         }
         const db = admin.firestore();
 
-        console.log(`ORG: ${ORG}, ENV: ${ENV}`);
+        console.log(`ORG: ${ORG}, ENV: ${ENV}, CHALLENGE: ${CHALLENGE}`);
     
         const dbUsersRef = db.collection(ORG).doc(ENV).collection(`users`);
         const dbATCMembersRef = db.collection(ORG).doc(ENV).collection(`ATCMembers`);
@@ -42,6 +42,8 @@ class Util {
         const dbDevTeamsRef = db.collection(ORG).doc(DEV_ENV).collection("challenges").doc(challengeUid).collection(`teams`);
     
         return {
+          challengeUid: challengeUid,
+
           dbUsersRef: dbUsersRef,
           dbATCMembersRef: dbATCMembersRef,
           dbChallengesRef: dbChallengesRef,
