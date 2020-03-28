@@ -20,7 +20,7 @@ class Util {
     
         const dbUsersRef = db.collection(ORG).doc(ENV).collection(`users`);
         const dbATCMembersRef = db.collection(ORG).doc(ENV).collection(`ATCMembers`);
-        const dbChallengesRef = db.collection(ORG).doc(ENV).collection(`Challenges`);
+        const dbChallengesRef = db.collection(ORG).doc(ENV).collection(`challenges`);
         const dbChallengeMembersRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);        
         const dbActivitiesRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
         const dbTeamsRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`teams`);
@@ -66,6 +66,54 @@ class Util {
           dbDevTeamsRef: dbDevTeamsRef,          
         }
     }
+
+    static getDynamicDBRefs (env) {
+      if (!env) {
+        env = ENV;
+      }
+      const org = ORG;
+
+      const db = admin.firestore();
+
+      console.log(`ORG: ${org}, ENV: ${env}`);
+  
+      const dbUsersRef = db.collection(org).doc(env).collection(`users`);
+      const dbATCMembersRef = db.collection(org).doc(env).collection(`ATCMembers`);
+      const dbChallengesRef = db.collection(org).doc(env).collection(`challenges`);
+        
+      return {
+        dbUsersRef: dbUsersRef,
+        dbATCMembersRef: dbATCMembersRef,
+        dbChallengesRef: dbChallengesRef,
+      }
+    }
+
+    static getDynamicChallengeDBRefs (env, challengeUid) {
+      if (!challengeUid) {
+        challengeUid = CHALLENGE;
+      }
+      if (!env) {
+        env = ENV;
+      }
+      const org = ORG;
+
+      const db = admin.firestore();
+
+      console.log(`ORG: ${org}, ENV: ${env}, CHALLENGE: ${challengeUid}`);
+  
+      const dbChallengeMembersRef = db.collection(org).doc(env).collection("challenges").doc(challengeUid).collection(`challengemembers`);        
+      const dbActivitiesRef = db.collection(org).doc(env).collection("challenges").doc(challengeUid).collection(`activities`);
+      const dbTeamsRef = db.collection(org).doc(env).collection("challenges").doc(challengeUid).collection(`teams`);
+        
+      return {
+        challengeUid: challengeUid,
+
+        dbChallengeMembersRef: dbChallengeMembersRef,
+        dbActivitiesRef: dbActivitiesRef,
+        dbTeamsRef: dbTeamsRef,
+      }
+    }
+
 }    
 
 module.exports = Util;

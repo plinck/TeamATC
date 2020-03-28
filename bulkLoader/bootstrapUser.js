@@ -11,6 +11,7 @@ const Util = require("./Util.js");
 const MemberInfo = require("./MemberInfo.js");
 const Activities = require("./Activities.js");
 const Users = require("./Users.js");
+const Backup = require("./Backup.js");
 
 function exitProgram() {
     console.log("BYE!");
@@ -273,51 +274,6 @@ async function createUsersFromGoogleActivities(fileToUpload) {
     }
 }
 
-
-// Copy Users from current location to DEV
-async function copyUsersToDev() {
-    const dbUsersRef = dbALLRefs.dbUsersRef;
-    const dbTeamsRef = dbALLRefs.dbTeamsRef
-    const dbATCMembersRef = dbALLRefs.dbATCMembersRef
-    const dbActivitiesRef = dbALLRefs.dbActivitiesRef
-    const dbChallengeMembersRef = dbALLRefs.dbChallengeMembersRef
-
-    console.log(`Copying users from ${dbCollSource} to ${dbCollDest}`);
-    return new Promise(async (resolve, reject) => {
-
-        return new Promise((resolve, reject) => {
-            dbUsersRef
-                .get()
-                .then(querySnapshot => {
-                    let users = [];
-                    querySnapshot.forEach(doc => {
-                        let user = {};
-                        user = doc.data();
-                        user.id = doc.id;
-                        users.push(user);
-
-                        // Now create the user with same ID
-                        // console.log(`User retrieved, user=${JSON.stringify(user)}`);
-                        dbUsersRef
-                            .doc(user.id)
-                            .set(user)
-                            .then(user => {
-                                //console.log(`Updated user ${JSON.stringify(user)}`);
-                                resolve(user);
-                            })
-                            .catch(err => {
-                                console.error(`error updating user: ${err}`);
-                                reject(err);
-                            });
-                    });
-                });
-            return resolve();
-        }).catch(err => {
-            reject(err);
-        });
-    });
-}
-
 async function deleteATCMembers() {
     const dbUsersRef = dbALLRefs.dbUsersRef;
     const dbTeamsRef = dbALLRefs.dbTeamsRef
@@ -393,7 +349,6 @@ async function uploadATCMembers(fileToUpload) {
         }); // MAP
     }
 }
-
 
 // update claims from auth into FB
 function updateClaimsInFirestore(uid, claims, authClaims) {
@@ -635,148 +590,6 @@ async function setUsersChallenge() {
     console.log(`Update: ${nbrUsers} users`);
 }
 
-async function copyDevToProd() {
-    const dbDevUsersRef = dbALLRefs.dbDevUsersRef;
-    const dbDevATCMembersRef = dbALLRefs.dbDevATCMembersRef;
-    const dbDevChallengesRef = dbALLRefs.dbDevChallengesRef;
-    const dbDevATCChallengeMemberRef = dbALLRefs.dbDevATCChallengeMemberRef;
-    const dbDevActivitiesRef = dbALLRefs.dbDevActivitiesRef;
-    const dbDevTeamsRef = dbALLRefs.dbDevTeamsRef;
-    
-    const dbProdUsersRef = dbALLRefs.dbProdUsersRef;
-    const dbProdATCMembersRef = dbALLRefs.dbProdATCMembersRef;
-    const dbProdChallengesRef = dbALLRefs.dbProdChallengesRef;
-    const dbProdATCChallengeMemberRef = dbALLRefs.dbProdATCChallengeMemberRef;
-    const dbProdActivitiesRef = dbALLRefs.dbProdActivitiesRef;
-    const dbProdTeamsRef = dbALLRefs.dbProdTeamsRef;
-
-    console.log("Copying users from dev to prod ...")
-    dbDevUsersRef.get().then(snap => {
-        snap.forEach(doc => {
-            let docData = doc.data();
-            dbProdUsersRef.doc(doc.id).set(docData).then(newDoc => {
-                return;
-            });
-        });
-    }).then( () => {
-        console.log(`Copied all users from dev to prod`);
-    }).catch(err => {
-        console.error(`error updating user: ${err}`);
-    });
-
-    console.log("Copying ATCMembers from dev to prod ...")
-    dbDevATCMembersRef.get().then(snap => {
-        snap.forEach(doc => {
-            let docData = doc.data();
-            dbProdATCMembersRef.doc(doc.id).set(docData).then(newDoc => {
-                return;
-            });
-        });
-    }).then( () => {
-        console.log(`Copied all ATCMembers from dev to prod`);
-    }).catch(err => {
-        console.error(`error updating ATCMembers: ${err}`);
-    });
-
-    console.log("Copying challenges from dev to prod ...")
-    dbDevChallengesRef.get().then(snap => {
-        snap.forEach(doc => {
-            let docData = doc.data();
-            dbProdChallengesRef.doc(doc.id).set(docData).then(newDoc => {
-                return;
-            });
-        });
-    }).then( () => {
-        console.log(`Copied all Challenges from dev to prod`);
-    }).catch(err => {
-        console.error(`error updating Challenges: ${err}`);
-    });
-
-    console.log("Copying challengeMembers from dev to prod ...")
-    dbDevATCChallengeMemberRef.get().then(snap => {
-        snap.forEach(doc => {
-            let docData = doc.data();
-            dbProdATCChallengeMemberRef.doc(doc.id).set(docData).then(newDoc => {
-                return;
-            });
-        });
-    }).then( () => {
-        console.log(`Copied all challengeMembers from dev to prod`);
-    }).catch(err => {
-        console.error(`error updating challengeMembers: ${err}`);
-    });
-
-    console.log("Copying challengeActivities from dev to prod ...")
-    dbDevActivitiesRef.get().then(snap => {
-        snap.forEach(doc => {
-            let docData = doc.data();
-            dbProdActivitiesRef.doc(doc.id).set(docData).then(newDoc => {
-                return;
-            });
-        });
-    }).then( () => {
-        console.log(`Copied all challengeActivities from dev to prod`);
-    }).catch(err => {
-        console.error(`error updating challengeActivities: ${err}`);
-    });
-
-    console.log("Copying teams from dev to prod ...")
-    dbDevTeamsRef.get().then(snap => {
-        snap.forEach(doc => {
-            let docData = doc.data();
-            dbProdTeamsRef.doc(doc.id).set(docData).then(newDoc => {
-                return;
-            });
-        });
-    }).then( () => {
-        console.log(`Copied all teams from dev to prod`);
-    }).catch(err => {
-        console.error(`error updating teams: ${err}`);
-    });
-
-
-}
-async function copyDevUsersToProd() {
-    const dbDevUsersRef = dbALLRefs.dbDevUsersRef;
-    
-    const dbProdUsersRef = dbALLRefs.dbProdUsersRef;
-
-    console.log("Copying users from dev to prod ...")
-    dbDevUsersRef.get().then(snap => {
-        snap.forEach(doc => {
-            let docData = doc.data();
-            dbProdUsersRef.doc(doc.id).set(docData).then(newDoc => {
-                return;
-            });
-        });
-    }).then( () => {
-        console.log(`Copied all users from dev to prod`);
-    }).catch(err => {
-        console.error(`error updating user: ${err}`);
-    });
-
-}
-
-async function copyProdUsersToDev() {
-    const dbDevUsersRef = dbALLRefs.dbDevUsersRef;
-    
-    const dbProdUsersRef = dbALLRefs.dbProdUsersRef;
-
-    console.log("Copying users from dev to prod ...")
-    dbProdUsersRef.get().then(snap => {
-        snap.forEach(doc => {
-            let docData = doc.data();
-            dbDevUsersRef.doc(doc.id).set(docData).then(newDoc => {
-                return;
-            });
-        });
-    }).then( () => {
-        console.log(`Copied all users from dev to prod`);
-    }).catch(err => {
-        console.error(`error updating user: ${err}`);
-    });
-
-}
 
 
 // Main menu
@@ -787,8 +600,8 @@ function mainMenu() {
         uploadATCMembers: uploadATCMembers,
         createUsersFromGoogleActivities: createUsersFromGoogleActivities,
         createActivitiesFromGoogleDoc: createActivitiesFromGoogleDoc,
-        setUsersChallenge: setUsersChallenge,
-        copyProdUsersToDev: copyProdUsersToDev,
+        //setUsersChallenge: setUsersChallenge,
+        copyProdToBack: Backup.copyProdToBack,
         //copyDevToProd: copyDevToProd,
         QUIT: exitProgram
     };
