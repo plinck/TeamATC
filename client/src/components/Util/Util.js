@@ -31,18 +31,6 @@ class Util {
     }
   };
 
-
-  static testCloudFunctions() {
-    const firebase = new Firebase();
-    const testFunctions = firebase.functions.httpsCallable('testFunctions');
-    
-    testFunctions({uid: "paul"}).then(function(res) {
-      // Read result of the Cloud Function.
-      var messageSentBack = res.data.message;
-      console.log(`return message from cloud function: ${messageSentBack}`)
-      // ...
-    });
-  }
   static getUserToken = async () => {
     const firebase = new Firebase();
     const token = await firebase.doRefreshToken(true);
