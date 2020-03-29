@@ -17,10 +17,10 @@ class UserAuthAPI {
     static deleteAuthUser = (uid) => {
         return new Promise((resolve, reject) => {
             const firebase = Util.getFirebaseAuth();
-            const deleteFBFAuthUser = firebase.functions.httpsCallable('deleteFBFAuthUser');
+            const fBFdeleteAuthUser = firebase.functions.httpsCallable('fBFdeleteAuthUser');
             const userInfo = {"uid": uid};
             
-            deleteFBFAuthUser(userInfo).then( (res) => {
+            fBFdeleteAuthUser(userInfo).then( (res) => {
                 // Read result of the Cloud Function.
                 let deletedUid = res.data.uid;
                 console.log(`deleted user with uid ${deletedUid} from cloud function`);

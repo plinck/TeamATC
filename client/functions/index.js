@@ -9,19 +9,21 @@ exports.testFunctions = functions.https.onCall((req, res) => {
 });
 
 
-exports.deleteFBFAuthUser = functions.https.onCall((req, res) => {
+exports.fBFdeleteAuthUser = functions.https.onCall((req, res) => {
     let uid = req.uid;
     // delete the authUser
-    admin.auth().deleteUser(uid)
+    // MUST RETURN A PROMISE!
+    return admin.auth().deleteUser(uid)
         .then(() => {
             console.log('Successfully deleted auth user');
-            return {"uid" : uid};
+            return ({"uid" : uid});
         }).catch((err) => {
             if (/is no user/.test(err)) {
-                return {"uid" : uid};
+                return ({"uid" : uid});
             } else {
-                console.error(`FB Func: deleteAuthUser -- Error deleting auth user: ${err}`);
-                throw Error(`FB Func: deleteAuthUser -- Error deleting auth user: ${err}`);
+                console.error(`FB Func: fBFdeleteAuthUser -- Error deleting auth user: ${err}`);
+                throw Error(`FB Func: fBFdeleteAuthUser -- Error deleting auth user: ${err}`);
+                //  throw new functions.https.HttpsError('failed to connect' + err.message)
             }
         });
 
