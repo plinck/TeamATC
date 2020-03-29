@@ -31,7 +31,6 @@ class Util {
     }
   };
 
-
   static getUserToken = async () => {
     const firebase = new Firebase();
     const token = await firebase.doRefreshToken(true);

@@ -43,12 +43,10 @@ class Users extends React.Component {
 
     // Delete this article from MongoDB
     userDelete = (id) => {
-        UserDB.delete( id )
-        .then(res => {
+        UserDB.delete( id ).then(res => {
             console.log("Deleted user");
             this.refreshPage();
-        })
-        .catch(err => {
+        }).catch(err => {
             alert(err);
             console.error(err); 
         });

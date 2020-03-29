@@ -1,7 +1,13 @@
 import Util from "../Util/Util";
+import UserAuthAPI from "./UserAuthAPI";
 
 // Backend functions for user DB in firestore and auth
 class UserDB {
+
+    static testFBFunc = () => {
+        Util.testCloudFunctions();
+    }
+    
     // get al users
     static getUsers = () => {
         return new Promise((resolve, reject) => {
@@ -108,22 +114,19 @@ class UserDB {
         const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
 
         return new Promise((resolve, reject) => {
-            Util.apiPostNoToken(`/api/auth/deleteUser/${uid}`, {
-                    id: uid
-                }).then(() => {
-                    console.log("Auth for User successfully deleted!");
-                    dbUsersRef.doc(uid).delete().then(() => {
-                        console.log("Firestore User successfully deleted!");
-                        return resolve();
-                    }).catch((err) => {
-                        console.error("Error deleting firestor user ", err);
-                        return reject(err);
-                    });
+            UserAuthAPI.deleteAuthUser(uid).then(() => {
+                console.log("Auth for User successfully deleted!");
+                dbUsersRef.doc(uid).delete().then(() => {
+                    console.log("Firestore User successfully deleted!");
+                    return resolve();
                 }).catch((err) => {
-                    console.error("Error deleting auth user ", err);
+                    console.error("Error deleting firestor user ", err);
                     return reject(err);
                 });
-
+            }).catch((err) => {
+                console.error("Error deleting auth user ", err);
+                return reject(err);
+            });
         });
     }
     // Updates the current user (not do NOT update uid since it is really a primary key)

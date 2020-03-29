@@ -1,6 +1,37 @@
 import Util from "../Util/Util";
 
 class UserAuthAPI {
+    // Cloud Functions
+    static testCloudFunctions() {
+        const firebase = Util.getFirebaseAuth();
+        const testFunctions = firebase.functions.httpsCallable('testFunctions');
+        
+        testFunctions({"uid": "paul"}).then(function(res) {
+          // Read result of the Cloud Function.
+          var messageSentBack = res.data.message;
+          console.log(`return message from cloud function: ${messageSentBack}`)
+          // ...
+        });
+    }
+    
+    static deleteAuthUser = (uid) => {
+        return new Promise((resolve, reject) => {
+            const firebase = Util.getFirebaseAuth();
+            const fBFdeleteAuthUser = firebase.functions.httpsCallable('fBFdeleteAuthUser');
+            const userInfo = {"uid": uid};
+            
+            fBFdeleteAuthUser(userInfo).then( (res) => {
+                // Read result of the Cloud Function.
+                let deletedUid = res.data.uid;
+                console.log(`deleted user with uid ${deletedUid} from cloud function`);
+                resolve();
+            }).catch(err => {
+                console.error(`${err}`);
+                reject(err);
+            });
+        });
+    }
+    
     // geths the current auth user info from firestore auth service
     static getCurrentAuthUser = () => {
         // its a promise so return
