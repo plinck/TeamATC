@@ -2,6 +2,11 @@ import Util from "../Util/Util";
 
 // Backend functions for user DB in firestore and auth
 class UserDB {
+
+    static testFBFunc = () => {
+        Util.testCloudFunctions();
+    }
+    
     // get al users
     static getUsers = () => {
         return new Promise((resolve, reject) => {
