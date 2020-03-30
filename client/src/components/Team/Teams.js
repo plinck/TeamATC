@@ -43,9 +43,9 @@ const Teams = (props) => {
         setCurrentTeamId(id);
     }
 
-    // When an update occurs you must also clear the current challnge ID since it needs to be NULL/undefined
+    // When an update occurs you must also clear the current ID since it needs to be NULL/undefined
     const handleUpdateTeam = (id) => {
-        setCurrentTeamId(undefined);
+        setCurrentTeamId(null);
         fetchData();
     }
 
