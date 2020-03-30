@@ -98,16 +98,26 @@ class ActivityForm extends React.Component {
 
     componentDidMount() {
         this._mounted = true;
-        this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
-        // Get current challenge info - should be part of state maybe eventually
-        this.fetchCurrentChallenge();
-
-        // only get activity if its an update, otherwise assume new
-        if (this.state.id) {
-            this.fetchActivity(this.state.id);
-        } else {
+        
+        if (this.props.user.challengeUid) {
+            // only get activity if its an update, otherwise assume new
+            if (this.state.id) {
+                this.fetchActivity(this.state.id);
+            }  
+            // this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
+            // Get current challenge info - should be part of state maybe eventually
+            this.fetchCurrentChallenge(this.props.user.challengeUid);
         }
+    }
 
+    componentDidUpdate(prevProps) {
+        if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
+            console.log(this.props.user.challengeUid)
+            this.fetchCurrentChallenge(this.props.user.challengeUid);
+            if (this.state.id) {
+                this.fetchActivity(this.state.id);
+            }  
+        }
     }
 
     enableButton = () => {
@@ -306,9 +316,9 @@ class ActivityForm extends React.Component {
     }
 
     // get current challenge for this user
-    fetchCurrentChallenge() {
-        console.log(`Current challengeUid: ${this.props.user.challengeUid}`);
-        ChallengeDB.get(this.props.user.challengeUid).then(challenge => {
+    fetchCurrentChallenge(challengeId) {
+        console.log(`Current challengeId: ${challengeId}`);
+        ChallengeDB.get(challengeId).then(challenge => {
             this.setState({
                 challenge: challenge
             });
@@ -460,17 +470,17 @@ class ActivityForm extends React.Component {
 
         // Some props take time to get ready so return null when uid not avaialble
         if (this.props.user.uid === null) {
-            return null;
+            return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
-
-        if (typeof this.state.teams === 'undefined') {
-            console.error("Fatal Error")
-            return (<div> <p>FATAL ERROR Gettng teams, something goofy going on ...</p> </div>)
-        }
-        if (this.state.teams === null) {
-            // console.log("No teams yet")
-            return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
-        }
+        
+        // if (typeof this.state.teams === 'undefined') {
+        //     console.error("Fatal Error")
+        //     return (<div> <p>FATAL ERROR Gettng teams, something goofy going on ...</p> </div>)
+        // }
+        // if (this.state.teams === null) {
+        //     // console.log("No teams yet")
+        //     return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
+        // }
 
         // Commented out the state vars that dont get mutated on this screen
         // these may be needed if a admin is editting
