@@ -42,6 +42,12 @@ class Users extends React.Component {
         this.refreshPage();
     }
 
+    componentDidUpdate(prevProps) {
+        if (this.props.user && this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
+            // Do Work
+        }
+    }
+
     // Delete this article from MongoDB
     userDelete = (id) => {
         UserDB.delete(id).then(res => {
