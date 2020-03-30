@@ -31,6 +31,25 @@ class UserAuthAPI {
             });
         });
     }
+
+    // This calls the backend to allow admins to create an auth user securely and not change who is logged in
+    static createAuthUser = (authUser) => {
+        return new Promise((resolve, reject) => {
+            const firebase = Util.getFirebaseAuth();
+            const fBFcreateAuthUser = firebase.functions.httpsCallable('fBFcreateAuthUser');
+            
+            fBFcreateAuthUser(authUser).then( (res) => {
+                // Read result of the Cloud Function.
+                let authUser = {user: null};
+                authUser.user = res.data;
+                console.log(`created authUser ${JSON.stringify(authUser)} from cloud function`);
+                resolve(authUser);
+            }).catch(err => {
+                console.error(`${err}`);
+                reject(err);
+            });
+        });
+    }
     
     // geths the current auth user info from firestore auth service
     static getCurrentAuthUser = () => {
@@ -38,16 +57,6 @@ class UserAuthAPI {
         return new Promise((resolve, reject) => {
             resolve(Util.getCurrentAuthUser());
         });
-    }
-
-    // This calls the backend to allow admins to create an auth user securely abd not change login
-    static createAuthUser = (authUser) => {
-        return(Util.apiPost("/api/auth/createUser", authUser));
-    }
-
-    // This calls the backend to allow admins to create an auth user securely abd not change login
-    static createAuthUserNoToken = (authUser) => {
-        return(Util.apiPostNoToken("/api/auth/createAuthUserNoToken", authUser));
     }
 
     // This calls the backend to allow admins to create an auth user securely abd not change login
