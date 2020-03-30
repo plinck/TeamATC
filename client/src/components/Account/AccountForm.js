@@ -19,34 +19,24 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import UserDB from "../User/UserDB";
 import TeamDB from "../Team/TeamDB";
+import { Container, Grid, Card, CardContent, Typography, CardActions } from '@material-ui/core';
 
 const styles = theme => ({
     container: {
         display: 'flex',
         flexWrap: 'wrap',
     },
-    inputFix: {
-        marginTop: 5
-    },
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        margin: theme.spacing(1),
         width: 300,
     },
-    menu: {
-        width: 200,
-    },
     formControl: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        margin: theme.spacing(1),
         minWidth: 300,
-    },
-    selectEmpty: {
-        marginTop: theme.spacing.unit * 2,
-    },
-  });
-  
-  function NumberFormatPhone(props) {
+    }
+});
+
+function NumberFormatPhone(props) {
     const { inputRef, onChange, ...other } = props;
 
     return (
@@ -75,7 +65,7 @@ class AccountForm extends React.Component {
             id: this.props.uid,
             uid: this.props.uid,
             teamUid: "",
-            teamName: "", 
+            teamName: "",
             firstName: "",
             lastName: "",
             photoURL: "",
@@ -85,7 +75,7 @@ class AccountForm extends React.Component {
             isAdmin: false,
             isTeamLead: false,
             isModerator: false,
-            isUser: false,    
+            isUser: false,
             message: "",
             teams: null,
             teamLookup: null
@@ -102,20 +92,20 @@ class AccountForm extends React.Component {
                     phoneNumber: user.phoneNumber || "",
                     uid: user.uid,
                     teamUid: user.teamUid || "",
-                    teamName: user.teamName || "",    
+                    teamName: user.teamName || "",
                     primaryRole: user.primaryRole,
                     isAdmin: user.isAdmin,
                     isTeamLead: user.isTeamLead,
                     isModerator: user.isModerator,
                     isUser: user.isUser,
-                    email: user.email            
+                    email: user.email
                 });
                 // Dont need to get custom primaryRole since they are passed in props from context
                 // and can not be changed here
             })
             .catch(err => {
                 console.error(`Error getting user ${err}`);
-                this.setState({error: `Error getting user ${err}`});
+                this.setState({ error: `Error getting user ${err}` });
             });
     };
 
@@ -127,14 +117,14 @@ class AccountForm extends React.Component {
             teams.forEach(team => {
                 teamLookup[team.id] = team.name;
             });
-            
+
             this.setState({
                 teams: teams,
                 teamLookup: teamLookup
             });
         }).catch(err => {
             console.error(`Error getting teams ${err}`);
-            this.setState({error: `Error getting teams ${err}`});
+            this.setState({ error: `Error getting teams ${err}` });
         });
     }
 
@@ -153,14 +143,14 @@ class AccountForm extends React.Component {
         const user = this.state;
         // set team name from ID
         user.teamName = this.state.teamLookup[this.state.teamUid]
-    
+
         UserDB.updateCurrent(user).then(user => {
-                // set message to show update
-                this.setState({message: "Account Updated"});
-            }).catch(err => {
-                // set message to show update
-                this.setState({message: `Error updating account ${err}`});
-            });
+            // set message to show update
+            this.setState({ message: "Account Updated" });
+        }).catch(err => {
+            // set message to show update
+            this.setState({ message: `Error updating account ${err}` });
+        });
     };
 
     onChange = event => {
@@ -186,8 +176,8 @@ class AccountForm extends React.Component {
             isAdmin,
             isTeamLead,
             isModerator,
-            isUser,        
-            message,      
+            isUser,
+            message,
             teamUid,
             teams
         } = this.state;
@@ -208,174 +198,154 @@ class AccountForm extends React.Component {
         if (this.state.teams === null) {
             console.log("No teams yet")
             return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
-        }    
+        }
 
-        return ( 
-            <div className="container">
-            <div className="card">
-                <div className="card-content">
-                    <span className="card-title">User Profile (Role: {primaryRole}, challenge: {this.props.user.challengeName})</span>
-                    <form className={classes.container} onSubmit={this.updateUser} >
+        return (
+            <Container style={{ paddingTop: "10px", paddingBottom: "10px" }}>
+                <Grid container>
+                    <Grid item xs={12}>
+                        <Card>
+                            <CardContent>
+                                <Typography gutterBottom component="h2" variant="h5">User Profile (Role: {primaryRole}, challenge: {this.props.user.challengeName})</Typography>
+                                <form className={classes.container} onSubmit={this.updateUser} >
 
-                        <FormControl variant="outlined" required className={classes.formControl}>
-                            <InputLabel id="teamNameLabel">Team Name</InputLabel>
-                            <Select
-                            labelId="teamNameLabel"
-                            id="teamUid"
-                            name="teamUid"
-                            type="text"
-                            margin="normal"
-                            style={{marginTop: 16, marginBottom: 16, marginLeft: 0, marginRight: 0, padding: 0}}
-                            value={teamUid}
-                            onChange={this.onChange}
-                            className={classes.textField}>
-            
-                            {teams.map((team) => {
-                                return (
-                                <MenuItem value={team.id}>{team.name}</MenuItem>
-                                );
-                            })} 
-                            {/*}
-                            <MenuItem value={"SePT3HTDR8EUbQgHCkf1"}>Rahuligan</MenuItem>
-                            <MenuItem value={"QwUhcThKRBQQE7nIu3ys"}>Scottie</MenuItem>
-                            */}
-                            </Select>
-                        </FormControl>
-      
-                        <TextField disabled={true}
-                            id="email"
-                            name="email"
-                            label="Email"
-                            placeholder="example@gmail.com"
-                            className={classes.textField}
-                            variant="outlined"
-                            inputProps={{
-                                style: {margin: 5, padding: 18}
-                            }}                              
-                            type="email"
-                            autoComplete="email"
-                            margin="normal"
-                            value={email}
-                            onChange={this.onChange}
-                        />
+                                    <FormControl variant="outlined" required className={classes.formControl}>
+                                        <InputLabel id="teamNameLabel">Team Name</InputLabel>
+                                        <Select
+                                            labelId="teamNameLabel"
+                                            id="teamUid"
+                                            value={teamUid}
+                                            onChange={this.onChange}
+                                            label="Team Name"
+                                            name="teamUid"
+                                            type="text">
 
-                        <TextField
-                            id="firstName"
-                            name="firstName"
-                            label="First Name"
-                            value={firstName}
-                            inputProps={{
-                                style: {margin: 5, padding: 18}
-                            }}   
-                            variant="outlined"                           
-                            placeholder="John"
-                            className={classes.textField}
-                            type="text"
-                            margin="normal"
-                            onChange={this.onChange}
-                        />
+                                            {teams.map((team, i) => {
+                                                return (
+                                                    <MenuItem key={i} value={team.id}>{team.name}</MenuItem>
+                                                );
+                                            })}
+                                        </Select>
+                                    </FormControl>
 
-                        <TextField
-                            id="lastName"
-                            name="lastName"
-                            label="Last Name"
-                            value={lastName}
-                            inputProps={{
-                                style: {margin: 5, padding: 18}
-                            }}   
-                            variant="outlined"                           
-                            placeholder="Smith"
-                            className={classes.textField}
-                            type="text"
-                            margin="normal"
-                            onChange={this.onChange}
-                        />
+                                    <TextField disabled={true}
+                                        id="email"
+                                        name="email"
+                                        label="Email"
+                                        placeholder="example@gmail.com"
+                                        className={classes.textField}
+                                        variant="outlined"
+                                        type="email"
+                                        autoComplete="email"
+                                        value={email}
+                                        onChange={this.onChange}
+                                    />
 
-                        <TextField
-                            id="phoneNumber"
-                            name="phoneNumber"
-                            value={phoneNumber}
-                            label="Phone Number"
-                            inputProps={{
-                                style: {margin: 5, padding: 18}
-                            }}   
-                            variant="outlined"                           
-                            className={classes.textField}
-                            margin="normal"
-                            onChange={this.handleChange('phoneNumber')}
-                            InputProps={{
-                                inputComponent: NumberFormatPhone,
-                            }}
-                        />
+                                    <TextField
+                                        id="firstName"
+                                        name="firstName"
+                                        label="First Name"
+                                        value={firstName}
+                                        variant="outlined"
+                                        placeholder="John"
+                                        className={classes.textField}
+                                        type="text"
+                                        onChange={this.onChange}
+                                    />
 
-                        <TextField
-                            id="photoURL"
-                            name="photoURL"
-                            value={photoURL ? photoURL : ""}
-                            label="Photo URL"
-                            multiline
-                            variant="outlined"
-                            placeholder="http://www.image.com/image.png"
-                            className={classes.textField}
-                            margin="normal"
-                            type="text"
-                            onChange={this.onChange}
-                        />
-                                
-                    </form>
+                                    <TextField
+                                        id="lastName"
+                                        name="lastName"
+                                        label="Last Name"
+                                        value={lastName}
+                                        variant="outlined"
+                                        placeholder="Smith"
+                                        className={classes.textField}
+                                        type="text"
+                                        onChange={this.onChange}
+                                    />
 
-                    <form className="Container">
-                    <br />
-                    {isRoleEditEnabled ? <hr /> : ""}
-                    {isRoleEditEnabled ? 
-                    <FormControl component="fieldset" className={classes.formControl}>
-                        <FormLabel component="legend">Current Roles <i>(can not edit your own roles)</i></FormLabel>
-                        <FormGroup row >
-                            <FormControlLabel 
-                                disabled={!isRoleEditEnabled}
-                                control={<Checkbox checked={isTeamLead}/>}
-                            label="TeamLead"
-                            /> 
-                            <FormControlLabel
-                                disabled={!isRoleEditEnabled}
-                                control={
-                                <Checkbox checked={isAdmin}/>
-                                }
-                                label="Admin"
-                            />
-                            <FormControlLabel
-                                disabled={!isRoleEditEnabled}
-                                control={
-                                <Checkbox checked={isModerator}/>
-                                }
-                                label="Moderator"
-                            />
-                            <FormControlLabel
-                                disabled={!isRoleEditEnabled}
-                                control={
-                                <Checkbox checked={isUser}/>
-                                }
-                                label="User"
-                            />
-                        </FormGroup>
-                    </FormControl> :
-                    ""}
-                    </form>
-                    <hr />    
-                    <br />
-                    <div className="row">
-                        <Button disabled={!isValid} onClick={this.updateUser} variant="contained" color="primary" className={classes.button}>
-                            Update
+                                    <TextField
+                                        id="phoneNumber"
+                                        label="Phone Number"
+                                        name="phoneNumber"
+                                        className={classes.textField}
+                                        variant="outlined"
+                                        margin='normal'
+                                        value={phoneNumber}
+                                        onChange={this.handleChange('phoneNumber')}
+                                        InputProps={{
+                                            inputComponent: NumberFormatPhone,
+                                        }}
+                                        inputProps={{
+                                            style: { padding: "18px", width: "100%" }
+                                        }}
+                                    />
+                                    <TextField
+                                        id="photoURL"
+                                        name="photoURL"
+                                        value={photoURL ? photoURL : ""}
+                                        label="Photo URL"
+                                        multiline
+                                        variant="outlined"
+                                        placeholder="http://www.image.com/image.png"
+                                        className={classes.textField}
+                                        type="text"
+                                        onChange={this.onChange}
+                                    />
+
+                                </form>
+
+                                <form className="Container">
+                                    <br />
+                                    {isRoleEditEnabled ? <hr /> : ""}
+                                    {isRoleEditEnabled ?
+                                        <FormControl component="fieldset" className={classes.formControl}>
+                                            <FormLabel component="legend">Current Roles <i>(can not edit your own roles)</i></FormLabel>
+                                            <FormGroup row >
+                                                <FormControlLabel
+                                                    disabled={!isRoleEditEnabled}
+                                                    control={<Checkbox checked={isTeamLead} />}
+                                                    label="TeamLead"
+                                                />
+                                                <FormControlLabel
+                                                    disabled={!isRoleEditEnabled}
+                                                    control={
+                                                        <Checkbox checked={isAdmin} />
+                                                    }
+                                                    label="Admin"
+                                                />
+                                                <FormControlLabel
+                                                    disabled={!isRoleEditEnabled}
+                                                    control={
+                                                        <Checkbox checked={isModerator} />
+                                                    }
+                                                    label="Moderator"
+                                                />
+                                                <FormControlLabel
+                                                    disabled={!isRoleEditEnabled}
+                                                    control={
+                                                        <Checkbox checked={isUser} />
+                                                    }
+                                                    label="User"
+                                                />
+                                            </FormGroup>
+                                        </FormControl> :
+                                        ""}
+                                </form>
+                                <p>{message}</p>
+                            </CardContent>
+                            <CardActions>
+                                <Button disabled={!isValid} onClick={this.updateUser} variant="contained" color="primary" className={classes.button}>
+                                    Update
                         </Button>
-                    </div>
-        
-                    <p>{message}</p>
-    
-                </div>
-            </div>
-        </div>
-        ); 
+                            </CardActions>
+                        </Card>
+                    </Grid>
+                </Grid>
+            </Container >
+        );
     }
 }
 
-export default  withStyles(styles)(withAuthUserContext(AccountForm));
+export default withStyles(styles)(withAuthUserContext(AccountForm));

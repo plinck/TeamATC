@@ -4,9 +4,22 @@ import { withRouter } from 'react-router-dom';
 
 import Users from "../User/Users"
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { Container, Grid, Button } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+
+
+
+const styles = theme => ({
+    root: {
+        [theme.breakpoints.up('md')]: {
+            marginLeft: "57px",
+        },
+        paddingTop: "10px"
+    }
+});
 
 class Admin extends React.Component {
-  
+
     // route to new user ( create )
     createUser = () => {
         this.props.history.push({
@@ -20,29 +33,32 @@ class Admin extends React.Component {
     }
 
     render() {
+        const { classes } = this.props
         const message = this.props && this.props.location && this.props.location.state ? this.props.location.state.message : "";
 
         if (this.props.user.authUser && this.props.user.isAdmin) {
-            return ( 
-            <div className="container">
-                <div className="row center-align">
-                    <br />
-                    <button className="btn center-align blue darken-4" onClick={this.createUser}>Create User</button>{" "}
+            return (
+                <div className={classes.root}>
+                    <Container >
+                        <Grid container>
+                            <br />
+                            <Button variant="contained" color="primary" onClick={this.createUser}>Create User</Button>
+                        </Grid>
+                        <Users />
+                        <div>{message}</div>
+                    </Container>
                 </div>
-                <Users />
-                <div>{message}</div>
-            </div>
             );
-        } else if (this.props.user.authUser) {                
+        } else if (this.props.user.authUser) {
             return (
                 <Redirect to="/dashboard" />
-            );  
-        } else  {                
+            );
+        } else {
             return (
                 <Redirect to="/signin" />
-            );      
+            );
         }
     }
 }
 
-export default withRouter(withAuthUserContext(Admin));
+export default withRouter(withAuthUserContext(withStyles(styles)(Admin)));

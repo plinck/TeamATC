@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        padding: '6px',
+        padding: '4px',
         color: 'white',
         backgroundColor: 'black',
         ...theme.mixins.toolbar,
@@ -115,7 +115,7 @@ export default function MiniDrawer(props) {
                     <NavLink className={classes.sideText} to="/teams"><ListItem selected={window.location.pathname === "/teams"} button><ListItemIcon><PeopleIcon /></ListItemIcon><ListItemText>Teams</ListItemText></ListItem></NavLink>
                     <Divider></Divider>
                     <ListItem style={{ textAlign: 'center' }}>{open ? <ListItemText><Button variant="contained" color="primary" style={{ marginLeft: "3px" }}><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText> : null}</ListItem>
-                    <a className={classes.mobileButton} href="mailto:info@atlantatriclub.com"><ListItem><ListItemIcon><MailIcon /></ListItemIcon><ListItemText>Contact Support</ListItemText></ListItem></a>
+                    <a className={classes.sideText} href="mailto:info@atlantatriclub.com"><ListItem button><ListItemIcon><MailIcon /></ListItemIcon><ListItemText>Contact Support</ListItemText></ListItem></a>
 
                 </List>
             </Drawer>
