@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { InputAdornment, Typography, Container, Grid, CardActions } from '@material-ui/core';
+import { InputAdornment, Typography, Container, Grid, CardActions, Link as L } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
@@ -196,14 +196,12 @@ class SignInFormBase extends React.Component {
                         </form>
 
                         {error && <p>{error.message}</p>}
-                        <p>
-                            <Link to="/pw-forget">Forgot Password?</Link>
-                            <Typography variant="subtitle1">Having trouble signing in? <a href="mailto:info@atlantatriclub.com">Contact Support</a></Typography>
-                        </p>
+                        <Link to="/pw-forget">Forgot Password?</Link>
+                        <Typography variant="subtitle1">Having trouble signing in? <L href="mailto:info@atlantatriclub.com">Contact Support</L></Typography>
 
                     </CardContent>
                     <CardActions>
-                        <p>Don't have an account? <Link to="/register">Register Now</Link></p>
+                        Don't have an account? <Link to="/register">Register Now</Link>
                         {/* This works, but I am disabling until I can verify they are member of the club */}
                         {/*
                     <button onClick={this.handleGoogleLogin} className="btn lighten-1 z-depth-0"> SignIn With Google</button>

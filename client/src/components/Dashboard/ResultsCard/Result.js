@@ -2,11 +2,12 @@ import React from 'react';
 import Box from '@material-ui/core/Box';
 
 import './Result.css'
+import { TableCell, TableRow } from '@material-ui/core';
 
 const Result = (props) => {
     // wait for props
     if (!props.result) {
-        return(null);
+        return (null);
     }
 
     //console.log(`${JSON.stringify(props.result)}`);
@@ -24,43 +25,33 @@ const Result = (props) => {
     }
 
     return (
-        <div>
-            {/*<-- Leaderboad row -->*/}
-            {/* One Row for each result in leaderboard */}
-            <Box className="row" color={rowFg} bgcolor={rowBg} m={0}>
-                {/* If its teamRecord display non-indednted, otherwise just indent user record as normal*/}
-                {props.result.teamRecord ?
-                    <div className="col s4 m4 truncate">
-                        {props.result.userOrTeamName}
-                    </div>
-                :  
-                    <div>
-                        <div className="col s1 m1">
-                            { props.result.isThisMine ?
-                                <img style={{maxHeight: '20px'}} src={"/images/me.png"} alt={"me"} />
-                                :  props.result.isThisMine
-                            }
-                        </div>
-                        <div className="col s3 m3 truncate">
-                            {props.result.userOrTeamName}
-                        </div>
-                    </div>
-                }
-                <div className="col s2 m2 truncate">
-                    {props.result.pointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </div>
-                <div className="col s2 m2 truncate">
-                    {props.result.swimPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </div>
-                <div className="col s2 m2 truncate">
-                    {props.result.bikePointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </div>
-                <div className="col s2 m2 truncate">
-                    {props.result.runPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </div>
-            </Box>
-            {/* End Row */}         
-        </div>
+        <TableRow key={props.index} style={{ backgroundColor: `${rowBg}` }}>
+            {props.result.teamRecord ?
+                <TableCell component="th" scope="row" style={{ fontWeight: "bold" }}>
+                    {props.result.userOrTeamName}
+                </TableCell>
+                :
+                <TableCell component="th" scope="row" style={{ paddingLeft: "50px" }}>
+                    {props.result.isThisMine ?
+                        <img style={{ maxHeight: '20px' }} src={"/images/me.png"} alt={"me"} />
+                        : props.result.isThisMine
+                    }
+                    {props.result.userOrTeamName}
+                </TableCell>
+            }
+            <TableCell>
+                {props.result.pointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </TableCell>
+            <TableCell align="right">
+                {props.result.swimPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </TableCell>
+            <TableCell align="right">
+                {props.result.bikePointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </TableCell>
+            <TableCell align="right">
+                {props.result.runPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </TableCell>
+        </TableRow>
     )
 }
 

@@ -62,7 +62,8 @@ const styles = theme => ({
     csvButton: {
         [theme.breakpoints.down('md')]: {
             display: "none"
-        }
+        },
+        textDecoration: "none"
     }
 });
 

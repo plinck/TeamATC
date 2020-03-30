@@ -36,7 +36,7 @@ const GoogleMap = (props) => {
                 <Box style={{ marginBottom: "10px" }} fontStyle="oblique" fontWeight="fontWeightBold">
                     <span style={{ color: 'grey' }}>{props.title ? props.title : 'Challenge Map'}</span>
                 </Box>
-                <Grid container style={{ height: '100%' }} spacing={2}>
+                <Grid container style={{ height: '91%' }} spacing={2}>
                     <Grid style={{ height: "100%", padding: "5px 0px" }} item xs={12} sm={9} md={8} onMouseDown={(e) => handlePress(e)}>
                         <Map
                             id="myMap"
