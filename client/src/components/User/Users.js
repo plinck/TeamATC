@@ -6,6 +6,7 @@ import { Redirect } from 'react-router';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import User from './User';
 import UserDB from "./UserDB";
+import { Grid } from '@material-ui/core';
 
 class Users extends React.Component {
     constructor(props) {
@@ -21,19 +22,19 @@ class Users extends React.Component {
     refreshPage = () => {
         // Get with security
         UserDB.getUsers()
-        .then(users => {
-            for (let i in users) {
-                users[i].firstName = users[i].firstName || "First";
-                users[i].lastName = users[i].lastName || "Last";
-                users[i].primaryRole = users[i].primaryRole || "user"; 
-            }
+            .then(users => {
+                for (let i in users) {
+                    users[i].firstName = users[i].firstName || "First";
+                    users[i].lastName = users[i].lastName || "Last";
+                    users[i].primaryRole = users[i].primaryRole || "user";
+                }
 
-            // console.log(`Users in refresh page: ${JSON.stringify(users, null, 2)}`);
-            this.setState({ users: users });
-        })
-        .catch(err => {
-            console.error(err); 
-        });        
+                // console.log(`Users in refresh page: ${JSON.stringify(users, null, 2)}`);
+                this.setState({ users: users });
+            })
+            .catch(err => {
+                console.error(err);
+            });
     };
 
     // Scrape all the users on mount
@@ -43,12 +44,12 @@ class Users extends React.Component {
 
     // Delete this article from MongoDB
     userDelete = (id) => {
-        UserDB.delete( id ).then(res => {
+        UserDB.delete(id).then(res => {
             console.log("Deleted user");
             this.refreshPage();
         }).catch(err => {
             alert(err);
-            console.error(err); 
+            console.error(err);
         });
     }
 
@@ -57,60 +58,60 @@ class Users extends React.Component {
 
         console.log(`Trying to make User ${id} Admin`);
 
-        UserDB.makeAdmin( id )
-        .then(res => {
-            console.log(`Made User ${id} Admin`);
-            this.setState({message: `Made User Admin`});
-            this.refreshPage();
-        })
-        .catch(err => {
-            alert(err);
-            console.error(err); 
-        });
-    }        
-    
+        UserDB.makeAdmin(id)
+            .then(res => {
+                console.log(`Made User ${id} Admin`);
+                this.setState({ message: `Made User Admin` });
+                this.refreshPage();
+            })
+            .catch(err => {
+                alert(err);
+                console.error(err);
+            });
+    }
+
     // Make TeamLead
     userMakeTeamLead = (id) => {
-        UserDB.makeTeamLead( id )
-        .then(res => {
-            console.log(`Made User ${id} TeamLead`);
-            this.setState({message: `Made User TeamLead`});
-            this.refreshPage();
-        })
-        .catch(err => {
-            alert(err);
-            console.error(err); 
-        });
-    }   
+        UserDB.makeTeamLead(id)
+            .then(res => {
+                console.log(`Made User ${id} TeamLead`);
+                this.setState({ message: `Made User TeamLead` });
+                this.refreshPage();
+            })
+            .catch(err => {
+                alert(err);
+                console.error(err);
+            });
+    }
 
     // Make User - essentailly dispables the user
     userMakeUser = (id) => {
-        UserDB.makeUser( id )
-        .then(res => {
-            console.log(`Made User ${id} User`);
-            this.setState({message: `Disabled User (i.e. made them a user)`});
-            this.refreshPage();
-        })
-        .catch(err => {
-            alert(err);
-            console.error(err); 
-        });
-    }       
+        UserDB.makeUser(id)
+            .then(res => {
+                console.log(`Made User ${id} User`);
+                this.setState({ message: `Disabled User (i.e. made them a user)` });
+                this.refreshPage();
+            })
+            .catch(err => {
+                alert(err);
+                console.error(err);
+            });
+    }
 
     // Make Moderator
     userMakeModerator = (id) => {
-        UserDB.makeModerator( id )
-        .then(res => {
-            console.log(`Made User ${id} Moderator`);
-            this.setState({message: `Made User Moderator`});
-            this.refreshPage();
-        })
-        .catch(err => {
-            this.setState({message: `Error ${err}`});
-            console.error(err); 
-        });
-    }       
-    
+        UserDB.makeModerator(id)
+            .then(res => {
+                console.log(`Made User ${id} Moderator`);
+                this.setState({ message: `Made User Moderator` });
+                this.refreshPage();
+            })
+            .catch(err => {
+                this.setState({ message: `Error ${err}` });
+                console.error(err);
+            });
+    }
+
     // go back to where you came from
     goBack = () => {
         this.props.history.goBack();
@@ -119,32 +120,32 @@ class Users extends React.Component {
     render() {
         if (this.props.user.authUser && this.props.user.isAdmin) {
             return (
-                <div className="row">
-                <div>{this.state.message}</div>
-                {this.state.users.map((user) => {
-                    return(            
-                        <div key={user.id} className="col s12 m6 l6">
-                            <User 
-                            userDelete={this.userDelete}
-                            userMakeAdmin={this.userMakeAdmin}
-                            userMakeTeamLead={this.userMakeTeamLead}
-                            userMakeModerator={this.userMakeModerator}
-                            userMakeUser={this.userMakeUser}
-                            userInfo={user}
-                            />
-                        </div>
+                <Grid style={{ paddingTop: "10px" }} container spacing={2} alignItems="stretch">
+                    <div>{this.state.message}</div>
+                    {this.state.users.map((user) => {
+                        return (
+                            <Grid item xs={12} md={4} lg={3} key={user.id}>
+                                <User
+                                    userDelete={this.userDelete}
+                                    userMakeAdmin={this.userMakeAdmin}
+                                    userMakeTeamLead={this.userMakeTeamLead}
+                                    userMakeModerator={this.userMakeModerator}
+                                    userMakeUser={this.userMakeUser}
+                                    userInfo={user}
+                                />
+                            </Grid>
                         );
-                })}
-                </div>
+                    })}
+                </Grid>
             );
-        } else if (this.props.user.authUser) {                
+        } else if (this.props.user.authUser) {
             return (
                 <Redirect to="/dashboard" />
-            );  
-        } else  {                
+            );
+        } else {
             return (
                 <Redirect to="/signin" />
-            );      
+            );
         }
     }
 }
