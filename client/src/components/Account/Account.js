@@ -3,17 +3,30 @@ import { Redirect } from 'react-router';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import AccountForm from "./AccountForm";
 import PasswordChangeForm from '../Auth/PasswordForget/PasswordChange';
+import { withStyles } from '@material-ui/core/styles';
 
-  
+
+
+const styles = theme => ({
+  root: {
+    [theme.breakpoints.up('md')]: {
+      marginLeft: "57px",
+    },
+    paddingTop: "10px"
+  }
+});
+
 class Account extends React.Component {
 
   onChange = event => {
-      this.setState({
-          [event.target.name]: event.target.value
-      });
+    this.setState({
+      [event.target.name]: event.target.value
+    });
   };
 
   render() {
+
+    const { classes } = this.props;
 
     // deconstrcut prop from authContext
     let {
@@ -34,9 +47,9 @@ class Account extends React.Component {
     }
 
     if (this.props.user.authUser) {
-        return ( 
-        <div>
-          <AccountForm 
+      return (
+        <div className={classes.root}>
+          <AccountForm
             uid={uid}
             displayName={displayName}
             email={email}
@@ -47,11 +60,11 @@ class Account extends React.Component {
         </div>
       );
     } else {
-        return (
-          <Redirect to="/signin" />
-        );
+      return (
+        <Redirect to="/signin" />
+      );
     }
   }
 }
 
-export default withAuthUserContext(Account);
+export default withAuthUserContext(withStyles(styles)(Account));
