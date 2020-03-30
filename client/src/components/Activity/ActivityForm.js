@@ -4,6 +4,7 @@ import { withRouter } from 'react-router';
 // Date picker component
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import './Activity.css'
 
 
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
@@ -20,7 +21,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import AddIcon from "@material-ui/icons/Add";
-import { Fab, Container, Grid, Card, CardContent } from "@material-ui/core";
+import { Fab, Container, Grid, Card, CardContent, Button, CardActions, Typography } from "@material-ui/core";
 
 import moment from "moment";
 
@@ -60,13 +61,13 @@ const styles = theme => ({
         flexWrap: "wrap",
     },
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         width: 300,
     },
     formControl: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
         width: 300,
     }
 });
@@ -511,25 +512,25 @@ class ActivityForm extends React.Component {
                             <Card>
                                 <CardContent>
                                     {message != null ? <p className="blue-text">{message}</p> : ""}
-                                    <span className="card-title">New Activity for {displayName} on Team "{teamName}"</span>
+                                    <Typography variant="h5" gutterBottom component="h2">New Activity for {displayName} on Team "{teamName}"</Typography>
 
-                                    <label>Activity Date:
-                                <DatePicker
-                                            id="activityDateTime"
-                                            name="activityDateTime"
-                                            value={activityDateTime}
-
-                                            selected={activityDateTime}
-                                            onSelect={date => this.handleDateChange(date)} //when day is clicked
-                                            onChange={date => this.handleDateChange(date)} //only when value has changed
-
-                                            showTimeSelect
-                                            timeFormat="HH:mm"
-                                            timeIntervals={15}
-                                            timeCaption="time"
-                                            dateFormat="MMMM d, yyyy h:mm aa"
-                                        />
+                                    <label>{`Activity Date: `}
                                     </label>
+                                    <DatePicker
+                                        id="activityDateTime"
+                                        name="activityDateTime"
+                                        value={activityDateTime}
+
+                                        selected={activityDateTime}
+                                        onSelect={date => this.handleDateChange(date)} //when day is clicked
+                                        onChange={date => this.handleDateChange(date)} //only when value has changed
+
+                                        showTimeSelect
+                                        timeFormat="HH:mm"
+                                        timeIntervals={15}
+                                        timeCaption="time"
+                                        dateFormat="MMMM d, yyyy h:mm aa"
+                                    />
 
                                     <div className="row">
                                         <div className="col s12">
@@ -668,17 +669,16 @@ class ActivityForm extends React.Component {
                                         </div>
                                     </div>
                                 </CardContent>
-                                <div className="card-action pCard row">
-                                    <div className="col s2 m2">
-                                        <button disabled={this.state.updateButtonDisabled}
-                                            className="btn waves-effect waves-light blue darken-4 modal-trigger m2"
-                                            name="action"
-                                            type="submit"
-                                            href="#modal1"
-                                            onClick={this.onSubmitHandler}>
-                                            {this.state.id ? "Update" : "Create"}
-                                        </button>
-                                    </div>
+                                <CardActions>
+
+                                    <Button disabled={this.state.updateButtonDisabled}
+                                        variant="contained"
+                                        color="primary"
+                                        name="action"
+                                        type="submit"
+                                        onClick={this.onSubmitHandler}>
+                                        {this.state.id ? "Update" : "Create"}
+                                    </Button>
 
                                     <label htmlFor="file">
                                         <input
@@ -697,7 +697,7 @@ class ActivityForm extends React.Component {
                                             <AddIcon /> Upload FIT File
                                     </Fab>
                                     </label>
-                                </div>
+                                </CardActions>
                             </Card>
                         </Grid>
                     </Grid>
