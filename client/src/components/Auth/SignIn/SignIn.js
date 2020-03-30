@@ -91,8 +91,6 @@ class SignInFormBase extends React.Component {
 
         // dont reset unless goood login
         // this.setState({ ...INITIAL_STATE });  
-        UserDB.testFBFunc();
-
         this.props.firebase
             .doSignInWithEmailAndPassword(email, password)
             .then((authUser) => {
