@@ -4,9 +4,9 @@ import UserAuthAPI from "./UserAuthAPI";
 // Backend functions for user DB in firestore and auth
 class UserDB {
 
-    static testFBFunc = () => {
-        Util.testCloudFunctions();
-    }
+    // static testFBFunc = () => {
+    //     Util.testCloudFunctions();
+    // }
     
     // get al users
     static getUsers = () => {
