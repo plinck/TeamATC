@@ -84,6 +84,7 @@ class TeamDB {
                     if (doc.exists) {
                         // update
                         let team = doc.data();
+                        team.id = doc.id;
                         return(resolve(team));
                     }
                     console.error("Team not found in firestore");
@@ -220,7 +221,7 @@ class TeamDB {
             Util.promiseGetChallengeDBRefs().then ( allDBRefs => {
                 const dbTeamsRef = allDBRefs.dbTeamsRef;
 
-                dbTeamsRef.doc(team.uid).set({
+                dbTeamsRef.doc(team.id).set({
                     name: team.name ? team.name : "No Name",
                     description: team.description ? team.description : ""
                 },{ merge: true }).then(() => {
