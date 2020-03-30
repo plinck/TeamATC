@@ -137,7 +137,6 @@ class Dashboard extends React.PureComponent {
     fetchData(uid) {
         ChallengeDB.getFiltered().then(challenges => {
             let currentChallenge = challenges.filter(challenge => challenge.id === uid)
-            console.log(currentChallenge[0])
             this.setState({ challenge: currentChallenge[0] })
         })
             .catch(err => console.log(err));

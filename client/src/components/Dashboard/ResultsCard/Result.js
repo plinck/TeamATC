@@ -5,7 +5,6 @@ import './Result.css'
 import { TableCell, TableRow } from '@material-ui/core';
 
 const Result = (props) => {
-    console.log(props)
     // wait for props
     if (!props.result) {
         return (null);
