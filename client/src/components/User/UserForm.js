@@ -181,11 +181,12 @@ class UserForm extends React.Component {
 
     // First, create the auth user in firebase
     // must be done on server for security reasons
-    UserAuthAPI.createAuthUserNoToken(user).then(response => {
-      const authUser = {};
-      authUser.user = response.data;
-      // Temp override these due to errors in stroing null values.
-      authUser.user.phoneNumber = user.phoneNumber;
+    UserAuthAPI.createAuthUser(user).then(authUser => {
+      // Temp override these due to errors in storing null values.
+      authUser.user.displayName = user.displayName ? user.displayName : "";
+      authUser.user.lastName = user.lastName ? user.lastName : "";
+      authUser.user.firstName = user.firstName ? user.firstName : "";
+      authUser.user.phoneNumber = user.phoneNumber ? user.phoneNumber : "";
       authUser.user.photoURL = user.photoURL ? user.photoUR : "";
       // Now Create the user in firestore
       UserDB.addAuthUserToFirestore(authUser, user).then((id) => {
@@ -203,8 +204,8 @@ class UserForm extends React.Component {
         this.setState({ message: `Error adding user in UserDB.addAuthUserToFirestore ${err}, msg: ${err.message}` });
       });
     }).catch(err => {
-      console.error(`Error adding user in UserAuthAPI.createAuthUserNoToken(user) ${err}`);
-      this.setState({ message: `Error adding auth user in UserAuthAPI.createAuthUserNoToken msg: ${err}` });
+      console.error(`Error adding user in UserAuthAPI.createAuthUser(user) ${err}`);
+      this.setState({ message: `Error adding auth user in UserAuthAPI.createAuthUser msg: ${err}` });
     });
   }
 

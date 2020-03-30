@@ -13,6 +13,10 @@ class UserDB {
                 querySnapshot.forEach(doc => {
                     let user = {};
                     user = doc.data();
+                    user.displayName = user.displayName ? user.displayName : ""
+                    user.firstName = user.firstName ? user.firstName : ""
+                    user.lastName = user.lastName ? user.lastName : ""
+                    user.phoneNumber = user.phoneNumber ? user.phoneNumber : ""
                     user.id = doc.id;
 
                     users.push(user);
