@@ -9,7 +9,7 @@ const Result = (props) => {
         return (null);
     }
 
-    //console.log(`${JSON.stringify(props.result)}`);
+    console.log(props)
 
     // Band odd rows for clarity
     let rowBg = "";
