@@ -1,26 +1,10 @@
 import React from 'react';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
-import { makeStyles, Grid, Card, CardContent, Typography, Button, CardMedia, CardActions } from '@material-ui/core';
+import { Grid, Card, CardContent, Typography, Button, CardMedia, CardActions } from '@material-ui/core';
 import moment from "moment";
 import { CHALLENGE } from "../Environment/Environment";
 
-const useStyles = makeStyles(theme => ({
-    main: {
-        background: 'url(/images/ATC-repeating-background.png) center center fixed',
-        backgroundSize: "cover",
-        height: 'calc(100vh - 64px)',
-        overflow: "hidden"
-    },
-    root: {
-        [theme.breakpoints.up('md')]: {
-            marginLeft: "57px",
-        },
-    }
-}))
-
-
 const Challenge = (props) => {
-    const classes = useStyles();
 
     const handleEditChallenge = (id) => {
         props.handleEditChallenge(id);

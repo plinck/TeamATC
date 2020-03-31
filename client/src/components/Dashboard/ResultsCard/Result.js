@@ -1,5 +1,4 @@
 import React from 'react';
-import Box from '@material-ui/core/Box';
 
 import './Result.css'
 import { TableCell, TableRow } from '@material-ui/core';
@@ -10,18 +9,15 @@ const Result = (props) => {
         return (null);
     }
 
-    //console.log(`${JSON.stringify(props.result)}`);
+    console.log(props)
 
     // Band odd rows for clarity
     let rowBg = "";
-    let rowFg = ""
     if (props.index % 2 === 0) {
         rowBg = "info.main";
-        rowFg = "white";
     }
     if (props.result.teamRecord && !props.onlyTeams) {
         rowBg = "yellow";
-        rowFg = "black";
     }
 
     return (

@@ -158,7 +158,6 @@ export default function createEpoly() {
             return (this.getPath().getAt(dist - 1));
         }
         // console.log(this.getPath().getLength())
-        console.log(total === metres)
         if (this.getPath().getLength() < 2) return null;
         var dist = 0;
         var olddist = 0;
