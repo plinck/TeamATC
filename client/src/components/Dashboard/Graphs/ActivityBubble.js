@@ -16,6 +16,13 @@ class ActivityBubble extends React.Component {
         open: false
     }
 
+    handleOpen = () => {
+        this.setState({ open: true });
+    };
+
+    handleClose = () => {
+        this.setState({ open: false });
+    };
 
     plotActivities = () => {
         const selectorOptions = {
@@ -88,7 +95,7 @@ class ActivityBubble extends React.Component {
 
         return (
             <div>
-                <ActivityBubbleModal open={this.state.open} displayInfo={this.state.clickedDistance} date={this.state.clickedDate} />
+                <ActivityBubbleModal open={this.state.open} handleOpen={this.handleOpen} handleClose={this.handleClose} displayInfo={this.state.clickedDistance} date={this.state.clickedDate} />
                 <Plot
                     data={[
                         {

@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import { Link } from "react-router-dom";
-import Tooltip from '@material-ui/core/Tooltip';
 import LaunchIcon from '@material-ui/icons/Launch';
 import './Result.css'
-import { Table, TableHead, TableBody, TableCell, TableRow, Card, CardContent } from '@material-ui/core';
+import { Table, TableHead, TableBody, TableCell, TableRow, Card, CardContent, Tooltip } from '@material-ui/core';
 import TeamResultsModal from './TeamResultsModal';
 
 const ResultsCard = (props) => {
-
     const [openTeamResults, setOpenTeamResults] = useState(false)
 
     const handleClickTeamResults = () => {
@@ -52,6 +50,8 @@ const ResultsCard = (props) => {
         totals = teamTotals;
     }
 
+    let uid = props.user ? props.user.uid : null
+
     return (
         <Card style={{ height: '100%' }}>
             <CardContent>
@@ -71,7 +71,9 @@ const ResultsCard = (props) => {
                         {totals.slice(0, 10).map((result, index) => (
                             <TableRow key={index}>
                                 <TableCell component="th" scope="row">
-                                    {result.userOrTeamName}
+                                    {uid === result.userOrTeamUid ? <Tooltip title={"This is me"}>
+                                        <img style={{ maxHeight: '18px' }} src={"/images/me.png"} alt={"me"} />
+                                    </Tooltip> : null}  {result.userOrTeamName}
                                 </TableCell>
                                 <TableCell>{result.pointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
                                 <TableCell padding="none" align="right">{result.swimPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>

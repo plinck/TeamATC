@@ -87,9 +87,9 @@ const provideAuthUserContext = Component => {
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
             let docRef = dbUsersRef.doc(authUser.uid);
             this.userListener = docRef.onSnapshot((doc) => {
-                const user = doc.data();
-                user.id = doc.id;
+                let user = doc.data();
                 if (user) {
+                    user.id = doc.id;
                     if (user.isAdmin) {
                         user.primaryRole = "admin"
                     } else if (user.isTeamLead) {
