@@ -65,3 +65,56 @@ exports.fBFcreateAuthUser = functions.https.onCall((user, res) => {
         });  // get
     });
 });
+
+const createNotification = ((notification) => {
+    const ORG = functions.config().environment.org;
+    const ENV = functions.config().environment.env;
+    console.log(`Create notification called with: ORG: ${ORG}, ENV: ${ENV}`);
+    
+    /*
+    return admin.firestore().collection('notifications')
+      .add(notification)
+      .then(doc => console.log('notification added', doc));
+    */
+  });
+  
+  /*
+  exports.teamCreated = functions.firestore
+    .document(`${functions.config().environment.org}/${functions.config().environment.env}/challenges/{challengeId}/teams/{teamId}`)
+    .onCreate(doc => {
+  
+        let team = doc.data();
+        team.id = doc.id;
+
+        const notification = {
+            content: 'Added a new team',
+            user: `${project.authorFirstName} ${project.authorLastName}`,
+            time: admin.firestore.FieldValue.serverTimestamp()
+        }
+
+        return createNotification(notification);
+
+  });
+  */
+  
+  exports.userJoined = functions.auth.user()
+    .onCreate(user => {
+      
+        const ORG = functions.config().environment.org;
+        const ENV = functions.config().environment.env;
+        console.log(`userJoined called with: ORG: ${ORG}, ENV: ${ENV}`);
+
+        return admin.firestore().collection(ORG).doc(ENV).collection('users')
+        .doc(user.uid).get().then(doc => {
+  
+          const newUser = doc.data();
+          const notification = {
+            content: 'Joined the party',
+            user: `${newUser.firstName} ${newUser.lastName}`,
+            time: admin.firestore.FieldValue.serverTimestamp()
+          };
+  
+          return createNotification(notification);
+  
+        });
+  });
