@@ -7,7 +7,6 @@ import { Table, TableHead, TableBody, TableCell, TableRow, Card, CardContent, To
 import TeamResultsModal from './TeamResultsModal';
 
 const ResultsCard = (props) => {
-    console.log(props)
     const [openTeamResults, setOpenTeamResults] = useState(false)
 
     const handleClickTeamResults = () => {
@@ -72,7 +71,7 @@ const ResultsCard = (props) => {
                         {totals.slice(0, 10).map((result, index) => (
                             <TableRow key={index}>
                                 <TableCell component="th" scope="row">
-                                    {uid === result.userOrTeamUid ? <Tooltip title={"My Activity"}>
+                                    {uid === result.userOrTeamUid ? <Tooltip title={"This is me"}>
                                         <img style={{ maxHeight: '18px' }} src={"/images/me.png"} alt={"me"} />
                                     </Tooltip> : null}  {result.userOrTeamName}
                                 </TableCell>
