@@ -16,7 +16,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Sidenav from './SideNav/Sidenav';
 import TimerIcon from '@material-ui/icons/Timer';
-import EqualizerIcon from '@material-ui/icons/Equalizer';
+// import EqualizerIcon from '@material-ui/icons/Equalizer';
 import AddIcon from '@material-ui/icons/Add';
 import MailIcon from '@material-ui/icons/Mail';
 import PeopleIcon from '@material-ui/icons/People';

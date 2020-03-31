@@ -13,7 +13,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import PeopleIcon from '@material-ui/icons/People';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-import EqualizerIcon from '@material-ui/icons/Equalizer';
+// import EqualizerIcon from '@material-ui/icons/Equalizer';
 import TimerIcon from '@material-ui/icons/Timer';
 import MailIcon from '@material-ui/icons/Mail';
 
