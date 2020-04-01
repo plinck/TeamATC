@@ -102,6 +102,7 @@ const provideAuthUserContext = Component => {
                     }
                     // Update my fake session object
                     Session.user = user;
+                    Util.setEnviromentFromClient();
                     console.log(`setupUserListener ==> Session.user: ${JSON.stringify(Session.user)}`)
 
                     // Listen to current challenge to get name, descirption for pages
@@ -173,6 +174,8 @@ const provideAuthUserContext = Component => {
                     });
                     // Update my fake session object
                     Session.challenge = challenge;
+                    // Set FB functions enviroment after challenge is updated
+                    Util.setEnviromentFromClient();
                 }
             });
         }

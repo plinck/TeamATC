@@ -1,4 +1,5 @@
 import Util from "../Util/Util";
+import TeamAPI from "./TeamAPI";
 
 class TeamDB {
 
@@ -220,11 +221,14 @@ class TeamDB {
         return new Promise((resolve, reject) => {
             Util.promiseGetChallengeDBRefs().then ( allDBRefs => {
                 const dbTeamsRef = allDBRefs.dbTeamsRef;
+                const challengeUid = allDBRefs.challengeUid;
 
                 dbTeamsRef.doc(team.id).set({
                     name: team.name ? team.name : "No Name",
                     description: team.description ? team.description : ""
                 },{ merge: true }).then(() => {
+                    // update teams but do no wait - no reason to
+                    TeamAPI.updateUserAndActivityTeams(challengeUid, team);
                     resolve();
                 }).catch(err => {
                     console.error(`error updating team: ${err}`);

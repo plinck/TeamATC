@@ -14,6 +14,23 @@ import Session from "../Util/Session.js";
 // without needing to use react context.  This way we can write more generic
 // functions and classes that do not have wrapped in react compnents
 class Util {
+
+  static setEnviromentFromClient() {
+    const firebase = Util.getFirebaseAuth();
+    const setEnviromentFromClient = firebase.functions.httpsCallable('setEnviromentFromClient');
+
+    const user = Session.user;
+    const challengeUid = user && user.challengeUid ? user.challengeUid : CHALLENGE;
+    console.log(`challengeUid: ${challengeUid}`)
+
+    setEnviromentFromClient({"org": ORG, "env": ENV, "challengeUid": challengeUid}).then(function(res) {
+      // Read result of the Cloud Function.
+      var messageSentBack = res.data.message;
+      console.log(`return message from cloud function: ${messageSentBack}`)
+      // ...
+    });
+}
+
   // Formats a display money field 
   static formatMoney = (amount, decimalCount = 2, decimal = ".", thousands = ",") => {
     try {
