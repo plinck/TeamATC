@@ -2,12 +2,26 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
+let ORG="ATC"
+let ENV="dev"
+let CHALLENGEUID=""
+
+exports.setEnviromentFromClient = functions.https.onCall((environment, res) => {
+    console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
+    console.log(`ORG ${(environment.org)}`)
+    console.log(`ENV ${(environment.env)}`)
+    console.log(`CHALLENGEUID ${(environment.challengeUid)}`)
+    ORG=environment.org;
+    ENV=environment.env;
+    CHALLENGEUID=environment.challengeUid;    
+    console.log(`saved environment with: ORG: ${ORG}, ENV: ${ENV}, CHALLENGEUID: ${CHALLENGEUID}`);
+    return {message: "Saved environment OK"};
+});
 
 exports.testFunctions = functions.https.onCall((req, res) => {
     console.log(`called testFunction with req ${JSON.stringify(req)}`)
     return {message: "response OK"};
 });
-
 
 exports.fBFdeleteAuthUser = functions.https.onCall((req, res) => {
     let uid = req.uid;
@@ -47,7 +61,7 @@ exports.fBFcreateAuthUser = functions.https.onCall((user, res) => {
             console.log(`Successfully fetched user data: ${JSON.stringify(authUser)}`);
             resolve(authUser);
         }).catch((err) => {
-            console.log(`User does not yet exist in auth..., creating: Error: ${err}`);
+            console.log(`User does not yet exist in auth... creating`);
             // Create user
             admin.auth().createUser({
                 email: user.email,
@@ -66,55 +80,39 @@ exports.fBFcreateAuthUser = functions.https.onCall((user, res) => {
     });
 });
 
-const createNotification = ((notification) => {
-    const ORG = functions.config().environment.org;
-    const ENV = functions.config().environment.env;
-    console.log(`Create notification called with: ORG: ${ORG}, ENV: ${ENV}`);
-    
-    /*
-    return admin.firestore().collection('notifications')
-      .add(notification)
-      .then(doc => console.log('notification added', doc));
-    */
-  });
-  
-  /*
-  exports.teamCreated = functions.firestore
-    .document(`${functions.config().environment.org}/${functions.config().environment.env}/challenges/{challengeId}/teams/{teamId}`)
-    .onCreate(doc => {
-  
-        let team = doc.data();
-        team.id = doc.id;
 
-        const notification = {
-            content: 'Added a new team',
-            user: `${project.authorFirstName} ${project.authorLastName}`,
-            time: admin.firestore.FieldValue.serverTimestamp()
+exports.fBFupdateTeam = functions.https.onCall((req, res) => {
+    console.log(`In fBFupdateTeam with: req ${JSON.stringify(req)}`);
+
+    let challengeUid = req.challengeUid;
+    let team = req.team;
+
+    console.log(`In fBFupdateTeam with: ORG: ${ORG}, ENV: ${ENV}, challengeUid: ${challengeUid}`);
+    return new Promise((resolve, reject) => {
+        let activitiesRef = undefined;
+        let dbUsersRef = admin.firestore().collection(ORG).doc(ENV).collection("users");
+        if (challengeUid && challengeUid != "") {
+            activitiesRef = admin.firestore().collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
         }
 
-        return createNotification(notification);
-
-  });
-  */
-  
-  exports.userJoined = functions.auth.user()
-    .onCreate(user => {
-      
-        const ORG = functions.config().environment.org;
-        const ENV = functions.config().environment.env;
-        console.log(`userJoined called with: ORG: ${ORG}, ENV: ${ENV}`);
-
-        return admin.firestore().collection(ORG).doc(ENV).collection('users')
-        .doc(user.uid).get().then(doc => {
-  
-          const newUser = doc.data();
-          const notification = {
-            content: 'Joined the party',
-            user: `${newUser.firstName} ${newUser.lastName}`,
-            time: admin.firestore.FieldValue.serverTimestamp()
-          };
-  
-          return createNotification(notification);
-  
+        let batch = admin.firestore().batch();
+        let allUsersOnTeamRef = dbUsersRef.where("teamUid", "==", team.id)
+        allUsersOnTeamRef.get().then((querySnapshot) => {
+            querySnapshot.forEach(doc => {
+                batch.set(doc.ref, {
+                    teamName: team.name,
+                }, { merge: true });
+            });
+            return batch.commit();
+        }).then(() => {
+            console.log("Batch successfully committed!");
+            resolve();
+        }).catch((err) =>{
+            console.error("Batch failed: ", err);
+            reject(err);
         });
-  });
+
+    }); // Promise
+    
+});
+
