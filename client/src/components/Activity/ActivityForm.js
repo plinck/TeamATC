@@ -349,7 +349,9 @@ class ActivityForm extends React.Component {
             this.setState({ message: `Activity Date can not be later than end of challenge` });
             return false;
         }
-        if (activity.activityDateTime < this.state.challenge.startDate) {
+
+        let startOfDay = moment(this.state.challenge.startDate).startOf("day").toDate();
+        if (activity.activityDateTime < startOfDay) {
             this.setState({ message: `Activity Date can not be earlier than beginning of challenge` });
             return false;
         }
