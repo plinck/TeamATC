@@ -116,3 +116,38 @@ exports.fBFupdateTeam = functions.https.onCall((req, res) => {
     
 });
 
+exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
+    console.log(`In fBFupdateActivityTeamName with: req ${JSON.stringify(req)}`);
+
+    let challengeUid = req.challengeUid;
+    let team = req.team;
+
+    console.log(`In fBFupdateActivityTeamName with: ORG: ${ORG}, ENV: ${ENV}, challengeUid: ${challengeUid}`);
+    return new Promise((resolve, reject) => {
+        let activitiesRef = undefined;
+        if (challengeUid && challengeUid != "") {
+            activitiesRef = admin.firestore().collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
+        }
+
+        let batch = admin.firestore().batch();
+        let allActivitiessOnTeamRef = activitiesRef.where("teamUid", "==", team.id)
+        allActivitiessOnTeamRef.get().then((querySnapshot) => {
+            querySnapshot.forEach(doc => {
+                batch.set(doc.ref, {
+                    teamName: team.name,
+                }, { merge: true });
+            });
+            return batch.commit();
+        }).then(() => {
+            console.log("Batch successfully committed!");
+            resolve();
+        }).catch((err) =>{
+            console.error("Batch failed: ", err);
+            reject(err);
+        });
+
+    }); // Promise
+    
+});
+
+
