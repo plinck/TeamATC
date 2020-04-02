@@ -663,7 +663,7 @@ class ActivityForm extends React.Component {
                                                     id="duration"
                                                     name="duration"
                                                     value={duration}
-                                                    label="Duration"
+                                                    label="Duration (hours)"
                                                     placeholder="1.5"
                                                     inputProps={{
                                                         style: { padding: 18 }
