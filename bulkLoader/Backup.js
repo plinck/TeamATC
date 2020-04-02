@@ -1,4 +1,7 @@
 const Util = require("./Util.js");
+const DEV="dev"
+const PROD="prod"
+const BACK="backup"
 
 class Backup {
     static async copyDevToProd() {
@@ -16,7 +19,7 @@ class Backup {
         const dbProdActivitiesRef = dbALLRefs.dbProdActivitiesRef;
         const dbProdTeamsRef = dbALLRefs.dbProdTeamsRef;
     
-        console.log("Copying users from dev to prod ...")
+        console.log(`Copying users from ${DEV} to ${PROD} ...`)
         dbDevUsersRef.get().then(snap => {
             snap.forEach(doc => {
                 let docData = doc.data();
@@ -25,12 +28,12 @@ class Backup {
                 });
             });
         }).then( () => {
-            console.log(`Copied all users from dev to prod`);
+            console.log(`Copied all users from ${DEV} to ${PROD}`);
         }).catch(err => {
             console.error(`error updating user: ${err}`);
         });
     
-        console.log("Copying ATCMembers from dev to prod ...")
+        console.log(`Copying ATCMembers from ${DEV} to ${PROD} ...`);
         dbDevATCMembersRef.get().then(snap => {
             snap.forEach(doc => {
                 let docData = doc.data();
@@ -39,12 +42,12 @@ class Backup {
                 });
             });
         }).then( () => {
-            console.log(`Copied all ATCMembers from dev to prod`);
+            console.log(`Copied all ATCMembers from ${DEV} to ${PROD}`);
         }).catch(err => {
             console.error(`error updating ATCMembers: ${err}`);
         });
     
-        console.log("Copying challenges from dev to prod ...")
+        console.log(`Copying challenges from ${DEV} to ${PROD} ...`)
         dbDevChallengesRef.get().then(snap => {
             snap.forEach(doc => {
                 let docData = doc.data();
@@ -53,12 +56,12 @@ class Backup {
                 });
             });
         }).then( () => {
-            console.log(`Copied all Challenges from dev to prod`);
+            console.log(`Copied all Challenges from ${DEV} to ${PROD}`);
         }).catch(err => {
             console.error(`error updating Challenges: ${err}`);
         });
     
-        console.log("Copying challengeMembers from dev to prod ...")
+        console.log(`Copying challengeMembers from ${DEV} to ${PROD} ...`);
         dbDevATCChallengeMemberRef.get().then(snap => {
             snap.forEach(doc => {
                 let docData = doc.data();
@@ -67,12 +70,12 @@ class Backup {
                 });
             });
         }).then( () => {
-            console.log(`Copied all challengeMembers from dev to prod`);
+            console.log(`Copied all challengeMembers from ${DEV} to ${PROD}`);
         }).catch(err => {
             console.error(`error updating challengeMembers: ${err}`);
         });
     
-        console.log("Copying challengeActivities from dev to prod ...")
+        console.log(`Copying challengeActivities from ${DEV} to ${PROD} ...`);
         dbDevActivitiesRef.get().then(snap => {
             snap.forEach(doc => {
                 let docData = doc.data();
@@ -81,12 +84,12 @@ class Backup {
                 });
             });
         }).then( () => {
-            console.log(`Copied all challengeActivities from dev to prod`);
+            console.log(`Copied all challengeActivities from ${DEV} to ${PROD}`);
         }).catch(err => {
             console.error(`error updating challengeActivities: ${err}`);
         });
     
-        console.log("Copying teams from dev to prod ...")
+        console.log(`Copying teams from ${DEV} to ${PROD} ...`);
         dbDevTeamsRef.get().then(snap => {
             snap.forEach(doc => {
                 let docData = doc.data();
@@ -95,7 +98,7 @@ class Backup {
                 });
             });
         }).then( () => {
-            console.log(`Copied all teams from dev to prod`);
+            console.log(`Copied all teams from ${DEV} to ${PROD}`);
         }).catch(err => {
             console.error(`error updating teams: ${err}`);
         });
@@ -104,18 +107,18 @@ class Backup {
     }
 
     static copyChallengeProdToBack(challengeUid) {
-        const dbChallengeProdRefs = Util.getDynamicChallengeDBRefs("prod", challengeUid)
+        const dbChallengeProdRefs = Util.getDynamicChallengeDBRefs("${PROD}", challengeUid)
         const dbProdATCChallengeMemberRef = dbChallengeProdRefs.dbChallengeMembersRef;
         const dbProdActivitiesRef = dbChallengeProdRefs.dbActivitiesRef;
         const dbProdTeamsRef = dbChallengeProdRefs.dbTeamsRef;
 
-        const dbChallengeBackRefs = Util.getDynamicChallengeDBRefs("back", challengeUid)
+        const dbChallengeBackRefs = Util.getDynamicChallengeDBRefs(BACK, challengeUid)
         const dbBackATCChallengeMemberRef = dbChallengeBackRefs.dbChallengeMembersRef;
         const dbBackActivitiesRef = dbChallengeBackRefs.dbActivitiesRef;
         const dbBackTeamsRef = dbChallengeBackRefs.dbTeamsRef;
 
 
-        console.log("Copying challengeMembers from prod to back ...")
+        console.log(`Copying challengeMembers from ${PROD} to ${BACK} ...`)
         dbProdATCChallengeMemberRef.get().then(snap => {
             snap.forEach(doc => {
                 let docData = doc.data();
@@ -124,12 +127,12 @@ class Backup {
                 });
             });
         }).then( () => {
-            console.log(`Copied all challengeMembers from prod to back`);
+            console.log(`Copied all challengeMembers from ${PROD} to ${BACK}`);
         }).catch(err => {
             console.error(`error updating challengeMembers: ${err}`);
         });
     
-        console.log("Copying challengeActivities from prod to back ...")
+        console.log(`Copying challengeActivities from ${PROD} to ${BACK} ...`)
         dbProdActivitiesRef.get().then(snap => {
             snap.forEach(doc => {
                 let docData = doc.data();
@@ -138,12 +141,12 @@ class Backup {
                 });
             });
         }).then( () => {
-            console.log(`Copied all challengeActivities from prod to back`);
+            console.log(`Copied all challengeActivities from ${PROD} to ${BACK}`);
         }).catch(err => {
             console.error(`error updating challengeActivities: ${err}`);
         });
     
-        console.log("Copying teams from prod to back ...")
+        console.log(`Copying teams from ${PROD} to ${BACK} ...`)
         dbProdTeamsRef.get().then(snap => {
             snap.forEach(doc => {
                 let docData = doc.data();
@@ -152,24 +155,24 @@ class Backup {
                 });
             });
         }).then( () => {
-            console.log(`Copied all teams from prod to back`);
+            console.log(`Copied all teams from ${PROD} to ${BACK}`);
         }).catch(err => {
             console.error(`error updating teams: ${err}`);
         });
     }
 
     static async copyProdToBack() {        
-        const dbProdRefs = Util.getDynamicDBRefs("prod");
+        const dbProdRefs = Util.getDynamicDBRefs(PROD);
         const dbProdUsersRef = dbProdRefs.dbUsersRef;
         const dbProdATCMembersRef = dbProdRefs.dbATCMembersRef;
         const dbProdChallengesRef = dbProdRefs.dbChallengesRef;
 
-        const dbBackRefs = Util.getDynamicDBRefs("back");
+        const dbBackRefs = Util.getDynamicDBRefs(BACK);
         const dbBackUsersRef = dbBackRefs.dbUsersRef;
         const dbBackATCMembersRef = dbBackRefs.dbATCMembersRef;
         const dbBackChallengesRef = dbBackRefs.dbChallengesRef;
     
-        console.log("Copying users from prod to back ...")
+        console.log(`Copying users from ${PROD} to ${BACK} ...`);
         dbProdUsersRef.get().then(snap => {
             snap.forEach(doc => {
                 let docData = doc.data();
@@ -178,12 +181,12 @@ class Backup {
                 });
             });
         }).then( () => {
-            console.log(`Copied all users from prod to back`);
+            console.log(`Copied all users from ${PROD} to ${BACK}`);
         }).catch(err => {
             console.error(`error updating user: ${err}`);
         });
     
-        console.log("Copying ATCMembers from prod to back ...")
+        console.log(`Copying ATCMembers from ${PROD} to ${BACK} ...`);
         dbProdATCMembersRef.get().then(snap => {
             snap.forEach(doc => {
                 let docData = doc.data();
@@ -192,12 +195,12 @@ class Backup {
                 });
             });
         }).then( () => {
-            console.log(`Copied all ATCMembers from prod to back`);
+            console.log(`Copied all ATCMembers from ${PROD} to ${BACK}`);
         }).catch(err => {
             console.error(`error updating ATCMembers: ${err}`);
         });
     
-        console.log("Copying challenges from prod to back ...")
+        console.log(`Copying challenges from ${PROD} to ${BACK} ...`)
         dbProdChallengesRef.get().then(snap => {
             snap.forEach(doc => {
                 let docData = doc.data();
@@ -208,7 +211,7 @@ class Backup {
                 });
             });
         }).then( () => {
-            console.log(`Copied all Challenges from prod to back`);
+            console.log(`Copied all Challenges from ${PROD} to ${BACK}`);
         }).catch(err => {
             console.error(`error updating Challenges: ${err}`);
         });
@@ -219,7 +222,7 @@ class Backup {
         
         const dbProdUsersRef = dbALLRefs.dbProdUsersRef;
     
-        console.log("Copying users from dev to prod ...")
+        console.log(`Copying users from ${DEV} to ${PROD} ...`);
         dbDevUsersRef.get().then(snap => {
             snap.forEach(doc => {
                 let docData = doc.data();
@@ -228,7 +231,7 @@ class Backup {
                 });
             });
         }).then( () => {
-            console.log(`Copied all users from dev to prod`);
+            console.log(`Copied all users from ${DEV} to ${PROD}`);
         }).catch(err => {
             console.error(`error updating user: ${err}`);
         });
@@ -240,7 +243,7 @@ class Backup {
         
         const dbProdUsersRef = dbALLRefs.dbProdUsersRef;
     
-        console.log("Copying users from dev to prod ...")
+        console.log(`Copying users from ${DEV} to ${PROD} ...`);
         dbProdUsersRef.get().then(snap => {
             snap.forEach(doc => {
                 let docData = doc.data();
@@ -249,7 +252,7 @@ class Backup {
                 });
             });
         }).then( () => {
-            console.log(`Copied all users from dev to prod`);
+            console.log(`Copied all users from ${DEV} to ${PROD}`);
         }).catch(err => {
             console.error(`error updating user: ${err}`);
         });
