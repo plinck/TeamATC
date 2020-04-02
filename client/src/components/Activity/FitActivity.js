@@ -10,43 +10,44 @@ class FitActivity {
         this.fitFile = fitFileToUpload;
     }
 
-    parseIntoActivity(jsonData) {
-        this.activity = {
-            activityName: "",
-            activityDateTime: null,
-            activityDateTimeString: "",
-            activityType: "",
-            distance: 0,
-            distanceUnits: "Miles",
-            duration: 0
+    parseNormalActivity(pActivity, jsonData) {
+        let activity = pActivity;
+        
+        const nbrSessions = jsonData.activity.num_sessions;
+        const event = jsonData.activity.event;
+
+        if (nbrSessions > 0 && event.toLowerCase() === "activity") {
+            const sport = jsonData.activity.sessions[0].sport;
+
+            activity.activityType = "Other";
+            if (sport.toLowerCase() === "cycling") {
+                activity.activityType = "Bike";
+            } else if (sport.toLowerCase() === "running") {
+                activity.activityType = "Run";
+            } else if (sport.toLowerCase() === "swimming") {
+                activity.activityType = "Swim";
+            }
+            // No name on Fit File???
+            activity.activityName = `${activity.activityType} on ${activity.activityDateTimeString}`;
+    
+            const total_distance = jsonData.activity.sessions[0].total_distance;
+            activity.distance = Number(total_distance).toFixed(2);
+            activity.distanceUnits = "Miles";
+
+            if (activity.sport === "Swim") {
+                activity.distance = activity.distance * 1760;
+                activity.distance = Number(total_distance).toFixed(0);
+                activity.distanceUnits = "Yards";         
+            }
+    
+            const total_timer_time = jsonData.activity.total_timer_time;
+            activity.duration = (Number(total_timer_time) / 3600).toFixed(2);
+    
+            console.log(`activity: ${JSON.stringify(activity)}`)    
+        } else {
+            console.error(`Error parsing Zwift JSON file.  No valid activity sessions found`);
+            return undefined;
         }
-
-        let activityDateEST = new Date(jsonData.activity.timestamp).toLocaleString("en-US", {
-            timeZone: "America/New_York"
-        });
-        activityDateEST = new Date(activityDateEST);
-        this.activity.activityDateTime = activityDateEST;
-        this.activity.activityDateTimeString = moment(activityDateEST).format("MM-DD-YYYY");
-
-        const sport = jsonData.sport.sport;
-
-        this.activity.activityType = "Other";
-        if (sport.toLowerCase() === "cycling") {
-            this.activity.activityType = "Bike";
-        } else if (sport.toLowerCase() === "running") {
-            this.activity.activityType = "Run";
-        } else if (sport.toLowerCase() === "swimming") {
-            this.activity.activityType = "Swim";
-        }
-        // No name on Fit File???
-        this.activity.activityName = `${this.activity.activityType} on ${this.activity.activityDateTimeString}`;
-
-        const total_distance = jsonData.activity.sessions[0].total_distance;
-        this.activity.distance = Number(total_distance).toFixed(2);
-        this.activity.distanceUnits = "Miles";
-
-        const total_timer_time = jsonData.activity.total_timer_time;
-        this.activity.duration = (Number(total_timer_time) / 3600).toFixed(2);
 
         // const sub_sport = jsonData.sport["sub_sport"];
         // const total_calories = jsonData.activity.sessions[0].total_calories;
@@ -59,7 +60,33 @@ class FitActivity {
         // const max_heart_rate = jsonData.activity.sessions[0].max_heart_rate;
         // const avg_cadence = jsonData.activity.sessions[0].avg_cadence;
         // const max_cadence = jsonData.activity.sessions[0].max_cadence;
-        console.log(`this.activity: ${JSON.stringify(this.activity)}`)
+
+        return activity;
+    }
+
+    parseIntoActivity(jsonData) {
+        let activity = {
+            activityName: "",
+            activityDateTime: null,
+            activityDateTimeString: "",
+            activityType: "",
+            distance: 0,
+            distanceUnits: "Miles",
+            duration: 0
+        }
+
+        // Date stamp is common so far
+        let activityDateEST = new Date(jsonData.activity.timestamp).toLocaleString("en-US", {
+            timeZone: "America/New_York"
+        });
+        activityDateEST = new Date(activityDateEST);
+        activity.activityDateTime = activityDateEST;
+        activity.activityDateTimeString = moment(activityDateEST).format("MM-DD-YYYY");
+
+        // const manufacturer = jsonData.file_id.manufacturer;
+        activity = this.parseNormalActivity(activity, jsonData);
+
+        return activity;
     }
 
     processFitFile() {
@@ -89,8 +116,13 @@ class FitActivity {
                             reject(`error parsing fit file ${error}`);
                         } else {
                             // console.log(JSON.stringify(data));
-                            this.parseIntoActivity(data);
-                            resolve(this.activity);
+                            let activity = this.parseIntoActivity(data);
+                            if (activity) {
+                                this.activity = activity;
+                                resolve(this.activity);
+                            } else {
+                                reject(` -- parsing error -- please check with support`);                             
+                            }
                         }
                     });
                 }
