@@ -1,10 +1,37 @@
 import React, { useState } from 'react';
 import Map from './Map'
 import { Card, CardContent, Grid, Box, Typography, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 import moment from "moment";
 
+const styles = theme => ({
+    text: {
+        marginBottom: "-10px"
+    },
+    noWrap: {
+        whiteSpace: "nowrap",
+        overflow: 'hidden',
+        [theme.breakpoints.down('sm')]: {
+            marginRight: "5px"
+        }
+    },
+    caption: {
+        fontStyle: "italic"
+    },
+    header: {
+        marginBottom: "-10px",
+        fontWeight: "bold"
+    },
+    mobile: {
+        [theme.breakpoints.down('sm')]: {
+            display: "none"
+        }
+    }
+})
 
 const GoogleMap = (props) => {
+    const { classes } = props
+    
     const handlePress = (e) => {
         e.stopPropagation();
         props.callbackParent({ isDraggable: false });
@@ -67,26 +94,44 @@ const GoogleMap = (props) => {
                         </Grid>
                         <Grid item xs={12} style={{ textAlign: "center" }}>
                             <Typography variant="h5">Team Leaders</Typography>
-                            <Table size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell style={{ fontWeight: "bold" }}>Team</TableCell>
-                                        <TableCell style={{ fontWeight: "bold" }}>Total Distance (mi)</TableCell>
-                                        <TableCell style={{ fontWeight: "bold" }}>Completion (%)</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {props.teamTotals.sort((x, y) => y.bikeDistanceTotal - x.bikeDistanceTotal).map((result, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell component="th" scope="row">
-                                                {result.userOrTeamName}
-                                            </TableCell>
-                                            <TableCell>{result.bikeDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
-                                            <TableCell>{calcCompletion(result.bikeDistanceTotal)}%</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                <Grid
+                                    container
+                                    justify="space-between"
+                                    alignItems="center"
+                                    >
+                                    <Grid style={{ textAlign: "left" }} className={classes.mobile} item xs md={5}>
+                                        <Typography className={classes.header}>Team</Typography>
+                                    </Grid>
+                                    <Grid  fontWeight="fontWeightBold" className={classes.mobile} item xs={false} md={3}>
+                                        <Typography className={classes.header}>Distance (mi)</Typography>
+                                    </Grid>
+                                    <Grid  fontWeight="fontWeightBold" className={classes.mobile} item xs={false} md={3}>
+                                        <Typography className={classes.header}>Completion (%)</Typography>
+                                    </Grid>
+                                </Grid>
+                                <hr></hr>
+                                {props.teamTotals.sort((x, y) => y.bikeDistanceTotal - x.bikeDistanceTotal).map((result, index) => (
+                                    <div>
+                                    <Grid
+                                        container
+                                        justify="space-between"
+                                        alignItems="center"
+                                        >
+                                        <Grid style={{ textAlign: "left" }} className={classes.noWrap} item xs md={5}>
+                                            <Typography className={classes.text}>{result.userOrTeamName}</Typography>
+                                            <Typography className={classes.caption} variant="caption">Next: CDA</Typography>
+                                        </Grid>
+                                        <Grid className={classes.mobile} item xs={false} md={3}>
+                                            <Typography className={classes.text}>{result.bikeDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
+                                            <Typography className={classes.caption} variant="caption">distnxt</Typography>
+                                        </Grid>
+                                        <Grid className={classes.mobile} item xs={false} md={3}>
+                                            <Typography className={classes.text}>{calcCompletion(result.bikeDistanceTotal)}%</Typography>
+                                            <Typography className={classes.caption} variant="caption">cmpnxt%</Typography>
+                                        </Grid>
+                                    </Grid>
+                                    </div>
+                                ))}
                         </Grid>
                     </Grid>
                 </Grid>
@@ -96,4 +141,4 @@ const GoogleMap = (props) => {
 
 }
 
-export default GoogleMap
+export default withStyles(styles)(GoogleMap)
