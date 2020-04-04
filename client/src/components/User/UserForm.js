@@ -190,15 +190,19 @@ class UserForm extends React.Component {
       authUser.user.photoURL = user.photoURL ? user.photoUR : "";
       // Now Create the user in firestore
       UserDB.addAuthUserToFirestore(authUser, user).then((id) => {
-        this.props.firebase.doPasswordReset(user.email).then(() => {
-          this.setState({
-            message: "New User Added.  Password reset Link sent - user must reset password login",
-            id: id
-          });
-        }).catch(err => {
-          console.error(`Error resettting user pw in firebase.doPasswordReset ${err}`);
-          this.setState({ message: err.message });
+        this.setState({
+          message: "New User Added.  Password reset Link sent - user must reset password login",
+          id: id
         });
+        // this.props.firebase.doPasswordReset(user.email).then(() => {
+        //   this.setState({
+        //     message: "New User Added.  Password reset Link sent - user must reset password login",
+        //     id: id
+        //   });
+        // }).catch(err => {
+        //   console.error(`Error resettting user pw in firebase.doPasswordReset ${err}`);
+        //   this.setState({ message: err.message });
+        // });
       }).catch(err => {
         console.error(`Error adding user in UserDB.addAuthUserToFirestore ${err}, msg: ${err.message}`);
         this.setState({ message: `Error adding user in UserDB.addAuthUserToFirestore ${err}, msg: ${err.message}` });
