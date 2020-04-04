@@ -38,6 +38,7 @@ const GoogleMap = (props) => {
     }
 
     const [totalDist, setTotalDist] = useState(0);
+    // teamLegTotals is a copy to teamTotals with the next leg info added to it
     const [teamLegTotals, setTeamLegTotals] = useState(props.teamTotals);
 
     const computeTotalDistance = (result) => {
@@ -58,7 +59,15 @@ const GoogleMap = (props) => {
         }
     }
 
+    // Using the teamTotals array, attach the leg info to each teams record
+    // legs come from the map component and atre computed after the route is drawn
+    // This function goes through each team and sees whwere they are on the route, then
+    // attaches next legh info to their teamTotals record
+    // TODO :- Right now the function state values are not displayed on the dashboard
+    // unless you go into the debugger.  It must be a timing issuie with state vars but
+    // I have yet to figure it out
     const calcNextLegInfo = (legs) => {
+        //Loop through each team
         for (let k = 0; k < teamLegTotals.length; k++) {
             let totalDistance = 0;
             let nextLegName = "";
@@ -67,7 +76,9 @@ const GoogleMap = (props) => {
             let nextLegIdx = 0;
 
             let i = 0;
-            // got until you find the next leg based on your distance
+            // Loop until you find the next leg based on your distance
+            // This loop will end where you are "in between" two legs
+            // Then you just need to extract the leg info an attach to team record
             for (i = 0; i < legs.length && totalDistance < teamLegTotals[k].bikeDistanceTotal ; i++) {
                 let legDistance = legs[i].distance.value / 1000 / 1.609344;  // to miles
                 totalDistance += legDistance;
