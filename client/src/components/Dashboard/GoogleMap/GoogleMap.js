@@ -64,26 +64,27 @@ const GoogleMap = (props) => {
             let nextLegName = "";
             let distanceToNextLeg = 0;
             let nextLegCompletionPercent = 0;
+            let nextLegIdx = 0;
 
             let i = 0;
             // got until you find the next leg based on your distance
             for (i = 0; i < legs.length && totalDistance < teamTotals[k].bikeDistanceTotal ; i++) {
-                totalDistance += legs[i].distance.value;
+                let legDistance = legs[i].distance.value / 1000 / 1.609344;  // to miles
+                totalDistance += legDistance;
+                nextLegIdx = i;
             }
             // now the next leg should be at i
-            let nextLegIdx = i < legs.length ? i : legs.length;
 
-            totalDistance = totalDistance / 1000 / 1.609344  //km to miles
             nextLegName = legs[nextLegIdx].end_address;
             distanceToNextLeg = totalDistance - teamTotals[k].bikeDistanceTotal;
             if (distanceToNextLeg <= 0) {
                 nextLegCompletionPercent = 100;
             } else {
-                nextLegCompletionPercent = parseInt(teamTotals[k].bikeDistanceTotal / distanceToNextLeg * 100);
+                nextLegCompletionPercent = parseInt((1 - (distanceToNextLeg / teamTotals[k].bikeDistanceTotal))  * 100);
             }
 
             teamTotals[k].nextLegName = nextLegName;
-            teamTotals[k].distanceToNextLeg = distanceToNextLeg;
+            teamTotals[k].distanceToNextLeg = distanceToNextLeg.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             teamTotals[k].nextLegCompletionPercent = nextLegCompletionPercent;
         }
         setTeamTotals(teamTotals);
