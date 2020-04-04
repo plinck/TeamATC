@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Map from './Map'
-import { Card, CardContent, Grid, Box, Typography, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+//import { Card, CardContent, Grid, Box, Typography, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+import { Card, CardContent, Grid, Box, Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import moment from "moment";
 
@@ -168,7 +169,7 @@ const GoogleMap = (props) => {
                                         </Grid>
                                         <Grid className={classes.mobile} item xs={false} md={3}>
                                             <Typography className={classes.text}>{result.bikeDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
-                                            <Typography className={classes.caption} variant="caption">{result.distanceToNextLeg}</Typography>
+                                            <Typography className={classes.caption} variant="caption">{result.distanceToNextLeg} mi </Typography>
                                         </Grid>
                                         <Grid className={classes.mobile} item xs={false} md={3}>
                                             <Typography className={classes.text}>{calcCompletion(result.bikeDistanceTotal)}%</Typography>

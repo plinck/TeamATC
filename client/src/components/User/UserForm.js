@@ -194,6 +194,8 @@ class UserForm extends React.Component {
           message: "New User Added.  Password reset Link sent - user must reset password login",
           id: id
         });
+        // comment out doing password reset on create as it confuses people and always 
+        // times out by the time they get the email to reset
         // this.props.firebase.doPasswordReset(user.email).then(() => {
         //   this.setState({
         //     message: "New User Added.  Password reset Link sent - user must reset password login",
