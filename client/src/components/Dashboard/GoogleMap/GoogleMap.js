@@ -37,7 +37,8 @@ const GoogleMap = (props) => {
         props.callbackParent({ isDraggable: false });
     }
 
-    const [totalDist, setTotalDist] = useState(0)
+    const [totalDist, setTotalDist] = useState(0);
+    const [teamTotals, setTeamTotals] = useState(props.teamTotals);
 
     const computeTotalDistance = (result) => {
         let totalDist = 0;
@@ -57,6 +58,38 @@ const GoogleMap = (props) => {
         }
     }
 
+    const calcNextLegInfo = (legs) => {
+        for (let k = 0; k < teamTotals.length; k++) {
+            let totalDistance = 0;
+            let nextLegName = "";
+            let distanceToNextLeg = 0;
+            let nextLegCompletionPercent = 0;
+
+            let i = 0;
+            // got until you find the next leg based on your distance
+            for (i = 0; i < legs.length && totalDistance < teamTotals[k].bikeDistanceTotal ; i++) {
+                totalDistance += legs[i].distance.value;
+            }
+            // now the next leg should be at i
+            let nextLegIdx = i < legs.length ? i : legs.length;
+
+            totalDistance = totalDistance / 1000 / 1.609344  //km to miles
+            nextLegName = legs[nextLegIdx].end_address;
+            distanceToNextLeg = totalDistance - teamTotals[k].bikeDistanceTotal;
+            if (distanceToNextLeg <= 0) {
+                nextLegCompletionPercent = 100;
+            } else {
+                nextLegCompletionPercent = parseInt(teamTotals[k].bikeDistanceTotal / distanceToNextLeg * 100);
+            }
+
+            teamTotals[k].nextLegName = nextLegName;
+            teamTotals[k].distanceToNextLeg = distanceToNextLeg;
+            teamTotals[k].nextLegCompletionPercent = nextLegCompletionPercent;
+        }
+        setTeamTotals(teamTotals);
+
+    }
+
     return (
         <Card style={{ height: '100%' }}>
             <CardContent style={{ height: '100%' }} >
@@ -74,11 +107,12 @@ const GoogleMap = (props) => {
                                 fullscreenControl: false,
                                 mapTypeControl: false,
                             }}
-                            teamTotals={props.teamTotals}
+                            teamTotals={teamTotals}
                             start={props.start}
                             end={props.end}
                             waypoints={props.waypoints}
                             computeTotalDistance={computeTotalDistance}
+                            calcNextLegInfo={calcNextLegInfo}
                             totalDist={totalDist}
                         />
                     </Grid>
@@ -102,35 +136,33 @@ const GoogleMap = (props) => {
                                     <Grid style={{ textAlign: "left" }} className={classes.mobile} item xs md={5}>
                                         <Typography className={classes.header}>Team</Typography>
                                     </Grid>
-                                    <Grid  fontWeight="fontWeightBold" className={classes.mobile} item xs={false} md={3}>
+                                    <Grid className={classes.mobile} item xs={false} md={3}>
                                         <Typography className={classes.header}>Distance (mi)</Typography>
                                     </Grid>
-                                    <Grid  fontWeight="fontWeightBold" className={classes.mobile} item xs={false} md={3}>
+                                    <Grid className={classes.mobile} item xs={false} md={3}>
                                         <Typography className={classes.header}>Completion (%)</Typography>
                                     </Grid>
                                 </Grid>
                                 <hr></hr>
-                                {props.teamTotals.sort((x, y) => y.bikeDistanceTotal - x.bikeDistanceTotal).map((result, index) => (
-                                    <div>
-                                    <Grid
-                                        container
+                                {teamTotals.sort((x, y) => y.bikeDistanceTotal - x.bikeDistanceTotal).map((result, index) => (
+                                    <Grid container key={index}
                                         justify="space-between"
                                         alignItems="center"
                                         >
+                                
                                         <Grid style={{ textAlign: "left" }} className={classes.noWrap} item xs md={5}>
                                             <Typography className={classes.text}>{result.userOrTeamName}</Typography>
-                                            <Typography className={classes.caption} variant="caption">Next: CDA</Typography>
+                                            <Typography className={classes.caption} variant="caption">Next:{result.nextLegName}</Typography>
                                         </Grid>
                                         <Grid className={classes.mobile} item xs={false} md={3}>
                                             <Typography className={classes.text}>{result.bikeDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Typography>
-                                            <Typography className={classes.caption} variant="caption">distnxt</Typography>
+                                            <Typography className={classes.caption} variant="caption">{result.distanceToNextLeg}</Typography>
                                         </Grid>
                                         <Grid className={classes.mobile} item xs={false} md={3}>
                                             <Typography className={classes.text}>{calcCompletion(result.bikeDistanceTotal)}%</Typography>
-                                            <Typography className={classes.caption} variant="caption">cmpnxt%</Typography>
+                                            <Typography className={classes.caption} variant="caption">{result.nextLegCompletionPercent}%</Typography>
                                         </Grid>
                                     </Grid>
-                                    </div>
                                 ))}
                         </Grid>
                     </Grid>

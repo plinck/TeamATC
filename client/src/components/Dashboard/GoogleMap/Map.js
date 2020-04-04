@@ -77,7 +77,10 @@ class GoogleMap extends Component {
                 polyline.setMap(map);
 
                 this.props.computeTotalDistance(response);
-                this.props.teamTotals.forEach(total => this.putMarkerOnRoute(polyline, total.bikeDistanceTotal, total.userOrTeamName))
+                this.props.calcNextLegInfo(response.routes[0].legs);
+                this.props.teamTotals.forEach(total => {
+                    this.putMarkerOnRoute(polyline, total.bikeDistanceTotal, total.userOrTeamName)
+                });
             } else {
                 alert("directions response " + status);
             }
