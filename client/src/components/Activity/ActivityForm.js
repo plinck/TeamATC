@@ -232,7 +232,7 @@ class ActivityForm extends React.Component {
 
             // Make sure its file type === fit
             let fileExt = fitFileToUpload.name.split('.').pop()
-            if (!fileExt || fileExt !== "fit") {
+            if (!fileExt || fileExt.toLowerCase() !== "fit") {
                 this.setState({ message: `Error - File MUST be of type ".fit"` });
                 return;
             }
