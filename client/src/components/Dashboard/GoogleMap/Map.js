@@ -76,6 +76,8 @@ class GoogleMap extends Component {
 
                 polyline.setMap(map);
 
+                // calc next leg info calls the parent to attach the next leg info
+                // to each of the teamTotal records
                 this.props.calcNextLegInfo(response.routes[0].legs);
                 this.props.computeTotalDistance(response);
                 this.props.teamTotals.forEach(total => {
