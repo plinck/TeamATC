@@ -3,27 +3,29 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/functions';
 import 'firebase/storage';
+import { FB_CONFIG } from "../../Environment/Environment"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBmeZVx6YKWwqMP8FvsEyoG0eIxcinHYc4",
-  authDomain: "teamatc-challenge.firebaseapp.com",
-  databaseURL: "https://teamatc-challenge.firebaseio.com",
-  projectId: "teamatc-challenge",
-  storageBucket: "teamatc-challenge.appspot.com",
-  messagingSenderId: "961307717305",
-  appId: "1:961307717305:web:faa30c4e8b56dc5c097568",
-  measurementId: "G-FXGMVHS2ZX"
+  apiKey: FB_CONFIG.API_KEY,
+  authDomain: FB_CONFIG.AUTH_DOMAIN,
+  databaseURL: FB_CONFIG.DATABASE_URL,
+  projectId: FB_CONFIG.PROJECT_ID,
+  storageBucket: FB_CONFIG.STORAGE_BUCKET,
+  messagingSenderId: FB_CONFIG.MESSAGING_SENDER_ID,
+  appId: FB_CONFIG.APP_ID,
+  measurementId: FB_CONFIG.MEASUREMENT_ID
 };
 
 // Firebase state already initialized so we dont do more that once
 // Kinda like a statuc property
-let firebaseInialized;
 class Firebase {
+  static firebaseInialized = undefined;
+
   constructor() {
     try {
-      if (!firebaseInialized) {
+      if (!this.firebaseInialized) {
         firebase.initializeApp(firebaseConfig);
-        firebaseInialized = true;
+        this.firebaseInialized = true;
       }
     } catch (err) {
       // we skip the "already exists" message which is

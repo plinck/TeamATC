@@ -16,6 +16,7 @@
 # misc
 **.DS_Store
 .env
+.firebase.config
 .env.prod
 .env.dev
 .env.local

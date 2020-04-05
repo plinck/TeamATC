@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { FormControl, Input, InputLabel } from '@material-ui/core';
 import Script from 'react-load-script';
+import { FB_CONFIG } from "../Environment/Environment";
 
 class LocationSearchBar extends Component {
     // Define Constructor
@@ -60,7 +61,7 @@ class LocationSearchBar extends Component {
         return (
             <>
                 <Script
-                    url="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmeZVx6YKWwqMP8FvsEyoG0eIxcinHYc4&libraries=places"
+                    url={`https://maps.googleapis.com/maps/api/js?key=${FB_CONFIG.API_KEY}&libraries=places`}
                     onLoad={this.handleScriptLoad}
                 />
                 <FormControl style={{ minWidth: "40%", marginRight: '10px' }}>

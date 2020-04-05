@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import createEpoly from './eploy.js';
 import bikeIcon from './pin.svg'
+import { FB_CONFIG } from "../../Environment/Environment";
 
-
-class GoogleMap extends Component {
+class Map extends Component {
     constructor(props) {
         super(props);
         this.onScriptLoad = this.onScriptLoad.bind(this);
@@ -158,7 +158,7 @@ class GoogleMap extends Component {
         if (!window.google) {
             var s = document.createElement('script');
             s.type = 'text/javascript';
-            s.src = `https://maps.google.com/maps/api/js?key=AIzaSyBmeZVx6YKWwqMP8FvsEyoG0eIxcinHYc4`;
+            s.src = `https://maps.googleapis.com/maps/api/js?key=${FB_CONFIG.API_KEY}&libraries=places`
             var x = document.getElementsByTagName('script')[0];
             x.parentNode.insertBefore(s, x);
             // Below is important. 
@@ -177,4 +177,4 @@ class GoogleMap extends Component {
         );
     }
 }
-export default GoogleMap
+export default Map
