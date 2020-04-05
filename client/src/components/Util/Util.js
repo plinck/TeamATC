@@ -21,12 +21,11 @@ class Util {
 
     const user = Session.user;
     const challengeUid = user && user.challengeUid ? user.challengeUid : CHALLENGE;
-    console.log(`challengeUid: ${challengeUid}`)
+    // console.log(`challengeUid: ${challengeUid}`)
 
     setEnviromentFromClient({"org": ORG, "env": ENV, "challengeUid": challengeUid}).then(function(res) {
       // Read result of the Cloud Function.
-      var messageSentBack = res.data.message;
-      console.log(`return message from cloud function: ${messageSentBack}`)
+      // console.log(`return message from cloud function: ${res.data.message}`)
       // ...
     });
 }
@@ -44,7 +43,7 @@ class Util {
 
       return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -57,10 +56,6 @@ class Util {
   // need to get dbRefs based in on current infomratkjon so no hardocding
   static getBaseDBRefs = () => {
     const firebase = new Firebase();
-
-    const user = Session.user;
-    const challengeUid = user && user.challengeUid ? user.challengeUid : CHALLENGE;
-    console.log(`challengeUid: ${challengeUid}`)
 
     const dbUsersRef = firebase.db.collection(ORG).doc(ENV).collection(`users`);
     const dbATCMembersRef = firebase.db.collection(ORG).doc(ENV).collection(`ATCMembers`);
@@ -81,7 +76,7 @@ class Util {
 
         Util.getCurrentUser().then(user => {
             const challengeUid = user.challengeUid ? user.challengeUid : CHALLENGE;
-            console.log(`challengeUid: ${challengeUid}`)
+            // console.log(`challengeUid: ${challengeUid}`)
 
             const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);
             const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
@@ -106,7 +101,7 @@ class Util {
     const firebase = new Firebase();
 
     challengeUid = challengeUid ? challengeUid : CHALLENGE;
-    console.log(`challengeUid: ${challengeUid}`)
+    // console.log(`challengeUid: ${challengeUid}`)
 
     const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);
     const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);

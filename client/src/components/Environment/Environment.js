@@ -1,5 +1,5 @@
-const ORG=process.env.REACT_APP_FIREBASE_ORG ? process.env.REACT_APP_FIREBASE_ORG : "ATC";
-const ENV=process.env.REACT_APP_FIREBASE_ENV ? process.env.REACT_APP_FIREBASE_ENV : "prod";
+const ORG=process.env.REACT_APP_FIREBASE_ORG;
+const ENV=process.env.REACT_APP_FIREBASE_ENV;
 
 // Firebase
 // const FB_CONFIG = {
@@ -34,8 +34,8 @@ if (ENV === "prod") {
     CHALLENGE="mFpSMP7oWvriDwIehwzB" 
 }
 
-console.log(`Using global environment ORG: ${ORG}, ENV: ${ENV}`);  
-console.log(`Using FB_CONFIG: ${JSON.stringigy(FB_CONFIG, null, 2)}`);  
+console.log(`Using global environment ORG: ${ORG}, ENV: ${ENV}  CHALLENGE: ${CHALLENGE}`);  
+// console.log(`Using FB_CONFIG: ${JSON.stringify(FB_CONFIG, null, 2)}`);  
 
 class globalEnv {
     // Formats a display money field 

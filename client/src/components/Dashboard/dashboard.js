@@ -158,7 +158,7 @@ class Dashboard extends React.PureComponent {
                 this.activeListener();
                 // console.log(`Detached listener`);
             }
-            console.log(this.props.user.challengeUid)
+            // console.log(this.props.user.challengeUid)
             this.createListener(this.props.user.challengeUid)
             this.fetchData(this.props.user.challengeUid)
         }

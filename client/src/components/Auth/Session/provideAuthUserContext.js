@@ -103,7 +103,7 @@ const provideAuthUserContext = Component => {
                     // Update my fake session object
                     Session.user = user;
                     Util.setEnviromentFromClient();
-                    console.log(`setupUserListener ==> Session.user: ${JSON.stringify(Session.user)}`)
+                    // console.log(`setupUserListener ==> Session.user: ${JSON.stringify(Session.user)}`)
 
                     // Listen to current challenge to get name, descirption for pages
                     if (user.challengeUid) {
@@ -167,7 +167,7 @@ const provideAuthUserContext = Component => {
                 challenge.id = doc.id;
                 if (challenge) {
                     Session.challenge = challenge;
-                    console.log(`Session.challenge: ${JSON.stringify(Session.challenge)}`)
+                    // console.log(`Session.challenge: ${JSON.stringify(Session.challenge)}`)
 
                     this.setState({
                         challengeName: challenge.name,

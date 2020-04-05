@@ -161,7 +161,7 @@ const GoogleMap = (props) => {
                                     <Grid container key={index}
                                         justify="space-between"
                                         alignItems="center"
-                                        >{console.log(`LegInfo: ${result.nextLegName}, ${result.distanceToNextLeg}, ${result.nextLegCompletionPercent}`)}
+                                        >
                                 
                                         <Grid style={{ textAlign: "left" }} className={classes.noWrap} item xs md={5}>
                                             <Typography className={classes.text}>{result.userOrTeamName}</Typography>
