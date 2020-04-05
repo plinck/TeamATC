@@ -18,13 +18,14 @@ const firebaseConfig = {
 
 // Firebase state already initialized so we dont do more that once
 // Kinda like a statuc property
-let firebaseInialized;
 class Firebase {
+  static firebaseInialized = undefined;
+
   constructor() {
     try {
-      if (!firebaseInialized) {
+      if (!this.firebaseInialized) {
         firebase.initializeApp(firebaseConfig);
-        firebaseInialized = true;
+        this.firebaseInialized = true;
       }
     } catch (err) {
       // we skip the "already exists" message which is
