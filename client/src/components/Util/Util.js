@@ -4,7 +4,7 @@ import {
   ENV,
   CHALLENGE
 } from "../Environment/Environment";
-import Firebase from "../Auth/Firebase/firebase";
+import Firebase from "../Auth/Firebase/Firebase.js";
 import Session from "../Util/Session.js";
 
 // Util is used for various common functions
