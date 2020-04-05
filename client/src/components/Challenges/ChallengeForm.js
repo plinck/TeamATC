@@ -7,6 +7,7 @@ import LocationSearchBar from './LocationSearchBar';
 import Waypoints from './Waypoints';
 import AddIcon from "@material-ui/icons/Add";
 import { Fab } from "@material-ui/core";
+import moment from "moment";
 
 import ChallengeDB from "./ChallengeDB"
 import Photo from "../Util/Photo.js"
@@ -45,11 +46,11 @@ const ChallengeForm = (props) => {
     const CLEAR_CHALLENGE_VALUES = {
         id: undefined,
         description: "",
-        endDate: new Date(),
+        endDate:  moment(new Date('2020-08-18T21:11:54')).endOf("day").toDate(),
         isCurrentChallenge: false,
         name: "",
         photoObj: null,
-        startDate: new Date(),
+        startDate: moment(new Date()).startOf("day").toDate(),
         startCity: "",
         endCity: "",
         waypoints: []
@@ -57,11 +58,11 @@ const ChallengeForm = (props) => {
     const CHALLENGE_INITIAL_VALUES = {
         id: props.id,
         description: "",
-        endDate: new Date('2020-08-18T21:11:54'),
+        endDate: moment(new Date('2020-08-18T21:11:54')).endOf("day").toDate(),
         isCurrentChallenge: false,
         name: "",
         photoObj: null,
-        startDate: new Date(),
+        startDate: moment(new Date()).startOf("day").toDate(),
         startCity: "",
         endCity: "",
         waypoints: []
@@ -75,13 +76,15 @@ const ChallengeForm = (props) => {
         setChallenge({ ...challenge, description: event.target.value })
     };
     const handleEndDateChange = date => {
-        setChallenge({ ...challenge, endDate: date })
+        const endOfDay = moment(date).endOf("day").toDate()
+        setChallenge({ ...challenge, endDate: endOfDay })
     };
     const handleNameChange = event => {
         setChallenge({ ...challenge, name: event.target.value })
     };
     const handleStartDateChange = date => {
-        setChallenge({ ...challenge, startDate: date })
+        const startOfDay = moment(date).startOf("day").toDate()
+        setChallenge({ ...challenge, startDate: startOfDay })
     };
 
     const handleStartCityChange = city => {
