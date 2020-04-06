@@ -22,6 +22,8 @@ class ChallengeDB {
                         challenge.id = doc.id;
                         challenge.startDate = challenge.startDate.toDate();
                         challenge.endDate = challenge.endDate.toDate();
+                        challenge.challengeShutdownStartDate = challenge.challengeShutdownStartDate ? challenge.challengeShutdownStartDate.toDate() : null;
+                        challenge.challengeShutdownEndDate = challenge.challengeShutdownStartDate ? challenge.challengeShutdownEndDate.toData() : null;       
                         challenges.push(challenge);
                     });
                     resolve(challenges);
@@ -49,6 +51,8 @@ class ChallengeDB {
                         challenge.id = doc.id;
                         challenge.startDate = challenge.startDate.toDate();
                         challenge.endDate = challenge.endDate.toDate();
+                        challenge.challengeShutdownStartDate = challenge.challengeShutdownStartDate ? challenge.challengeShutdownStartDate.toDate() : null;
+                        challenge.challengeShutdownEndDate = challenge.challengeShutdownStartDate ? challenge.challengeShutdownEndDate.toData() : null;       
                         resolve(challenge);
                     } else {
                         reject(`Challenge not found with id: ${id}`);
