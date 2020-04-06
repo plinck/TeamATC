@@ -17,6 +17,14 @@ class FitActivity {
         const event = jsonData.activity.event;
 
         if (nbrSessions > 0 && event.toLowerCase() === "activity") {
+            // Date stamp is common so far
+            let activityDateEST = new Date(jsonData.activity.sessions[0].start_time).toLocaleString("en-US", {
+                timeZone: "America/New_York"
+            });
+            activityDateEST = new Date(activityDateEST);
+            activity.activityDateTime = activityDateEST;
+            activity.activityDateTimeString = moment(activityDateEST).format("MM-DD-YYYY");
+
             const sport = jsonData.activity.sessions[0].sport;
 
             activity.activityType = "Other";
@@ -40,12 +48,12 @@ class FitActivity {
                 activity.distanceUnits = "Yards";         
             }
     
-            const total_timer_time = jsonData.activity.total_timer_time;
+            const total_timer_time = jsonData.activity.sessions[0].total_timer_time;
             activity.duration = (Number(total_timer_time) / 3600).toFixed(2);
     
             console.log(`activity: ${JSON.stringify(activity)}`)    
         } else {
-            console.error(`Error parsing Zwift JSON file.  No valid activity sessions found`);
+            console.error(`Error parsing FIT JSON file.  No valid activity sessions found`);
             return undefined;
         }
 
@@ -74,14 +82,6 @@ class FitActivity {
             distanceUnits: "Miles",
             duration: 0
         }
-
-        // Date stamp is common so far
-        let activityDateEST = new Date(jsonData.activity.timestamp).toLocaleString("en-US", {
-            timeZone: "America/New_York"
-        });
-        activityDateEST = new Date(activityDateEST);
-        activity.activityDateTime = activityDateEST;
-        activity.activityDateTimeString = moment(activityDateEST).format("MM-DD-YYYY");
 
         // const manufacturer = jsonData.file_id.manufacturer;
         activity = this.parseNormalActivity(activity, jsonData);
