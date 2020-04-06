@@ -33,6 +33,8 @@ const provideAuthUserContext = Component => {
 
                 challengeUid: null,
                 challengeName: null,
+                challengeShutdownStartDate: null,
+                challengeShutdownEndDate: null,
 
                 primaryRole: "user",
                 isAdmin: false,
@@ -171,9 +173,9 @@ const provideAuthUserContext = Component => {
 
                     this.setState({
                         challengeName: challenge.name,
+                        challengeShutdownStartDate: challenge.challengeShutdownStartDate ? challenge.challengeShutdownStartDate.toDate() : null,
+                        challengeShutdownEndDate: challenge.challengeShutdownStartDate ? challenge.challengeShutdownEndDate.toDate() : null,     
                     });
-                    // Update my fake session object
-                    Session.challenge = challenge;
                     // Set FB functions enviroment after challenge is updated
                     Util.setEnviromentFromClient();
                 }
