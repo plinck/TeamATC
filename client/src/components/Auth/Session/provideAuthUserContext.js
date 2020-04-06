@@ -173,8 +173,8 @@ const provideAuthUserContext = Component => {
 
                     this.setState({
                         challengeName: challenge.name,
-                        challengeShutdownStartDate: challenge.challengeShutdownStartDate,
-                        challengeShutdownEndDate: challenge.challengeShutdownEndDate
+                        challengeShutdownStartDate: challenge.challengeShutdownStartDate ? challenge.challengeShutdownStartDate.toDate() : null,
+                        challengeShutdownEndDate: challenge.challengeShutdownStartDate ? challenge.challengeShutdownEndDate.toDate() : null,     
                     });
                     // Set FB functions enviroment after challenge is updated
                     Util.setEnviromentFromClient();

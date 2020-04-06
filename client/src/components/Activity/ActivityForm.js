@@ -360,9 +360,9 @@ class ActivityForm extends React.Component {
         if (this.props.user.challengeShutdownStartDate && this.props.user.challengeShutdownEndDate) {
             const startOfShutdownDay = moment(this.props.user.challengeShutdownStartDate).startOf("day").toDate();
             const endOfShutdownDay = moment(this.props.user.challengeShutdownEndDate).endOf("day").toDate();
-            const endOfShutdownDayDispplay = moment(endOfShutdownDay).format('MM-DD-YYYY');
+            const endOfShutdownDayDisplay = moment(endOfShutdownDay).format('MM-DD-YYYY');
             if (activity.activityDateTime >= startOfShutdownDay &&  activity.activityDateTime <= endOfShutdownDay) {
-                this.setState({ message: `Activity entry is paused.  No activities can be entered, End of shutdown ${endOfShutdownDayDispplay}` });
+                this.setState({ message: `Activity entry is paused.  No activities can be entered, End of shutdown after ${endOfShutdownDayDisplay}` });
                 return false;
             }
         }
