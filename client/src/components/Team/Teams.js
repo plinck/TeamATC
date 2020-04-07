@@ -71,6 +71,16 @@ const Teams = (props) => {
         });
     }
 
+    const handleShowTeamMembers = (teamUid, teamName) => {
+        // popup dialog
+        TeamDB.getTeamUsers(teamUid).then (users => {
+            console.log(`Users: ${users}`);
+        }).catch(err => {
+            console.error(`Error getting teams users`);
+        });
+
+    }
+
     // MAIN START : --
     // get teams at load - this is like compnent
     const fetchData = () => {
@@ -107,6 +117,7 @@ const Teams = (props) => {
                                 handleEditTeam={handleEditTeam}
                                 handleDeleteTeam={handleDeleteTeam}
                                 handleJoinTeam={handleJoinTeam}
+                                handleShowTeamMembers={handleShowTeamMembers}
                             />)
                         })
                         }
