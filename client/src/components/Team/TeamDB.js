@@ -182,7 +182,7 @@ class TeamDB {
                 });
             }).catch(err => {
                 console.error(`Error getting team dbRefs in TeamDB.get ${err}`);
-                reject(`Error getting team dbRefs in TeamDB.get ${err}`);
+                reject(`Error getting team dbRefs in TeamDB.getTeamUsers ${err}`);
             });
         });
     }

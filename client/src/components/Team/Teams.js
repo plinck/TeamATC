@@ -39,9 +39,13 @@ const Teams = (props) => {
 
     const [currentTeamId, setCurrentTeamId] = useState();
     const [message, setMessage] = useState();
+    const [selectedTeamUid, setSelectedTeamUid] = useState();
+    const [selectedTeamName, setSelectedTeamName] = useState();
 
-    const handleOpenTeamMembers = () => {
-        setOpenTeamMembers(true)
+    const handleOpenTeamMembers = (teamUid, teamName) => {
+        setSelectedTeamUid(teamUid);
+        setSelectedTeamName(teamName);
+        setOpenTeamMembers(true);
     }
 
     const handleClose = () => {
@@ -81,6 +85,7 @@ const Teams = (props) => {
             console.error(`Error joining team: ${teamUid} for user: ${props.uid}`);
         });
     }
+    
 
     // MAIN START : --
     // get teams at load - this is like compnent
@@ -103,7 +108,7 @@ const Teams = (props) => {
     return (
         <div className={classes.root}>
             <Container className={classes.container} maxWidth="xl">
-                <TeamMembersModal id="TeamMembersModal" handleClose={handleClose} open={openTeamMembers}/>
+                <TeamMembersModal id="TeamMembersModal" teamUid={selectedTeamUid} teamName={selectedTeamName} handleClose={handleClose} open={openTeamMembers}/>
 
                 {message ? <Typography color="primary" variant="subtitle1" align="center">{message}</Typography> : ""}
                 <Grid style={{ marginTop: '10px' }} container spacing={2} justify="center" alignItems="center">

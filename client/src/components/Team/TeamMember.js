@@ -4,7 +4,7 @@ import { TableCell, TableRow } from '@material-ui/core';
 
 const TeamMember = (props) => {
     // wait for props
-    if (!props.user) {
+    if (!props.teamMember) {
         return (null);
     }
 
@@ -19,14 +19,17 @@ const TeamMember = (props) => {
     return (
         <TableRow key={props.index} style={{ backgroundColor: `${rowBg}` }}>
             <TableCell component="th" scope="row" style={{ paddingLeft: "50px" }}>
-                {props.user.isThisMine ?
+                {props.isThisMine ?
                     <img style={{ maxHeight: '20px' }} src={"/images/me.png"} alt={"me"} />
-                    : props.user.isThisMine
+                    : props.isThisMine
                 }
-                {props.user.firstName} {props.user.lastName}
+                {props.teamMember.firstName} {props.teamMember.lastName}
             </TableCell>
             <TableCell align="right">
-                {props.user.hasActivities}
+                <a href={"mailto:" + props.teamMember.email}>{props.teamMember.email}</a>
+            </TableCell>
+            <TableCell align="right">
+                {props.teamMember.hasActivities ? "Yes" : "No"}
             </TableCell>
         </TableRow>
     )

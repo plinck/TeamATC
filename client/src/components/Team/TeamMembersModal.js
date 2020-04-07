@@ -7,6 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TeamMember from "./TeamMember";
 import TeamDB from "./TeamDB";
 import { TableHead, TableRow, TableCell, Table, TableBody } from '@material-ui/core';
+import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 
 class TeamMembersModal extends React.Component {
     constructor(props) {
@@ -14,42 +15,45 @@ class TeamMembersModal extends React.Component {
 
         this.state = {
             open: this.props.open,
-            users: []
+            teamMembers: []
         };
     }
 
     componentDidMount() {
-        TeamDB.getTeamUsers(this.props.teamId).then (users => {
-            this.setState({users : users});
-        }).catch(err => {
-            console.error(`Error getting teams users`);
-        })
+        if (this.props.teamUid) {
+            TeamDB.getTeamUsers(this.props.teamUid).then (teamMembers => {
+                this.setState({teamMembers : teamMembers});
+            }).catch(err => {
+                console.error(`Error getting teams teamMembers`);
+            })
+        }
     }
 
-    sortByTeam(results) {
-        results.sort((a, b) => {
-            const teamA = a.teamName;
-            const teamB = b.teamName;
-
-            let comparison = 0;
-            if (teamA > teamB) {
-                comparison = 1;
-            } else if (teamA < teamB) {
-                comparison = -1;
+    componentDidUpdate(prevProps) {
+            if (this.props.teamUid && this.props.teamUid !== prevProps.teamUid) {
+                TeamDB.getTeamUsers(this.props.teamUid).then (teamMembers => {
+                    this.setState({teamMembers : teamMembers});
+                }).catch(err => {
+                    console.error(`Error getting teams teamMembers ${err}`);
+                })
             }
-            return comparison;  // comparison * -1 ==> Invert so it will sort in descending order
-        });
-        return results;
     }
+
 
     render() {
 
         let teamMemberHeaderRow =
             <TableHead>
                 <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell >Email</TableCell>
-                    <TableCell align="right">Logged?</TableCell>
+                    <TableCell component="th" scope="row" style={{ paddingLeft: "50px" }}>
+                        Name
+                    </TableCell>
+                    <TableCell align="right">
+                        Email
+                    </TableCell>
+                    <TableCell align="right">
+                        Logged?
+                    </TableCell>
                 </TableRow>
             </TableHead>
 
@@ -68,9 +72,12 @@ class TeamMembersModal extends React.Component {
                         <Table size="small" >
                             {teamMemberHeaderRow}
                             <TableBody>
-                                {this.state.users.map((user, index) => {
+                                {this.state.teamMembers.map((teamMember, index) => {
                                     return (
-                                        <TeamMember key={index} user={user} index={index} />
+                                        <TeamMember key={index} 
+                                        isThisMine={this.props.user.uid === teamMember.id ? true : false} 
+                                        teamMember={teamMember}
+                                        index={index} />
                                     );
                                 })}
                             </TableBody>
@@ -87,4 +94,4 @@ class TeamMembersModal extends React.Component {
     }
 }
 
-export default TeamMembersModal;
+export default withAuthUserContext(TeamMembersModal);
