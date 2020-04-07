@@ -16,8 +16,8 @@ const Team = (props) => {
         props.handleJoinTeam(id, name);
     }
 
-    const handleShowTeamMembers = (id, name) => {
-        props.handleShowTeamMembers(id, name);
+    const handleOpenTeamMembers = (id, name) => {
+        props.handleOpenTeamMembers(id, name);
     }
 
     // dont ket non-admin delete or edit 
@@ -61,7 +61,7 @@ const Team = (props) => {
 
                     <Button
                         color="primary"
-                        onClick={() => { handleShowTeamMembers(props.team.id, props.team.name) }}
+                        onClick={() => { handleOpenTeamMembers(props.team.id, props.team.name) }}
                     >Team Members
                     </Button>
                 </CardActions>

@@ -5,6 +5,7 @@ import TeamDB from "./TeamDB"
 import TeamForm from './TeamForm';
 import Team from "./Team"
 import UserDB from "../User/UserDB.js"
+import TeamMembersModal from './TeamMembersModal';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -32,11 +33,21 @@ const useStyles = makeStyles(theme => ({
 
 const Teams = (props) => {
     const classes = useStyles();
-    console.log(props)
+    const [openTeamMembers, setOpenTeamMembers] = useState(false)
+
     const [teams, setTeams] = useState([{}]);
 
     const [currentTeamId, setCurrentTeamId] = useState();
     const [message, setMessage] = useState();
+
+    const handleOpenTeamMembers = () => {
+        setOpenTeamMembers(true)
+    }
+
+    const handleClose = () => {
+        setOpenTeamMembers(false)
+    }
+
 
     // When editting. make sure you set the id to ensure form gets proper record.
     const handleEditTeam = (id) => {
@@ -71,16 +82,6 @@ const Teams = (props) => {
         });
     }
 
-    const handleShowTeamMembers = (teamUid, teamName) => {
-        // popup dialog
-        TeamDB.getTeamUsers(teamUid).then (users => {
-            console.log(`Users: ${users}`);
-        }).catch(err => {
-            console.error(`Error getting teams users`);
-        });
-
-    }
-
     // MAIN START : --
     // get teams at load - this is like compnent
     const fetchData = () => {
@@ -102,6 +103,8 @@ const Teams = (props) => {
     return (
         <div className={classes.root}>
             <Container className={classes.container} maxWidth="xl">
+                <TeamMembersModal id="TeamMembersModal" handleClose={handleClose} open={openTeamMembers}/>
+
                 {message ? <Typography color="primary" variant="subtitle1" align="center">{message}</Typography> : ""}
                 <Grid style={{ marginTop: '10px' }} container spacing={2} justify="center" alignItems="center">
                     {userCanUpdateTeam ?
@@ -117,7 +120,7 @@ const Teams = (props) => {
                                 handleEditTeam={handleEditTeam}
                                 handleDeleteTeam={handleDeleteTeam}
                                 handleJoinTeam={handleJoinTeam}
-                                handleShowTeamMembers={handleShowTeamMembers}
+                                handleOpenTeamMembers={handleOpenTeamMembers}
                             />)
                         })
                         }

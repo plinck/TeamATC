@@ -4,7 +4,8 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Result from "./Result";
+import TeamMember from "./TeamMember";
+import TeamDB from "./TeamDB";
 import { TableHead, TableRow, TableCell, Table, TableBody } from '@material-ui/core';
 
 class TeamMembersModal extends React.Component {
@@ -12,13 +13,13 @@ class TeamMembersModal extends React.Component {
         super(props);
 
         this.state = {
-            open: props.open,
+            open: this.props.open,
             users: []
         };
     }
 
     componentDidMount() {
-        TeamDB.getTeamUsers(props.teamId).then (users => {
+        TeamDB.getTeamUsers(this.props.teamId).then (users => {
             this.setState({users : users});
         }).catch(err => {
             console.error(`Error getting teams users`);
@@ -42,12 +43,6 @@ class TeamMembersModal extends React.Component {
     }
 
     render() {
-        // switch to component will receive props
-        // if (!this.props.teamTotals || this.props.userTotals) {
-        //     return null;
-        // }
-        let teamTotals = this.props.teamTotals;
-        let userTotals = this.props.userTotals;
 
         let teamMemberHeaderRow =
             <TableHead>
@@ -70,18 +65,16 @@ class TeamMembersModal extends React.Component {
                     aria-describedby="alert-dialog-description">
                     <DialogTitle id="alert-dialog-title">{"Team Results"}</DialogTitle>
                     <DialogContent>
-                        {/* Team standings/results card */}
                         <Table size="small" >
                             {teamMemberHeaderRow}
                             <TableBody>
-                                {combinedResults.map((combinedResult, index) => {
+                                {this.state.users.map((user, index) => {
                                     return (
-                                        <Result key={index} result={combinedResult} index={index} />
+                                        <TeamMember key={index} user={user} index={index} />
                                     );
                                 })}
                             </TableBody>
                         </Table>
-                        {/* End Team standings/results card */}
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this.props.handleClose} autoFocus>
