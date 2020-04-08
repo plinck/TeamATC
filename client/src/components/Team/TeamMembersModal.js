@@ -67,7 +67,7 @@ class TeamMembersModal extends React.Component {
                     onClose={this.props.handleClose}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description">
-                    <DialogTitle id="alert-dialog-title">{"Team Results"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{"Team Members"}</DialogTitle>
                     <DialogContent>
                         <Table size="small" >
                             {teamMemberHeaderRow}
