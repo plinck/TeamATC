@@ -16,6 +16,10 @@ const Team = (props) => {
         props.handleJoinTeam(id, name);
     }
 
+    const handleOpenTeamMembers = (id, name) => {
+        props.handleOpenTeamMembers(id, name);
+    }
+
     // dont ket non-admin delete or edit 
     const enableEdit = (props.user && props.user.isAdmin) ? true : false;
     // Dont allow anyone to delete a team with assigned users or acvities
@@ -53,6 +57,12 @@ const Team = (props) => {
                         color="primary"
                         onClick={() => { handleJoinTeam(props.team.id, props.team.name) }}
                     >Select/Join
+                    </Button>
+
+                    <Button
+                        color="primary"
+                        onClick={() => { handleOpenTeamMembers(props.team.id, props.team.name) }}
+                    >Team Members
                     </Button>
                 </CardActions>
 

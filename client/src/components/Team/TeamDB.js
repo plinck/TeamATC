@@ -102,48 +102,92 @@ class TeamDB {
     // Get Users for a team
     // TODO : - Fix this - the users promise isnt done when team is returned so this wont work as expected
     // TODO:  Test this as I dont think it works.  I need to get chaining better as lots of uses
-    static getTeamUsers = (id) => {
-        let team = {};
-        let userArray = [];
+    static getTeamUsersAlt = (teamId) => {
+        let user = {};
+        let users = [];
 
         // its a promise so return
         return new Promise((resolve, reject) => {
             Util.promiseGetChallengeDBRefs().then ( allDBRefs => {
-                const dbTeamsRef = allDBRefs.dbTeamsRef;
+                const dbActivitiesRef = allDBRefs.dbActivitiesRef;
                 const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
 
-                let docRef = dbTeamsRef.doc(id);
-                docRef.get().then((doc) => {
-                    if (doc.exists) {
-                        // update
-                        team = doc.data();
-                        team.id = doc.id;
-                        const docRef = dbUsersRef.where("teamUid", "==", team.id).orderBy("lastName", "desc");
-                        return(docRef.get());
-                    } else {
-                        throw new Error(`Team not found`);
-                    }
-                }).then(docSnaps => {
+                dbUsersRef.where("teamUid", "==", teamId).orderBy("lastName").get().then((docSnaps) => {
                     docSnaps.forEach((doc) => {
-                        const user = doc.data();
+                        // update
+                        user = doc.data();
                         user.id = doc.id;
-
-                        user.teamUid = team.id;
-                        user.teamName = team.name;
-                        
-                        userArray.push(user);
+                        user.hasActivities = false;
+                        users.push(user);
                     });
-                    team.users = userArray;
-                    console.log(`Team with users ${JSON.stringify(team)}`);
-                    resolve(team);
-                }).catch(err => {
-                    reject(`Error getting team in TeamDB.get ${err}`);
+                    return(users);
+                }).then( users => {
+                    users.forEach((user) => {
+                        dbActivitiesRef.where("uid", "==", user.id).orderBy("lastName", "desc").limit(1).then(activity => {
+                            if (activity.exists) {
+                                user.hasActivities = true;
+                            }    
+                        })
+                    }); 
+                    resolve(users);       
+                }).catch (err => {
+                    console.error(`Error getting users for team in TeamDB.getTeamUsers ${err}`);
+                    reject(`Error getting users for team in TeamDB.getTeamUsers ${err}`);
                 });
             }).catch(err => {
+                console.error(`Error getting team dbRefs in TeamDB.get ${err}`);
                 reject(`Error getting team dbRefs in TeamDB.get ${err}`);
             });
         });
     }
+
+    static getTeamUsers = (teamId) => {
+        let users = [];
+        
+        // its a promise so return
+        return new Promise((resolve, reject) => {
+            Util.promiseGetChallengeDBRefs().then ( allDBRefs => {
+                const dbActivitiesRef = allDBRefs.dbActivitiesRef;
+                const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
+
+                dbUsersRef.where("teamUid", "==", teamId).orderBy("lastName").get().then((querySnapshot) => {
+                    const activityQueryPromises = [];
+                    querySnapshot.forEach(doc => {
+                        let user = doc.data();
+                        user.id = doc.id;
+                        user.hasActivities = false;
+                        // get the user ndoc.data().uid;
+                        const activityQuery = dbActivitiesRef.where("uid", "==", user.id).limit(1).get().then ( activitiesSnap => {
+                            activitiesSnap.forEach(doc => {
+                                //console.log(`Got activity for user: ${user.lastName}`);
+                                user.hasActivities =true;
+                            });
+                            if (!user.hasActivities) {
+                                console.error(`User ${user.firstName} ${user.lastName} posted no activties`);
+                            }
+                        }).catch(err => {
+                            console.error(`Error getTeamUsersAlt.activityQuery: ${err}`)
+                        }).finally(() => {
+                            users.push(user);
+                        });
+                        activityQueryPromises.push(activityQuery);
+                    });
+                    // This waits until ALL promises in the activityQueryPromises array are resolved
+                    Promise.all(activityQueryPromises).then(() => {
+                        console.log('All activityQueryPromises Resolved');
+                        resolve(users);
+                    });
+                }).catch(err => {
+                    reject(`Error TeamDB.getTeamUsersAlt ${err.message}`);
+                });
+            }).catch(err => {
+                console.error(`Error getting team dbRefs in TeamDB.get ${err}`);
+                reject(`Error getting team dbRefs in TeamDB.getTeamUsers ${err}`);
+            });
+        });
+    }
+
+
 
     // delete team
     // Do NOT allow delete if team is part of any activity or user
