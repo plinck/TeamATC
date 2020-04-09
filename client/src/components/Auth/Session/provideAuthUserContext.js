@@ -166,8 +166,8 @@ const provideAuthUserContext = Component => {
             let docRef = dbChallengesRef.doc(challengeId);
             this.challengeListener = docRef.onSnapshot((doc) => {
                 const challenge = doc.data();
-                challenge.id = doc.id;
                 if (challenge) {
+                    challenge.id = doc.id;
                     Session.challenge = challenge;
                     // console.log(`Session.challenge: ${JSON.stringify(Session.challenge)}`)
 
