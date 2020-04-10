@@ -90,12 +90,14 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
         console.log(`URIRequest: ${URIRequest}`);
         axios.post(URIRequest).then((res) => {
             console.log("Successfully sent strava token request.  response info");
-            console.log(res.data.athlete);
-            console.log(res.data.refresh_token);
-            console.log(res.data.access_token);
-            console.log(res.data.athlete.profile);
-            console.log(res.data.athlete.firstname);
-            console.log(res.data.athlete.lastname);
+            // console.log(res.data.athlete);
+            // console.log(res.data.refresh_token);
+            // console.log(res.data.access_token);
+            // console.log(res.data.athlete.profile);
+            // console.log(res.data.athlete.firstname);
+            // console.log(res.data.athlete.lastname);
+            console.log(res.data);
+
 
             // MJUST break up response since FB functions can not resolve this complex
             // res object as it has circular reference.  It causes an error;
