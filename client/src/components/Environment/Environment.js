@@ -24,6 +24,9 @@ const FB_CONFIG = {
     APP_ID:process.env.REACT_APP_APP_ID,
     MEASUREMENT_ID:process.env.REACT_APP_MEASUREMENT_ID
 }
+const STRAVA_CONFIG = {
+    CLIENT_ID: process.env.REACT_APP_STRAVA_CLIENT_ID
+}
 
 let CHALLENGE="9uxEvhpHM2cqCcn1ESZg";
 
@@ -50,4 +53,4 @@ class globalEnv {
 }
 
 export default globalEnv;
-export { ORG, ENV, CHALLENGE, FB_CONFIG };
+export { ORG, ENV, CHALLENGE, FB_CONFIG, STRAVA_CONFIG };

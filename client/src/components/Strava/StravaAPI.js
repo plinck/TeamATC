@@ -1,5 +1,5 @@
 import Util from "../Util/Util";
-import { FB_CONFIG } from "../Environment/Environment.js"
+import { FB_CONFIG, STRAVA_CONFIG } from "../Environment/Environment.js"
 
 class StravaAPI {
     static refreshToken(code, state) {
@@ -32,7 +32,7 @@ class StravaAPI {
     static sendOAuthRequestFromClient() {
         console.log(`called sendOAuthRequestFromClient from client`);
 
-        const client_id = "45739";
+        const client_id = STRAVA_CONFIG.CLIENT_ID;
         const redirect_uri = "http://localhost:3000/oauthredirect";
         const response_type = "code";
         const approval_prompt = "auto"

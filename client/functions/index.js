@@ -9,6 +9,8 @@ admin.initializeApp(functions.config().firebase);
 let ORG="ATC"
 let ENV="prod"
 let CHALLENGEUID=""
+// Get environment vars
+const config = functions.config().env;
 
 exports.setEnviromentFromClient = functions.https.onCall((environment, res) => {
     console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
@@ -29,7 +31,7 @@ app.get('/stravaauth', async (req, res) => {
     console.log(`called stravaSendAuthorizationRequest with environment ${req}`);
     
     const params = {
-        client_id: "45739",
+        client_id: config.strava.client_id,
         redirect_uri: "http://localhost:3000/oauthredirect",
         response_type: 'code',
         approval_prompt: "auto",
@@ -74,8 +76,8 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
     //     code: code,
     // };
     const params = {
-        client_id: "45739",
-        client_secret: "4122d6e687a84e38c4d81dee061752c5b331787f",
+        client_id: config.strava.client_id,
+        client_secret: config.strava.client_secret,
         code: code,
         grant_type: "authorization_code"
     };
