@@ -58,7 +58,12 @@ const OAuthRedirect = (props) => {
         // If no error process the OAuth return by storing in user record
         if (!error && state && code) {
             console.log("next Step after OAUTH Returns success");
-            StravaAPI.refreshToken(code, state);
+            StravaAPI.getOAuthToken(code).then(res => {
+                // console.log(`Success in StravaAPI.getOAuthToken, res: ${JSON.stringify(res)}`);
+                // redirect with message - how to show on dashboard
+            }).catch (err => {
+                console.error(`Error  StravaAPI.getOAuthToken: ${err}`)
+            });
         }
 
     }, [error, state, code]);

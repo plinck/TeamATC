@@ -1,6 +1,5 @@
 import Util from "../Util/Util";
 import { FB_CONFIG } from "../Environment/Environment.js"
-import axios from "axios";
 
 class StravaAPI {
     static refreshToken(code, state) {
@@ -13,6 +12,7 @@ class StravaAPI {
     }
 
     static getOAuthToken(code) {
+        console.log(`getOAuthToken Token with code: ${code}`);
         return new Promise((resolve, reject) => {
             const firebase = Util.getFirebaseAuth();
             const stravaGetToken = firebase.functions.httpsCallable('stravaGetToken');
@@ -27,7 +27,6 @@ class StravaAPI {
                 reject(err);
             });
         });
-
     }
 
     static sendOAuthRequestFromClient() {
@@ -39,21 +38,12 @@ class StravaAPI {
         const approval_prompt = "auto"
         const scope = "activity:read_all";
         const state = "STRAVA";
-        const myToken = "be7573b7721ba4a5987fea739f28d1d596b89b38";
     
         const URIRequest = `https://www.strava.com/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=${response_type}&approval_prompt=${approval_prompt}&scope=${scope}&state=${state}`;
-    
-        // axios.get(URIRequest, {
-        //     headers: {
-        //         'Authorization': `Bearer ${myToken}`
-        //     }
-        // });
 
         window.location.replace(URIRequest);
-
     
         return;
-    
     }
 }
 

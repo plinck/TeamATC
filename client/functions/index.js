@@ -10,10 +10,21 @@ let ORG="ATC"
 let ENV="prod"
 let CHALLENGEUID=""
 
-const app = express();
+exports.setEnviromentFromClient = functions.https.onCall((environment, res) => {
+    console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
+    console.log(`ORG ${(environment.org)}`)
+    console.log(`ENV ${(environment.env)}`)
+    console.log(`CHALLENGEUID ${(environment.challengeUid)}`)
+    ORG=environment.org;
+    ENV=environment.env;
+    CHALLENGEUID=environment.challengeUid;    
+    console.log(`saved environment with: ORG: ${ORG}, ENV: ${ENV}, CHALLENGEUID: ${CHALLENGEUID}`);
+    return {message: "Saved environment OK"};
+});
 
 // I did these functions using expores since it was the simplest (maybe only) way
 // to do a simple redirect to the strava auth page vs using gets etc,
+const app = express();
 app.get('/stravaauth', async (req, res) => {
     console.log(`called stravaSendAuthorizationRequest with environment ${req}`);
     
@@ -48,21 +59,14 @@ app.get('/stravaauth', async (req, res) => {
 });
 exports.oauth = functions.https.onRequest(app);
 
-exports.setEnviromentFromClient = functions.https.onCall((environment, res) => {
-    console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
-    console.log(`ORG ${(environment.org)}`)
-    console.log(`ENV ${(environment.env)}`)
-    console.log(`CHALLENGEUID ${(environment.challengeUid)}`)
-    ORG=environment.org;
-    ENV=environment.env;
-    CHALLENGEUID=environment.challengeUid;    
-    console.log(`saved environment with: ORG: ${ORG}, ENV: ${ENV}, CHALLENGEUID: ${CHALLENGEUID}`);
-    return {message: "Saved environment OK"};
-});
-
+// This gets the token after the user has authorized the app to use strava
 exports.stravaGetToken = functions.https.onCall((req, res) => {
-    console.log(`called stravaSendAuthorizationRequest with environment ${JSON.stringify(req)}`);
-    const code = req.code;
+    console.log(`called stravaGetToken with request`);
+    console.log(req);
+    let code = undefined;
+    if (req && req.code) {
+        code = req.code;
+    }
 
     // const params = {
     //     client_id: functions.config().strava.client_id,
@@ -73,31 +77,44 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
         client_id: "45739",
         client_secret: "4122d6e687a84e38c4d81dee061752c5b331787f",
         code: code,
+        grant_type: "authorization_code"
     };
 
     const URIRequest = "https://www.strava.com/oauth/token?" + 
-    `client_id=${params.client_id}` +
-    `&client_secret=${params.client_secret}` +
-    `&code=${params.code}`
-    ;
+        `client_id=${params.client_id}` +
+        `&client_secret=${params.client_secret}` +
+        `&code=${params.code}` +
+        `&grant_type=${params.grant_type}`
+        ;
 
-    return axios.post(URIRequest).then((res) => {
-        console.log(`Successfully sent strava token request.  response is: ${JSON.stringify(res)}`);
+    console.log(`URIRequest: ${URIRequest}`);
+    return new Promise((resolve, reject) => {
+        axios.post(URIRequest).then((res) => {
+            console.log("Successfully sent strava token request.  response info");
+            console.log(res.data.athlete);
+            console.log(res.data.refresh_token);
+            console.log(res.data.access_token);
+            console.log(res.data.athlete.profile);
+            console.log(res.data.athlete.firstname);
+            console.log(res.data.athlete.lastname);
 
-        // const athlete = res.data.athlete;
-        // const accessToken = res.data.access_token;
-        // const stravaUserID = res.id;
-        // const photoURL = res.profile;
-        // const email = res.email;
-        // const displayName = res.firstname + ' ' + res.lastname;
+            // MJUST break up response since FB functions can not resolve this complex
+            // res object as it has circular reference.  It causes an error;
+            // Unhandled error RangeError: Maximum call stack size exceeded
+            const clientResponse = {
+                refresh_token: res.data.refresh_token,
+                access_token: res.data.access_token,
+                athlete: res.data.athlete,
+            }
 
-        // NOW, save the strave info to the user account, maybe do in client
-        //const firebaseToken = await createFirebaseAccount(stravaUserID, displayName, photoURL, email, accessToken);
-    
-        return (res);
-    }).catch((err) => {
-        console.error(`FB Func: stravaGetToken -- Error : ${err}`);
-        throw Error(`FB Func: stravaGetToken -- Error : ${err}`);
+            // NOW, save the strave info to the user account, maybe do in client
+            // const firebaseToken = await createFirebaseAccount(stravaUserID, displayName, photoURL, email, accessToken);
+        
+            return resolve(clientResponse);
+        }).catch((err) => {
+            console.error(`FB Func: stravaGetToken -- Error : ${err}`);
+            return reject(`FB Func: stravaGetToken -- Error : ${err}`); 
+        });
     });
 });
 
@@ -233,5 +250,3 @@ exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
     }); // Promise
     
 });
-
-
