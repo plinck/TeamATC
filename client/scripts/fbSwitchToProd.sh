@@ -5,4 +5,6 @@
 cd ~/GitHub/firebase/TeamATC/client
 cp .env-prod .env
 cp .firebaserc-prod .firebaserc
+cp functions/.serviceAccountKey-prod.json functions/.serviceAccountKey.json
+
 firebase use teamatc-challenge

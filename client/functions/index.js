@@ -1,10 +1,52 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const axios = require('axios');
+const cors = require('cors')({origin: true});
+const express = require('express');
+
 admin.initializeApp(functions.config().firebase);
 
 let ORG="ATC"
-let ENV="dev"
+let ENV="prod"
 let CHALLENGEUID=""
+
+const app = express();
+
+// I did these functions using expores since it was the simplest (maybe only) way
+// to do a simple redirect to the strava auth page vs using gets etc,
+app.get('/stravaauth', async (req, res) => {
+    console.log(`called stravaSendAuthorizationRequest with environment ${req}`);
+    
+    const params = {
+        client_id: "45739",
+        redirect_uri: "http://localhost:3000/oauthredirect",
+        response_type: 'code',
+        approval_prompt: "auto",
+        scope: "activity:read_all",
+        state: "STRAVA"
+    };
+
+    try {
+        const URIRequest = "https://www.strava.com/oauth/authorize?" + 
+        `client_id=${params.client_id}` +
+        `&redirect_uri=${params.redirect_uri}` +
+        `&response_type=${params.response_type}` +
+        `&approval_prompt=${params.approval_prompt}` +
+        `&scope=${params.scope}` +
+        `&state=${params.state}`
+        ;
+
+        console.log(`Request to redirect: ${URIRequest}`);
+        res.redirect(URIRequest);
+        res.end(200);
+    } catch (err) {
+        console.error(`Error redirecting to URI: ${err}`);
+        res.redirect(`${redirect_uri}?error=BadRequest`);
+        return res.status(401).json(`Error Caught in OAuth server request: ${err}`);
+    }
+
+});
+exports.oauth = functions.https.onRequest(app);
 
 exports.setEnviromentFromClient = functions.https.onCall((environment, res) => {
     console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
@@ -17,6 +59,48 @@ exports.setEnviromentFromClient = functions.https.onCall((environment, res) => {
     console.log(`saved environment with: ORG: ${ORG}, ENV: ${ENV}, CHALLENGEUID: ${CHALLENGEUID}`);
     return {message: "Saved environment OK"};
 });
+
+exports.stravaGetToken = functions.https.onCall((req, res) => {
+    console.log(`called stravaSendAuthorizationRequest with environment ${JSON.stringify(req)}`);
+    const code = req.code;
+
+    // const params = {
+    //     client_id: functions.config().strava.client_id,
+    //     client_secret: functions.config().strava.client_secret,
+    //     code: code,
+    // };
+    const params = {
+        client_id: "45739",
+        client_secret: "4122d6e687a84e38c4d81dee061752c5b331787f",
+        code: code,
+    };
+
+    const URIRequest = "https://www.strava.com/oauth/token?" + 
+    `client_id=${params.client_id}` +
+    `&client_secret=${params.client_secret}` +
+    `&code=${params.code}`
+    ;
+
+    return axios.post(URIRequest).then((res) => {
+        console.log(`Successfully sent strava token request.  response is: ${JSON.stringify(res)}`);
+
+        // const athlete = res.data.athlete;
+        // const accessToken = res.data.access_token;
+        // const stravaUserID = res.id;
+        // const photoURL = res.profile;
+        // const email = res.email;
+        // const displayName = res.firstname + ' ' + res.lastname;
+
+        // NOW, save the strave info to the user account, maybe do in client
+        //const firebaseToken = await createFirebaseAccount(stravaUserID, displayName, photoURL, email, accessToken);
+    
+        return (res);
+    }).catch((err) => {
+        console.error(`FB Func: stravaGetToken -- Error : ${err}`);
+        throw Error(`FB Func: stravaGetToken -- Error : ${err}`);
+    });
+});
+
 
 exports.testFunctions = functions.https.onCall((req, res) => {
     console.log(`called testFunction with req ${JSON.stringify(req)}`)

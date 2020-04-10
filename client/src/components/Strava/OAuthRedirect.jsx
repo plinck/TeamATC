@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
-import { Container, makeStyles, Typography } from '@material-ui/core';
+import { Container, makeStyles, Typography, Grid } from '@material-ui/core';
 import queryString from 'query-string'
 import StravaAPI from "./StravaAPI.js"
+import Button from '@material-ui/core/Button';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -61,16 +63,33 @@ const OAuthRedirect = (props) => {
 
     }, [error, state, code]);
 
+    const sendAuthorizationRequest = () => {
+        StravaAPI.sendAuthRequestExpress();
+    }
+
     return (
         <div className={classes.root}>
             <Container className={classes.container} maxWidth="xl">
-                <Typography color="primary" variant="subtitle1" align="center">
-                    Strava OAuth Code: {code} State: {state} Error: {error}
-                </Typography>
                 {error ? 
                     <Typography color="primary" variant="subtitle1" align="center">
                         Error {error}
-                    </Typography> : ""}
+                    </Typography>
+                    : 
+                    <Typography color="primary" variant="subtitle1" align="center">
+                        Strava OAuth Code: {code} State: {state}
+                    </Typography>
+                    }
+                <Grid align="center">
+                    <Button style={{justifyContent: 'center'}}
+                        variant="contained"
+                        color="primary"
+                        startIcon={<DeleteIcon />}
+                        onClick={sendAuthorizationRequest}
+                        >
+                        Send Strava Auth Request
+                    </Button>
+                </Grid>
+            
             </Container>
         </div>
     )

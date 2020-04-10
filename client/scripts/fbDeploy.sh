@@ -2,7 +2,6 @@
 # firebase functions:config:set environment.org="ATC" environment.env="dev"
 
 # copy prod env to ensure deplaying prod
-cp ~/GitHub/firebase/TeamATC/client/.env.prod ~/GitHub/firebase/TeamATC/client/.env
 cd ~/GitHub/firebase/TeamATC/client
 sudo npm run build
-firebase deploy --project teamatc-challenge
+firebase deploy --project
