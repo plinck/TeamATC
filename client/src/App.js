@@ -18,6 +18,7 @@ import UserForm from './components/User/UserForm';
 import Register from './components/Auth/Register/Register';
 import Challenges from './components/Challenges/Challenges';
 import Teams from './components/Team/Teams';
+import OAuthRedirect from './components/Strava/OAuthRedirect.jsx';
 import { Toolbar } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -64,6 +65,7 @@ class App extends React.Component {
           <Route exact path="/userpage" component={UserPage} />
           <Route exact path="/userform" component={UserForm} />
           <Route exact path="/register" component={Register} />
+          <Route exact path="/oauthredirect" component={OAuthRedirect} />
         </div>
       </Router>
 
