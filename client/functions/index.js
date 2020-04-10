@@ -82,7 +82,7 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
 
         const URIRequest = "https://www.strava.com/oauth/token?" + 
             `client_id=${params.client_id}` +
-            `&client_secret=${params.client_secrest}` +
+            `&client_secret=${params.client_secret}` +
             `&code=${params.code}` +
             `&grant_type=${params.grant_type}`
             ;
