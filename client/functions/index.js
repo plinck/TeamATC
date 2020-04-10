@@ -63,34 +63,31 @@ exports.oauth = functions.https.onRequest(app);
 
 // This gets the token after the user has authorized the app to use strava
 exports.stravaGetToken = functions.https.onCall((req, res) => {
-    console.log(`called stravaGetToken with request`);
-    console.log(req);
-    let code = undefined;
-    if (req && req.code) {
-        code = req.code;
-    }
-
-    // const params = {
-    //     client_id: functions.config().strava.client_id,
-    //     client_secret: functions.config().strava.client_secret,
-    //     code: code,
-    // };
-    const params = {
-        client_id: config.strava.client_id,
-        client_secret: config.strava.client_secret,
-        code: code,
-        grant_type: "authorization_code"
-    };
-
-    const URIRequest = "https://www.strava.com/oauth/token?" + 
-        `client_id=${params.client_id}` +
-        `&client_secret=${params.client_secret}` +
-        `&code=${params.code}` +
-        `&grant_type=${params.grant_type}`
-        ;
-
-    console.log(`URIRequest: ${URIRequest}`);
     return new Promise((resolve, reject) => {
+        console.log(`called stravaGetToken with request`);
+        console.log(req);
+        let code = undefined;
+        if (req && req.code) {
+            code = req.code;
+        } else {
+            return reject(`Error oin stravaGetToken - invalid parm - must provide code`);
+        }
+
+        const params = {
+            client_id: config.strava.client_id,
+            client_secret: config.strava.client_secret,
+            code: code,
+            grant_type: "authorization_code"
+        };
+
+        const URIRequest = "https://www.strava.com/oauth/token?" + 
+            `client_id=${params.client_id}` +
+            `&client_secret=${params.client_secrest}` +
+            `&code=${params.code}` +
+            `&grant_type=${params.grant_type}`
+            ;
+
+        console.log(`URIRequest: ${URIRequest}`);
         axios.post(URIRequest).then((res) => {
             console.log("Successfully sent strava token request.  response info");
             console.log(res.data.athlete);
@@ -106,12 +103,14 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
             const clientResponse = {
                 refresh_token: res.data.refresh_token,
                 access_token: res.data.access_token,
+                expires_at: res.data.expires_at,
+                expires_in: res.data.expires_in,
                 athlete: res.data.athlete,
             }
 
-            // NOW, save the strave info to the user account, maybe do in client
-            // const firebaseToken = await createFirebaseAccount(stravaUserID, displayName, photoURL, email, accessToken);
-        
+            // NOW, save the strava info to the user account, maybe do in client
+            // Must Save access_toke, refresh_token, expires_at, accepted_scopes
+
             return resolve(clientResponse);
         }).catch((err) => {
             console.error(`FB Func: stravaGetToken -- Error : ${err}`);
@@ -120,6 +119,56 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
     });
 });
 
+exports.stravaRefreshToken = functions.https.onCall((req, res) => {
+    return new Promise((resolve, reject) => {
+        console.log(`called stravaRefreshToken with request`);
+        console.log(req);
+        let refresh_token = undefined;
+        if (req && req.refresh_token) {
+            refresh_token = req.refresh_token;
+        } else {
+            return reject(`Error oin stravaRefreshToken - invalid parm - must provide refresh_token`);
+        }
+
+        const params = {
+            client_id: config.strava.client_id,
+            client_secret: config.strava.client_secret,
+            refresh_token: refresh_token,
+            grant_type: "refresh_token"
+        };
+
+        const URIRequest = "https://www.strava.com/oauth/token?" + 
+            `client_id=${params.client_id}` +
+            `&client_secret=${params.client_secret}` +
+            `&code=${params.code}` +
+            `&grant_type=${params.grant_type}`
+            ;
+
+        console.log(`URIRequest: ${URIRequest}`);
+
+        axios.post(URIRequest).then((res) => {
+            console.log("Successfully sent strava token request.  response info");
+
+            // MJUST break up response since FB functions can not resolve this complex
+            // res object as it has circular reference.  It causes an error;
+            // Unhandled error RangeError: Maximum call stack size exceeded
+            const clientResponse = {
+                refresh_token: res.data.refresh_token,
+                access_token: res.data.access_token,
+                expires_at: res.data.expires_at,
+                expires_in: res.data.expires_in,
+            }
+
+            // NOW, save the strave info to the user account, maybe do in client
+            // Must Save access_toke, refresh_token, expires_at, accepted_scopes
+        
+            return resolve(clientResponse);
+        }).catch((err) => {
+            console.error(`FB Func: stravaGetToken -- Error : ${err}`);
+            return reject(`FB Func: stravaGetToken -- Error : ${err}`); 
+        });
+    });
+});
 
 exports.testFunctions = functions.https.onCall((req, res) => {
     console.log(`called testFunction with req ${JSON.stringify(req)}`)
