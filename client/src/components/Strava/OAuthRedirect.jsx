@@ -4,7 +4,9 @@ import { Container, makeStyles, Typography, Grid } from '@material-ui/core';
 import queryString from 'query-string'
 import StravaAPI from "./StravaAPI.js"
 import Button from '@material-ui/core/Button';
-import DeleteIcon from '@material-ui/icons/Delete';
+import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
+import CachedIcon from '@material-ui/icons/Cached';
+import HistoryIcon from '@material-ui/icons/History';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -24,10 +26,13 @@ const useStyles = makeStyles(theme => ({
     button: {
         margin: '15px'
     },
-    messages: {
+    errormessages: {
         color: 'red'
+    },
+    messages: {
+        color: 'white'
     }
-
+    
 }))
 
 const OAuthRedirect = (props) => {
@@ -71,27 +76,55 @@ const OAuthRedirect = (props) => {
     const sendAuthorizationRequest = () => {
         StravaAPI.sendAuthRequestExpress();
     }
+    const refreshStravaToken = () => {
+        StravaAPI.refreshStravaToken();
+    }
+    const getStravaActivities = () => {
+        StravaAPI.getStravaActivities();
+    }
 
     return (
         <div className={classes.root}>
             <Container className={classes.container} maxWidth="xl">
                 {error ? 
-                    <Typography color="primary" variant="subtitle1" align="center">
+                    <Typography color="error" variant="subtitle1" align="center">
                         Error {error}
                     </Typography>
                     : 
-                    <Typography color="primary" variant="subtitle1" align="center">
-                        Strava OAuth Code: {code} State: {state}
+                    <Typography variant="subtitle1" align="center">
+                        <Grid className={classes.messages}>Strava OAuth Code: {code} State: {state}</Grid>
                     </Typography>
                     }
                 <Grid align="center">
                     <Button style={{justifyContent: 'center'}}
                         variant="contained"
                         color="primary"
-                        startIcon={<DeleteIcon />}
+                        startIcon={<DirectionsBikeIcon />}
                         onClick={sendAuthorizationRequest}
                         >
                         Send Strava Auth Request
+                    </Button>
+                </Grid>
+                <br></br>
+                <Grid align="center">
+                    <Button style={{justifyContent: 'center'}}
+                        variant="contained"
+                        color="primary"
+                        startIcon={<HistoryIcon />}
+                        onClick={refreshStravaToken}
+                        >
+                        Refresh Strava Token
+                    </Button>
+                </Grid>
+                <br></br>
+                <Grid align="center">
+                    <Button style={{justifyContent: 'center'}}
+                        variant="contained"
+                        color="primary"
+                        startIcon={<CachedIcon />}
+                        onClick={getStravaActivities}
+                        >
+                        Get Activities
                     </Button>
                 </Grid>
             

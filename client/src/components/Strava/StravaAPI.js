@@ -29,6 +29,42 @@ class StravaAPI {
         });
     }
 
+    static refreshStravaToken(uid, code) {
+        console.log(`refreshStravaToken Token with code: ${code}`);
+        return new Promise((resolve, reject) => {
+            const firebase = Util.getFirebaseAuth();
+            const stravaRefreshToken = firebase.functions.httpsCallable('stravaRefreshToken');
+            const req = {"uid" : uid, "code": code};
+            
+            stravaRefreshToken(req).then( (res) => {
+                // Read result of the Cloud Function.
+                console.log(`Success gettng token, response.data: ${JSON.stringify(res.data)}`);
+                resolve(res.data);
+            }).catch(err => {
+                console.error(`${err}`);
+                reject(err);
+            });
+        });
+    }
+
+    static getStravaActivities(uid, code) {
+        console.log(`getStravaActivities Token with code: ${code}`);
+        return new Promise((resolve, reject) => {
+            const firebase = Util.getFirebaseAuth();
+            const stravaRefreshToken = firebase.functions.httpsCallable('stravaRefreshToken');
+            const req = {"uid" : uid, "code": code};
+            
+            stravaRefreshToken(req).then( (res) => {
+                // Read result of the Cloud Function.
+                console.log(`Success gettng token, response.data: ${JSON.stringify(res.data)}`);
+                resolve(res.data);
+            }).catch(err => {
+                console.error(`${err}`);
+                reject(err);
+            });
+        });
+    }
+
     static sendOAuthRequestFromClient() {
         console.log(`called sendOAuthRequestFromClient from client`);
 

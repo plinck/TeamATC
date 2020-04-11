@@ -36,6 +36,11 @@ const provideAuthUserContext = Component => {
                 challengeShutdownStartDate: null,
                 challengeShutdownEndDate: null,
 
+                stavaUserAuth : null,
+                stravaRefreshToken : null,
+                stravaAccessToken : null,
+                stravaExpiresAt : null,            
+
                 primaryRole: "user",
                 isAdmin: false,
                 isTeamLead: false,
@@ -127,6 +132,11 @@ const provideAuthUserContext = Component => {
                         teamName: user.teamName,
 
                         challengeUid: user.challengeUid ? user.challengeUid : CHALLENGE,
+
+                        stavaUserAuth: user.stavaUserAuth ? true : false,
+                        stravaRefreshToken : user.stravaRefreshToken ? user.stravaRefreshToken : null,
+                        stravaAccessToken : user.stravaAccessToken ? user.stravaAccessToken : null,
+                        stravaExpiresAt : user.stravaExpiresAt ? user.stravaExpiresAt : null,            
 
                         primaryRole: user.primaryRole ? user.primaryRole : "",
                         isAdmin: user.isAdmin ? user.isAdmin : false,
