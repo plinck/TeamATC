@@ -41,8 +41,8 @@ const OAuthRedirect = (props) => {
     let state = undefined;
     let code = undefined;
 
-
     const [search, setSearch] = React.useState();
+    const [message, setMessage] = React.useState();
 
     if (props.location.search && !search) {
         setSearch(props.location.search);
@@ -77,7 +77,12 @@ const OAuthRedirect = (props) => {
         StravaAPI.sendAuthRequestExpress();
     }
     const refreshStravaToken = () => {
-        StravaAPI.refreshStravaToken();
+        if (props.user.uid && props.user.stravaRefreshToken) {
+            StravaAPI.refreshStravaToken(props.user.uid, props.user.stravaRefreshToken);
+        } else {
+            console.error(`refreshStravaToken: user info not ready, try again in a few minutes ...`);
+            setMessage(`refreshStravaToken: user info not ready, try again in a few minutes ...`);
+        }
     }
     const getStravaActivities = () => {
         StravaAPI.getStravaActivities();
@@ -86,6 +91,12 @@ const OAuthRedirect = (props) => {
     return (
         <div className={classes.root}>
             <Container className={classes.container} maxWidth="xl">
+                {message ? 
+                    <Typography color="error" variant="subtitle1" align="center">
+                        {message}
+                    </Typography>
+                    : ""}
+
                 {error ? 
                     <Typography color="error" variant="subtitle1" align="center">
                         Error {error}

@@ -82,7 +82,7 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
             grant_type: "authorization_code"
         };
 
-        const URIRequest = "https://www.strava.com/oauth/token?" + 
+        const URIRequest = "https://www.strava.com/api/v3/oauth/token?" + 
             `client_id=${params.client_id}` +
             `&client_secret=${params.client_secret}` +
             `&code=${params.code}` +
@@ -129,8 +129,8 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
 
 exports.stravaRefreshToken = functions.https.onCall((req, res) => {
     return new Promise((resolve, reject) => {
-        // console.log(`called stravaRefreshToken with request`);
-        // console.log(req);
+        console.log(`called stravaRefreshToken with request`);
+        console.log(req);
         let refresh_token = undefined;
         let uid = undefined;
         if (req && req.refresh_token && req.uid) {
@@ -147,17 +147,17 @@ exports.stravaRefreshToken = functions.https.onCall((req, res) => {
             grant_type: "refresh_token"
         };
 
-        const URIRequest = "https://www.strava.com/oauth/token?" + 
+        const URIRequest = "https://www.strava.com/api/v3/oauth/token?" + 
             `client_id=${params.client_id}` +
             `&client_secret=${params.client_secret}` +
-            `&code=${params.code}` +
+            `&refresh_token=${params.refresh_token}` +
             `&grant_type=${params.grant_type}`
             ;
 
         console.log(`URIRequest: ${URIRequest}`);
 
         axios.post(URIRequest).then((res) => {
-            console.log("Successfully sent strava token request.  response info");
+            console.log("Successfully sent strava token refresh srequest.  response info");
 
             // MJUST break up response since FB functions can not resolve this complex
             // res object as it has circular reference.  It causes an error;
@@ -178,8 +178,8 @@ exports.stravaRefreshToken = functions.https.onCall((req, res) => {
                 return reject(`FB Func: stravaRefreshToken in updateUserWithStrava -- Error : ${err}`); 
             });
         }).catch((err) => {
-            console.error(`FB Func: stravaRefreshToken -- Error : ${err}`);
-            return reject(`FB Func: stravaRefreshToken -- Error : ${err}`); 
+            console.error(`FB Func: stravaRefreshToken axios.post(URIRequest) failed -- Error : ${err}`);
+            return reject(`FB Func: stravaRefreshToken axios.post(URIRequest) failed -- Error : ${err}`); 
         });
     });
 });

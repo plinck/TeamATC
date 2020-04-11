@@ -29,16 +29,16 @@ class StravaAPI {
         });
     }
 
-    static refreshStravaToken(uid, code) {
-        console.log(`refreshStravaToken Token with code: ${code}`);
+    static refreshStravaToken(uid, refresh_token) {
+        console.log(`refreshStravaToken Token with refresh_token: ${refresh_token}`);
         return new Promise((resolve, reject) => {
             const firebase = Util.getFirebaseAuth();
             const stravaRefreshToken = firebase.functions.httpsCallable('stravaRefreshToken');
-            const req = {"uid" : uid, "code": code};
+            const req = {"uid" : uid, "refresh_token": refresh_token};
             
             stravaRefreshToken(req).then( (res) => {
                 // Read result of the Cloud Function.
-                console.log(`Success gettng token, response.data: ${JSON.stringify(res.data)}`);
+                console.log(`Success refreshing token, response.data: ${JSON.stringify(res.data)}`);
                 resolve(res.data);
             }).catch(err => {
                 console.error(`${err}`);
@@ -47,12 +47,12 @@ class StravaAPI {
         });
     }
 
-    static getStravaActivities(uid, code) {
-        console.log(`getStravaActivities Token with code: ${code}`);
+    static getStravaActivities(uid, refresh_token) {
+        console.log(`getStravaActivities Token with refresh_token: ${refresh_token}`);
         return new Promise((resolve, reject) => {
             const firebase = Util.getFirebaseAuth();
             const stravaRefreshToken = firebase.functions.httpsCallable('stravaRefreshToken');
-            const req = {"uid" : uid, "code": code};
+            const req = {"uid" : uid, "refresh_token": refresh_token};
             
             stravaRefreshToken(req).then( (res) => {
                 // Read result of the Cloud Function.
