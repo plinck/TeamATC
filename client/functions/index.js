@@ -184,6 +184,64 @@ exports.stravaRefreshToken = functions.https.onCall((req, res) => {
     });
 });
 
+exports.stravaDeauthorize = functions.https.onCall((req, res) => {
+    return new Promise((resolve, reject) => {
+        console.log(`called stravaDeauthorize with request`);
+        console.log(req);
+        let access_token = undefined;
+        let uid = undefined;
+        if (req && req.access_token && req.uid) {
+            access_token = req.access_token;
+            uid = req.uid;
+        } else {
+            return reject(`Error in stravaDeauthorize - invalid parm - must provide uid and access_token`);
+        }
+
+        console.log(`stravaDeauthorize access_token${access_token}, uid:${uid}`);
+        const params = {
+            client_id: config.strava.client_id,
+            client_secret: config.strava.client_secret,
+            access_token: access_token,
+        };
+
+        const URIRequest = "https://www.strava.com/oauth/deauthorize?" + 
+            `client_id=${params.client_id}` +
+            `&client_secret=${params.client_secret}` +
+            `&access_token=${params.access_token}`
+            ;
+
+        console.log(`URIRequest: ${URIRequest}`);
+
+        axios.post(URIRequest, {
+                headers: {
+                    'Authorization': `Bearer ${access_token}`
+                }
+            }).then((res) => {
+            console.log("Successfully sent stravaDeauthorize refresh request.");
+
+            // MJUST break up response since FB functions can not resolve this complex
+            // res object as it has circular reference.  It causes an error;
+            // Unhandled error RangeError: Maximum call stack size exceeded
+            const clientResponse = {
+                refresh_token: res.data.refresh_token,
+            }
+
+            // NOW, save the strava info to the user account, maybe do in client
+            // Must Save access_toke, refresh_token, expires_at, accepted_scopes
+            const deauthorize = true;
+            updateUserWithStrava(uid, clientResponse, deauthorize).then (() => {
+                resolve(clientResponse);
+            }).catch((err) => {
+                console.error(`stravaDeauthorize->updateUserWithStrava -- ${err}`);
+                reject(`stravaDeauthorize->updateUserWithStrava -- ${err}`); 
+            });
+        }).catch((err) => {
+            console.error(`stravaDeauthorize failed -- ${err}`);
+            reject(`stravaDeauthorize failed -- ${err}`); 
+        });
+    });
+});
+
 exports.testFunctions = functions.https.onCall((req, res) => {
     console.log(`called testFunction with req ${JSON.stringify(req)}`)
     return {message: "response OK"};
@@ -320,20 +378,34 @@ exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
 // ===============================================================
 // Local - non-exported functions
 // ===============================================================
-updateUserWithStrava = ((uid, stravaInfo) => {
+updateUserWithStrava = ((uid, stravaInfo, deauthorize) => {
     console.log(`In updateUserWithStrava with: ORG: ${ORG}, ENV: ${ENV}`);
-
+    
     return new Promise((resolve, reject) => {
+        let userStravaUpdate = stravaInfo;
+
+        if (deauthorize) {
+            userStravaUpdate = {
+                stravaUserAuth : false,
+                refresh_token: null,
+                access_token: null,
+                expires_at: null
+            }
+        } else {
+            userStravaUpdate.stavaUserAuth = true;
+        }
+        console.log(`In updateUserWithStrava with uid ${uid}, userStravaUpdate: ${JSON.stringify(userStravaUpdate, null,2)}`);
+
         // convert UTC EPOCH date (seconds since epoch) to JS Date
-        let expiresAt = new Date(stravaInfo.expires_at * 1000)
+        let expiresAt = userStravaUpdate.expires_at  && userStravaUpdate.expires_at !== null ? new Date(userStravaUpdate.expires_at * 1000) : null;
 
         let dbUsersRef = admin.firestore().collection(ORG).doc(ENV).collection("users");
 
         dbUsersRef.doc(uid).set({
-            stavaUserAuth: true,
-            stravaRefreshToken : stravaInfo.refresh_token,
-            stravaAccessToken : stravaInfo.access_token,
-            stravaExpiresAt : expiresAt,
+            stravaUserAuth: userStravaUpdate.stravaUserAuth ? userStravaUpdate.stravaUserAuth : falses,
+            stravaRefreshToken : userStravaUpdate.refresh_token ? userStravaUpdate.refresh_token : null,
+            stravaAccessToken : userStravaUpdate.access_token ? userStravaUpdate.access_token : null,
+            stravaExpiresAt : expiresAt ? expiresAt : null,
         }, { merge: true }).then(() => {
             console.log("User successfully updated with Strava Info!");
             resolve();

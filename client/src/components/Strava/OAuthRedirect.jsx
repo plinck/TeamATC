@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import CachedIcon from '@material-ui/icons/Cached';
 import HistoryIcon from '@material-ui/icons/History';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -78,10 +79,28 @@ const OAuthRedirect = (props) => {
     }
     const refreshStravaToken = () => {
         if (props.user.uid && props.user.stravaRefreshToken) {
-            StravaAPI.refreshStravaToken(props.user.uid, props.user.stravaRefreshToken);
+            StravaAPI.refreshStravaToken(props.user.uid, props.user.stravaRefreshToken).then( data => {
+                setMessage(`StravaAPI.refreshStravaToken Successful`);    
+            }).catch (err => {
+                console.error(`StravaAPI.refreshStravaToken: error ${err}`);
+                setMessage(`StravaAPI.refreshStravaToken: error ${err}`);    
+            });
         } else {
             console.error(`refreshStravaToken: user info not ready, try again in a few minutes ...`);
             setMessage(`refreshStravaToken: user info not ready, try again in a few minutes ...`);
+        }
+    }
+    const deauthorizeStrava = () => {
+        if (props.user.uid && props.user.stravaAccessToken) {
+            StravaAPI.deauthorizeStrava(props.user.uid, props.user.stravaAccessToken).then( data => {
+                setMessage(`StravaAPI.deauthorizeStrava Successful`);    
+            }).catch (err => {
+                console.error(`StravaAPI.deauthorizeStrava: error ${err}`);
+                setMessage(`StravaAPI.deauthorizeStrava: error ${err}`);    
+            });
+        } else {
+            console.error(`deauthorizeStrava: user info not ready, try again in a few minutes ...`);
+            setMessage(`deauthorizeStrava: user info not ready, try again in a few minutes ...`);
         }
     }
     const getStravaActivities = () => {
@@ -125,6 +144,17 @@ const OAuthRedirect = (props) => {
                         onClick={refreshStravaToken}
                         >
                         Refresh Strava Token
+                    </Button>
+                </Grid>
+                <br></br>
+                <Grid align="center">
+                    <Button style={{justifyContent: 'center'}}
+                        variant="contained"
+                        color="primary"
+                        startIcon={<DeleteIcon />}
+                        onClick={deauthorizeStrava}
+                        >
+                        Deauthorize Strava
                     </Button>
                 </Grid>
                 <br></br>

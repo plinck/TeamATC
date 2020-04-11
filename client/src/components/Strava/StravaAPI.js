@@ -47,16 +47,16 @@ class StravaAPI {
         });
     }
 
-    static getStravaActivities(uid, refresh_token) {
-        console.log(`getStravaActivities Token with refresh_token: ${refresh_token}`);
+    static deauthorizeStrava(uid, access_token) {
+        console.log(`deauthorizeStrava Token with access_token: ${access_token}`);
         return new Promise((resolve, reject) => {
             const firebase = Util.getFirebaseAuth();
-            const stravaRefreshToken = firebase.functions.httpsCallable('stravaRefreshToken');
-            const req = {"uid" : uid, "refresh_token": refresh_token};
+            const stravaDeauthorize = firebase.functions.httpsCallable('stravaDeauthorize');
+            const req = {"uid" : uid, "access_token": access_token};
             
-            stravaRefreshToken(req).then( (res) => {
+            stravaDeauthorize(req).then( (res) => {
                 // Read result of the Cloud Function.
-                console.log(`Success gettng token, response.data: ${JSON.stringify(res.data)}`);
+                console.log(`Success stravaDeauthorize, response.data: ${JSON.stringify(res.data)}`);
                 resolve(res.data);
             }).catch(err => {
                 console.error(`${err}`);
@@ -65,6 +65,25 @@ class StravaAPI {
         });
     }
 
+    static getStravaActivities(uid, access_token) {
+        console.log(`getStravaActivities Token with access_token: ${access_token}`);
+        return new Promise((resolve, reject) => {
+            const firebase = Util.getFirebaseAuth();
+            const stravaGetActivities = firebase.functions.httpsCallable('stravaGetActivities');
+            const req = {"uid" : uid, "access_token": access_token};
+            
+            stravaGetActivities(req).then( (res) => {
+                // Read result of the Cloud Function.
+                console.log(`Success stravaGetActivities, response.data: ${JSON.stringify(res.data)}`);
+                resolve(res.data);
+            }).catch(err => {
+                console.error(`${err}`);
+                reject(err);
+            });
+        });
+    }
+
+    // depracted -- jsut here for reference
     static sendOAuthRequestFromClient() {
         console.log(`called sendOAuthRequestFromClient from client`);
 
