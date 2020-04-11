@@ -11,12 +11,12 @@ class StravaAPI {
         window.location.replace(URIRequest);
     }
 
-    static getOAuthToken(code) {
+    static getOAuthToken(uid, code) {
         console.log(`getOAuthToken Token with code: ${code}`);
         return new Promise((resolve, reject) => {
             const firebase = Util.getFirebaseAuth();
             const stravaGetToken = firebase.functions.httpsCallable('stravaGetToken');
-            const req = {"code": code};
+            const req = {"uid" : uid, "code": code};
             
             stravaGetToken(req).then( (res) => {
                 // Read result of the Cloud Function.

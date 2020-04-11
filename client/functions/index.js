@@ -67,10 +67,12 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
         console.log(`called stravaGetToken with request`);
         console.log(req);
         let code = undefined;
-        if (req && req.code) {
+        let uid = undefined;
+        if (req && req.code && req.uid) {
             code = req.code;
+            uid = req.uid;
         } else {
-            return reject(`Error oin stravaGetToken - invalid parm - must provide code`);
+            return reject(`Error in stravaGetToken - invalid parm - must provide code and uid`);
         }
 
         const params = {
@@ -112,8 +114,12 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
 
             // NOW, save the strava info to the user account, maybe do in client
             // Must Save access_toke, refresh_token, expires_at, accepted_scopes
-
-            return resolve(clientResponse);
+            updateUserWithStrava(uid, clientResponse).then (() => {
+                return resolve(clientResponse);
+            }).catch((err) => {
+                console.error(`FB Func: stravaGetToken in updateUserWithStrava -- Error : ${err}`);
+                return reject(`FB Func: stravaGetToken in updateUserWithStrava -- Error : ${err}`); 
+            });
         }).catch((err) => {
             console.error(`FB Func: stravaGetToken -- Error : ${err}`);
             return reject(`FB Func: stravaGetToken -- Error : ${err}`); 
@@ -123,13 +129,15 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
 
 exports.stravaRefreshToken = functions.https.onCall((req, res) => {
     return new Promise((resolve, reject) => {
-        console.log(`called stravaRefreshToken with request`);
-        console.log(req);
+        // console.log(`called stravaRefreshToken with request`);
+        // console.log(req);
         let refresh_token = undefined;
-        if (req && req.refresh_token) {
+        let uid = undefined;
+        if (req && req.refresh_token && req.uid) {
             refresh_token = req.refresh_token;
+            uid = req.uid;
         } else {
-            return reject(`Error oin stravaRefreshToken - invalid parm - must provide refresh_token`);
+            return reject(`Error oin stravaRefreshToken - invalid parm - must provide uid and refresh_token`);
         }
 
         const params = {
@@ -161,13 +169,17 @@ exports.stravaRefreshToken = functions.https.onCall((req, res) => {
                 expires_in: res.data.expires_in,
             }
 
-            // NOW, save the strave info to the user account, maybe do in client
+            // NOW, save the strava info to the user account, maybe do in client
             // Must Save access_toke, refresh_token, expires_at, accepted_scopes
-        
-            return resolve(clientResponse);
+            updateUserWithStrava(uid, clientResponse).then (() => {
+                return resolve(clientResponse);
+            }).catch((err) => {
+                console.error(`FB Func: stravaRefreshToken in updateUserWithStrava -- Error : ${err}`);
+                return reject(`FB Func: stravaRefreshToken in updateUserWithStrava -- Error : ${err}`); 
+            });
         }).catch((err) => {
-            console.error(`FB Func: stravaGetToken -- Error : ${err}`);
-            return reject(`FB Func: stravaGetToken -- Error : ${err}`); 
+            console.error(`FB Func: stravaRefreshToken -- Error : ${err}`);
+            return reject(`FB Func: stravaRefreshToken -- Error : ${err}`); 
         });
     });
 });
@@ -294,6 +306,36 @@ exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
             return batch.commit();
         }).then(() => {
             console.log("Batch successfully committed!");
+            resolve();
+        }).catch((err) =>{
+            console.error("Batch failed: ", err);
+            reject(err);
+        });
+
+    }); // Promise
+    
+});
+
+
+// ===============================================================
+// Local - non-exported functions
+// ===============================================================
+updateUserWithStrava = ((uid, stravaInfo) => {
+    console.log(`In updateUserWithStrava with: ORG: ${ORG}, ENV: ${ENV}`);
+
+    return new Promise((resolve, reject) => {
+        // convert UTC EPOCH date (seconds since epoch) to JS Date
+        let expiresAt = new Date(stravaInfo.expires_at * 1000)
+
+        let dbUsersRef = admin.firestore().collection(ORG).doc(ENV).collection("users");
+
+        dbUsersRef.doc(uid).set({
+            stavaUserAuth: true,
+            stravaRefreshToken : stravaInfo.refresh_token,
+            stravaAccessToken : stravaInfo.access_token,
+            stravaExpiresAt : expiresAt,
+        }, { merge: true }).then(() => {
+            console.log("User successfully updated with Strava Info!");
             resolve();
         }).catch((err) =>{
             console.error("Batch failed: ", err);
