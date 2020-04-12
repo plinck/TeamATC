@@ -242,6 +242,67 @@ exports.stravaDeauthorize = functions.https.onCall((req, res) => {
     });
 });
 
+exports.stravaGetActivities = functions.https.onCall((req, res) => {
+    // curl -X GET "https://www.strava.com/api/v3/athlete/activities?after=1546318800&page=1&per_page=30"
+    // -H  "accept: application/json" -H  "authorization: Bearer access_token"
+    return new Promise((resolve, reject) => {
+        console.log(`called stravaGetActivities with request`);
+        console.log(req);
+        let access_token = undefined;
+        let uid = undefined;
+        let dateAfter = undefined;
+        if (req && req.access_token && req.uid) {
+            access_token = req.access_token;
+            uid = req.uid;
+        } else {
+            return reject(`Error in stravaGetActivities - invalid parm - must provide uid and access_token`);
+        }
+        if (req.dateAfter) {
+            dateAfter = new Date(req.dateAfter);
+        } else {
+            dateAfter = new Date();
+            dateAfter.setDate(dateAfter.getDate()-365);
+        }
+        // convert date to unix epoch timestamp
+        var unixDateAfter = Math.floor(dateAfter.getTime()/1000.0);
+
+        console.log(`stravaGetActivities access_token${access_token}, uid:${uid}, dateAfter: ${dateAfter}`);
+        const params = {
+            after: unixDateAfter,
+            page: 1,
+            per_page: 100,
+        };
+
+        const URIRequest = "https://www.strava.com/api/v3/athlete/activities?" + 
+            `after=${params.after}` +
+            `&page=${params.page}` +
+            `&per_page=${params.per_page}`
+            ;
+
+        console.log(`URIRequest: ${URIRequest}`);
+
+        axios.post(URIRequest, {
+                headers: {
+                    'Authorization': `Bearer ${access_token}`,
+                    'accept': "application/json"
+                }
+            }).then((res) => {
+            console.log("Successfully sent stravaGetActivities refresh request.");
+
+            // MJUST break up response since FB functions can not resolve this complex
+            // res object as it has circular reference.  It causes an error;
+            // Unhandled error RangeError: Maximum call stack size exceeded
+            resolve(res);
+
+            // NOW, save the strava activites to this users activities
+
+        }).catch((err) => {
+            console.error(`stravaGetActivities failed -- ${err}`);
+            reject(`stravaGetActivities failed -- ${err}`); 
+        });
+    });
+});
+
 exports.testFunctions = functions.https.onCall((req, res) => {
     console.log(`called testFunction with req ${JSON.stringify(req)}`)
     return {message: "response OK"};
@@ -402,7 +463,7 @@ updateUserWithStrava = ((uid, stravaInfo, deauthorize) => {
         let dbUsersRef = admin.firestore().collection(ORG).doc(ENV).collection("users");
 
         dbUsersRef.doc(uid).set({
-            stravaUserAuth: userStravaUpdate.stravaUserAuth ? userStravaUpdate.stravaUserAuth : falses,
+            stravaUserAuth: userStravaUpdate.stravaUserAuth ? userStravaUpdate.stravaUserAuth : false,
             stravaRefreshToken : userStravaUpdate.refresh_token ? userStravaUpdate.refresh_token : null,
             stravaAccessToken : userStravaUpdate.access_token ? userStravaUpdate.access_token : null,
             stravaExpiresAt : expiresAt ? expiresAt : null,

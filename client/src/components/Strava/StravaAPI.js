@@ -70,6 +70,7 @@ class StravaAPI {
         return new Promise((resolve, reject) => {
             const firebase = Util.getFirebaseAuth();
             const stravaGetActivities = firebase.functions.httpsCallable('stravaGetActivities');
+            let dateAfter = new Date("2019-01-01");
             const req = {"uid" : uid, "access_token": access_token};
             
             stravaGetActivities(req).then( (res) => {

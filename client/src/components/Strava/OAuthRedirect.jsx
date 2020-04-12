@@ -104,7 +104,17 @@ const OAuthRedirect = (props) => {
         }
     }
     const getStravaActivities = () => {
-        StravaAPI.getStravaActivities();
+        if (props.user.uid && props.user.stravaAccessToken) {
+            StravaAPI.getStravaActivities(props.user.uid, props.user.stravaAccessToken).then( data => {
+                setMessage(`StravaAPI.getStravaActivities Successful`);    
+            }).catch (err => {
+                console.error(`StravaAPI.getStravaActivities: error ${err}`);
+                setMessage(`StravaAPI.getStravaActivities: error ${err}`);    
+            });
+        } else {
+            console.error(`getStravaActivities: user info not ready, try again in a few minutes ...`);
+            setMessage(`getStravaActivities: user info not ready, try again in a few minutes ...`);
+        }
     }
 
     return (
