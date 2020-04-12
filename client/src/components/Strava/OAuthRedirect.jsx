@@ -72,7 +72,7 @@ const OAuthRedirect = (props) => {
     }, [error, state, code, props.user.uid]);
 
     const sendAuthorizationRequest = () => {
-        StravaAPI.sendAuthRequestExpress("http://localhost:3000/oauthredirect");
+        StravaAPI.sendAuthRequestExpress();
     }
 
     return (

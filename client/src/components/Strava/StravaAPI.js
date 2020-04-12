@@ -7,9 +7,13 @@ class StravaAPI {
     }
 
     static sendAuthRequestExpress(redirectUrl) {
-        const redirect_uri = redirectUrl ? redirectUrl : "http://localhost:3000/oauthredirect";
+        let URIRequest = undefined;
+        if (redirectUrl) {
+            URIRequest=`https://us-central1-${FB_CONFIG.PROJECT_ID}.cloudfunctions.net/oauth/stravaauth?redirect_uri=${redirectUrl}`;
+        } else {
+            URIRequest=`https://us-central1-${FB_CONFIG.PROJECT_ID}.cloudfunctions.net/oauth/stravaauth`;        
+        }
 
-        const URIRequest=`https://us-central1-${FB_CONFIG.PROJECT_ID}.cloudfunctions.net/oauth/stravaauth?redirect_uri=${redirect_uri}`;
         window.location.replace(URIRequest);
     }
 
