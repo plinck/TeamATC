@@ -3,10 +3,6 @@ import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Container, makeStyles, Typography, Grid } from '@material-ui/core';
 import queryString from 'query-string'
 import StravaAPI from "./StravaAPI.js"
-import Button from '@material-ui/core/Button';
-import CachedIcon from '@material-ui/icons/Cached';
-import HistoryIcon from '@material-ui/icons/History';
-import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -66,8 +62,10 @@ const OAuthRedirect = (props) => {
             StravaAPI.getOAuthToken(props.user.uid, code).then(res => {
                 // console.log(`Success in StravaAPI.getOAuthToken, res: ${JSON.stringify(res)}`);
                 // redirect with message - how to show on dashboard
+                setMessage(`Succesfully Authorized Strava!`)
             }).catch (err => {
                 console.error(`Error  StravaAPI.getOAuthToken: ${err}`)
+                setMessage(`Strava Authorization not Apporoved`)
             });
         }
 
@@ -75,45 +73,6 @@ const OAuthRedirect = (props) => {
 
     const sendAuthorizationRequest = () => {
         StravaAPI.sendAuthRequestExpress("http://localhost:3000/oauthredirect");
-    }
-    const refreshStravaToken = () => {
-        if (props.user.uid && props.user.stravaRefreshToken) {
-            StravaAPI.refreshStravaToken(props.user.uid, props.user.stravaRefreshToken).then( data => {
-                setMessage(`StravaAPI.refreshStravaToken Successful`);    
-            }).catch (err => {
-                console.error(`StravaAPI.refreshStravaToken: error ${err}`);
-                setMessage(`StravaAPI.refreshStravaToken: error ${err}`);    
-            });
-        } else {
-            console.error(`refreshStravaToken: user info not ready, try again in a few minutes ...`);
-            setMessage(`refreshStravaToken: user info not ready, try again in a few minutes ...`);
-        }
-    }
-    const deauthorizeStrava = () => {
-        if (props.user.uid && props.user.stravaAccessToken) {
-            StravaAPI.deauthorizeStrava(props.user.uid, props.user.stravaAccessToken).then( data => {
-                setMessage(`StravaAPI.deauthorizeStrava Successful`);    
-            }).catch (err => {
-                console.error(`StravaAPI.deauthorizeStrava: error ${err}`);
-                setMessage(`StravaAPI.deauthorizeStrava: error ${err}`);    
-            });
-        } else {
-            console.error(`deauthorizeStrava: user info not ready, try again in a few minutes ...`);
-            setMessage(`deauthorizeStrava: user info not ready, try again in a few minutes ...`);
-        }
-    }
-    const getStravaActivities = () => {
-        if (props.user.uid && props.user.stravaAccessToken) {
-            StravaAPI.getStravaActivities(props.user.uid, props.user.stravaAccessToken).then( data => {
-                setMessage(`StravaAPI.getStravaActivities Successful`);    
-            }).catch (err => {
-                console.error(`StravaAPI.getStravaActivities: error ${err}`);
-                setMessage(`StravaAPI.getStravaActivities: error ${err}`);    
-            });
-        } else {
-            console.error(`getStravaActivities: user info not ready, try again in a few minutes ...`);
-            setMessage(`getStravaActivities: user info not ready, try again in a few minutes ...`);
-        }
     }
 
     return (
@@ -130,45 +89,23 @@ const OAuthRedirect = (props) => {
                         Error {error}
                     </Typography>
                     : 
-                    <Typography variant="subtitle1" align="center">
-                        <Grid className={classes.messages}>Strava OAuth Code: {code} State: {state}</Grid>
+                    <Typography variant="h4" align="center">
+                        <br />
+                        <Grid className={classes.messages}>Authorize Strava</Grid>
                     </Typography>
                     }
                 <Grid align="center">
                     <img src="/images/stravaConnectWithLight.png" alt="connect with strava" onClick={sendAuthorizationRequest}/>
                 </Grid>
                 <br></br>
-                <Grid align="center">
-                    <Button style={{justifyContent: 'center'}}
-                        variant="contained"
-                        color="primary"
-                        startIcon={<HistoryIcon />}
-                        onClick={refreshStravaToken}
-                        >
-                        Refresh Strava Token
-                    </Button>
-                </Grid>
-                <br></br>
-                <Grid align="center">
-                    <Button style={{justifyContent: 'center'}}
-                        variant="contained"
-                        color="primary"
-                        startIcon={<DeleteIcon />}
-                        onClick={deauthorizeStrava}
-                        >
-                        Deauthorize Strava
-                    </Button>
-                </Grid>
-                <br></br>
-                <Grid align="center">
-                    <Button style={{justifyContent: 'center'}}
-                        variant="contained"
-                        color="primary"
-                        startIcon={<CachedIcon />}
-                        onClick={getStravaActivities}
-                        >
-                        Get Activities
-                    </Button>
+                <Grid className={classes.messages} align="center">
+                    Click the above button to go to Strava and Authorize it to sync your activities
+                    <br />
+                    <hr />
+                    <br />
+                    Note: The actual syncing of activities is not yet complete. Coming soon!
+                    <br />
+                    <img src="/images/stravaPoweredBy.png" height="60" alt="Powered by Strava"/>
                 </Grid>
             
             </Container>

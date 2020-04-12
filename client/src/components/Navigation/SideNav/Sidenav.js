@@ -119,7 +119,6 @@ export default function MiniDrawer(props) {
                     <a className={classes.sideText} href="mailto:info@atlantatriclub.com"><ListItem button><ListItemIcon><MailIcon /></ListItemIcon><ListItemText>Contact Support</ListItemText></ListItem></a>
                     <Divider></Divider>
                     <NavLink to="/oauthredirect"><ListItem selected={window.location.pathname === "/oauthredirect"}><ListItemIcon><DirectionsBikeIcon /></ListItemIcon><img src="/images/stravaConnectWith.png" alt="connect with strava"/></ListItem></NavLink>
-                    <ListItem><img src="/images/stravaCompatible.png" height="30" alt="compatible with strava"/></ListItem>
                 </List>
             </Drawer>
         </div >
