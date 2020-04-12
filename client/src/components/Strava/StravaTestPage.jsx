@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     
 }))
 
-const OAuthRedirect = (props) => {
+const StravaTestPage = (props) => {
     const classes = useStyles();
     let error = undefined;
     let state = undefined;
@@ -74,7 +74,7 @@ const OAuthRedirect = (props) => {
     }, [error, state, code, props.user.uid]);
 
     const sendAuthorizationRequest = () => {
-        StravaAPI.sendAuthRequestExpress("http://localhost:3000/oauthredirect");
+        StravaAPI.sendAuthRequestExpress("http://localhost:3000/stravatestpage");
     }
     const refreshStravaToken = () => {
         if (props.user.uid && props.user.stravaRefreshToken) {
@@ -176,4 +176,4 @@ const OAuthRedirect = (props) => {
     )
 }
 
-export default withAuthUserContext(OAuthRedirect);
+export default withAuthUserContext(StravaTestPage);

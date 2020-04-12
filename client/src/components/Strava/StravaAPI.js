@@ -6,8 +6,10 @@ class StravaAPI {
         console.log(`Refreshing Token with code: ${code} state: ${state}`);
     }
 
-    static sendAuthRequestExpress() {
-        const URIRequest=`https://us-central1-${FB_CONFIG.PROJECT_ID}.cloudfunctions.net/oauth/stravaauth`;
+    static sendAuthRequestExpress(redirectUrl) {
+        const redirect_uri = redirectUrl ? redirectUrl : "http://localhost:3000/oauthredirect";
+
+        const URIRequest=`https://us-central1-${FB_CONFIG.PROJECT_ID}.cloudfunctions.net/oauth/stravaauth?redirect_uri=${redirect_uri}`;
         window.location.replace(URIRequest);
     }
 
@@ -87,11 +89,11 @@ class StravaAPI {
     }
 
     // depracted -- jsut here for reference
-    static sendOAuthRequestFromClient() {
+    static sendOAuthRequestFromClient(redirectUrl) {
         console.log(`called sendOAuthRequestFromClient from client`);
 
         const client_id = STRAVA_CONFIG.CLIENT_ID;
-        const redirect_uri = "http://localhost:3000/oauthredirect";
+        const redirect_uri = redirectUrl ? redirectUrl : "http://localhost:3000/oauthredirect";
         const response_type = "code";
         const approval_prompt = "auto"
         const scope = "activity:read_all";

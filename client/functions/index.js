@@ -29,10 +29,12 @@ exports.setEnviromentFromClient = functions.https.onCall((environment, res) => {
 const app = express();
 app.get('/stravaauth', async (req, res) => {
     console.log(`called stravaSendAuthorizationRequest with environment ${req}`);
+    const redirectURL = req.query.redirect_uri ? req.query.redirect_uri : "http://localhost:3000/oauthredirect";
+    console.log(`redirectURL: ${redirectURL}`)
     
     const params = {
         client_id: config.strava.client_id,
-        redirect_uri: "http://localhost:3000/oauthredirect",
+        redirect_uri: redirectURL,
         response_type: 'code',
         approval_prompt: "auto",
         scope: "activity:read_all",
