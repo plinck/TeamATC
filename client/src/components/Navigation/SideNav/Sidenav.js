@@ -16,6 +16,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 // import EqualizerIcon from '@material-ui/icons/Equalizer';
 import TimerIcon from '@material-ui/icons/Timer';
 import MailIcon from '@material-ui/icons/Mail';
+import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 
 const drawerWidth = 240;
 
@@ -116,7 +117,8 @@ export default function MiniDrawer(props) {
                     <Divider></Divider>
                     <ListItem style={{ textAlign: 'center' }}>{open ? <ListItemText><Button variant="contained" color="primary" style={{ marginLeft: "3px" }}><NavLink className={classes.menuButton} to="/activitypage" >New Workout</NavLink></Button></ListItemText> : null}</ListItem>
                     <a className={classes.sideText} href="mailto:info@atlantatriclub.com"><ListItem button><ListItemIcon><MailIcon /></ListItemIcon><ListItemText>Contact Support</ListItemText></ListItem></a>
-
+                    <Divider></Divider>
+                    <NavLink to="/oauthredirect"><ListItem selected={window.location.pathname === "/oauthredirect"}><ListItemIcon><DirectionsBikeIcon /></ListItemIcon><img src="/images/stravaConnectWith.png" alt="connect with strava"/></ListItem></NavLink>
                 </List>
             </Drawer>
         </div >
