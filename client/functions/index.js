@@ -281,9 +281,9 @@ exports.stravaGetActivities = functions.https.onCall((req, res) => {
 
         console.log(`URIRequest: ${URIRequest}`);
 
-        axios.post(URIRequest, {
+        axios.get(URIRequest, {
                 headers: {
-                    'Authorization': `Bearer ${access_token}`,
+                    'authorization': `Bearer ${access_token}`,
                     'accept': "application/json"
                 }
             }).then((res) => {
