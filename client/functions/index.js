@@ -91,17 +91,9 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
 
         console.log(`URIRequest: ${URIRequest}`);
         axios.post(URIRequest).then((res) => {
-            console.log("Successfully sent strava token request.  response info");
-            // console.log(res.data.athlete);
-            // console.log(res.data.refresh_token);
-            // console.log(res.data.access_token);
-            // console.log(res.data.athlete.profile);
-            // console.log(res.data.athlete.firstname);
-            // console.log(res.data.athlete.lastname);
-            console.log(res.data);
+            // console.log("Successfully sent strava token request.  response info");
 
-
-            // MJUST break up response since FB functions can not resolve this complex
+            // MUST break up response since FB functions can not resolve this complex
             // res object as it has circular reference.  It causes an error;
             // Unhandled error RangeError: Maximum call stack size exceeded
             const clientResponse = {
@@ -110,6 +102,7 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
                 expires_at: res.data.expires_at,
                 expires_in: res.data.expires_in,
                 athlete: res.data.athlete,
+                athleteId: res.data.athlete.id,
             }
 
             // NOW, save the strava info to the user account, maybe do in client
@@ -251,26 +244,28 @@ exports.stravaGetActivities = functions.https.onCall((req, context) => {
         let access_token = undefined;
         let uid = undefined;
         let dateAfter = undefined;
+
         if (req && req.access_token && req.uid) {
             access_token = req.access_token;
             uid = req.uid;
         } else {
             return reject(`Error in stravaGetActivities - invalid parm - must provide uid and access_token`);
         }
-        if (req.dateAfter) {
-            dateAfter = new Date(req.dateAfter);
+        
+        if (req && req.dateAfter) {
+            dateAfter = req.dateAfter;
         } else {
             dateAfter = new Date();
-            dateAfter.setDate(dateAfter.getDate()-365);
+            dateAfter.setDate(dateAfter.getDate()-14);
+            // convert date to unix epoch timestamp
+            dateAfter = Math.floor(dateAfter.getTime()/1000.0);
         }
-        // convert date to unix epoch timestamp
-        var unixDateAfter = Math.floor(dateAfter.getTime()/1000.0);
 
         console.log(`stravaGetActivities access_token${access_token}, uid:${uid}, dateAfter: ${dateAfter}`);
         const params = {
-            after: unixDateAfter,
+            after: dateAfter,
             page: 1,
-            per_page: 1,
+            per_page: 30,
         };
 
         const URIRequest = "https://www.strava.com/api/v3/athlete/activities?" + 
@@ -294,8 +289,8 @@ exports.stravaGetActivities = functions.https.onCall((req, context) => {
             // Unhandled error RangeError: Maximum call stack size exceeded
 
             // NOW, save the strava activites to this users activities
-            console.log("Response data (res.data)");
-            console.log(res.data);
+            // console.log("Response data (res.data)");
+            // console.log(res.data);
             resolve(res.data);
         }).catch((err) => {
             console.error(`stravaGetActivities failed -- ${err}`);
@@ -445,30 +440,35 @@ updateUserWithStrava = ((uid, stravaInfo, deauthorize) => {
     
     return new Promise((resolve, reject) => {
         let userStravaUpdate = stravaInfo;
+        // convert UTC EPOCH date (seconds since epoch) to JS Date
+        let expiresAt = stravaInfo.expires_at  && stravaInfo.expires_at !== null ? new Date(stravaInfo.expires_at * 1000) : null;
 
         if (deauthorize) {
             userStravaUpdate = {
+                stravaAthleteId : null,
                 stravaUserAuth : false,
-                refresh_token: null,
-                access_token: null,
-                expires_at: null
+                stravaRefreshToken: null,
+                stravaAccessToken: null,
+                stravaExpiresAt: null
             }
         } else {
-            userStravaUpdate.stavaUserAuth = true;
+            userStravaUpdate = {
+                stravaUserAuth : true,
+                stravaRefreshToken: stravaInfo.refresh_token ? stravaInfo.refresh_token : null,
+                stravaAccessToken: stravaInfo.access_token ? stravaInfo.access_token : null,
+                stravaExpiresAt: expiresAt,
+            }
+            // Dont include athlete ID if it isnt passed so not to overrwrite (e.g. on tokenRefresh)
+            if (stravaInfo.athleteId) {
+                userStravaUpdate.stravaAthleteId = stravaInfo.athleteId;
+            }
+
         }
         console.log(`In updateUserWithStrava with uid ${uid}, userStravaUpdate: ${JSON.stringify(userStravaUpdate, null,2)}`);
 
-        // convert UTC EPOCH date (seconds since epoch) to JS Date
-        let expiresAt = userStravaUpdate.expires_at  && userStravaUpdate.expires_at !== null ? new Date(userStravaUpdate.expires_at * 1000) : null;
-
         let dbUsersRef = admin.firestore().collection(ORG).doc(ENV).collection("users");
 
-        dbUsersRef.doc(uid).set({
-            stravaUserAuth: userStravaUpdate.stravaUserAuth ? userStravaUpdate.stravaUserAuth : false,
-            stravaRefreshToken : userStravaUpdate.refresh_token ? userStravaUpdate.refresh_token : null,
-            stravaAccessToken : userStravaUpdate.access_token ? userStravaUpdate.access_token : null,
-            stravaExpiresAt : expiresAt ? expiresAt : null,
-        }, { merge: true }).then(() => {
+        dbUsersRef.doc(uid).set(userStravaUpdate, { merge: true }).then(() => {
             console.log("User successfully updated with Strava Info!");
             resolve();
         }).catch((err) =>{

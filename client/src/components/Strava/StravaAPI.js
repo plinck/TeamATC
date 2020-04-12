@@ -70,12 +70,14 @@ class StravaAPI {
         return new Promise((resolve, reject) => {
             const firebase = Util.getFirebaseAuth();
             const stravaGetActivities = firebase.functions.httpsCallable('stravaGetActivities');
-            let dateAfter = new Date("2019-01-01");
-            const req = {"uid" : uid, "access_token": access_token};
+            let dateAfter = new Date("2019-12-01");
+            let unixDateAfter = Math.floor(dateAfter.getTime()/1000.0);
+
+            const req = {"dateAfter" : unixDateAfter, "uid" : uid, "access_token": access_token};
             
             stravaGetActivities(req).then( (res) => {
                 // Read result of the Cloud Function.
-                console.log(`Success stravaGetActivities, response.data: ${JSON.stringify(res.data)}`);
+                // console.log(`Success stravaGetActivities, response.data: ${JSON.stringify(res.data)}`);
                 resolve(res.data);
             }).catch(err => {
                 console.error(`${err}`);
