@@ -242,7 +242,7 @@ exports.stravaDeauthorize = functions.https.onCall((req, res) => {
     });
 });
 
-exports.stravaGetActivities = functions.https.onCall((req, res) => {
+exports.stravaGetActivities = functions.https.onCall((req, context) => {
     // curl -X GET "https://www.strava.com/api/v3/athlete/activities?after=1546318800&page=1&per_page=30"
     // -H  "accept: application/json" -H  "authorization: Bearer access_token"
     return new Promise((resolve, reject) => {
@@ -270,7 +270,7 @@ exports.stravaGetActivities = functions.https.onCall((req, res) => {
         const params = {
             after: unixDateAfter,
             page: 1,
-            per_page: 100,
+            per_page: 1,
         };
 
         const URIRequest = "https://www.strava.com/api/v3/athlete/activities?" + 
@@ -287,15 +287,16 @@ exports.stravaGetActivities = functions.https.onCall((req, res) => {
                     'accept': "application/json"
                 }
             }).then((res) => {
-            console.log("Successfully sent stravaGetActivities refresh request.");
+            console.log("Successfully sent stravaGetActivities request.");
 
-            // MJUST break up response since FB functions can not resolve this complex
+            // MUST break up response since FB functions can not resolve this complex
             // res object as it has circular reference.  It causes an error;
             // Unhandled error RangeError: Maximum call stack size exceeded
-            resolve(res);
 
             // NOW, save the strava activites to this users activities
-
+            console.log("Response data (res.data)");
+            console.log(res.data);
+            resolve(res.data);
         }).catch((err) => {
             console.error(`stravaGetActivities failed -- ${err}`);
             reject(`stravaGetActivities failed -- ${err}`); 
