@@ -136,14 +136,10 @@ const OAuthRedirect = (props) => {
                     </Typography>
                     }
                 <Grid align="center">
-                    <Button style={{justifyContent: 'center'}}
-                        variant="contained"
-                        color="primary"
-                        startIcon={<DirectionsBikeIcon />}
-                        onClick={sendAuthorizationRequest}
-                        >
-                        Send Strava Auth Request
-                    </Button>
+                    <img src="/images/stravaConnectWith.png" alt="connect with strava" onClick={sendAuthorizationRequest}/>
+                </Grid>
+                <Grid align="center">
+                    <img src="/images/stravaCompatible.png" height="30" alt="compatible with strava"/>
                 </Grid>
                 <br></br>
                 <Grid align="center">
