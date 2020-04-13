@@ -2,18 +2,6 @@ const ORG=process.env.REACT_APP_FIREBASE_ORG;
 const ENV=process.env.REACT_APP_FIREBASE_ENV;
 
 // Firebase
-// const FB_CONFIG = {
-//     API_KEY:process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY : "AIzaSyBmeZVx6YKWwqMP8FvsEyoG0eIxcinHYc4",
-//     AUTH_DOMAIN:process.env.REACT_APP_AUTH_DOMAIN ? process.env.REACT_APP_AUTH_DOMAIN : "teamatc-challenge.firebaseapp.com",
-//     DATABASE_URL:process.env.REACT_APP_DATABASE_URL ? process.env.REACT_APP_DATABASE_URL : "https://teamatc-challenge.firebaseio.com",
-//     PROJECT_ID:process.env.REACT_APP_PROJECT_ID ? process.env.REACT_APP_PROJECT_ID : "teamatc-challenge",
-//     STORAGE_BUCKET:process.env.REACT_APP_STORAGE_BUCKET ? process.env.REACT_APP_STORAGE_BUCKET : "teamatc-challenge.appspot.com",
-//     MESSAGING_SENDER_ID:process.env.REACT_APP_MESSAGING_SENDER_ID ? process.env.REACT_APP_MESSAGING_SENDER_ID : "961307717305",
-//     APP_ID:process.env.REACT_APP_APP_ID ? process.env.REACT_APP_APP_ID : "1:961307717305:web:faa30c4e8b56dc5c097568",
-//     MEASUREMENT_ID:process.env.REACT_APP_MEASUREMENT_ID ? process.env.REACT_APP_MEASUREMENT_ID : "G-FXGMVHS2ZX"
-// }
-
-// Firebase
 const FB_CONFIG = {
     API_KEY:process.env.REACT_APP_API_KEY,
     AUTH_DOMAIN:process.env.REACT_APP_AUTH_DOMAIN,
@@ -22,7 +10,8 @@ const FB_CONFIG = {
     STORAGE_BUCKET:process.env.REACT_APP_STORAGE_BUCKET,
     MESSAGING_SENDER_ID:process.env.REACT_APP_MESSAGING_SENDER_ID,
     APP_ID:process.env.REACT_APP_APP_ID,
-    MEASUREMENT_ID:process.env.REACT_APP_MEASUREMENT_ID
+    MEASUREMENT_ID:process.env.REACT_APP_MEASUREMENT_ID,
+    RUN_FUNCTIONS_LOCALLY:process.env.REACT_APP_RUN_FUNCTIONS_LOCALLY
 }
 const STRAVA_CONFIG = {
     CLIENT_ID: process.env.REACT_APP_STRAVA_CLIENT_ID

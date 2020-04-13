@@ -1,27 +1,20 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+admin.initializeApp(functions.config().firebase);
+
 const axios = require('axios');
 const cors = require('cors')({origin: true});
 const express = require('express');
+const ENV = require("./FirebaseEnvironment.js");
 
-admin.initializeApp(functions.config().firebase);
-
-let ORG="ATC"
-let ENV="prod"
-let CHALLENGEUID=""
-// Get environment vars
-const config = functions.config().env;
-
-exports.setEnviromentFromClient = functions.https.onCall((environment, res) => {
+exports.setEnviromentFromClient = functions.https.onCall((environment, context) => {
     console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
-    console.log(`ORG ${(environment.org)}`)
-    console.log(`ENV ${(environment.env)}`)
-    console.log(`CHALLENGEUID ${(environment.challengeUid)}`)
-    ORG=environment.org;
-    ENV=environment.env;
-    CHALLENGEUID=environment.challengeUid;    
-    console.log(`saved environment with: ORG: ${ORG}, ENV: ${ENV}, CHALLENGEUID: ${CHALLENGEUID}`);
-    return {message: "Saved environment OK"};
+    ENV.set(environment.org, environment.env, environment.challengeUid);
+    
+    console.log("Running locally since not deployed yet");
+
+    console.log(`Saved environment ${ENV.APP_CONFIG.ORG}, ${ENV.APP_CONFIG.ENV}, ${ENV.APP_CONFIG.CHALLENGEUID}`);
+    return {message: `Saved environment ${ENV.APP_CONFIG.ORG}, ${ENV.APP_CONFIG.ENV}, ${ENV.APP_CONFIG.CHALLENGEUID}`};
 });
 
 // I did these functions using expores since it was the simplest (maybe only) way
@@ -370,12 +363,12 @@ exports.fBFupdateTeam = functions.https.onCall((req, res) => {
     let challengeUid = req.challengeUid;
     let team = req.team;
 
-    console.log(`In fBFupdateTeam with: ORG: ${ORG}, ENV: ${ENV}, challengeUid: ${challengeUid}`);
+    console.log(`In fBFupdateTeam with: ORG: ${ENV.APP_CONFIG.ORG}, ENV: ${ENV.APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
     return new Promise((resolve, reject) => {
         let activitiesRef = undefined;
-        let dbUsersRef = admin.firestore().collection(ORG).doc(ENV).collection("users");
+        let dbUsersRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("users");
         if (challengeUid && challengeUid != "") {
-            activitiesRef = admin.firestore().collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
+            activitiesRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection(`activities`);
         }
 
         let batch = admin.firestore().batch();
@@ -409,7 +402,7 @@ exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
     return new Promise((resolve, reject) => {
         let activitiesRef = undefined;
         if (challengeUid && challengeUid != "") {
-            activitiesRef = admin.firestore().collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
+            activitiesRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection(`activities`);
         }
 
         let batch = admin.firestore().batch();
@@ -438,7 +431,7 @@ exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
 // Local - non-exported functions
 // ===============================================================
 updateUserWithStrava = ((uid, stravaInfo, deauthorize) => {
-    console.log(`In updateUserWithStrava with: ORG: ${ORG}, ENV: ${ENV}`);
+    console.log(`In updateUserWithStrava with: ORG: ${ENV.APP_CONFIG.ORG}, ENV: ${ENV.APP_CONFIG.ENV}`);
     
     return new Promise((resolve, reject) => {
         let userStravaUpdate = stravaInfo;
@@ -468,7 +461,7 @@ updateUserWithStrava = ((uid, stravaInfo, deauthorize) => {
         }
         console.log(`In updateUserWithStrava with uid ${uid}, userStravaUpdate: ${JSON.stringify(userStravaUpdate, null,2)}`);
 
-        let dbUsersRef = admin.firestore().collection(ORG).doc(ENV).collection("users");
+        let dbUsersRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("users");
 
         dbUsersRef.doc(uid).set(userStravaUpdate, { merge: true }).then(() => {
             console.log("User successfully updated with Strava Info!");
