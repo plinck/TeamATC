@@ -7,32 +7,34 @@ const ENV = require("./FirebaseEnvironment.js");
 const app = express();
 
 app.get('/webhook', (req, res) => {
-    console.log("In Strava webhook get API");
+    return cors(req, res, () => {
+        console.log("In Strava webhook get API");
      // Your verify token. Should be a random string.
-    const VERIFY_TOKEN = "STRAVA";
-    // Parses the query params
-    let mode = req.query['hub.mode'];
-    let token = req.query['hub.verify_token'];
-    let challenge = req.query['hub.challenge'];
-    return res.status(200).json({"hub.challenge":challenge});
+        const VERIFY_TOKEN = "STRAVA";
+        // Parses the query params
+        let mode = req.query['hub.mode'];
+        let token = req.query['hub.verify_token'];
+        let challenge = req.query['hub.challenge'];
+        res.json({"hub.challenge":challenge});
 
-    // Checks if a token and mode is in the query string of the request
-    if (mode && token) {
-        // Verifies that the mode and token sent are valid
-        if (mode === 'subscribe' && token === VERIFY_TOKEN) {     
-        // Responds with the challenge token from the request
-            console.log('WEBHOOK_VERIFIED');
-            //res.json({"hub.challenge":challenge});  
-            return res.status(200).json({"hub.challenge":challenge});
+        // Checks if a token and mode is in the query string of the request
+        if (mode && token) {
+            // Verifies that the mode and token sent are valid
+            if (mode === 'subscribe' && token === VERIFY_TOKEN) {     
+            // Responds with the challenge token from the request
+                console.log('WEBHOOK_VERIFIED');
+                res.json({"hub.challenge":challenge});  
+                //res.status(200).json({"hub.challenge":challenge});
+            } else {
+                // Responds with '403 Forbidden' if verify tokens do not match
+                console.error(`mode !== subscribe and / or token !=  VERIFY_TOKEN`);
+                res.sendStatus(403);      
+            }
         } else {
-            // Responds with '403 Forbidden' if verify tokens do not match
-            console.error(`mode !== subscribe and / or token !=  VERIFY_TOKEN`);
-            return res.sendStatus(403);      
+            console.error(`mode and token not present`);
+            res.sendStatus(404);
         }
-    } else {
-        console.error(`mode and token not present`);
-        return res.sendStatus(404);
-    }
+    });
 });
 
 app.post('/webhook', async (req, res) => {
