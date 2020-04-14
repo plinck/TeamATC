@@ -11,8 +11,6 @@ exports.setEnviromentFromClient = functions.https.onCall((environment, context) 
     console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
     ENV.set(environment.org, environment.env, environment.challengeUid);
     
-    console.log("Running locally since not deployed yet");
-
     console.log(`Saved environment ${ENV.APP_CONFIG.ORG}, ${ENV.APP_CONFIG.ENV}, ${ENV.APP_CONFIG.CHALLENGEUID}`);
     return {message: `Saved environment ${ENV.APP_CONFIG.ORG}, ${ENV.APP_CONFIG.ENV}, ${ENV.APP_CONFIG.CHALLENGEUID}`};
 });
@@ -22,11 +20,11 @@ exports.setEnviromentFromClient = functions.https.onCall((environment, context) 
 const app = express();
 app.get('/stravaauth', async (req, res) => {
     console.log(`called stravaSendAuthorizationRequest with environment ${req}`);
-    const redirectURL = req.query.redirect_uri ? req.query.redirect_uri : config.strava.redirect_uri;
+    const redirectURL = req.query.redirect_uri ? req.query.redirect_uri : ENV.FUNCTIONS_CONFIG.strava.redirect_uri;
     console.log(`redirectURL: ${redirectURL}`)
     
     const params = {
-        client_id: config.strava.client_id,
+        client_id: ENV.FUNCTIONS_CONFIG.strava.client_id,
         redirect_uri: redirectURL,
         response_type: 'code',
         approval_prompt: "auto",
@@ -71,8 +69,8 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
         }
 
         const params = {
-            client_id: config.strava.client_id,
-            client_secret: config.strava.client_secret,
+            client_id: ENV.FUNCTIONS_CONFIG.strava.client_id,
+            client_secret: ENV.FUNCTIONS_CONFIG.strava.client_secret,
             code: code,
             grant_type: "authorization_code"
         };
@@ -129,8 +127,8 @@ exports.stravaRefreshToken = functions.https.onCall((req, res) => {
         }
 
         const params = {
-            client_id: config.strava.client_id,
-            client_secret: config.strava.client_secret,
+            client_id: ENV.FUNCTIONS_CONFIG.strava.client_id,
+            client_secret: ENV.FUNCTIONS_CONFIG.strava.client_secret,
             refresh_token: refresh_token,
             grant_type: "refresh_token"
         };
@@ -187,8 +185,8 @@ exports.stravaDeauthorize = functions.https.onCall((req, res) => {
 
         console.log(`stravaDeauthorize access_token${access_token}, uid:${uid}`);
         const params = {
-            client_id: config.strava.client_id,
-            client_secret: config.strava.client_secret,
+            client_id: ENV.FUNCTIONS_CONFIG.strava.client_id,
+            client_secret: ENV.FUNCTIONS_CONFIG.strava.client_secret,
             access_token: access_token,
         };
 
