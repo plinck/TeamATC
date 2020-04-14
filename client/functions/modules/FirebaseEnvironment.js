@@ -6,7 +6,7 @@ let FUNCTIONS_CONFIG = functions.config().env;
 // This is for running FB functions locally
 if (process.env.NODE_ENV !== 'production') {
   if (fs.existsSync('./.env-strava-config.json')) {
-    const env = require('./.env-strava-config.json');
+    const env = require('../.env-strava-config.json');
     console.log("running functions locally");
     FUNCTIONS_CONFIG = env;
   }

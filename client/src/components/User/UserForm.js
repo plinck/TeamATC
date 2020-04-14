@@ -47,7 +47,7 @@ const styles = theme => ({
     minWidth: 300,
   },
   selectEmpty: {
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing(2),
   },
   root: {
     [theme.breakpoints.up('md')]: {
