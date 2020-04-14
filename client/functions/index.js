@@ -39,6 +39,20 @@ const auth = require('./modules/auth.js');
 exports.authDeleteUser = auth.authDeleteUser;
 exports.authCreateUser = auth.authCreateUser;
 
+// ===============================================================================================
+// Webhooks module functions
+// --------------------------
+// ===============================================================================================
+const webhook = require('./modules/webhook.js');
+exports.webhook = webhook.webhook;
+
+// ===============================================================================================
+// Strava module functions
+// --------------------------
+// I did oauth function using expores since it was the simplest (maybe only) way
+// to do a simple redirect to the strava auth page vs using gets etc,
+// ===============================================================================================
+
 exports.fBFupdateTeam = functions.https.onCall((req, res) => {
     console.log(`In fBFupdateTeam with: req ${JSON.stringify(req)}`);
 
