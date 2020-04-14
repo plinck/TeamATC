@@ -2,9 +2,6 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
-const axios = require('axios');
-const cors = require('cors')({origin: true});
-const express = require('express');
 const ENV = require("./modules/FirebaseEnvironment.js");
 
 exports.setEnviromentFromClient = functions.https.onCall((environment, context) => {
@@ -39,8 +36,8 @@ exports.testFunctions = functions.https.onCall((req, res) => {
 // firebase auth user stuff
 // ===============================================================================================
 const auth = require('./modules/auth.js');
-exports.fBFdeleteAuthUser = auth.fBFdeleteAuthUser;
-exports.fBFcreateAuthUser = auth.fBFcreateAuthUser;
+exports.authDeleteUser = auth.authDeleteUser;
+exports.authCreateUser = auth.authCreateUser;
 
 exports.fBFupdateTeam = functions.https.onCall((req, res) => {
     console.log(`In fBFupdateTeam with: req ${JSON.stringify(req)}`);
