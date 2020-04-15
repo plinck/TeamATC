@@ -1,4 +1,5 @@
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
 const axios = require('axios');
 const cors = require('cors')({origin: true});
 const express = require('express');
@@ -9,6 +10,7 @@ app.get('/stravaauth', async (req, res) => {
     console.log(`called stravaSendAuthorizationRequest with environment ${req}`);
     const redirectURL = req.query.redirect_uri ? req.query.redirect_uri : ENV.FUNCTIONS_CONFIG.strava.redirect_uri;
     console.log(`redirectURL: ${redirectURL}`)
+    console.log(`client_id: ${ENV.FUNCTIONS_CONFIG.strava.client_id}`)
     
     const params = {
         client_id: ENV.FUNCTIONS_CONFIG.strava.client_id,
