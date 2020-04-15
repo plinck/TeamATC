@@ -7,7 +7,7 @@ import { withRouter } from 'react-router-dom';
 
 import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
 
-class SampleClassGraphCard extends React.Component {
+class stravangrokClassGraphCard extends React.Component {
             
     plotGraph() {
         let trace1 = {
@@ -72,4 +72,4 @@ class SampleClassGraphCard extends React.Component {
     }
 }
 
-export default withRouter(withAuthUserContext(SampleClassGraphCard));
+export default withRouter(withAuthUserContext(stravangrokClassGraphCard));

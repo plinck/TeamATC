@@ -7,7 +7,7 @@ import { withRouter } from 'react-router-dom';
 
 import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
 
-class SampleClassPieChart extends React.Component {
+class stravangrokClassPieChart extends React.Component {
             
     plotGraph() {
 
@@ -106,4 +106,4 @@ class SampleClassPieChart extends React.Component {
     }
 }
 
-export default withRouter(withAuthUserContext(SampleClassPieChart));
+export default withRouter(withAuthUserContext(stravangrokClassPieChart));
