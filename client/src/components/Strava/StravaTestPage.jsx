@@ -115,6 +115,19 @@ const StravaTestPage = (props) => {
             setMessage(`getStravaActivities: user info not ready, try again in a few minutes ...`);
         }
     }
+    const sendStravaSubscribeRequest = () => {
+        if (props.user.uid && props.user.stravaAccessToken) {
+            StravaAPI.sendStravaSubscribeRequest().then( data => {
+                setMessage(`StravaAPI.sendStravaSubscribeRequest Successful`);    
+            }).catch (err => {
+                console.error(`StravaAPI.sendStravaSubscribeRequest: error ${err}`);
+                setMessage(`StravaAPI.sendStravaSubscribeRequest: error ${err}`);    
+            });
+        } else {
+            console.error(`sendStravaSubscribeRequest: user info not ready, try again in a few minutes ...`);
+            setMessage(`sendStravaSubscribeRequest: user info not ready, try again in a few minutes ...`);
+        }
+    }
 
     return (
         <div className={classes.root}>
@@ -168,6 +181,17 @@ const StravaTestPage = (props) => {
                         onClick={getStravaActivities}
                         >
                         Get Activities
+                    </Button>
+                </Grid>
+                <br></br>
+                <Grid align="center">
+                    <Button style={{justifyContent: 'center'}}
+                        variant="contained"
+                        color="primary"
+                        startIcon={<CachedIcon />}
+                        onClick={sendStravaSubscribeRequest}
+                        >
+                        Subscribe Webhooks
                     </Button>
                 </Grid>
             

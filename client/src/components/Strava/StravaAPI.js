@@ -1,3 +1,4 @@
+import axios from "axios";
 import Util from "../Util/Util";
 import { FB_CONFIG, STRAVA_CONFIG } from "../Environment/Environment.js"
 
@@ -15,6 +16,26 @@ class StravaAPI {
         }
 
         window.location.replace(URIRequest);
+    }
+
+    static sendStravaSubscribeRequest(callbackUrl) {
+        return new Promise((resolve, reject) => {
+            let URIRequest = undefined;
+            if (callbackUrl) {
+                URIRequest=`https://us-central1-${FB_CONFIG.PROJECT_ID}.cloudfunctions.net/webhook/subscribe?callback_url=${callbackUrl}`;
+            } else {
+                URIRequest=`https://us-central1-${FB_CONFIG.PROJECT_ID}.cloudfunctions.net/webhook/subscribe`;        
+            }
+
+            axios.get(URIRequest).then((res) => {
+                console.log("Successfully sent strava token request.  response info");
+                console.log(res);  
+                resolve("Success");
+            }).catch ((err) => {
+                console.error(`Error Caught in /subscribe server request: ${err}`);
+                reject(`Error Caught in /subscribe server request: ${err}`);
+            });
+        });
     }
 
     static getOAuthToken(uid, code) {

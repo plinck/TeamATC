@@ -26,6 +26,11 @@ class Firebase {
       if (!this.firebaseInialized) {
         firebase.initializeApp(firebaseConfig);
         this.firebaseInialized = true;
+        if (FB_CONFIG.RUN_FUNCTIONS_LOCALLY === "local") {
+          console.log("Using local FB Functions");
+          firebase.functions().useFunctionsEmulator('http://localhost:5001');
+        }
+
       }
     } catch (err) {
       // we skip the "already exists" message which is
