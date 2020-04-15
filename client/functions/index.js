@@ -44,7 +44,7 @@ exports.authCreateUser = auth.authCreateUser;
 // --------------------------
 // ===============================================================================================
 const webhook = require('./modules/webhook.js');
-exports.webhook = webhook.webhook;
+exports.webhook = webhook.strava;
 
 // ===============================================================================================
 // Strava module functions

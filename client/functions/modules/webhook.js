@@ -6,7 +6,7 @@ const ENV = require("./FirebaseEnvironment.js");
 
 const app = express();
 
-app.get('/webhook', (req, res) => {
+app.get('/strava', (req, res) => {
     return cors(req, res, () => {
         console.log("In Strava webhook get API");
      // Your verify token. Should be a random string.
@@ -15,7 +15,6 @@ app.get('/webhook', (req, res) => {
         let mode = req.query['hub.mode'];
         let token = req.query['hub.verify_token'];
         let challenge = req.query['hub.challenge'];
-        res.json({"hub.challenge":challenge});
 
         // Checks if a token and mode is in the query string of the request
         if (mode && token) {
@@ -23,21 +22,20 @@ app.get('/webhook', (req, res) => {
             if (mode === 'subscribe' && token === VERIFY_TOKEN) {     
             // Responds with the challenge token from the request
                 console.log('WEBHOOK_VERIFIED');
-                res.json({"hub.challenge":challenge});  
-                //res.status(200).json({"hub.challenge":challenge});
+                res.status(200).json({"hub.challenge":challenge});
             } else {
                 // Responds with '403 Forbidden' if verify tokens do not match
                 console.error(`mode !== subscribe and / or token !=  VERIFY_TOKEN`);
-                res.sendStatus(403);      
+                res.sendStatus(403).json({"Error" : "mode !== subscribe and / or token !=  VERIFY_TOKEN"});      
             }
         } else {
             console.error(`mode and token not present`);
-            res.sendStatus(404);
+            res.sendStatus(404).json({"Error" : "mode and token not presen"});;
         }
     });
 });
 
-app.post('/webhook', async (req, res) => {
+app.post('/strava', async (req, res) => {
   const event = req.body;
   console.log('[STRAVA] Event ' + event.aspect_type + ': ' + event.object_type + ' (' + event.object_id + ') for ' + event.owner_id + ' (updates: ' + JSON.stringify(event.updates) + ' @ ' + event.event_time);
   // await admin.firestore().collection('events').add(event);
@@ -76,4 +74,4 @@ app.get('/subscribe', async (req, res) => {
         });
     });
 });
-exports.webhook = functions.https.onRequest(app);
+exports.strava = functions.https.onRequest(app);
