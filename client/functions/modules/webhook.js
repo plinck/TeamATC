@@ -3,6 +3,7 @@ const request = require('request');
 const cors = require('cors')({origin: true});
 const express = require('express');
 const ENV = require("./FirebaseEnvironment.js");
+const events = require("./events");
 
 const app = express();
 
@@ -37,7 +38,8 @@ app.get('/strava', (req, res) => {
 app.post('/strava', async (req, res) => {
   const event = req.body;
   console.log('[STRAVA] Event ' + event.aspect_type + ': ' + event.object_type + ' (' + event.object_id + ') for ' + event.owner_id + ' (updates: ' + JSON.stringify(event.updates) + ' @ ' + event.event_time);
-  // await admin.firestore().collection('events').add(event);
+  // save event as activity
+  events.saveStravaEvent(event);
 
   return res.status(200).json({ success: true });
 });

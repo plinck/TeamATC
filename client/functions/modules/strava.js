@@ -4,6 +4,8 @@ const axios = require('axios');
 const cors = require('cors')({origin: true});
 const express = require('express');
 const ENV = require("./FirebaseEnvironment.js");
+const uus = require("./updateUserWithStrava");
+const updateUserWithStrava = uus.updateUserWithStrava;
 
 const app = express();
 app.get('/stravaauth', async (req, res) => {
@@ -279,52 +281,4 @@ exports.stravaGetActivities = functions.https.onCall((req, context) => {
             reject(`stravaGetActivities failed -- ${err}`); 
         });
     });
-});
-
-// ===============================================================
-// Local - non-exported functions
-// ===============================================================
-updateUserWithStrava = ((uid, stravaInfo, deauthorize) => {
-    console.log(`In updateUserWithStrava with: ORG: ${ENV.APP_CONFIG.ORG}, ENV: ${ENV.APP_CONFIG.ENV}`);
-    
-    return new Promise((resolve, reject) => {
-        let userStravaUpdate = stravaInfo;
-        // convert UTC EPOCH date (seconds since epoch) to JS Date
-        let expiresAt = stravaInfo.expires_at  && stravaInfo.expires_at !== null ? new Date(stravaInfo.expires_at * 1000) : null;
-
-        if (deauthorize) {
-            userStravaUpdate = {
-                stravaAthleteId : null,
-                stravaUserAuth : false,
-                stravaRefreshToken: null,
-                stravaAccessToken: null,
-                stravaExpiresAt: null
-            }
-        } else {
-            userStravaUpdate = {
-                stravaUserAuth : true,
-                stravaRefreshToken: stravaInfo.refresh_token ? stravaInfo.refresh_token : null,
-                stravaAccessToken: stravaInfo.access_token ? stravaInfo.access_token : null,
-                stravaExpiresAt: expiresAt,
-            }
-            // Dont include athlete ID if it isnt passed so not to overrwrite (e.g. on tokenRefresh)
-            if (stravaInfo.athleteId) {
-                userStravaUpdate.stravaAthleteId = stravaInfo.athleteId;
-            }
-
-        }
-        console.log(`In updateUserWithStrava with uid ${uid}, userStravaUpdate: ${JSON.stringify(userStravaUpdate, null,2)}`);
-
-        let dbUsersRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("users");
-
-        dbUsersRef.doc(uid).set(userStravaUpdate, { merge: true }).then(() => {
-            console.log("User successfully updated with Strava Info!");
-            resolve();
-        }).catch((err) =>{
-            console.error("Batch failed: ", err);
-            reject(err);
-        });
-
-    }); // Promise
-    
 });
