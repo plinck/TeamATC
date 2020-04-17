@@ -25,8 +25,8 @@ exports.saveStravaEvent = (async (event) => {
     let dbUsersRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("users");
 
     let foundUser = false;
-    dbUsersRef.where("stravaAthleteId", "==", stravaAthleteId).limit(1).get().then(async (snapshot) => {
-        snapshot.foreach (doc => {
+    dbUsersRef.where("stravaAthleteId", "==", stravaAthleteId).limit(1).get().then(async (querySnapshot) => {
+        querySnapshot.forEach(doc => {
             foundUser = true;
             let user = doc.data();
             user.id = doc.id;
