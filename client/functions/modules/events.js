@@ -25,10 +25,11 @@ exports.saveStravaEvent = (async (event) => {
     let dbUsersRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("users");
 
     let foundUser = false;
+    let user = {};
     dbUsersRef.where("stravaAthleteId", "==", stravaAthleteId).limit(1).get().then(async (querySnapshot) => {
         querySnapshot.forEach(doc => {
             foundUser = true;
-            let user = doc.data();
+            user = doc.data();
             user.id = doc.id;
             user.stravaExpiresAt = user.stravaExpiresAt ? user.stravaExpiresAt.toDate() : null;
             console.log(`Found User with Athlete Id ${stravaAthleteId}, displayName: ${user.displayName}`);
@@ -46,16 +47,17 @@ exports.saveStravaEvent = (async (event) => {
                 stravaAccessToken = user.stravaAccessToken;
             }
             // get the activity
+            console.log(`stravaAccessToken: ${stravaAccessToken}`);
             if (stravaAccessToken) {
                 const URIRequest = `https://www.strava.com/api/v3/activities/${stravaActivityId}`;
-                try {
-                    const activity = await axios.get(URIRequest,
-                        { headers: { 'Authorization': `Bearer ${stravaAccessToken}` } }
-                    );          
-                    console.log(`activity from Strava: ${JSON.stringify(activity, null, 4)}`);
-                } catch (err) {
-                    console.error(`Error getting activity from strava`); 
-                }
+                console.log(`URIRequest: ${URIRequest}`);
+                axios.get(URIRequest,
+                    { headers: { 'Authorization': `Bearer ${stravaAccessToken}` } }
+                ).then((res) => {
+                    console.log(`activity from Strava: ${JSON.stringify(res.data, null, 4)}`);
+                }).catch (err => {
+                    console.error(`Error getting activity from strava, err ${err}`); 
+                });
             } else {
                 console.error(`Invalid access_token for user:${user.displayName}`); 
             }
