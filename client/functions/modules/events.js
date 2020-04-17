@@ -13,8 +13,10 @@ exports.saveStravaEvent = (async (event) => {
 
     // make sure its an activity create event
     if (event.aspect_type !== "create" || event.object_type !== "activity") {
+        console.log(`In saveStravaEvent -- aspect_type and object_type is NOT new activity`);
         return;
     }
+    console.log(`In saveStravaEvent -- found new activity`);
     let stravaAthleteId = event.owner_id;
     let stravaActivityId = event.object_id;
     // convert UTC EPOCH date (seconds since epoch) to JS Date
@@ -23,8 +25,8 @@ exports.saveStravaEvent = (async (event) => {
     let dbUsersRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("users");
 
     let foundUser = false;
-    dbUsersRef.where("stravaAthleteId", "==", stravaAthleteId).limit(1).get().then(async (snapshop) => {
-        snapshow.foreach (doc => {
+    dbUsersRef.where("stravaAthleteId", "==", stravaAthleteId).limit(1).get().then(async (snapshot) => {
+        snapshot.foreach (doc => {
             foundUser = true;
             let user = doc.data();
             user.id = doc.id;
