@@ -1,6 +1,7 @@
 import Firebase from "../Auth/Firebase/Firebase.js";
 import Session from "../Util/Session.js";
-
+import { ORG } from "../Environment/Environment";
+  
 // ================================================================================================
 // CLOUD STORAGE CALLS
 // ================================================================================================
@@ -13,7 +14,7 @@ class Photo {
             const uid = Session.user.id;
             const fb = new Firebase();
 
-            let folderRef = fb.storage.ref(`/ATC/${uid}/${uploadTag}`);
+            let folderRef = fb.storage.ref(`/${ORG}/${uid}/${uploadTag}`);
             // Create a unique file name
             const fileName = (+new Date()) + "-" + file.name;
             let photoObj = {};
