@@ -11,16 +11,16 @@ import IconButton from '@material-ui/core/IconButton';
 import UserAuthAPI from "../../User/UserAuthAPI";
 import UserDB from "../../User/UserDB";
 import MemberDB from "../../User/MemberDB";
+import { ORG } from "../../Environment/Environment"
 
 // TODO: Remove input props once materialize is removed.
-
 const styles = theme => ({
     root: {
         [theme.breakpoints.up('md')]: {
             height: "calc(100vh - 64px)",
             marginTop: "-31px"
         },
-        background: 'url(/images/ATC-repeating-background.png) center center fixed',
+        background: `url(/images/${ORG}/repeating-background.png) center center fixed`,
         backgroundSize: "cover",
         height: 'calc(100vh - 65px)',
         overflow: "hidden"

@@ -3,6 +3,7 @@ import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Container, makeStyles, Typography, Grid } from '@material-ui/core';
 import queryString from 'query-string'
 import StravaAPI from "./StravaAPI.js"
+import { ORG } from "../Environment/Environment"
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -10,7 +11,7 @@ const useStyles = makeStyles(theme => ({
             marginLeft: "57px",
             height: "calc(100vh - 95px)"
         },
-        background: 'url(/images/ATC-repeating-background.png) center center fixed',
+        background: `url(/images/${ORG}/repeating-background.png) center center fixed`,
         backgroundSize: "cover",
         height: 'calc(100vh - 65px)',
         overflow: "hidden"

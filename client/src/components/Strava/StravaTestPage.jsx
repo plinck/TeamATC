@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import CachedIcon from '@material-ui/icons/Cached';
 import HistoryIcon from '@material-ui/icons/History';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { ORG } from "../Environment/Environment"
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -14,7 +15,7 @@ const useStyles = makeStyles(theme => ({
             marginLeft: "57px",
             height: "calc(100vh - 95px)"
         },
-        background: 'url(/images/ATC-repeating-background.png) center center fixed',
+        background: `url(/images/${ORG}/repeating-background.png) center center fixed`,
         backgroundSize: "cover",
         height: 'calc(100vh - 65px)',
         overflow: "hidden"

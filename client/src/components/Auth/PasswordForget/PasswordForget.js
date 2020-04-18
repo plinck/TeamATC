@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 
 import { withFirebase } from '../Firebase/FirebaseContext';
 import { Container, Card, CardContent, Typography, Grid } from '@material-ui/core';
+import { ORG } from "../../Environment/Environment.js"
 
 const PasswordForgetPage = () => (
   <div>
@@ -19,7 +20,7 @@ const styles = theme => ({
       height: "calc(100vh - 64px)",
       marginTop: "-31px"
     },
-    background: 'url(/images/ATC-repeating-background.png) center center fixed',
+    background: `url(/images/${ORG}/repeating-background.png) center center fixed`,
     backgroundSize: "cover",
     height: 'calc(100vh - 65px)',
     overflow: "hidden"

@@ -6,6 +6,7 @@ import TeamForm from './TeamForm';
 import Team from "./Team"
 import UserDB from "../User/UserDB.js"
 import TeamMembersModal from './TeamMembersModal';
+import { ORG } from "../Environment/Environment"
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -13,7 +14,7 @@ const useStyles = makeStyles(theme => ({
             marginLeft: "57px",
             height: "calc(100vh - 95px)"
         },
-        background: 'url(/images/ATC-repeating-background.png) center center fixed',
+        background: `url(/images/${ORG}/repeating-background.png) center center fixed`,
         backgroundSize: "cover",
         height: 'calc(100vh - 65px)',
         overflow: "hidden"

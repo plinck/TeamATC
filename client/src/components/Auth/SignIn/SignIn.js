@@ -14,6 +14,7 @@ import { withRouter } from 'react-router-dom';
 import { withFirebase } from '../Firebase/FirebaseContext';
 import AuthUserContext from '../Session/AuthUserContext';
 import UserDB from "../../User/UserDB.js";
+import { ORG } from "../../Environment/Environment"
 
 const INITIAL_STATE = {
     email: '',
@@ -28,7 +29,7 @@ const styles = theme => ({
             height: "calc(100vh - 64px)",
             marginTop: "-31px"
         },
-        background: 'url(/images/ATC-repeating-background.png) center center fixed',
+        background: `url(/images/${ORG}/repeating-background.png) center center fixed`,
         backgroundSize: "cover",
         height: 'calc(100vh - 65px)',
         overflow: "hidden"
@@ -53,7 +54,7 @@ const styles = theme => ({
     background: {
         height: 'calc(100vh - 64px)',
         backgroundSize: "cover",
-        background: 'url(/images/ATC-repeating-background.png) center center fixed'
+        background: `url(/images/${ORG}/repeating-background.png) center center fixed`,
     }
 });
 
