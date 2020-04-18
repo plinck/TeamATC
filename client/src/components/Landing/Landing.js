@@ -11,13 +11,13 @@ const useStyles = makeStyles(theme => ({
     container: {
         height: '95vh',
         marginTop: "-31px",
-        backgroundImage: 'url(/images/landingPageBackground2.jpg)',
+        backgroundImage: `url(/images/${ORG}/landingPageBackground.jpg)`,
         backgroundSize: "cover",
         [theme.breakpoints.down('md')]: {
             backgroundPositionX: "54%"
         },
         [theme.breakpoints.down('sm')]: {
-            background: 'linear-gradient(to bottom, rgba(255, 255, 255, 1.8) 3%, rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0.65) 100%), url(/images/landingPageBackground2.jpg)',
+            background: `linear-gradient(to bottom, rgba(255, 255, 255, 1.8) 3%, rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0.65) 100%), url(/images/${ORG}/landingPageBackground.jpg)`,
             backgroundPositionX: "54%"
         }
     },
@@ -61,8 +61,8 @@ const Landing = (props) => {
                     spacing={3}
                 >
                     <Grid item xs={12} md={5}>
-                        <Typography variant="h3">The Atlanta Triathlon Club Team Challenge</Typography>
-                        <Typography variant="h6">The Team ATC Challenge Web App lets you track your workout activities, manage your team and score, and keep an eye on the challenge leaderboards – all in real time. </Typography>
+                        <Typography variant="h3">{`The ${ORG} Club Team Challenge`}</Typography>
+                        <Typography variant="h6">The Team ${ORG} Challenge Web App lets you track your workout activities, manage your team and score, and keep an eye on the challenge leaderboards – all in real time. </Typography>
                         <div style={{ textAlign: "center" }}>
                             <Button onClick={() => handleClick("/signin")} className={classes.homeButton} variant="contained" color="primary">Login</Button>
                             <Button onClick={() => handleClick("/register")} className={classes.homeButton} variant='contained'>Sign Up</Button>
