@@ -3,7 +3,7 @@ const axios = require('axios');
 const ENV = require("./FirebaseEnvironment.js");
 const rt = require("./refreshToken");
 const refreshToken = rt.refreshToken;
-
+const { addStravaActivity } = require("./addStravaActivity");
 // ===============================================================
 // 
 // ===============================================================
@@ -54,7 +54,14 @@ exports.saveStravaEvent = (async (event) => {
                 axios.get(URIRequest,
                     { headers: { 'Authorization': `Bearer ${stravaAccessToken}` } }
                 ).then((res) => {
-                    console.log(`activity from Strava: ${JSON.stringify(res.data, null, 4)}`);
+                    // console.log(`activity from Strava: ${JSON.stringify(res.data, null, 4)}`);
+                    console.log(`Success retrieving activity from Strava`);
+                    //Now add the activity to DB
+                    addStravaActivity(user, res.data).then(res => {
+                        console.log(`Activity added to firestore successful`);
+                    }).catch(err => {
+                        console.error(`Error adding activity to firestore err:${err}`);                      
+                    })
                 }).catch (err => {
                     console.error(`Error getting activity from strava, err ${err}`); 
                 });
