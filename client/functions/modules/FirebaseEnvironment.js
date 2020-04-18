@@ -15,8 +15,8 @@ if (process.env.NODE_ENV !== 'production') {
 */
 
 let APP_CONFIG = {
-    ORG : FUNCTIONS_CONFIG.app.org,
-    ENV : FUNCTIONS_CONFIG.app.env,
+    ORG : functions.config().env.app.org,
+    ENV : functions.config().env.app.env,
     CHALLENGEUID : ""    
 }
 
