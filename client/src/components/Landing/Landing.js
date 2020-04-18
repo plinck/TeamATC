@@ -62,7 +62,7 @@ const Landing = (props) => {
                 >
                     <Grid item xs={12} md={5}>
                         <Typography variant="h3">{`The ${ORG} Club Team Challenge`}</Typography>
-                        <Typography variant="h6">The Team ${ORG} Challenge Web App lets you track your workout activities, manage your team and score, and keep an eye on the challenge leaderboards – all in real time. </Typography>
+                        <Typography variant="h6">{`The Team ${ORG} Challenge Web App lets you track your workout activities, manage your team and score, and keep an eye on the challenge leaderboards – all in real time.`} </Typography>
                         <div style={{ textAlign: "center" }}>
                             <Button onClick={() => handleClick("/signin")} className={classes.homeButton} variant="contained" color="primary">Login</Button>
                             <Button onClick={() => handleClick("/register")} className={classes.homeButton} variant='contained'>Sign Up</Button>
