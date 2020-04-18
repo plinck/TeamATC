@@ -17,6 +17,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import TimerIcon from '@material-ui/icons/Timer';
 import MailIcon from '@material-ui/icons/Mail';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
+import { ORG } from "../../Environment/Environment";
 
 const drawerWidth = 240;
 
@@ -103,7 +104,7 @@ export default function MiniDrawer(props) {
             >
                 <div className={classes.toolbar}>
                     <Link style={{ textDecoration: "none", color: "white" }} to="/">
-                        <img className="logo" src="../images/logo.png" alt="TeamATC Challenge Logo" />
+                        <img className="logo" src={`../images/${ORG}/logo.png`} alt="TeamATC Challenge Logo" />
                         <span style={{ display: "inline", verticalAlign: "super", marginLeft: "17px" }}><Typography style={{ display: "inline", verticalAlign: "super" }} variant="h4">TeamATC</Typography></span>
                     </Link>
                 </div>

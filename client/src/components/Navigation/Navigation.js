@@ -20,6 +20,7 @@ import TimerIcon from '@material-ui/icons/Timer';
 import AddIcon from '@material-ui/icons/Add';
 import MailIcon from '@material-ui/icons/Mail';
 import PeopleIcon from '@material-ui/icons/People';
+import { ORG } from "../Environment/Environment.js"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -210,7 +211,7 @@ let Navigation = (props) => {
 
             <Typography variant="h4" className={props.user.authUser ? classes.title : classes.nonAuthTitle}>
               <Link style={{ textDecoration: "none", color: "white" }} to="/">
-                <img className="logo" src="../images/logo.png" alt="TeamATC Challenge Logo" /> <span className={classes.titleText}>{name}</span>
+                <img className="logo" src={`../images/${ORG}/logo.png`} alt="Challenge Logo" /> <span className={classes.titleText}>{name}</span>
               </Link>
             </Typography>
 

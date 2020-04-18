@@ -5,6 +5,7 @@ import { Redirect } from 'react-router';
 import { useHistory } from "react-router-dom";
 import { Container, Button, Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { ORG } from "../Environment/Environment.js"
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -76,7 +77,7 @@ const Landing = (props) => {
                     <Grid container
                         justify="space-between">
                         <Grid item>
-                            <img alt="banner logo" style={{ maxWidth: '100%' }} src="../images/ATC-Banner-2016.png" />
+                            <img alt="banner logo" style={{ maxWidth: '100%' }} src={`../images/${ORG}/LandingBanner.png`} />
                         </Grid>
                         <Grid item>
                             <Typography variant="body1" style={{ fontSize: "12px" }}>
