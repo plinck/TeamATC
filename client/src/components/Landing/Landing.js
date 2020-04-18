@@ -81,7 +81,7 @@ const Landing = (props) => {
                         </Grid>
                         <Grid item>
                             <Typography variant="body1" style={{ fontSize: "12px" }}>
-                                Copyright © TeamATC {new Date().getFullYear()}
+                                Copyright © Multisports Technologies, LLC {new Date().getFullYear()}
                             </Typography>
                         </Grid>
                     </Grid>

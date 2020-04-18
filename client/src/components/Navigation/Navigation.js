@@ -82,7 +82,7 @@ const useStyles = makeStyles(theme => ({
 
 let Navigation = (props) => {
   const classes = useStyles();
-  let name = 'TeamATC Challenge';
+  let name = `${ORG} Club Challenge`;
 
   const [state, setState] = React.useState({
     left: false,

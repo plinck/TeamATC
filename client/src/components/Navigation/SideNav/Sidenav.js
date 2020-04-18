@@ -104,8 +104,8 @@ export default function MiniDrawer(props) {
             >
                 <div className={classes.toolbar}>
                     <Link style={{ textDecoration: "none", color: "white" }} to="/">
-                        <img className="logo" src={`../images/${ORG}/logo.png`} alt="TeamATC Challenge Logo" />
-                        <span style={{ display: "inline", verticalAlign: "super", marginLeft: "17px" }}><Typography style={{ display: "inline", verticalAlign: "super" }} variant="h4">TeamATC</Typography></span>
+                        <img className="logo" src={`../images/${ORG}/logo.png`} alt="Club Challenge Logo" />
+                        <span style={{ display: "inline", verticalAlign: "super", marginLeft: "17px" }}><Typography style={{ display: "inline", verticalAlign: "super" }} variant="h4">{`Team${ORG}`}</Typography></span>
                     </Link>
                 </div>
                 <Divider />
