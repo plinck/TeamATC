@@ -165,7 +165,7 @@ async function createUsersFromGoogleActivities(fileToUpload) {
     const dbTeamsRef = dbALLRefs.dbTeamsRef
     const dbATCMembersRef = dbALLRefs.dbATCMembersRef
     
-    // First Read and Parse All from ATC CSV file to grab participating users
+    // First Read and Parse All from CSV file to grab participating users
     if (!fileToUpload) {
         fileToUpload = "ATCActivities.csv";
     }
@@ -300,7 +300,7 @@ async function uploadATCMembers(fileToUpload) {
     if (!fileToUpload) {
         fileToUpload = "ATCMembers.csv";
     }
-    console.log(`Uploading ATC users from ${fileToUpload}`);
+    console.log(`Uploading users from ${fileToUpload}`);
 
     // read  the file and parse
     let ATCMembers = [];

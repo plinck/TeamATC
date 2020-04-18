@@ -127,7 +127,7 @@ class Register extends React.Component {
                 this.setState({ message: `Error adding user ${err}` });
             });
         }).catch(_ => {
-            const message = <div>Can not register - Not a valid ATC Member <a href="mailto:info@atlantatriclub.com">Contact Support</a></div>
+            const message = <div>Can not register - Not a valid Member <a href="mailto:info@atlantatriclub.com">Contact Support</a></div>
             this.setState({ message: message });
         });
     }
@@ -147,7 +147,7 @@ class Register extends React.Component {
                                 <CardContent>
                                     {this.state.message ? <Typography variant="subtitle1"><Box fontWeight="fontWeightLight" color="warning.main" fontStyle="oblique">{this.state.message}</Box></Typography> : ""}
                                     <Typography variant="h5">Register Now</Typography>
-                                    <Typography variant="subtitle1"><Box fontWeight="fontWeightLight" color="info.main" fontStyle="oblique">Use your ATC Member Email to register</Box></Typography>
+                                    <Typography variant="subtitle1"><Box fontWeight="fontWeightLight" color="info.main" fontStyle="oblique">Use your Membership Email to register</Box></Typography>
 
                                     <TextField
                                         id="firstName"

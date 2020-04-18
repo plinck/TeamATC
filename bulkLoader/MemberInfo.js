@@ -139,7 +139,7 @@ class MemberInfo {
         let nbrATCMembers = 0;
         let ATCMembers = [];
 
-        // Get the ATC Members
+        // Get the  Members
         try {
             let allATCMembersSnapshot = await Util.getBaseDBRefs().dbATCMembersRef.get();
             allATCMembersSnapshot.forEach(doc => {
@@ -153,7 +153,7 @@ class MemberInfo {
             return ATCMembers;
         }
         catch (err) {
-            console.error(`Error getting ATC Users: ${err}`);
+            console.error(`Error getting Members: ${err}`);
             return [];
         }
     }
@@ -176,7 +176,7 @@ class MemberInfo {
             return teams;
         }
         catch (err) {
-            console.error(`Error getting ATC Teams: ${err}`);
+            console.error(`Error getting Teams: ${err}`);
             return [];
         }
     }

@@ -17,7 +17,7 @@ class Activities {
             let dateString = activityFieldsArray[2].trim();
             let activityDateTime = new Date(dateString);
 
-            // Fix the name to get proper firstname lastname to match ATC Database
+            // Fix the name to get proper firstname lastname to match Database
             let fullName = MemberInfo.getName(activityFieldsArray[1]);
             let firstName = fullName.firstName;
             let lastName = fullName.lastName;
@@ -41,7 +41,7 @@ class Activities {
                 }
             });
             if (!_foundMember) {
-                console.log(`Error in activity for member: ${firstName} ${lastName}, no valid ATC Member found in record: ${line}`);
+                console.log(`Error in activity for member: ${firstName} ${lastName}, no valid Member found in record: ${line}`);
                 totalBadAtivities += 1;
                 return false;
             }
@@ -55,7 +55,7 @@ class Activities {
             });
             if (!_foundTeam) {
                 totalBadAtivities += 1;
-                console.log(`Error in activity for member: ${displayName} on Team: ${teamName} , no valid ATC Team with that name found`)
+                console.log(`Error in activity for member: ${displayName} on Team: ${teamName} , no valid Team with that name found`)
                 return false;
             }
 

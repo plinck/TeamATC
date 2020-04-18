@@ -1,4 +1,4 @@
-# Team ATC Challenge
+# Club Challenge
 
 ## Overview
 
