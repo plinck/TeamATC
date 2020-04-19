@@ -9,22 +9,31 @@ const addStravaActivity = ((user, stravaActivity) => {
 
     let stavaActivityDistanceUnits = "Miles";
     let stavaActivityDistance = 0.0;
+    let stravaActivityType = "";
     if (stravaActivity.type.toLowerCase() === "swim") {
+        stravaActivityType = "Swim";
         stavaActivityDistanceUnits = "Yards";
         //convert meters to yards
         stavaActivityDistance = stravaActivity.distance * 1.09361;
-    } else {
+    } else if (stravaActivity.type.toLowerCase() === "ride") {
+        stravaActivityType = "Bike";
         // meters to miles
         stavaActivityDistance = stravaActivity.distance * 1.09361 / 1760;   
+    } else if (stravaActivity.type.toLowerCase() === "run") {
+        stravaActivityType = "Run";
+        stavaActivityDistance = stravaActivity.distance * 1.09361 / 1760;   
+    } else {
+        stravaActivityType = "Other";
+        stavaActivityDistance = stravaActivity.distance * 1.09361 / 1760;   
     }
-    
+
     return new Promise((resolve, reject) => {
         let activity = {
             teamName: user.teamName ? user.teamName : "",
             teamUid: user.teamUid ? user.teamUid : null,
             activityName: stravaActivity.name,
             activityDateTime: new Date(stravaActivity.start_date),
-            activityType: stravaActivity.type,
+            activityType: stravaActivityType,
             distance: stavaActivityDistance,
             distanceUnits: stavaActivityDistanceUnits,
             duration: stravaActivity.elapsed_time / 3600,

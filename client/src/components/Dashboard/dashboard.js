@@ -134,9 +134,9 @@ class Dashboard extends React.PureComponent {
             console.error(`Error attaching listener: ${error}`);
         });
     }
-    fetchData(uid) {
+    fetchData(challengeId) {
         ChallengeDB.getFiltered().then(challenges => {
-            let currentChallenge = challenges.filter(challenge => challenge.id === uid)
+            let currentChallenge = challenges.filter(challenge => challenge.id === challengeId)
             this.setState({ challenge: currentChallenge[0] })
         })
             .catch(err => console.log(err));
@@ -237,11 +237,12 @@ class Dashboard extends React.PureComponent {
                             {this.state.challenge && this.state.challenge.startCity ?
                                 <div key="11" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 12, h: 12, x: 0, y: 0, minW: 6, minH: 11, maxW: 12, maxH: 18 }}>
                                     <GoogleMap
+                                        challenge={this.state.challenge}
                                         title={this.state.challenge.name}
                                         start={this.state.challenge.startCity}
                                         end={this.state.challenge.endCity}
                                         waypoints={this.state.challenge.waypoints}
-                                        teamTotals={this.state.totals.teamR}
+                                        teamResults={this.state.totals.teamR}
                                         endDate={this.state.challenge.endDate}
                                         callbackParent={() => this.onChildChanged()} />
                                 </div> : <></>}
