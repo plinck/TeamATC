@@ -244,8 +244,8 @@ const ChallengeForm = (props) => {
                     <Divider />
                     <br />
                     <Typography variant="h5">Create Route (Not Required)</Typography>
-                    <LocationSearchBar title="Start City" id="startCity" handleStartCityChange={handleStartCityChange} />
-                    <LocationSearchBar title="End City" id="endCity" handleStartCityChange={handleEndCityChange} />
+                    <LocationSearchBar value={challenge.startCity} title="Start City" id="startCity"  handleStartCityChange={handleStartCityChange} />
+                    <LocationSearchBar value={challenge.endCity} title="End City" id="endCity" handleStartCityChange={handleEndCityChange} />
                     <Waypoints handleAddWaypoint={handleAddWaypoint} handleDelete={handleDelete} waypoints={challenge.waypoints} />
                 </form>
             </CardContent>

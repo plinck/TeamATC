@@ -68,6 +68,7 @@ class LocationSearchBar extends Component {
                     <InputLabel htmlFor={this.props.id}>{this.props.title ? this.props.title : "Search a City"}</InputLabel>
                     <Input
                         id={this.props.id}
+                        value={this.props.value}
                         placeholder="Search City"
                         inputProps={{
                             style: { padding: '10px' }
