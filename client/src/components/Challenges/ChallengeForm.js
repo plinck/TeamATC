@@ -9,6 +9,12 @@ import AddIcon from "@material-ui/icons/Add";
 import { Fab } from "@material-ui/core";
 import moment from "moment";
 
+import Checkbox from '@material-ui/core/Checkbox';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+
 import ChallengeDB from "./ChallengeDB"
 import Photo from "../Util/Photo.js"
 
@@ -40,7 +46,7 @@ const ChallengeForm = (props) => {
     const classes = useStyles();
 
     // This is the challenge state object - i.e.
-    // This object holds the actual state for this objct
+    // This object holds the actual state for this object
     // The other state vars are used for managing flow etc and not
     // directly tied to the actual domain object.  This keeps things cleaner, IMO
     const CLEAR_CHALLENGE_VALUES = {
@@ -53,7 +59,12 @@ const ChallengeForm = (props) => {
         startDate: moment(new Date()).startOf("day").toDate(),
         startCity: "",
         endCity: "",
-        waypoints: []
+        waypoints: [],
+        isSwim : true,
+        isBike : true,
+        isRun : true,
+        isOther : true,
+        mapCalculation : "all"
     }
     const CHALLENGE_INITIAL_VALUES = {
         id: props.id,
@@ -65,13 +76,25 @@ const ChallengeForm = (props) => {
         startDate: moment(new Date()).startOf("day").toDate(),
         startCity: "",
         endCity: "",
-        waypoints: []
+        waypoints: [],
+        isSwim : true,
+        isBike : true,
+        isRun : true,
+        isOther : true,
+        mapCalculation : "all"
     }
     const [challenge, setChallenge] = useState(CHALLENGE_INITIAL_VALUES);
     const [message, setMessage] = React.useState("");
     const [photoFile, setPhotoFile] = React.useState(null);
 
     // Domain object handlers
+    const onChange = ((fieldName, newValue) => {
+        console.log(`fieldName: ${fieldName}, newValue: ${newValue}`);
+        setChallenge({...challenge, 
+            [fieldName] : newValue
+        });
+    });
+    
     const handleDescriptionChange = event => {
         setChallenge({ ...challenge, description: event.target.value })
     };
@@ -165,7 +188,7 @@ const ChallengeForm = (props) => {
     }
 
     // MAIN START : --
-    // get challenges at load - this is like compnent
+    // get challenges at load 
     const fetchData = (challengeUid) => {
         ChallengeDB.get(challengeUid).then(challenge => {
             setChallenge(challenge);
@@ -247,6 +270,62 @@ const ChallengeForm = (props) => {
                     <LocationSearchBar value={challenge.startCity} title="Start City" id="startCity"  handleStartCityChange={handleStartCityChange} />
                     <LocationSearchBar value={challenge.endCity} title="End City" id="endCity" handleStartCityChange={handleEndCityChange} />
                     <Waypoints handleAddWaypoint={handleAddWaypoint} handleDelete={handleDelete} waypoints={challenge.waypoints} />
+                    <br />
+                    <hr />
+                    <FormControl component="fieldset" className={classes.formControl}>
+                      <FormLabel component="legend">Activity Types</FormLabel>
+                      <FormGroup row>
+                        <FormControlLabel
+                          control={
+                            <Checkbox 
+                                checked={challenge.isSwim}
+                                id="isSwim"
+                                name="isSwim"
+                                value={challenge.isSwim}
+                                onChange={() => onChange("isSwim", !challenge.isSwim)}
+                            />
+                          }
+                          label="Swim"
+                        />
+                        <FormControlLabel
+                          control={
+                            <Checkbox 
+                                checked={challenge.isBike}
+                                id="isBike"
+                                name="isBike"
+                                value={challenge.isBike}
+                                onChange={() => onChange("isBike", !challenge.isBike)}
+                            />
+                          }
+                          label="Bike"
+                        />
+                        <FormControlLabel
+                          control={
+                            <Checkbox 
+                                checked={challenge.isRun}
+                                id="isRun"
+                                name="isRun"
+                                value={challenge.isRun}
+                                onChange={() => onChange("isRun", !challenge.isRun)}
+                            />
+                          }
+                          label="Run"
+                        />
+                        <FormControlLabel
+                          control={
+                            <Checkbox 
+                                checked={challenge.isOther}
+                                id="isOther"
+                                name="isOther"
+                                value={challenge.isOther}
+                                onChange={() => onChange("isOther", !challenge.isOther)}
+                            />
+                          }
+                          label="Other"
+                        />
+                      </FormGroup>
+                    </FormControl>
+  
                 </form>
             </CardContent>
             <CardActions>

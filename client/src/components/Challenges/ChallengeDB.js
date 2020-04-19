@@ -76,7 +76,12 @@ class ChallengeDB {
                 startDate: challenge.startDate,
                 startCity: challenge.startCity ? challenge.startCity : false,
                 endCity: challenge.endCity ? challenge.endCity : false,
-                waypoints: challenge.waypoints ? challenge.waypoints : false
+                waypoints: challenge.waypoints ? challenge.waypoints : false,
+                isSwim: challenge.isSwim !== undefined &&  challenge.isSwim !== null ? challenge.isSwim : false,
+                isBike: challenge.isBike !== undefined &&  challenge.isBike !== null ? challenge.isBike : false,
+                isRun: challenge.isRun !== undefined &&  challenge.isRun !== null ? challenge.isRun : false,
+                isOther: challenge.isOther !== undefined &&  challenge.isOther !== null ? challenge.isOther : false,
+                mapCalculation: challenge.mapCalculation ? challenge.mapCalculation : "all"
             }
             // do NOT overwrite existing photoOBj
             if (challenge.photoObj && challenge.photoObj != null) {
@@ -104,7 +109,12 @@ class ChallengeDB {
                 startDate: challenge.startDate,
                 startCity: challenge.startCity ? challenge.startCity : false,
                 endCity: challenge.endCity ? challenge.endCity : false,
-                waypoints: challenge.waypoints ? challenge.waypoints : false
+                waypoints: challenge.waypoints ? challenge.waypoints : false,
+                isSwim: challenge.isSwim !== undefined &&  challenge.isSwim !== null ? challenge.isSwim : false,
+                isBike: challenge.isBike !== undefined &&  challenge.isBike !== null ? challenge.isBike : false,
+                isRun: challenge.isRun !== undefined &&  challenge.isRun !== null ? challenge.isRun : false,
+                isOther: challenge.isOther !== undefined &&  challenge.isOther !== null ? challenge.isOther : false,
+                mapCalculation: challenge.mapCalculation ? challenge.mapCalculation : "all"
             }
             // do NOT overwrite existing photoOBj
             if (challenge.photoObj && challenge.photoObj != null) {
