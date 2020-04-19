@@ -80,8 +80,12 @@ class Map extends Component {
                 // to each of the teamTotal records
                 this.props.calcNextLegInfo(response.routes[0].legs);
                 this.props.computeTotalDistance(response);
-                this.props.teamTotals.forEach(total => {
-                    this.putMarkerOnRoute(polyline, total.bikeDistanceTotal, total.userOrTeamName)
+                this.props.teamResults.forEach(total => {
+                    let includedDistanceTotal = 0;
+                    includedDistanceTotal += this.props.challenge.isSwim ? total.swimPointsTotal : 0;
+                    includedDistanceTotal += this.props.challenge.isBike ? total.bikeDistanceTotal : 0;
+                    includedDistanceTotal += this.props.challenge.isRun ? total.runPointsTotal : 0;
+                    this.putMarkerOnRoute(polyline, includedDistanceTotal, total.userOrTeamName)
                 });
             } else {
                 alert("directions response " + status);
