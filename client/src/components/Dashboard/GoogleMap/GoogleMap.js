@@ -103,7 +103,8 @@ const GoogleMap = (props) => {
             teamLegTotals[k].nextLegName = nextLegName;
             teamLegTotals[k].distanceToNextLeg = distanceToNextLeg.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             teamLegTotals[k].nextLegCompletionPercent = nextLegCompletionPercent;
-            teamLegTotals[k].includedDistanceTotal = includedDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            teamLegTotals[k].includedDistanceTotal = includedDistanceTotal;
+            teamLegTotals[k].includedDistanceTotalDisplay = includedDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
         setTeamLegTotals(teamLegTotals);
 
@@ -194,7 +195,7 @@ const GoogleMap = (props) => {
                                         </Grid>
                                         <Grid className={classes.mobile} item xs={false} md={3}>
                                             <Typography className={classes.text}>
-                                                {result.includedDistanceTotal ? result.includedDistanceTotal : 0}
+                                                {result.includedDistanceTotalDisplay ? result.includedDistanceTotalDisplay : 0}
                                             </Typography>
                                             <Typography className={classes.caption} variant="caption">{result.distanceToNextLeg} mi </Typography>
                                         </Grid>
