@@ -26,7 +26,7 @@ exports.saveStravaEvent = (async (event) => {
 
     let foundUser = false;
     let user = {};
-    dbUsersRef.where("stravaAthleteId", "==", stravaAthleteId).limit(1).get().then(async (querySnapshot) => {
+    dbUsersRef.where("stravaAthleteId", "==", stravaAthleteId).limit(1).get().then((querySnapshot) => {
         querySnapshot.forEach(doc => {
             foundUser = true;
             user = doc.data();
@@ -41,32 +41,57 @@ exports.saveStravaEvent = (async (event) => {
             if (!user.stravaExpiresAt || today > user.stravaExpiresAt) {
                 // Must refresh users access token
                 let req = {"uid" : user.id, "refresh_token" : user.stravaRefreshToken};
-                const stravaInfo = await refreshToken(req);
-                stravaAccessToken = stravaInfo.access_token;
-            } else {
-                stravaAccessToken = user.stravaAccessToken;
-            }
-            // get the activity
-            console.log(`stravaAccessToken: ${stravaAccessToken}`);
-            if (stravaAccessToken) {
-                const URIRequest = `https://www.strava.com/api/v3/activities/${stravaActivityId}`;
-                console.log(`URIRequest: ${URIRequest}`);
-                axios.get(URIRequest,
-                    { headers: { 'Authorization': `Bearer ${stravaAccessToken}` } }
-                ).then((res) => {
-                    // console.log(`activity from Strava: ${JSON.stringify(res.data, null, 4)}`);
-                    console.log(`Success retrieving activity from Strava`);
-                    //Now add the activity to DB
-                    addStravaActivity(user, res.data).then(res => {
-                        console.log(`Activity added to firestore successful`);
-                    }).catch(err => {
-                        console.error(`Error adding activity to firestore err:${err}`);                      
-                    })
-                }).catch (err => {
-                    console.error(`Error getting activity from strava, err ${err}`); 
+                refreshToken(req).then(stravaInfo => {
+                    stravaAccessToken = stravaInfo.access_token;
+                    // get the activity
+                    console.log(`Refreshed stravaAccessToken: ${stravaAccessToken}`);
+                    if (stravaAccessToken) {
+                        const URIRequest = `https://www.strava.com/api/v3/activities/${stravaActivityId}`;
+                        console.log(`URIRequest: ${URIRequest}`);
+                        axios.get(URIRequest,
+                            { headers: { 'Authorization': `Bearer ${stravaAccessToken}` } }
+                        ).then((res) => {
+                            // console.log(`activity from Strava: ${JSON.stringify(res.data, null, 4)}`);
+                            console.log(`Success retrieving activity from Strava`);
+                            //Now add the activity to DB
+                            addStravaActivity(user, res.data).then(res => {
+                                console.log(`Activity added to firestore successful`);
+                            }).catch(err => {
+                                console.error(`Error adding activity to firestore err:${err}`);                      
+                            })
+                        }).catch (err => {
+                            console.error(`Error getting activity from strava, err ${err}`); 
+                        });
+                    } else {
+                        console.error(`Invalid access_token for user:${user.displayName}`); 
+                    }
+                }).catch(err => {
+                    console.error(`Error in refreshToken - ${err}`);
                 });
             } else {
-                console.error(`Invalid access_token for user:${user.displayName}`); 
+                stravaAccessToken = user.stravaAccessToken;
+                // get the activity
+                console.log(`User stravaAccessToken: ${stravaAccessToken}`);
+                if (stravaAccessToken) {
+                    const URIRequest = `https://www.strava.com/api/v3/activities/${stravaActivityId}`;
+                    console.log(`URIRequest: ${URIRequest}`);
+                    axios.get(URIRequest,
+                        { headers: { 'Authorization': `Bearer ${stravaAccessToken}` } }
+                    ).then((res) => {
+                        // console.log(`activity from Strava: ${JSON.stringify(res.data, null, 4)}`);
+                        console.log(`Success retrieving activity from Strava`);
+                        //Now add the activity to DB
+                        addStravaActivity(user, res.data).then(res => {
+                            console.log(`Activity added to firestore successful`);
+                        }).catch(err => {
+                            console.error(`Error adding activity to firestore err:${err}`);                      
+                        })
+                    }).catch (err => {
+                        console.error(`Error getting activity from strava, err ${err}`); 
+                    });
+                } else {
+                    console.error(`Invalid access_token for user:${user.displayName}`); 
+                }
             }
         } else {
             console.error(`Can not find user with stravaAthleteId:${stravaAthleteId}`);
