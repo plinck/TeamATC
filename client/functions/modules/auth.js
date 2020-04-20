@@ -1,6 +1,5 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const ENV = require("./FirebaseEnvironment.js");
 
 exports.authDeleteUser = functions.https.onCall((req, context) => {
     let uid = req.uid;

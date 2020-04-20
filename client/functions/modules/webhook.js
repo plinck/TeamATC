@@ -2,7 +2,7 @@ const functions = require('firebase-functions');
 const request = require('request');
 const cors = require('cors')({origin: true});
 const express = require('express');
-const ENV = require("./FirebaseEnvironment.js");
+const {FUNCTIONS_CONFIG} = require("./FirebaseEnvironment.js");
 const events = require("./events");
 
 const app = express();
@@ -46,12 +46,12 @@ app.post('/strava', async (req, res) => {
 
 app.get('/subscribe', (req, res) => {
         console.log(`called webhooks subscribe`);
-        const callbackURL = req.query.callback_url ? req.query.callback_url : ENV.FUNCTIONS_CONFIG.strava.callback_url;
+        const callbackURL = req.query.callback_url ? req.query.callback_url : FUNCTIONS_CONFIG.strava.callback_url;
         console.log(`callbackURL: ${callbackURL}`)
 
         const params = {
-            client_id: ENV.FUNCTIONS_CONFIG.strava.client_id,
-            client_secret: ENV.FUNCTIONS_CONFIG.strava.client_secret,
+            client_id: FUNCTIONS_CONFIG.strava.client_id,
+            client_secret: FUNCTIONS_CONFIG.strava.client_secret,
             callback_url: callbackURL,
             verify_token: 'STRAVA',
         };

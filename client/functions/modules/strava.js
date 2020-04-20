@@ -3,21 +3,19 @@ const admin = require('firebase-admin');
 const axios = require('axios');
 const cors = require('cors')({origin: true});
 const express = require('express');
-const ENV = require("./FirebaseEnvironment.js");
-const uus = require("./updateUserWithStrava");
-const updateUserWithStrava = uus.updateUserWithStrava;
-const rt = require("./refreshToken");
-const refreshToken = rt.refreshToken;
+const { FUNCTIONS_CONFIG } = require("./FirebaseEnvironment.js");
+const { updateUserWithStrava } = require("./updateUserWithStrava");
+const { refreshToken } = require("./refreshToken");
 
 const app = express();
 app.get('/stravaauth', async (req, res) => {
     console.log(`called stravaSendAuthorizationRequest with environment ${req}`);
-    const redirectURL = req.query.redirect_uri ? req.query.redirect_uri : ENV.FUNCTIONS_CONFIG.strava.redirect_uri;
+    const redirectURL = req.query.redirect_uri ? req.query.redirect_uri : FUNCTIONS_CONFIG.strava.redirect_uri;
     console.log(`redirectURL: ${redirectURL}`)
-    console.log(`client_id: ${ENV.FUNCTIONS_CONFIG.strava.client_id}`)
+    console.log(`client_id: ${FUNCTIONS_CONFIG.strava.client_id}`)
     
     const params = {
-        client_id: ENV.FUNCTIONS_CONFIG.strava.client_id,
+        client_id: FUNCTIONS_CONFIG.strava.client_id,
         redirect_uri: redirectURL,
         response_type: 'code',
         approval_prompt: "auto",
@@ -62,8 +60,8 @@ exports.stravaGetToken = functions.https.onCall((req, res) => {
         }
 
         const params = {
-            client_id: ENV.FUNCTIONS_CONFIG.strava.client_id,
-            client_secret: ENV.FUNCTIONS_CONFIG.strava.client_secret,
+            client_id: FUNCTIONS_CONFIG.strava.client_id,
+            client_secret: FUNCTIONS_CONFIG.strava.client_secret,
             code: code,
             grant_type: "authorization_code"
         };
@@ -124,8 +122,8 @@ exports.stravaDeauthorize = functions.https.onCall((req, res) => {
 
         console.log(`stravaDeauthorize access_token${access_token}, uid:${uid}`);
         const params = {
-            client_id: ENV.FUNCTIONS_CONFIG.strava.client_id,
-            client_secret: ENV.FUNCTIONS_CONFIG.strava.client_secret,
+            client_id: FUNCTIONS_CONFIG.strava.client_id,
+            client_secret: FUNCTIONS_CONFIG.strava.client_secret,
             access_token: access_token,
         };
 

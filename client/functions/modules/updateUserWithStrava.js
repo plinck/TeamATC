@@ -1,11 +1,11 @@
 const admin = require('firebase-admin');
-const ENV = require("./FirebaseEnvironment.js");
+const {APP_CONFIG} = require("./FirebaseEnvironment.js");
 
 // ===============================================================
 // Local - non-exported functions
 // ===============================================================
 const updateUserWithStrava = ((uid, stravaInfo, deauthorize) => {
-    console.log(`In updateUserWithStrava with: ORG: ${ENV.APP_CONFIG.ORG}, ENV: ${ENV.APP_CONFIG.ENV}`);
+    console.log(`In updateUserWithStrava with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}`);
     
     return new Promise((resolve, reject) => {
         let userStravaUpdate = stravaInfo;
@@ -35,7 +35,7 @@ const updateUserWithStrava = ((uid, stravaInfo, deauthorize) => {
         }
         console.log(`In updateUserWithStrava with uid ${uid}, userStravaUpdate: ${JSON.stringify(userStravaUpdate, null,2)}`);
 
-        let dbUsersRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("users");
+        let dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
 
         dbUsersRef.doc(uid).set(userStravaUpdate, { merge: true }).then(() => {
             console.log("User successfully updated with Strava Info!");
