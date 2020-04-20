@@ -11,7 +11,8 @@ class LocationSearchBar extends Component {
         // Declare State
         this.state = {
             city: '',
-            query: ''
+            query: '',
+            fieldValue: ""
         };
 
     }
@@ -47,7 +48,7 @@ class LocationSearchBar extends Component {
         // Check if address is valid
         if (address) {
             // Set State
-            this.props.handleStartCityChange(addressObject.formatted_address);
+            this.props.handleCityChange(addressObject.formatted_address);
             this.setState(
                 {
                     city: address[0].long_name,
@@ -57,7 +58,28 @@ class LocationSearchBar extends Component {
         }
     }
 
+    hanleFieldValueChange = event => {
+        this.setState({ [event.target.name ]: event.target.value });
+    };
+
+    componentDidMount() {
+        // since t hey are auth, uid == id
+        if (this.props.value && this.props.value !== "") {
+            this.setState({fieldValue: this.props.value});
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.value && this.props.value!== prevProps.value) {
+            if (this.props.value && this.props.value !== "") {
+                this.setState({fieldValue: this.props.value});
+            }
+        }
+    }
+
     render() {
+        let fieldValue = this.state.fieldValue;
+
         return (
             <>
                 <Script
@@ -68,7 +90,9 @@ class LocationSearchBar extends Component {
                     <InputLabel htmlFor={this.props.id}>{this.props.title ? this.props.title : "Search a City"}</InputLabel>
                     <Input
                         id={this.props.id}
-                        value={this.props.value}
+                        name="fieldValue"
+                        value={fieldValue}
+                        onChange={this.hanleFieldValueChange}
                         placeholder="Search City"
                         inputProps={{
                             style: { padding: '10px' }
