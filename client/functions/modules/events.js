@@ -9,7 +9,7 @@ const { addStravaActivity } = require("./addStravaActivity");
 const updateActivity = ((user, accessToken, stravaActivityId) => {
     const stravaAccessToken = accessToken;
     // get the activity
-    console.log(`Refreshed stravaAccessToken: ${stravaAccessToken}`);
+    console.log(`In updateActivity for strava activity id: ${stravaActivityId}`);
     if (stravaAccessToken) {
         const URIRequest = `https://www.strava.com/api/v3/activities/${stravaActivityId}`;
         console.log(`URIRequest: ${URIRequest}`);
@@ -64,11 +64,13 @@ exports.saveStravaEvent = (async (event) => {
                 // Must refresh users access token
                 let req = {"uid" : user.id, "refresh_token" : user.stravaRefreshToken};
                 refreshToken(req).then(stravaInfo => {
+                    console.log(`Refreshed stravaAccessToken: ${stravaAccessToken}`);
                     updateActivity(user, stravaInfo.access_token, stravaActivityId);
                 }).catch(err => {
                     console.error(`Error in refreshToken - ${err}`);
                 });
             } else {
+                console.log(`Used user.stravaAccessToken: ${user.stravaAccessToken}`);
                 updateActivity(user, user.stravaAccessToken, stravaActivityId);
             }
         } else {
