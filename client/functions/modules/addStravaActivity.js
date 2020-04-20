@@ -1,11 +1,11 @@
 const admin = require('firebase-admin');
-const ENV = require("./FirebaseEnvironment.js");
+const { APP_CONFIG } = require("./FirebaseEnvironment.js");
 
 // ===============================================================
 // Local - non-exported functions
 // ===============================================================
 const addStravaActivity = ((user, stravaActivity) => {
-    console.log(`In addStravaActivity with: ORG: ${ENV.APP_CONFIG.ORG}, ENV: ${ENV.APP_CONFIG.ENV}`);
+    console.log(`In addStravaActivity with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}`);
 
     let stavaActivityDistanceUnits = "Miles";
     let stavaActivityDistance = 0.0;
@@ -51,7 +51,7 @@ const addStravaActivity = ((user, stravaActivity) => {
     
         console.log(`In addStravaActivity with userid ${user.id}, stravaActivity.id: ${stravaActivity.id}`);
 
-        const dbActivitiesRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("challenges").doc(user.challengeUid).collection(`activities`);
+        const dbActivitiesRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(user.challengeUid).collection(`activities`);
 
         // USe set so as not to duplicste activities
         const activityKey = `${stravaActivity.athlete.id}-${stravaActivity.id}`;

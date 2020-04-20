@@ -1,7 +1,6 @@
 const axios = require('axios');
-const ENV = require("./FirebaseEnvironment.js");
-const uus = require("./updateUserWithStrava");
-const updateUserWithStrava = uus.updateUserWithStrava;
+const {FUNCTIONS_CONFIG} = require("./FirebaseEnvironment.js");
+const {updateUserWithStrava} = require("./updateUserWithStrava");
 
 const refreshToken = ((req, res) => {
     return new Promise((resolve, reject) => {
@@ -17,8 +16,8 @@ const refreshToken = ((req, res) => {
         }
 
         const params = {
-            client_id: ENV.FUNCTIONS_CONFIG.strava.client_id,
-            client_secret: ENV.FUNCTIONS_CONFIG.strava.client_secret,
+            client_id: FUNCTIONS_CONFIG.strava.client_id,
+            client_secret: FUNCTIONS_CONFIG.strava.client_secret,
             refresh_token: refresh_token,
             grant_type: "refresh_token"
         };
