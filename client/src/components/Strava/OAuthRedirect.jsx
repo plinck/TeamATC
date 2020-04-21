@@ -103,9 +103,6 @@ const OAuthRedirect = (props) => {
                     Click the above button to go to Strava and Authorize it to sync your activities
                     <br />
                     <hr />
-                    <br />
-                    Note: The actual syncing of activities is not yet complete. Coming soon!
-                    <br />
                     <img src="/images/stravaPoweredBy.png" height="60" alt="Powered by Strava"/>
                 </Grid>
             
