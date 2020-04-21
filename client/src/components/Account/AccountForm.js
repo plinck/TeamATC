@@ -64,39 +64,42 @@ class AccountForm extends React.Component {
         this.state = {
             user : {
                 id: this.props.uid,
-                uid: this.props.uid,
-                teamUid: "",
-                teamName: "",
-                firstName: "",
-                lastName: "",
-                photoURL: "",
-                phoneNumber: "",
+                challengeUid : "",
+                displayName : "",
                 email: "",
-                primaryRole: "",
+                firstName: "",
                 isAdmin: false,
                 isTeamLead: false,
                 isModerator: false,
                 isUser: false,
+                lastName: "",
+                phoneNumber: "",
+                photoURL: "",
+                primaryRole: "",
+                stravaAccessToken: "",
+                stravaAthleteId : "",
+                stravaExpiresAt: null,
+                stravaRefreshToken: "",
+                stravaUserAuth : false,
+                teamName: "",
+                teamUid: "",
+                uid: this.props.uid
             },
             message: "",
             teams: null,
             teamLookup: null
-        };
+        }
     }
 
-    fetchUser = (id) => {
-        UserDB.get(id)
-            .then(user => {
-                this.setState({
-                    user : user
-                });
-                // Dont need to get custom primaryRole since they are passed in props from context
-                // and can not be changed here
-            })
-            .catch(err => {
-                console.error(`Error getting user ${err}`);
-                this.setState({ message: `Error getting user ${err}` });
+    fetchUser(id) {
+        UserDB.get(id).then(user => {
+            this.setState({
+                user : user
             });
+        }).catch(err => {
+            console.error(`Error getting user ${err}`);
+            this.setState({ message: `Error getting user ${err}` });
+        });
     };
 
     // get available teams for select list
