@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import TextField from '@material-ui/core/TextField';
@@ -326,11 +327,29 @@ class AccountForm extends React.Component {
                                         </FormControl> :
                                         ""}
                                 </form>
-                            </CardContent>
-                            <CardActions>
                                 <Button disabled={!isValid} onClick={this.updateUser} variant="contained" color="primary" className={classes.button}>
                                     Update
-                        </Button>
+                                </Button>
+                                <br />
+                                <hr />
+                                {user.stravaUserAuth ? 
+                                    <Typography variant="subtitle2">
+                                        <Grid item xs={12}>
+                                            Strava authorized - Strava Id:{user.stravaAthleteId}
+                                        </Grid>
+                                    </Typography>
+                                    : 
+                                    <Typography variant="subtitle2">
+                                        <Grid item xs={12} fontWeight="fontWeightLight" color="warning.main" fontStyle="oblique">
+                                            Strava Not Authorized - click below to authorize
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <NavLink to="/oauthredirect"><img src="/images/stravaConnectWith.png" alt="connect with strava"/></NavLink>
+                                        </Grid>                              
+                                    </Typography>
+                                }
+                            </CardContent>
+                            <CardActions>
                             </CardActions>
                         </Card>
                     </Grid>

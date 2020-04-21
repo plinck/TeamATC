@@ -327,7 +327,7 @@ class UserDB {
             {
                 isAdmin: true,
                 isModerator: false,
-                isteamLead: false,
+                isTeamLead: false,
                 isUser: false,
                 primaryRole: "admin"
             }
@@ -340,7 +340,7 @@ class UserDB {
             {
                 isAdmin: false,
                 isModerator: true,
-                isteamLead: false,
+                isTeamLead: false,
                 isUser: false,
                 primaryRole: "moderator"
             }
@@ -353,7 +353,7 @@ class UserDB {
             {
                 isAdmin: false,
                 isModerator: false,
-                isteamLead: true,
+                isTeamLead: true,
                 isUser: false,
                 primaryRole: "teamLead"
             }
@@ -366,8 +366,8 @@ class UserDB {
             {
                 isAdmin: false,
                 isModerator: false,
-                isteamLead: false,
-                isUser: false,
+                isTeamLead: false,
+                isUser: true,
                 primaryRole: "user"
             }
         ));
