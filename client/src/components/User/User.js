@@ -9,7 +9,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { withRouter } from 'react-router-dom';
 import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
-import { Card, CardMedia, Typography, CardActions, CardContent } from '@material-ui/core';
+import { Card, Grid, CardMedia, Typography, CardActions, CardContent } from '@material-ui/core';
 
 class User extends React.Component {
     // State used for Dialog box to confirm delete
@@ -32,7 +32,7 @@ class User extends React.Component {
 
     // decontruct props
     render() {
-        let { id, uid, firstName, lastName, phoneNumber, email, photoURL, primaryRole } = this.props.userInfo;
+        let { id, uid, firstName, lastName, phoneNumber, email, photoURL, primaryRole, stravaUserAuth, stravaAthleteId} = this.props.userInfo;
         let { userMakeAdmin, userMakeTeamLead, userMakeUser, userMakeModerator } = this.props;
 
         if (!photoURL) {
@@ -65,6 +65,22 @@ class User extends React.Component {
                     <Typography variant="body2" color="textSecondary" component="p">{email}</Typography>
                     <Typography variant="body2" color="textSecondary" component="p">{phoneNumber.length > 9 ? phoneNumber.replace(/(\d\d\d)(\d\d\d)(\d\d\d\d)/, '$1-$2-$3') : phoneNumber}</Typography>
                     <Typography variant="body2" color="textSecondary" component="p">Primary Role: {primaryRole}</Typography>
+                    <br />
+                    <hr />
+                    {stravaUserAuth ? 
+                        <Typography variant="subtitle2">
+                            <Grid item xs={12}>
+                                Strava authorized - Strava Id:{stravaAthleteId}
+                            </Grid>
+                        </Typography>
+                        : 
+                        <Typography variant="subtitle2">
+                            <Grid item xs={12} fontWeight="fontWeightLight" color="warning.main" fontStyle="oblique">
+                                Strava Not Authorized
+                            </Grid>
+                        </Typography>
+                    }
+
                 </CardContent>
                 <CardActions>
 

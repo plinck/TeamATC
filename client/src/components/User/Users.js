@@ -26,6 +26,8 @@ class Users extends React.Component {
                     users[i].firstName = users[i].firstName || "First";
                     users[i].lastName = users[i].lastName || "Last";
                     users[i].primaryRole = users[i].primaryRole || "user";
+                    users[i].stravaUserAuth = users[i].stravaUserAuth || false;
+                    users[i].stravaAthleteId = users[i].stravaAthleteId || 0;
                 }
 
                 // console.log(`Users in refresh page: ${JSON.stringify(users, null, 2)}`);

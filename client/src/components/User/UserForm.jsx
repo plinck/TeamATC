@@ -1,5 +1,4 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom'
 import { withRouter } from 'react-router-dom';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { withFirebase } from '../Auth/Firebase/FirebaseContext';
@@ -492,11 +491,8 @@ class UserForm extends React.Component {
                             : 
                             <Typography variant="subtitle2">
                                 <Grid item xs={12} fontWeight="fontWeightLight" color="warning.main" fontStyle="oblique">
-                                    Strava Not Authorized - click below to authorize
+                                    Strava Not Authorized for this user
                                 </Grid>
-                                <Grid item xs={12}>
-                                    <NavLink to="/oauthredirect"><img src="/images/stravaConnectWith.png" alt="connect with strava"/></NavLink>
-                                </Grid>                              
                             </Typography>
                         }
                     </CardContent>
