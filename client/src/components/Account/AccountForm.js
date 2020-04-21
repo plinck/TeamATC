@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import TextField from '@material-ui/core/TextField';
@@ -62,51 +63,44 @@ class AccountForm extends React.Component {
         super(props);
 
         this.state = {
-            id: this.props.uid,
-            uid: this.props.uid,
-            teamUid: "",
-            teamName: "",
-            firstName: "",
-            lastName: "",
-            photoURL: "",
-            phoneNumber: "",
-            email: "",
-            primaryRole: "",
-            isAdmin: false,
-            isTeamLead: false,
-            isModerator: false,
-            isUser: false,
+            user : {
+                id: this.props.uid,
+                challengeUid : "",
+                displayName : "",
+                email: "",
+                firstName: "",
+                isAdmin: false,
+                isTeamLead: false,
+                isModerator: false,
+                isUser: false,
+                lastName: "",
+                phoneNumber: "",
+                photoURL: "",
+                primaryRole: "",
+                stravaAccessToken: "",
+                stravaAthleteId : "",
+                stravaExpiresAt: null,
+                stravaRefreshToken: "",
+                stravaUserAuth : false,
+                teamName: "",
+                teamUid: "",
+                uid: this.props.uid
+            },
             message: "",
             teams: null,
             teamLookup: null
-        };
+        }
     }
 
-    fetchUser = (uid) => {
-        UserDB.get(uid)
-            .then(user => {
-                this.setState({
-                    firstName: user.firstName || "",
-                    lastName: user.lastName || "",
-                    photoURL: user.photoURL || "",
-                    phoneNumber: user.phoneNumber || "",
-                    uid: user.uid,
-                    teamUid: user.teamUid || "",
-                    teamName: user.teamName || "",
-                    primaryRole: user.primaryRole,
-                    isAdmin: user.isAdmin,
-                    isTeamLead: user.isTeamLead,
-                    isModerator: user.isModerator,
-                    isUser: user.isUser,
-                    email: user.email
-                });
-                // Dont need to get custom primaryRole since they are passed in props from context
-                // and can not be changed here
-            })
-            .catch(err => {
-                console.error(`Error getting user ${err}`);
-                this.setState({ error: `Error getting user ${err}` });
+    fetchUser(id) {
+        UserDB.get(id).then(user => {
+            this.setState({
+                user : user
             });
+        }).catch(err => {
+            console.error(`Error getting user ${err}`);
+            this.setState({ message: `Error getting user ${err}` });
+        });
     };
 
     // get available teams for select list
@@ -124,14 +118,14 @@ class AccountForm extends React.Component {
             });
         }).catch(err => {
             console.error(`Error getting teams ${err}`);
-            this.setState({ error: `Error getting teams ${err}` });
+            this.setState({ message: `Error getting teams ${err}` });
         });
     }
 
     componentDidMount() {
-        console.log(`authUser.uid: ${this.state.uid}`);
+        console.log(`authUser.uid: ${this.state.user.uid}`);
         // since t hey are auth, uid == id
-        this.fetchUser(this.state.uid);
+        this.fetchUser(this.state.user.uid);
         this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
 
     }
@@ -139,10 +133,10 @@ class AccountForm extends React.Component {
     updateUser = (e) => {
         e.preventDefault();
         // Update current user in firestore (and auth for some fields)
-        console.log(`updating db with user.uid:${this.state.uid}`);
-        const user = this.state;
+        console.log(`updating db with user.uid:${this.state.user.id}`);
+        const user = this.state.user;
         // set team name from ID
-        user.teamName = this.state.teamLookup[this.state.teamUid]
+        user.teamName = this.state.teamLookup[this.state.user.teamUid]
 
         UserDB.updateCurrent(user).then(user => {
             // set message to show update
@@ -154,42 +148,41 @@ class AccountForm extends React.Component {
     };
 
     onChange = event => {
-        this.setState({
-            [event.target.name]: event.target.value
-        });
+        const name = event.target.name;
+        const value = event.target.value;
+        this.setState((prevState) => ({
+            user: {                   // object that we want to update
+                ...prevState.user,    // keep all other key-value pairs
+                [name]: value       // update the value of specific key
+            }
+        }))
+        // this.setState({
+        //     [event.target.name]: event.target.value
+        // });
     };
 
-    handleChange = name => event => {
-        this.setState({ [name]: event.target.value });
+    handleChange = pname => event => {
+        const name = pname;
+        const value = event.target.value;
+        this.setState((prevState) => ({
+            user: {                   // object that we want to update
+                ...prevState.user,    // keep all other key-value pairs
+                [name]: value       // update the value of specific key
+            }
+        }))
     };
 
     render() {
         const { classes } = this.props;
 
         const {
-            firstName,
-            lastName,
-            photoURL,
-            phoneNumber,
-            email,
-            primaryRole,
-            isAdmin,
-            isTeamLead,
-            isModerator,
-            isUser,
+            user,
             message,
-            teamUid,
             teams
         } = this.state;
 
-        const isValid = firstName !== "" && lastName !== "" && phoneNumber !== "";
+        const isValid = user.firstName !== "" && user.lastName !== "" && user.phoneNumber !== "";
         var isRoleEditEnabled = false;
-
-        // DO NOT allow users to edit their own role even if admin as bad
-        // things can happen
-        // if (isAdmin) {
-        //     isRoleEditEnabled = true;
-        // }
 
         if (typeof this.state.teams === 'undefined') {
             console.error("Fatal Error")
@@ -206,7 +199,8 @@ class AccountForm extends React.Component {
                     <Grid item xs={12}>
                         <Card>
                             <CardContent>
-                                <Typography gutterBottom component="h2" variant="h5">User Profile (Role: {primaryRole}, challenge: {this.props.user.challengeName})</Typography>
+                                <Typography variant="subtitle2">{message}</Typography>
+                                <Typography gutterBottom component="h2" variant="h5">User Profile (Role: {user.primaryRole}, challenge: {this.props.user.challengeName})</Typography>
                                 <form className={classes.container} onSubmit={this.updateUser} >
 
                                     <FormControl variant="outlined" required className={classes.formControl}>
@@ -214,7 +208,7 @@ class AccountForm extends React.Component {
                                         <Select
                                             labelId="teamNameLabel"
                                             id="teamUid"
-                                            value={teamUid}
+                                            value={user.teamUid}
                                             onChange={this.onChange}
                                             label="Team Name"
                                             name="teamUid"
@@ -237,7 +231,7 @@ class AccountForm extends React.Component {
                                         variant="outlined"
                                         type="email"
                                         autoComplete="email"
-                                        value={email}
+                                        value={user.email}
                                         onChange={this.onChange}
                                     />
 
@@ -245,7 +239,7 @@ class AccountForm extends React.Component {
                                         id="firstName"
                                         name="firstName"
                                         label="First Name"
-                                        value={firstName}
+                                        value={user.firstName}
                                         variant="outlined"
                                         placeholder="John"
                                         className={classes.textField}
@@ -257,7 +251,7 @@ class AccountForm extends React.Component {
                                         id="lastName"
                                         name="lastName"
                                         label="Last Name"
-                                        value={lastName}
+                                        value={user.lastName}
                                         variant="outlined"
                                         placeholder="Smith"
                                         className={classes.textField}
@@ -272,7 +266,7 @@ class AccountForm extends React.Component {
                                         className={classes.textField}
                                         variant="outlined"
                                         margin='normal'
-                                        value={phoneNumber}
+                                        value={user.phoneNumber}
                                         onChange={this.handleChange('phoneNumber')}
                                         InputProps={{
                                             inputComponent: NumberFormatPhone,
@@ -284,7 +278,7 @@ class AccountForm extends React.Component {
                                     <TextField
                                         id="photoURL"
                                         name="photoURL"
-                                        value={photoURL ? photoURL : ""}
+                                        value={user.photoURL ? user.photoURL : ""}
                                         label="Photo URL"
                                         multiline
                                         variant="outlined"
@@ -305,27 +299,27 @@ class AccountForm extends React.Component {
                                             <FormGroup row >
                                                 <FormControlLabel
                                                     disabled={!isRoleEditEnabled}
-                                                    control={<Checkbox checked={isTeamLead} />}
+                                                    control={<Checkbox checked={user.isTeamLead} />}
                                                     label="TeamLead"
                                                 />
                                                 <FormControlLabel
                                                     disabled={!isRoleEditEnabled}
                                                     control={
-                                                        <Checkbox checked={isAdmin} />
+                                                        <Checkbox checked={user.isAdmin} />
                                                     }
                                                     label="Admin"
                                                 />
                                                 <FormControlLabel
                                                     disabled={!isRoleEditEnabled}
                                                     control={
-                                                        <Checkbox checked={isModerator} />
+                                                        <Checkbox checked={user.isModerator} />
                                                     }
                                                     label="Moderator"
                                                 />
                                                 <FormControlLabel
                                                     disabled={!isRoleEditEnabled}
                                                     control={
-                                                        <Checkbox checked={isUser} />
+                                                        <Checkbox checked={user.isUser} />
                                                     }
                                                     label="User"
                                                 />
@@ -333,12 +327,29 @@ class AccountForm extends React.Component {
                                         </FormControl> :
                                         ""}
                                 </form>
-                                <p>{message}</p>
-                            </CardContent>
-                            <CardActions>
                                 <Button disabled={!isValid} onClick={this.updateUser} variant="contained" color="primary" className={classes.button}>
                                     Update
-                        </Button>
+                                </Button>
+                                <br />
+                                <hr />
+                                {user.stravaUserAuth ? 
+                                    <Typography variant="subtitle2">
+                                        <Grid item xs={12}>
+                                            Strava authorized - Strava Id:{user.stravaAthleteId}
+                                        </Grid>
+                                    </Typography>
+                                    : 
+                                    <Typography variant="subtitle2">
+                                        <Grid item xs={12} fontWeight="fontWeightLight" color="warning.main" fontStyle="oblique">
+                                            Strava Not Authorized - click below to authorize
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <NavLink to="/oauthredirect"><img src="/images/stravaConnectWith.png" alt="connect with strava"/></NavLink>
+                                        </Grid>                              
+                                    </Typography>
+                                }
+                            </CardContent>
+                            <CardActions>
                             </CardActions>
                         </Card>
                     </Grid>

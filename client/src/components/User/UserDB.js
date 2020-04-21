@@ -39,6 +39,7 @@ class UserDB {
             docRef.get().then((doc) => {
                 if (doc.exists) {
                     let user = doc.data();
+                    user.id = doc.id;
                     return(resolve(user));
                 }
                 console.log("User not found in firestore");
@@ -94,6 +95,7 @@ class UserDB {
                 docRef.get().then((doc) => {
                     if (doc.exists) {
                         let user = doc.data();
+                        user.id = doc.id;
                         resolve(user);
                     } else {
                         console.error("User not found in firestore");
@@ -129,39 +131,34 @@ class UserDB {
             });
         });
     }
-    // Updates the current user (not do NOT update uid since it is really a primary key)
+    // Updates the current user (do NOT update uid since it is really a primary key)
     // uid doc field in firestore should only be messed with on create
     static updateCurrent =  (user) => {
         console.log(`trying to update user in fb and auth: ${user}`);
+        // make a copy --i.e. not a reference
+        let newUser = {...user};
+        // Delete the id field since you do not want in db as it is they key
+        if (newUser.id) {
+            delete newUser.id;
+        }
+
         return new Promise(async (resolve, reject) => {
             const authUser = await Util.getCurrentAuthUser();
-
             // we always want uid = id to keep auth and firestore in sync
             authUser.updateProfile({
                 displayName: `${user.firstName} ${user.lastName}`,
                 photoURL: user.photoURL,
-            })
-            .then(() => {
+            }).then(() => {
                 console.log("Auth Profile for User successfully updated!");
                 const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
-                dbUsersRef.doc(user.id).set({
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    displayName: `${user.firstName} ${user.lastName}`,
-                    phoneNumber: user.phoneNumber,
-                    email: user.email.toLowerCase(),
-                    photoURL: user.photoURL ? user.photoURL : "",
-                    teamName: user.teamName ? user.teamName : "",
-                    teamUid: user.teamUid ? user.teamUid : ""
-                },{ merge: true }).then(() => {
+                dbUsersRef.doc(user.id).set(newUser, { merge: true }).then(() => {
                     console.log("completed");
                     resolve();
                 }).catch(err => {
                     console.error(`error updating user: ${err}`);
                     reject(err);
                 });
-            })
-            .catch(err => {
+            }).catch(err => {
                 console.log("completed");
                 reject(err);
             });
@@ -170,21 +167,17 @@ class UserDB {
 
     static update (user) {
         console.log(`trying to update user in fb: ${user}`);
-        return new Promise(async (resolve, reject) => {
+        let newUser = {...user};
+        // Delete the id field since you do not want in db as it is they key
+        if (newUser.id) {
+            delete newUser.id;
+        }
 
+        return new Promise(async (resolve, reject) => {
             // update
             console.log("User updated, user=", user);
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
-            dbUsersRef.doc(user.id).set({
-                firstName: user.firstName,
-                lastName: user.lastName,
-                displayName: `${user.firstName} ${user.lastName}`,
-                phoneNumber: user.phoneNumber,
-                email: user.email,
-                photoURL: user.photoURL ? user.photoURL : "",
-                teamUid: user.teamUid ? user.teamUid  : "",
-                teamName: user.teamName ? user.teamName  : ""
-            }, {
+            dbUsersRef.doc(user.id).set(newUser, {
                 merge: true
             }).then(() => {
                 console.log("completed");
@@ -334,7 +327,7 @@ class UserDB {
             {
                 isAdmin: true,
                 isModerator: false,
-                isteamLead: false,
+                isTeamLead: false,
                 isUser: false,
                 primaryRole: "admin"
             }
@@ -347,7 +340,7 @@ class UserDB {
             {
                 isAdmin: false,
                 isModerator: true,
-                isteamLead: false,
+                isTeamLead: false,
                 isUser: false,
                 primaryRole: "moderator"
             }
@@ -360,7 +353,7 @@ class UserDB {
             {
                 isAdmin: false,
                 isModerator: false,
-                isteamLead: true,
+                isTeamLead: true,
                 isUser: false,
                 primaryRole: "teamLead"
             }
@@ -373,8 +366,8 @@ class UserDB {
             {
                 isAdmin: false,
                 isModerator: false,
-                isteamLead: false,
-                isUser: false,
+                isTeamLead: false,
+                isUser: true,
                 primaryRole: "user"
             }
         ));
