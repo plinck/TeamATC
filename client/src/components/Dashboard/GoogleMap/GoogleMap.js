@@ -70,7 +70,7 @@ const GoogleMap = (props) => {
     const calcNextLegInfo = (legs) => {
         //Loop through each team
         for (let k = 0; k < teamLegTotals.length; k++) {
-            let totalDistance = 0;
+            let totalDistanceToNextLeg = 0;
             let nextLegName = "";
             let distanceToNextLeg = 0;
             let nextLegCompletionPercent = 0;
@@ -85,21 +85,21 @@ const GoogleMap = (props) => {
             includedDistanceTotal += props.challenge.isBike ? teamLegTotals[k].bikeDistanceTotal : 0;
             includedDistanceTotal += props.challenge.isRun ? teamLegTotals[k].runPointsTotal : 0;
 
-            for (i = 0; i < legs.length && totalDistance < includedDistanceTotal ; i++) {
+            for (i = 0; i < legs.length && totalDistanceToNextLeg < includedDistanceTotal ; i++) {
                 let legDistance = legs[i].distance.value / 1000 / 1.609344;  // to miles
-                totalDistance += legDistance;
+                totalDistanceToNextLeg += legDistance;
                 nextLegIdx = i;
             }
 
             nextLegName = legs[nextLegIdx].end_address;
-            distanceToNextLeg = totalDistance - includedDistanceTotal;
+            distanceToNextLeg = totalDistanceToNextLeg - includedDistanceTotal;
             if (distanceToNextLeg <= 0) {
                 nextLegCompletionPercent = 100;
-            } else if (includedDistanceTotal >= distanceToNextLeg) {
+            } else if (includedDistanceTotal >= totalDistanceToNextLeg) {
                 nextLegCompletionPercent = 100;
             }
             else {
-                nextLegCompletionPercent = parseInt((includedDistanceTotal / distanceToNextLeg)  * 100);
+                nextLegCompletionPercent = parseInt((includedDistanceTotal / totalDistanceToNextLeg)  * 100);
             }
 
             teamLegTotals[k].nextLegName = nextLegName;
