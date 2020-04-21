@@ -90,14 +90,16 @@ const GoogleMap = (props) => {
                 totalDistance += legDistance;
                 nextLegIdx = i;
             }
-            // now the next leg should be at i
 
             nextLegName = legs[nextLegIdx].end_address;
             distanceToNextLeg = totalDistance - includedDistanceTotal;
             if (distanceToNextLeg <= 0) {
                 nextLegCompletionPercent = 100;
-            } else {
-                nextLegCompletionPercent = parseInt((1 - (distanceToNextLeg / includedDistanceTotal))  * 100);
+            } else if (includedDistanceTotal >= distanceToNextLeg) {
+                nextLegCompletionPercent = 100;
+            }
+            else {
+                nextLegCompletionPercent = parseInt((includedDistanceTotal / distanceToNextLeg)  * 100);
             }
 
             teamLegTotals[k].nextLegName = nextLegName;
