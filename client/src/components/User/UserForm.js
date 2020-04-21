@@ -118,10 +118,10 @@ class UserForm extends React.Component {
           teamUid: user.teamUid || "",
           teamName: user.teamName || "",
           primaryRole: user.primaryRole,
-          isAdmin: user.isAdmin,
-          isTeamLead: user.isTeamLead,
-          isModerator: user.isModerator,
-          isUser: user.isUser,
+          isAdmin: user.isAdmin ? user.isAdmin : false,
+          isTeamLead: user.isTeamLead ? user.isTeamLead : false,
+          isModerator: user.isModerator ? user.isModerator: false,
+          isUser: user.isUser ? user.isUser : false,
           email: user.email
         });
       })
@@ -354,8 +354,8 @@ class UserForm extends React.Component {
         <Container>
           <Card>
             <CardContent>
-              <Typography gutterBottom variant="h5" component="h2">User (Role: {primaryRole}, challenge: {this.props.user.challengeName})</Typography>
               <p>{message}</p>
+              <Typography gutterBottom variant="h5" component="h2">User (Role: {primaryRole}, challenge: {this.props.user.challengeName})</Typography>
               <form onSubmit={this.saveUser} >
 
                 {/* Dont usee teams for now - wait unti l you have challenge properly integrated

@@ -21,8 +21,7 @@ class Users extends React.Component {
 
     refreshPage = () => {
         // Get with security
-        UserDB.getUsers()
-            .then(users => {
+        UserDB.getUsers().then(users => {
                 for (let i in users) {
                     users[i].firstName = users[i].firstName || "First";
                     users[i].lastName = users[i].lastName || "Last";
@@ -54,8 +53,8 @@ class Users extends React.Component {
             console.log("Deleted user");
             this.refreshPage();
         }).catch(err => {
-            alert(err);
-            console.error(err);
+            this.setState({ message: `Error deleting user: ${err}` });
+            console.error(`Error deleting user: ${err}`);
         });
     }
 

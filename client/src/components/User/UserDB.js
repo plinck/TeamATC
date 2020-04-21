@@ -167,21 +167,17 @@ class UserDB {
 
     static update (user) {
         console.log(`trying to update user in fb: ${user}`);
-        return new Promise(async (resolve, reject) => {
+        let newUser = {...user};
+        // Delete the id field since you do not want in db as it is they key
+        if (newUser.id) {
+            delete newUser.id;
+        }
 
+        return new Promise(async (resolve, reject) => {
             // update
             console.log("User updated, user=", user);
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
-            dbUsersRef.doc(user.id).set({
-                firstName: user.firstName,
-                lastName: user.lastName,
-                displayName: `${user.firstName} ${user.lastName}`,
-                phoneNumber: user.phoneNumber,
-                email: user.email,
-                photoURL: user.photoURL ? user.photoURL : "",
-                teamUid: user.teamUid ? user.teamUid  : "",
-                teamName: user.teamName ? user.teamName  : ""
-            }, {
+            dbUsersRef.doc(user.id).set(newUser, {
                 merge: true
             }).then(() => {
                 console.log("completed");
