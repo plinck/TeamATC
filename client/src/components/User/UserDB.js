@@ -39,6 +39,7 @@ class UserDB {
             docRef.get().then((doc) => {
                 if (doc.exists) {
                     let user = doc.data();
+                    user.id = doc.id;
                     return(resolve(user));
                 }
                 console.log("User not found in firestore");
