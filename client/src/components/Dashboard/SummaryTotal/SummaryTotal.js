@@ -13,7 +13,10 @@ const useStyles = makeStyles(theme => ({
     },
     runText: {
         color: "#33cc32"
-    }
+    },
+    otherText: {
+        color: '#ffa500'
+    },
 }))
 
 const SummaryTotal = (props) => {
@@ -56,6 +59,11 @@ const SummaryTotal = (props) => {
                             <img style={{ maxHeight: '20px' }} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "}
                             {props.currentUserTotals.runNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                         </h6>
+                        <h6 className={classes.otherText}>
+                            <img style={{ maxHeight: '20px' }} src={"/images/icons8-triathlon-50.png"} alt={"other"} />{"other: "}
+                            {props.currentUserTotals.otherNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                        </h6>
+
                         {/* End Nbr */}
 
                         {/* Begin Distance */}
@@ -75,6 +83,11 @@ const SummaryTotal = (props) => {
                             <img style={{ maxHeight: '20px' }} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "}
                             {props.currentUserTotals.runDistanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
                         </h6>
+                        <h6 className={classes.otherText}>
+                            <img style={{ maxHeight: '20px' }} src={"/images/icons8-triathlon-50.png"} alt={"other"} />{"other: "}
+                            {props.currentUserTotals.otherDistanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
+                        </h6>
+
                         {/* End Distance */}
 
                         {/* Begin Duraation */}
@@ -94,6 +107,11 @@ const SummaryTotal = (props) => {
                             <img style={{ maxHeight: '20px' }} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "}
                             {props.currentUserTotals.runDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
                         </h6>
+                        <h6 className={classes.otherText}>
+                            <img style={{ maxHeight: '20px' }} src={"/images/icons8-triathlon-50.png"} alt={"other"} />{"other: "}
+                            {props.currentUserTotals.otherDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
+                        </h6>
+
                         {/* End Distance */}
                     </CardContent>
                 </Card>
@@ -126,6 +144,10 @@ const SummaryTotal = (props) => {
                             <img style={{ maxHeight: '20px' }} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "}
                             {props.currentTeamTotals.runNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                         </h6>
+                        <h6 className={classes.otherText}>
+                            <img style={{ maxHeight: '20px' }} src={"/images/icons8-triathlon-50.png"} alt={"other"} />{"other: "}
+                            {props.currentTeamTotals.otherNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                        </h6>
                         {/* End Nbr */}
 
                         {/* Begin Distance */}
@@ -144,6 +166,10 @@ const SummaryTotal = (props) => {
                         <h6 className={classes.runText}>
                             <img style={{ maxHeight: '20px' }} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "}
                             {props.currentTeamTotals.runDistanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
+                        </h6>
+                        <h6 className={classes.otherDistanceTotal}>
+                            <img style={{ maxHeight: '20px' }} src={"/images/icons8-triathlon-50.png"} alt={"other"} />{"other: "}
+                            {props.currentTeamTotals.otherDistanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
                         </h6>
                         {/* End Distance */}
 
@@ -164,6 +190,11 @@ const SummaryTotal = (props) => {
                             <img style={{ maxHeight: '20px' }} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "}
                             {props.currentTeamTotals.runDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
                         </h6>
+                        <h6 className={classes.otherText}>
+                            <img style={{ maxHeight: '20px' }} src={"/images/icons8-triathlon-50.png"} alt={"other"} />{"other: "}
+                            {props.currentTeamTotals.otherDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
+                        </h6>
+
                         {/* End Distance */}
                     </CardContent>
                 </Card>
@@ -196,6 +227,11 @@ const SummaryTotal = (props) => {
                             <img style={{ maxHeight: '20px' }} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "}
                             {props.currentAllTotals.runNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                         </h6>
+                        <h6 className={classes.otherText}>
+                            <img style={{ maxHeight: '20px' }} src={"/images/icons8-triathlon-50.png"} alt={"other"} />{"other: "}
+                            {props.currentAllTotals.otherNbrActivities.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                        </h6>
+
                         {/* End Nbr */}
 
                         {/* Begin Distance */}
@@ -215,6 +251,11 @@ const SummaryTotal = (props) => {
                             <img style={{ maxHeight: '20px' }} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "}
                             {props.currentAllTotals.runDistanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
                         </h6>
+                        <h6 className={classes.otherText}>
+                            <img style={{ maxHeight: '20px' }} src={"/images/icons8-triathlon-50.png"} alt={"other"} />{"other: "}
+                            {props.currentAllTotals.otherDistanceTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Miles
+                        </h6>
+
                         {/* End Distance */}
 
                         {/* Begin Duraation */}
@@ -234,6 +275,11 @@ const SummaryTotal = (props) => {
                             <img style={{ maxHeight: '20px' }} src={"/images/icons8-running-50.png"} alt={"Run"} />{"Run: "}
                             {props.currentAllTotals.runDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
                         </h6>
+                        <h6 className={classes.otherText}>
+                            <img style={{ maxHeight: '20px' }} src={"/images/icons8-triathlon-50.png"} alt={"other"} />{"other: "}
+                            {props.currentAllTotals.otherDurationTotal.toFixed(1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Hours
+                        </h6>
+
                         {/* End Distance */}
                     </CardContent>
                 </Card>

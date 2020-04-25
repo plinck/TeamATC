@@ -55,6 +55,8 @@ class Dashboard extends React.PureComponent {
         };
     }
 
+    activeListener = undefined;
+
     static get defaultProps() {
         return {
             className: "layout",
@@ -66,12 +68,9 @@ class Dashboard extends React.PureComponent {
         this.setState({ isDraggable: false })
     }
 
-    activeListener = undefined;
-
     resetLayout() {
         this.setState({ layouts: {} })
     }
-
 
     onLayoutChange(layout, layouts) {
         saveToLS("layouts", layouts);
@@ -134,6 +133,7 @@ class Dashboard extends React.PureComponent {
             console.error(`Error attaching listener: ${error}`);
         });
     }
+
     fetchData(challengeId) {
         ChallengeDB.getFiltered().then(challenges => {
             let currentChallenge = challenges.filter(challenge => challenge.id === challengeId)
@@ -146,6 +146,7 @@ class Dashboard extends React.PureComponent {
         this._mounted = true;
         let layouts = getFromLS("layouts") || {};
         this.setState({ loadingFlag: true, layouts: JSON.parse(JSON.stringify(layouts)) });
+        console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
         if (this.props.user.challengeUid) {
             this.createListener(this.props.user.challengeUid)
             this.fetchData(this.props.user.challengeUid)
@@ -153,6 +154,8 @@ class Dashboard extends React.PureComponent {
     }
 
     componentDidUpdate(prevProps) {
+        console.log(`prevProps.user.challengeUid: ${prevProps.user.challengeUid}`);
+        console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
         if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
             if (this.activeListener) {
                 this.activeListener();
@@ -208,14 +211,10 @@ class Dashboard extends React.PureComponent {
 
     render() {
         const { classes } = this.props;
-        if (this.state.loadingFlag) {
-            return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
-        }
-
 
         // Some need to catch up for some reason - I had to refresh browser after going to activities page
         if (!this.state.totals || !this.state.totals.userR || !this.state.totals.teamR) {
-            return null;
+            return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
         let myActivities = this.state.myActivities;
         if (this.props.user.authUser) {

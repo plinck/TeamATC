@@ -22,7 +22,7 @@ const PointsBreakdownGraph = (props) => {
         let swimPoints = path.slice(0, 5).map(team => team.swimPointsTotal | 0);
         let bikePoints = path.slice(0, 5).map(team => team.bikePointsTotal | 0);
         let runPoints = path.slice(0, 5).map(team => team.runPointsTotal | 0);
-
+        let otherPoints = path.slice(0, 5).map(team => team.otherPointsTotal | 0);
 
         let trace1 = {
             x: teams,
@@ -54,7 +54,17 @@ const PointsBreakdownGraph = (props) => {
             }
         };
 
-        let data = [trace1, trace2, trace3];
+        let trace4 = {
+            x: teams,
+            y: otherPoints,
+            name: 'Other',
+            type: 'bar',
+            marker: {
+                color: "#ffa500"
+            }
+        };
+
+        let data = [trace1, trace2, trace3, trace4];
         let layout = {
             barmode: 'stack', autosize: true,
             height: 300,

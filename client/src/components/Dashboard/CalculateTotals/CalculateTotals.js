@@ -22,7 +22,10 @@ class CalculateTotals {
             bikeDurationTotal: 0,
             runNbrActivities: 0,
             runDistanceTotal: 0,
-            runDurationTotal: 0
+            runDurationTotal: 0,
+            otherNbrActivities: 0,
+            otherDistanceTotal: 0,
+            otherDurationTotal: 0,
         };
 
         let newTeamTotals = {
@@ -39,7 +42,10 @@ class CalculateTotals {
             bikeDurationTotal: 0,
             runNbrActivities: 0,
             runDistanceTotal: 0,
-            runDurationTotal: 0
+            runDurationTotal: 0,
+            otherNbrActivities: 0,
+            otherDistanceTotal: 0,
+            otherDurationTotal: 0,
         };
 
         let newUserTotals = {
@@ -56,7 +62,10 @@ class CalculateTotals {
             bikeDurationTotal: 0,
             runNbrActivities: 0,
             runDistanceTotal: 0,
-            runDurationTotal: 0
+            runDurationTotal: 0,
+            otherNbrActivities: 0,
+            otherDistanceTotal: 0,
+            otherDurationTotal: 0,
         };
 
         let newUserResults = [];
@@ -95,7 +104,11 @@ class CalculateTotals {
                     newTotals.runDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
                     break;
                 default:
-                // NADA
+                    newTotals.otherNbrActivities += 1;
+                    newTotals.otherDistanceTotal += activities[i].distance;
+                    newTotals.otherPointsTotal = newTotals.otherDistanceTotal;
+                    newTotals.otherDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                    break;
             }
 
             // only add for this team
@@ -123,7 +136,11 @@ class CalculateTotals {
                         newTeamTotals.runDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
                         break;
                     default:
-                    // NADA
+                        newTeamTotals.otherNbrActivities += 1;
+                        newTeamTotals.otherDistanceTotal += activities[i].distance;
+                        newTeamTotals.otherPointsTotal = newTeamTotals.otherDistanceTotal;
+                        newTeamTotals.otherDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                        break;
                 }
             }
             if (uid === activities[i].uid) {
@@ -150,7 +167,11 @@ class CalculateTotals {
                         newUserTotals.runDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
                         break;
                     default:
-                    // NADA
+                        newUserTotals.otherNbrActivities += 1;
+                        newUserTotals.otherDistanceTotal += activities[i].distance;
+                        newTeamTotals.otherPointsTotal = newUserTotals.otherDistanceTotal;
+                        newUserTotals.otherDurationTotal += activities[i].durationUnits === "Minutes" ? activities[i].duration / 60 : activities[i].duration;
+                        break;
                 }
             }
         }
@@ -198,22 +219,26 @@ class CalculateTotals {
             isThisMine: false,
             distanceTotal: 0,
             pointsTotal: 0,
-            swimDistanceTotal: 0,
-            swimPointsTotal: 0,
-            bikeDistanceTotal: 0,
-            bikePointsTotal: 0,
-            runDistanceTotal: 0,
-            runPointsTotal: 0,
             durationTotal: 0,
             nbrActivities: 0,
+            swimDistanceTotal: 0,
+            swimPointsTotal: 0,
             swimNbrActivities: 0,
             swimDurationTotal: 0,
+            bikeDistanceTotal: 0,
+            bikePointsTotal: 0,
             bikeNbrActivities: 0,
             bikeDurationTotal: 0,
+            runDistanceTotal: 0,
+            runPointsTotal: 0,
             runNbrActivities: 0,
             runDurationTotal: 0,
             teamName: "",
-            teamRecord: false
+            teamRecord: false,
+            otherDistanceTotal: 0,
+            otherPointsTotal: 0,
+            otherNbrActivities: 0,
+            otherDurationTotal: 0,
         }
 
         let idx = userResults.findIndex((uResult) => {
@@ -259,7 +284,14 @@ class CalculateTotals {
                     newUserResult.runPointsTotal = newUserResult.runDistanceTotal * 3;
                     break;
                 default:
-                // NADA
+                    newUserResult.pointsTotal += distanceInMiles;
+
+                    newUserResult.otherNbrActivities += 1;
+                    newUserResult.otherDistanceTotal += activity.distance;
+                    newUserResult.otherDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+
+                    newUserResult.otherPointsTotal = newUserResult.otherDistanceTotal;
+                    break;
             }
             userResults[idx] = newUserResult;
 
@@ -303,7 +335,14 @@ class CalculateTotals {
                     newUserResult.runPointsTotal = newUserResult.runDistanceTotal * 3;
                     break;
                 default:
-                // NADA
+                    newUserResult.pointsTotal += distanceInMiles;
+
+                    newUserResult.otherNbrActivities += 1;
+                    newUserResult.otherDistanceTotal += activity.distance;
+                    newUserResult.otherDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+
+                    newUserResult.otherPointsTotal = newUserResult.otherDistanceTotal;
+                    break;
             }
             userResults.push(newUserResult);
         }
@@ -322,22 +361,26 @@ class CalculateTotals {
             isThisMine: false,
             distanceTotal: 0,
             pointsTotal: 0,
-            swimDistanceTotal: 0,
-            swimPointsTotal: 0,
-            bikeDistanceTotal: 0,
-            bikePointsTotal: 0,
-            runDistanceTotal: 0,
-            runPointsTotal: 0,
             durationTotal: 0,
             nbrActivities: 0,
+            swimDistanceTotal: 0,
+            swimPointsTotal: 0,
             swimNbrActivities: 0,
             swimDurationTotal: 0,
+            bikeDistanceTotal: 0,
+            bikePointsTotal: 0,
             bikeNbrActivities: 0,
             bikeDurationTotal: 0,
+            runDistanceTotal: 0,
+            runPointsTotal: 0,
             runNbrActivities: 0,
             runDurationTotal: 0,
             teamName: "",
-            teamRecord: true
+            teamRecord: false,
+            otherDistanceTotal: 0,
+            otherPointsTotal: 0,
+            otherNbrActivities: 0,
+            otherDurationTotal: 0,
         }
 
         let idx = teamResults.findIndex((uResult) => {
@@ -384,7 +427,14 @@ class CalculateTotals {
                     newTeamResult.runPointsTotal = newTeamResult.runDistanceTotal * 3;
                     break;
                 default:
-                // NADA
+                    newTeamResult.pointsTotal += distanceInMiles;
+
+                    newTeamResult.otherNbrActivities += 1;
+                    newTeamResult.otherDistanceTotal += activity.distance;
+                    newTeamResult.otherDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+
+                    newTeamResult.otherPointsTotal = newTeamResult.otherDistanceTotal;
+                    break;
             }
             teamResults[idx] = newTeamResult;
 
@@ -429,7 +479,14 @@ class CalculateTotals {
                     newTeamResult.runPointsTotal += newTeamResult.runDistanceTotal * 3;
                     break;
                 default:
-                // NADA
+                    newTeamResult.pointsTotal += distanceInMiles;
+
+                    newTeamResult.otherNbrActivities += 1;
+                    newTeamResult.otherDistanceTotal += activity.distance;
+                    newTeamResult.otherDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+
+                    newTeamResult.otherPointsTotal = newTeamResult.otherDistanceTotal;
+                    break;
             }
             teamResults.push(newTeamResult);
         }

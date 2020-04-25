@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { InputAdornment, Typography, Container, Grid, CardActions, Link as L } from '@material-ui/core';
+import { InputAdornment, Box, Typography, Container, Grid, CardActions, Link as L } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
@@ -19,7 +19,7 @@ import { ORG } from "../../Environment/Environment"
 const INITIAL_STATE = {
     email: '',
     password: '',
-    error: null,
+    message: null,
     showPassword: false
 };
 
@@ -100,10 +100,9 @@ class SignInFormBase extends React.Component {
                 if (this._isMounted) {
                     this.setState({ ...INITIAL_STATE });
                 }
-            })
-            .catch(error => {
+            }).catch(err => {
                 if (this._isMounted) {
-                    this.setState({ error });
+                    this.setState({ message: `Error sigining in: ${err}` });
                 }
             });
     };
@@ -116,14 +115,12 @@ class SignInFormBase extends React.Component {
             .then((authUser) => {
                 console.log("Logged in with google to firebase");
                 return (UserDB.addAuthUserToFirestore(authUser));
-            })
-            .then(() => {
+            }).then(() => {
                 console.log("Added to firebase");
-            })
-            .catch(err => {
-                console.error("Error logging in with google", err);
+            }).catch(err => {
+                console.error(`Error logging in with google ${err}`);
                 if (this._isMounted) {
-                    this.setState({ error: err });
+                    this.setState({ message: `Error logging in with google ${err}` });
                 }
             });
     }
@@ -132,7 +129,7 @@ class SignInFormBase extends React.Component {
         const { classes } = this.props;
 
         let firebaseAuthKey;
-        const { email, password, showPassword, error } = this.state;
+        const { email, password, showPassword, message } = this.state;
 
         const isInvalid = password === '' || email === '';
 
@@ -145,6 +142,12 @@ class SignInFormBase extends React.Component {
             SignInScreen =
                 <Card>
                     <CardContent>
+                        {message ? 
+                            <Typography variant="subtitle1">
+                                <Box fontWeight="fontWeightLight" color="warning.main" fontStyle="oblique">
+                                    {message}
+                                </Box>
+                            </Typography> : ""}
                         <Typography variant="h5">Sign In</Typography>
                         <form className={classes.formContainer} onSubmit={this.signInUser} >
 
@@ -185,8 +188,6 @@ class SignInFormBase extends React.Component {
                                     )
                                 }}
                                 onChange={this.onChange}
-                                error={!!this.state.errorText}
-                                helperText={this.state.errorText}
                                 inputProps={{
                                     style: { padding: '18px' }
                                 }}
@@ -196,7 +197,6 @@ class SignInFormBase extends React.Component {
                         </Button>
                         </form>
 
-                        {error && <p>{error.message}</p>}
                         <Link to="/pw-forget">Forgot Password?</Link>
                         <Typography variant="subtitle1">Having trouble signing in? <L href="mailto:info@atlantatriclub.com">Contact Support</L></Typography>
 

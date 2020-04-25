@@ -66,6 +66,7 @@ class TeamResultsModal extends React.Component {
                     <TableCell align="right">Swim</TableCell>
                     <TableCell align="right">Bike</TableCell>
                     <TableCell align="right">Run</TableCell>
+                    <TableCell align="right">Other</TableCell>
                 </TableRow>
             </TableHead>
 

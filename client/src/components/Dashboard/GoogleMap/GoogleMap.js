@@ -84,6 +84,7 @@ const GoogleMap = (props) => {
             includedDistanceTotal += props.challenge.isSwim ? teamLegTotals[k].swimPointsTotal : 0;
             includedDistanceTotal += props.challenge.isBike ? teamLegTotals[k].bikeDistanceTotal : 0;
             includedDistanceTotal += props.challenge.isRun ? teamLegTotals[k].runPointsTotal : 0;
+            includedDistanceTotal += props.challenge.isOther ? teamLegTotals[k].otherDistanceTotal : 0;
 
             for (i = 0; i < legs.length && totalDistanceToNextLeg < includedDistanceTotal ; i++) {
                 let legDistance = legs[i].distance.value / 1000 / 1.609344;  // to miles
