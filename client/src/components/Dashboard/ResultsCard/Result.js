@@ -47,6 +47,9 @@ const Result = (props) => {
             <TableCell align="right">
                 {props.result.runPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
             </TableCell>
+            <TableCell align="right">
+            {props.result.otherPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </TableCell>
         </TableRow>
     )
 }

@@ -15,21 +15,25 @@ class ActivityTotalsGraphs extends React.Component {
     plotGraph() {
         // Grab props
         let distanceTotal  = this.props.currentTotalsShare.distanceTotal;
-        let swimDistanceTotal  = this.props.currentTotalsShare.swimDistanceTotal;
-        let swimPointsTotal  = swimDistanceTotal * 10;
-        let bikeDistanceTotal  = this.props.currentTotalsShare.bikeDistanceTotal;
-        let bikePointsTotal  = bikeDistanceTotal;
-        let runDistanceTotal  = this.props.currentTotalsShare.runDistanceTotal;
-        let runPointsTotal  = runDistanceTotal * 3;
         let durationTotal = this.props.currentTotalsShare.durationTotal;
         let nbrActivities = this.props.currentTotalsShare.nbrActivities;
+        let pointsTotal  = swimPointsTotal + bikePointsTotal + runPointsTotal;
+        let swimDistanceTotal  = this.props.currentTotalsShare.swimDistanceTotal;
+        let swimPointsTotal  = swimDistanceTotal * 10;
         let swimNbrActivities = this.props.currentTotalsShare.swimNbrActivities;
         let swimDurationTotal = this.props.currentTotalsShare.swimDurationTotal;
+        let bikeDistanceTotal  = this.props.currentTotalsShare.bikeDistanceTotal;
+        let bikePointsTotal  = bikeDistanceTotal;
         let bikeNbrActivities = this.props.currentTotalsShare.bikeNbrActivities;
         let bikeDurationTotal = this.props.currentTotalsShare.bikeDurationTotal;
+        let runDistanceTotal  = this.props.currentTotalsShare.runDistanceTotal;
+        let runPointsTotal  = runDistanceTotal * 3;
         let runNbrActivities = this.props.currentTotalsShare.runNbrActivities;
         let runDurationTotal = this.props.currentTotalsShare.runDurationTotal
-        let pointsTotal  = swimPointsTotal + bikePointsTotal + runPointsTotal;
+        let otherDistanceTotal  = this.props.currentTotalsShare.otherDistanceTotal;
+        let otherPointsTotal  = otherDistanceTotal;
+        let otherNbrActivities = this.props.currentTotalsShare.otherNbrActivities;
+        let otherDurationTotal = this.props.currentTotalsShare.otherDurationTotal;
 
         let trace1 = {
             x: ['Activities', 'Points', 'Duration', 'ActualDist'],
@@ -51,15 +55,23 @@ class ActivityTotalsGraphs extends React.Component {
             name: 'Run',
             type: 'bar'
         };
-        
+
         let trace4 = {
+            x: ['Activities', 'Points', 'Duration', 'ActualDist'],
+            y: [otherNbrActivities, otherPointsTotal, otherDurationTotal, otherDistanceTotal],
+            name: 'Other',
+            type: 'bar'
+        };
+        
+      
+        let trace5 = {
             x: ['Activities', 'Points', 'Duration', 'ActualDist'],
             y: [nbrActivities, pointsTotal, durationTotal, distanceTotal],
             name: 'Total',
             type: 'bar'
         };
         
-        let data = [trace1, trace2, trace3, trace4];
+        let data = [trace1, trace2, trace3, trace4, trace5];
         let layout = {barmode: 'stack'};
         
         return (

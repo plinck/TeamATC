@@ -12,35 +12,39 @@ class ActivityTeamBreakdown extends React.Component {
     plotGraph() {
         // Grab props
         let distanceTotal  = this.props.currentTotalsShare.distanceTotal;
-        let swimDistanceTotal  = this.props.currentTotalsShare.swimDistanceTotal;
-        let swimPointsTotal  = swimDistanceTotal * 10;
-        let bikeDistanceTotal  = this.props.currentTotalsShare.bikeDistanceTotal;
-        let bikePointsTotal  = bikeDistanceTotal;
-        let runDistanceTotal  = this.props.currentTotalsShare.runDistanceTotal;
-        let runPointsTotal  = runDistanceTotal * 3;
         let durationTotal = this.props.currentTotalsShare.durationTotal;
         let nbrActivities = this.props.currentTotalsShare.nbrActivities;
+        let pointsTotal  = swimPointsTotal + bikePointsTotal + runPointsTotal;
+        let swimDistanceTotal  = this.props.currentTotalsShare.swimDistanceTotal;
+        let swimPointsTotal  = swimDistanceTotal * 10;
         let swimNbrActivities = this.props.currentTotalsShare.swimNbrActivities;
         let swimDurationTotal = this.props.currentTotalsShare.swimDurationTotal;
+        let bikeDistanceTotal  = this.props.currentTotalsShare.bikeDistanceTotal;
+        let bikePointsTotal  = bikeDistanceTotal;
         let bikeNbrActivities = this.props.currentTotalsShare.bikeNbrActivities;
         let bikeDurationTotal = this.props.currentTotalsShare.bikeDurationTotal;
         let runNbrActivities = this.props.currentTotalsShare.runNbrActivities;
         let runDurationTotal = this.props.currentTotalsShare.runDurationTotal
-        let pointsTotal  = swimPointsTotal + bikePointsTotal + runPointsTotal;
-        
+        let runDistanceTotal  = this.props.currentTotalsShare.runDistanceTotal;
+        let runPointsTotal  = runDistanceTotal * 3;
+        let otherDistanceTotal  = this.props.currentTotalsShare.otherDistanceTotal;
+        let otherPointsTotal  = otherDistanceTotal;
+        let otherNbrActivities = this.props.currentTotalsShare.otherNbrActivities;
+        let otherDurationTotal = this.props.currentTotalsShare.otherDurationTotal;
+      
         
 
         let ultimateColors = [
-            ['rgb(0, 153, 255)', 'rgb(255, 0, 0)', 'rgb(51, 204, 50)'],
+            ['rgb(0, 153, 255)', 'rgb(255, 0, 0)', 'rgb(51, 204, 50)', 'rgb(100, 65, 0)'],
           ];
 
         let chartValues = [
-            [swimDistanceTotal, bikeDistanceTotal, runDistanceTotal],
-            [swimDurationTotal, bikeDurationTotal, runDurationTotal]
+            [swimDistanceTotal, bikeDistanceTotal, runDistanceTotal, otherDistanceTotal],
+            [swimDurationTotal, bikeDurationTotal, runDurationTotal, otherDistanceTotal]
         ];
 
         let chartLabels = [
-            ["Swim", "Bike", "Run"],
+            ["Swim", "Bike", "Run", "Other"],
         ]
 
         let data = [

@@ -65,6 +65,7 @@ const ResultsCard = (props) => {
                             <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Swim</TableCell>
                             <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Bike</TableCell>
                             <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Run</TableCell>
+                            <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Other</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -79,6 +80,7 @@ const ResultsCard = (props) => {
                                 <TableCell padding="none" align="right">{result.swimPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
                                 <TableCell padding="none" align="right">{result.bikePointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
                                 <TableCell padding="none" align="right">{result.runPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
+                                <TableCell padding="none" align="right">{result.otherPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
