@@ -606,6 +606,7 @@ class ActivityForm extends React.Component {
                                                         'Swim',
                                                         'Bike',
                                                         'Run',
+                                                        'Other'
                                                     ]}
                                                     getOptionLabel={option => option}
                                                     renderInput={params =>
