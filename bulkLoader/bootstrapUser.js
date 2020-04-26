@@ -591,8 +591,8 @@ async function setUsersChallenge() {
 }
 
 async function createTestActivities () {
-    let totalActivities = 3000;
-    let i = 1;
+    let totalActivities = 7000;
+    let i = 0;
     const dbChallengeRefs = Util.getDynamicChallengeDBRefs("ATC", "prod", "B7ilHMG5povjQ6M1sgnF")
     const dbActivitiesRef = dbChallengeRefs.dbActivitiesRef;
 

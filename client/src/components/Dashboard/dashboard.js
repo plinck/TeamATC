@@ -47,7 +47,6 @@ class Dashboard extends React.PureComponent {
 
         this.state = {
             layouts: JSON.parse(JSON.stringify(originalLayouts)),
-            loadingFlag: true,
             activities: [],
             myActivities: [],
             totals: {},
@@ -81,8 +80,9 @@ class Dashboard extends React.PureComponent {
         let allDBRefs = Util.getChallengeDependentRefs(challengeUid);
         const dbActivitiesRef = allDBRefs.dbActivitiesRef;
 
-        let ref = dbActivitiesRef
-            .orderBy("activityDateTime", "desc");
+        // try not to do any sorting or filtering to make it fast
+        // let ref = dbActivitiesRef
+        //     .orderBy("activityDateTime", "desc");
         this.activeListener = ref.onSnapshot((querySnapshot) => {
             let activities = this.state.activities;
 
@@ -124,13 +124,12 @@ class Dashboard extends React.PureComponent {
                 this.props.user.uid, this.props.user.displayName);
             let myActivities = this.myActivitiesFilter(activities);
             this.setState({
-                loadingFlag: false,
                 activities,
                 totals,
                 myActivities
             });
-        }, (error) => {
-            console.error(`Error attaching listener: ${error}`);
+        }, (err) => {
+            console.error(`Error attaching listener: ${err}`);
         });
     }
 
@@ -145,7 +144,7 @@ class Dashboard extends React.PureComponent {
     componentDidMount() {
         this._mounted = true;
         let layouts = getFromLS("layouts") || {};
-        this.setState({ loadingFlag: true, layouts: JSON.parse(JSON.stringify(layouts)) });
+        this.setState({ layouts: JSON.parse(JSON.stringify(layouts)) });
         console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
         if (this.props.user.challengeUid) {
             this.createListener(this.props.user.challengeUid)
