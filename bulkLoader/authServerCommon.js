@@ -11,7 +11,7 @@ const databaseURL = "https://teamatc-challenge.firebaseio.com";
 
 const serviceAccount = require(path.join(
     __dirname,
-    "./.serviceAccountKeyBootstrap.json"
+    "./.serviceAccountKey.json"
 ));
 
 admin.initializeApp({

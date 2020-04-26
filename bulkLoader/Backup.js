@@ -1,4 +1,5 @@
 const Util = require("./Util.js");
+const ORG="ATC"
 const DEV="dev"
 const PROD="prod"
 const BACK="backup"
@@ -107,12 +108,12 @@ class Backup {
     }
 
     static copyChallengeProdToBack(challengeUid) {
-        const dbChallengeProdRefs = Util.getDynamicChallengeDBRefs("${PROD}", challengeUid)
+        const dbChallengeProdRefs = Util.getDynamicChallengeDBRefs(ORG, PROD, challengeUid)
         const dbProdATCChallengeMemberRef = dbChallengeProdRefs.dbChallengeMembersRef;
         const dbProdActivitiesRef = dbChallengeProdRefs.dbActivitiesRef;
         const dbProdTeamsRef = dbChallengeProdRefs.dbTeamsRef;
 
-        const dbChallengeBackRefs = Util.getDynamicChallengeDBRefs(BACK, challengeUid)
+        const dbChallengeBackRefs = Util.getDynamicChallengeDBRefs(ORG, BACK, challengeUid)
         const dbBackATCChallengeMemberRef = dbChallengeBackRefs.dbChallengeMembersRef;
         const dbBackActivitiesRef = dbChallengeBackRefs.dbActivitiesRef;
         const dbBackTeamsRef = dbChallengeBackRefs.dbTeamsRef;

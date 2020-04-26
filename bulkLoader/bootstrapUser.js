@@ -590,6 +590,39 @@ async function setUsersChallenge() {
     console.log(`Update: ${nbrUsers} users`);
 }
 
+async function createTestActivities () {
+    let totalActivities = 7000;
+    let i = 0;
+    const dbChallengeRefs = Util.getDynamicChallengeDBRefs("ATC", "prod", "B7ilHMG5povjQ6M1sgnF")
+    const dbActivitiesRef = dbChallengeRefs.dbActivitiesRef;
+
+    for (i = 10; i < totalActivities; i++) {
+        // get random stuff for activity
+
+        let activity = {
+            teamName: "Perf Test Team",
+            teamUid: "AzPOnjrWGlxFISFFBr5E",
+            activityName: `Activity nbr: ${i}`,
+            activityDateTime: new Date(),
+            activityType: "Bike",
+            distance: 20.0,
+            distanceUnits: "Miles",
+            duration: 1.0,
+            email: "paul.linck@gmail.com",
+            displayName: "Paul Linck",
+            uid: "O9viDWnDDcb8NGTWsibRF2D2MVJ3"   
+        };
+
+        Activities.create(activity, dbActivitiesRef).then(newActivity => {
+            // None
+        }).catch(err => {
+            // NA
+        });
+    }
+    console.log(`Last Activitiy Added : ${i}`);
+
+    return;
+}
 
 
 // Main menu
@@ -601,8 +634,9 @@ function mainMenu() {
         createUsersFromGoogleActivities: createUsersFromGoogleActivities,
         createActivitiesFromGoogleDoc: createActivitiesFromGoogleDoc,
         //setUsersChallenge: setUsersChallenge,
-        copyProdToBack: Backup.copyProdToBack,
+        // copyProdToBack: Backup.copyProdToBack,
         //copyDevToProd: copyDevToProd,
+        createTestActivities: createTestActivities,
         QUIT: exitProgram
     };
 
