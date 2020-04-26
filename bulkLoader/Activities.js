@@ -93,6 +93,18 @@ class Activities {
         console.log(`Found: ${totalActivities} valid activities, ${totalBadAtivities} Bad Activities`);
         return ChallengeActivities;
     }
+
+    static create = (activity, dbActivitiesRef) => {
+        return new Promise((resolve, reject) => {
+            dbActivitiesRef.add(activity).then(() => {
+                //console.log("Firestore activity successfully added");
+                return resolve(activity);
+            }).catch((err) => {
+                console.error("Firestore activity add failed");
+                return reject(err);
+            });
+        });
+    }
 }    
 
 module.exports = Activities;

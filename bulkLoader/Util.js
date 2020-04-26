@@ -88,14 +88,16 @@ class Util {
       }
     }
 
-    static getDynamicChallengeDBRefs (env, challengeUid) {
+    static getDynamicChallengeDBRefs (org, env, challengeUid) {
       if (!challengeUid) {
         challengeUid = CHALLENGE;
       }
       if (!env) {
         env = ENV;
       }
-      const org = ORG;
+      if (!org) {
+        org = ORG;
+      }
 
       const db = admin.firestore();
 
