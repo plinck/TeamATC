@@ -94,7 +94,7 @@ exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
     let challengeUid = req.challengeUid;
     let team = req.team;
 
-    console.log(`In fBFupdateActivityTeamName with: ORG: ${ORG}, ENV: ${ENV}, challengeUid: ${challengeUid}`);
+    console.log(`In fBFupdateActivityTeamName with: ORG: ${ENV.APP_CONFIG.ORG}, ENV: ${ENV.APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
     return new Promise((resolve, reject) => {
         let activitiesRef = undefined;
         if (challengeUid && challengeUid != "") {
