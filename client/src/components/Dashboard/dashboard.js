@@ -12,7 +12,7 @@ import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
 import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
 import PointsBreakdownGraph from './Graphs/PointsBreakdown';
-import { Container, Grid, CircularProgress } from '@material-ui/core'
+import { Container, Button, Grid, CircularProgress } from '@material-ui/core'
 import Util from "../Util/Util";
 import GoogleMap from './GoogleMap/GoogleMap';
 import TeamWidget from './TeamWidget/TeamWidget';
@@ -135,14 +135,17 @@ class Dashboard extends React.PureComponent {
     }
 
     prepareDashboardFromActivities() {
-        let activities = this.state.activities;
+
+        let activities = this.props.activities;
+        let nbrRenderredActivities = this.props.activities.length
         
         const totals = CalculateTotals.totals(activities, this.props.user.teamUid, this.props.user.teamName,
             this.props.user.uid, this.props.user.displayName);
         let myActivities = this.myActivitiesFilter(activities);
         this.setState({
             totals,
-            myActivities
+            myActivities,
+            nbrRenderredActivities
         });
     }
 
@@ -167,6 +170,7 @@ class Dashboard extends React.PureComponent {
     }
 
     componentDidUpdate(prevProps) {
+        console.log("componentDidUpdate");
         // console.log(`prevProps.user.challengeUid: ${prevProps.user.challengeUid}`);
         // console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
         if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
@@ -178,6 +182,9 @@ class Dashboard extends React.PureComponent {
             // this.createListener(this.props.user.challengeUid)
             this.prepareDashboardFromActivities();
             this.fetchData(this.props.user.challengeUid)
+        }
+        if (this.props.activities.length !== this.state.activities.length) {
+            console.log(`New Activities`);
         }
     }
      
@@ -223,6 +230,9 @@ class Dashboard extends React.PureComponent {
         return myActivities;
     }
 
+    sendUpdate() {
+        this.forceUpdate();
+    }
 
     render() {
         const { classes } = this.props;
@@ -236,10 +246,20 @@ class Dashboard extends React.PureComponent {
         }
 
         let myActivities = this.state.myActivities;
+        console.log(`Renderring ${this.props.activities.length} number of activities`);
         if (this.props.user.authUser) {
             return (
                 <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
                     <Container maxWidth="xl">
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            name="action"
+                            onClick={() => this.sendUpdate()}>
+                            Force Update
+                        </Button>
+
+
                         {/* <button onClick={() => this.resetLayout()}>Reset Layout</button> */}
                         <ResponsiveReactGridLayout
                             cols={{ lg: 12, md: 12, sm: 4, xs: 4, xxs: 2 }}
@@ -300,7 +320,7 @@ class Dashboard extends React.PureComponent {
                             <div key="7" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 8, h: 10, x: 0, y: 4, minW: 6, minH: 10, maxW: 12, maxH: 10 }}>
                                 <ActivityBubble
                                     title={"Heatmap (All Athletes)"}
-                                    activities={this.state.activities}
+                                    activities={this.props.activities}
                                     callbackParent={() => this.onChildChanged()}
                                 />
                             </div>
@@ -321,7 +341,7 @@ class Dashboard extends React.PureComponent {
                             <div key="10" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 9, x: 4, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
                                 <ActivityByDay
                                     title={"Activity By Day"}
-                                    activities={this.state.activities}
+                                    activities={this.props.activities}
                                 />
                             </div>
 
@@ -361,8 +381,9 @@ function saveToLS(key, value) {
 }
 
 const mapStateToProps = (state) => {
-    console.log(`mapStateToProps State: ${JSON.stringify(state)}`)
+    console.log(`mapStateToProps State, nbrActivities: ${state.activities.length}`)
     return {
+        ...state,
         activities: state.activities
     }
 }  

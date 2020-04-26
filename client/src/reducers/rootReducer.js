@@ -1,19 +1,17 @@
 const initState = {
-  activities: [],
-  nbrActivities: 0
+  activities: []
 }
 
+// MUST RETURN NEW STATE not just MUTATE
 const rootReducer = (state = initState, action) => {
     // console.log(action);'
     if (action.type === 'DELETE_ACTIVITY') {
         let newActivities = state.activities.filter(activity => {
             return activity.id !== action.id;
         });
-        let newNbr = state.nbrActivities - 1;
         return {
             ...state,
-            activities: newActivities,
-            nbrActivities: newNbr
+            activities: newActivities
         }
     }
     if (action.type === 'MODIFY_ACTIVITY') {
@@ -30,14 +28,11 @@ const rootReducer = (state = initState, action) => {
         }
     }
     if (action.type === 'ADD_ACTIVITY') {
-        let newActivities = state.activities;
-        newActivities.push(action.activity);
-        let newNbr = state.nbrActivities - 1;
-        return {
-            ...state,
-            activities: newActivities,
-            nbrActivities: newNbr
-        }
+        let newState = {...state};
+        let mutatedActivities = state.activities;
+        mutatedActivities.push(action.activity);
+        newState = {...newState, activities: mutatedActivities};
+        return newState;
     }
     return state;
 }
