@@ -24,7 +24,7 @@ class ActivityListener extends React.Component {
         }
     }
 
-    createActivityListener = (challengeUid) => {
+    createActivityListener = async (challengeUid) => {
         console.log(`Created activity listener with challengeUid: ${challengeUid}`);
         if (this.activityListener) {
             this.activityListener();
