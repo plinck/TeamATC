@@ -17,6 +17,7 @@ import Util from "../Util/Util";
 import GoogleMap from './GoogleMap/GoogleMap';
 import TeamWidget from './TeamWidget/TeamWidget';
 import ChallengeDB from '../Challenges/ChallengeDB';
+import { connect } from 'react-redux';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
@@ -47,7 +48,7 @@ class Dashboard extends React.PureComponent {
 
         this.state = {
             layouts: JSON.parse(JSON.stringify(originalLayouts)),
-            activities: [],
+            activities: this.props.activities,
             myActivities: [],
             totals: {},
             challenge: {}
@@ -133,6 +134,18 @@ class Dashboard extends React.PureComponent {
         });
     }
 
+    prepareDashboardFromActivities() {
+        let activities = this.state.activities;
+        
+        const totals = CalculateTotals.totals(activities, this.props.user.teamUid, this.props.user.teamName,
+            this.props.user.uid, this.props.user.displayName);
+        let myActivities = this.myActivitiesFilter(activities);
+        this.setState({
+            totals,
+            myActivities
+        });
+    }
+
     fetchData(challengeId) {
         ChallengeDB.getFiltered().then(challenges => {
             let currentChallenge = challenges.filter(challenge => challenge.id === challengeId)
@@ -147,7 +160,8 @@ class Dashboard extends React.PureComponent {
         this.setState({ layouts: JSON.parse(JSON.stringify(layouts)) });
         // console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
         if (this.props.user.challengeUid) {
-            this.createListener(this.props.user.challengeUid)
+            // this.createListener(this.props.user.challengeUid)
+            this.prepareDashboardFromActivities();
             this.fetchData(this.props.user.challengeUid)
         }
     }
@@ -161,10 +175,16 @@ class Dashboard extends React.PureComponent {
                 // console.log(`Detached listener`);
             }
             // console.log(this.props.user.challengeUid)
-            this.createListener(this.props.user.challengeUid)
+            // this.createListener(this.props.user.challengeUid)
+            this.prepareDashboardFromActivities();
             this.fetchData(this.props.user.challengeUid)
         }
     }
+
+    componentWillReceiveProps(newProps){
+        this.setState({activities: newProps.activities});
+     }
+     
     // Search for object in array based on key using uniqure ID
     searchForActivity(keyValue, keyName, searchArray) {
         for (var i = 0; i < searchArray.length; i++) {
@@ -340,5 +360,10 @@ function saveToLS(key, value) {
     }
 }
 
+const mapStateToProps = (state) => {
+    return {
+        activities: state.activities
+    }
+}  
 
-export default withAuthUserContext(withStyles(styles)(WidthProvider(Dashboard)));
+export default connect(mapStateToProps)(withAuthUserContext(withStyles(styles)(WidthProvider(Dashboard))));
