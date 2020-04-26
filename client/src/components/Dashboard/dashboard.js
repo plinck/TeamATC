@@ -180,10 +180,6 @@ class Dashboard extends React.PureComponent {
             this.fetchData(this.props.user.challengeUid)
         }
     }
-
-    componentWillReceiveProps(newProps){
-        this.setState({activities: newProps.activities});
-     }
      
     // Search for object in array based on key using uniqure ID
     searchForActivity(keyValue, keyName, searchArray) {
@@ -235,6 +231,10 @@ class Dashboard extends React.PureComponent {
         if (!this.state.totals || !this.state.totals.userR || !this.state.totals.teamR) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
+        if (!this.props.activities) {
+            return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
+        }
+
         let myActivities = this.state.myActivities;
         if (this.props.user.authUser) {
             return (
@@ -361,6 +361,7 @@ function saveToLS(key, value) {
 }
 
 const mapStateToProps = (state) => {
+    console.log(`mapStateToProps State: ${JSON.stringify(state)}`)
     return {
         activities: state.activities
     }
