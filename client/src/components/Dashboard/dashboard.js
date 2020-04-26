@@ -81,8 +81,8 @@ class Dashboard extends React.PureComponent {
         const dbActivitiesRef = allDBRefs.dbActivitiesRef;
 
         // try not to do any sorting or filtering to make it fast
-        // let ref = dbActivitiesRef
-        //     .orderBy("activityDateTime", "desc");
+        let ref = dbActivitiesRef
+            .orderBy("activityDateTime", "desc");
         this.activeListener = ref.onSnapshot((querySnapshot) => {
             let activities = this.state.activities;
 
@@ -145,7 +145,7 @@ class Dashboard extends React.PureComponent {
         this._mounted = true;
         let layouts = getFromLS("layouts") || {};
         this.setState({ layouts: JSON.parse(JSON.stringify(layouts)) });
-        console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
+        // console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
         if (this.props.user.challengeUid) {
             this.createListener(this.props.user.challengeUid)
             this.fetchData(this.props.user.challengeUid)
@@ -153,8 +153,8 @@ class Dashboard extends React.PureComponent {
     }
 
     componentDidUpdate(prevProps) {
-        console.log(`prevProps.user.challengeUid: ${prevProps.user.challengeUid}`);
-        console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
+        // console.log(`prevProps.user.challengeUid: ${prevProps.user.challengeUid}`);
+        // console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
         if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
             if (this.activeListener) {
                 this.activeListener();

@@ -115,7 +115,7 @@ class ActivityForm extends React.Component {
             if (this.state.id) {
                 this.fetchActivity(this.state.id);
             }  
-            console.log(this.props.user.challengeUid)
+            // console.log(this.props.user.challengeUid)
             this.fetchCurrentChallenge(this.props.user.challengeUid);
             this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
         }

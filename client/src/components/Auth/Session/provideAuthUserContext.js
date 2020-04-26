@@ -6,6 +6,8 @@ import UserAuthAPI from '../../User/UserAuthAPI';
 import Session from "../../Util/Session.js";
 import {CHALLENGE} from "../../Environment/Environment";
 
+import ActivityListener from "../../Activity/ActivityListener"
+
 // This component WRAPS Firebase and Authentication Context togtehr in 
 // a HOC - Higher Order Component.
 // This allows providers to just wrap provideAuthUserContext around a component
@@ -210,9 +212,12 @@ const provideAuthUserContext = Component => {
         // I am not 100% sure its cleaner and easier but I will go with it for now.
         render() {
             return (
-                <AuthUserContext.Provider value={this.state} >
-                    <Component {...this.props} />
-                </AuthUserContext.Provider>
+                <div>
+                    <ActivityListener challengeUid ={this.state.challengeUid} />
+                    <AuthUserContext.Provider value={this.state} >
+                        <Component {...this.props} />
+                    </AuthUserContext.Provider>
+                </div>
             );
         }
     }
