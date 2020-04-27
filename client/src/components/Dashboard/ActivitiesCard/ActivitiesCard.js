@@ -41,6 +41,11 @@ const ActivitiesCard = (props) => {
                 </Tooltip>
             </div>
         </Box>
+
+    let activities = props.activity.slice(0, 10).sort((a, b) => 
+        a.activityDateTime > b.activityDateTime ? -1 : 1
+    );
+
     return (
         <Card style={{ height: "100%" }}>
             <CardContent>
@@ -55,7 +60,7 @@ const ActivitiesCard = (props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {props.activity.slice(0, 10).map((activity, index) => {
+                        {activities.slice(0, 10).map((activity, index) => {
                             const {
                                 activityDateTime,
                                 activityName, // swim, bike, run
