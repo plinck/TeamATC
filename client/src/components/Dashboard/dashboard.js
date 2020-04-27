@@ -81,8 +81,7 @@ class Dashboard extends React.PureComponent {
         const dbActivitiesRef = allDBRefs.dbActivitiesRef;
 
         // try not to do any sorting or filtering to make it fast
-        // let ref = dbActivitiesRef
-        //     .orderBy("activityDateTime", "desc");
+        let ref = dbActivitiesRef.orderBy("activityDateTime", "desc");
         this.activeListener = ref.onSnapshot((querySnapshot) => {
             let activities = this.state.activities;
 
