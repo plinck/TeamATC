@@ -24,7 +24,7 @@ class ActivityListener extends React.Component {
         }
     }
 
-    createActivityListener = async (challengeUid) => {
+    createActivityListener = (challengeUid) => {
         console.log(`Created activity listener with challengeUid: ${challengeUid}`);
         if (this.activityListener) {
             this.activityListener();
@@ -41,7 +41,7 @@ class ActivityListener extends React.Component {
             querySnapshot.docChanges().forEach(change => {
                 if (change.type === "added") {
                     activity = change.doc.data();
-                        activity.id = change.doc.id;
+                    activity.id = change.doc.id;
                     activity.activityDateTime = activity.activityDateTime.toDate();
                     this.props.addActivity(activity);
                 }

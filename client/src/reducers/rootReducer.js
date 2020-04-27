@@ -20,6 +20,7 @@ const rootReducer = (state = initState, action) => {
     if (action.type === 'MODIFY_ACTIVITY') {
         let newActivities = state.activities.filter(activity => {
             if (activity.id === action.activity.id) {
+                console.log(`MODIFY_ACTIVITY name: ${action.activity.activityName}`);
                 return action.activity;
             } else {
                 return activity;

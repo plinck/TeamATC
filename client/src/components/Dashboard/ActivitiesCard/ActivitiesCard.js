@@ -45,6 +45,7 @@ const ActivitiesCard = (props) => {
     let activities = props.activity.slice(0, 10).sort((a, b) => 
         a.activityDateTime > b.activityDateTime ? -1 : 1
     );
+    console.log(`First activities: ${activities.length > 0 ? JSON.stringify(activities[0]): "NA"}`);
 
     return (
         <Card style={{ height: "100%" }}>

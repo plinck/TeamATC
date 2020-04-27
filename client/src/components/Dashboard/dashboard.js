@@ -12,7 +12,7 @@ import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
 import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
 import PointsBreakdownGraph from './Graphs/PointsBreakdown';
-import { Container, Button, Grid, CircularProgress } from '@material-ui/core'
+import { Container, Grid, CircularProgress } from '@material-ui/core'
 import Util from "../Util/Util";
 import GoogleMap from './GoogleMap/GoogleMap';
 import TeamWidget from './TeamWidget/TeamWidget';
@@ -253,7 +253,7 @@ class Dashboard extends React.PureComponent {
         
         // let myActivities = this.myActivitiesFilter(activities);
         let myActivities = activities.filter(activity => activity.uid === this.props.user.uid);
-        //console.log(`Last myActivity: ${myActivities.length > 0 ? JSON.stringify(myActivities[myActivities.length-1]): "NA"}`);
+        // console.log(`Last myActivity: ${myActivities.length > 0 ? JSON.stringify(myActivities[myActivities.length-1]): "NA"}`);
 
         const totals = CalculateTotals.totals(activities, this.props.user.teamUid, this.props.user.teamName,
             this.props.user.uid, this.props.user.displayName);
