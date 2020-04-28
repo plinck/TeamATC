@@ -590,6 +590,10 @@ async function setUsersChallenge() {
     console.log(`Update: ${nbrUsers} users`);
 }
 
+async function createSAAUsers() {
+    Users.createSAAUsers("SAAUsers.csv");
+}
+
 async function createTestActivities () {
     let totalActivities = 7000;
     let i = 0;
@@ -628,7 +632,8 @@ async function createTestActivities () {
 // Main menu
 function mainMenu() {
     const menuItems = {
-        seed: seedDatabase,
+        // seed: seedDatabase,
+        createSAAUsers: createSAAUsers,
         deleteATCMembers: deleteATCMembers,
         uploadATCMembers: uploadATCMembers,
         createUsersFromGoogleActivities: createUsersFromGoogleActivities,
