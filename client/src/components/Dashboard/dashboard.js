@@ -52,9 +52,10 @@ class Dashboard extends React.PureComponent {
             totals: {},
             challenge: {}
         };
+
+        this.activityListener = undefined;
     }
 
-    activeListener = undefined;
 
     static get defaultProps() {
         return {
@@ -77,16 +78,28 @@ class Dashboard extends React.PureComponent {
     }
 
     createListener(challengeUid) {
+        // kill the listener if exists
+        if (this.activityListener) {
+            this.activityListener();
+        }
+        // This is just to show something on the page while its loading
+        this.setState({loadingFlag: true});
+        this.renderTotals(this.state.activities);                    
+        
         let allDBRefs = Util.getChallengeDependentRefs(challengeUid);
         const dbActivitiesRef = allDBRefs.dbActivitiesRef;
 
-        // try not to do any sorting or filtering to make it fast
         let ref = dbActivitiesRef.orderBy("activityDateTime", "desc");
-        this.activeListener = ref.onSnapshot((querySnapshot) => {
+        this.activityListener = ref.onSnapshot((querySnapshot) => {
+
             let activities = this.state.activities;
+            this.setState({loadingFlag: true});
 
             let activity = {};
+            let nbrActivities = 0;
+
             querySnapshot.docChanges().forEach(change => {
+        
                 if (change.type === "added") {
                     activity = change.doc.data();
                     activity.id = change.doc.id;
@@ -118,17 +131,31 @@ class Dashboard extends React.PureComponent {
                         activities.splice(oldActivityAndIndex.index, 1);
                     }
                 }
+                // render every so often to keep things flowing
+                // didnt help
+                // if (nbrActivities % 2500 === 0) {
+                //     this.renderTotals(activities);                    
+                // }
             });
-            const totals = CalculateTotals.totals(activities, this.props.user.teamUid, this.props.user.teamName,
-                this.props.user.uid, this.props.user.displayName);
-            let myActivities = this.myActivitiesFilter(activities);
-            this.setState({
-                activities,
-                totals,
-                myActivities
-            });
+            this.renderTotals(activities);
+            this.setState({loadingFlag: false});
+    
         }, (err) => {
             console.error(`Error attaching listener: ${err}`);
+            this.setState({loadingFlag: false});
+        });
+    }
+
+    // This is to render interim without waiting for all to be done.
+    renderTotals(activities) {
+        const totals = CalculateTotals.totals(activities,
+            this.props.user.teamUid, this.props.user.teamName,
+            this.props.user.uid, this.props.user.displayName);
+        let myActivities = this.myActivitiesFilter(activities);
+        this.setState({
+            activities,
+            totals,
+            myActivities
         });
     }
 
@@ -155,8 +182,8 @@ class Dashboard extends React.PureComponent {
         console.log(`prevProps.user.challengeUid: ${prevProps.user.challengeUid}`);
         console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
         if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
-            if (this.activeListener) {
-                this.activeListener();
+            if (this.activityListener) {
+                this.activityListener();
                 // console.log(`Detached listener`);
             }
             // console.log(this.props.user.challengeUid)
@@ -188,8 +215,8 @@ class Dashboard extends React.PureComponent {
         this._mounted = false;
 
         // kill the listener
-        if (this.activeListener) {
-            this.activeListener();
+        if (this.activityListener) {
+            this.activityListener();
             // console.log(`Detached listener`);
         }
     }
@@ -218,6 +245,10 @@ class Dashboard extends React.PureComponent {
         if (this.props.user.authUser) {
             return (
                 <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
+                    {this.state.loadingFlag ?
+                        <Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading Map ...</p> </Grid>
+                    : ""}
+
                     <Container maxWidth="xl">
                         {/* <button onClick={() => this.resetLayout()}>Reset Layout</button> */}
                         <ResponsiveReactGridLayout
