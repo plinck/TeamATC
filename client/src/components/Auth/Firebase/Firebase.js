@@ -3,6 +3,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/functions';
 import 'firebase/storage';
+import 'firebase/performance';
 import { FB_CONFIG } from "../../Environment/Environment"
 
 const firebaseConfig = {
@@ -45,6 +46,7 @@ class Firebase {
     this.db = firebase.firestore();
     this.functions = firebase.functions();
     this.storage = firebase.storage();
+    this.perf = firebase.performance();
   }
 
   doGetCurrentUser = () => {
