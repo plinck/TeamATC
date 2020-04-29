@@ -33,7 +33,7 @@ const updateActivity = ((user, accessToken, stravaActivityId) => {
 
 });
 
-exports.saveStravaEvent = (async (event) => {
+exports.saveStravaEvent = ( (event) => {
     console.log(`In saveStravaEvent with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}`);
     console.log(JSON.stringify(event,null,4));
 
@@ -48,13 +48,17 @@ exports.saveStravaEvent = (async (event) => {
   
     let foundUser = false;
     let user = {};
+    console.log(`saveStravaEvent - "dbUsersRef before let`);
     let dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
+    console.log(`saveStravaEvent - "dbUsersRef before where`);
     dbUsersRef.where("stravaAthleteId", "==", stravaAthleteId).limit(1).get().then((querySnapshot) => {
+        console.log(`saveStravaEvent - "dbUsersRef after where clause" before foreach()`);
         querySnapshot.forEach(doc => {
             foundUser = true;
             user = doc.data();
             user.id = doc.id;
             user.stravaExpiresAt = user.stravaExpiresAt ? user.stravaExpiresAt.toDate() : null;
+            console.log(`saveStravaEvent - "dbUsersRef.where clause" foundUser`);
         });
         if (foundUser) {
             console.log(`Found User with Athlete Id ${stravaAthleteId}, displayName: ${user.displayName}`);
@@ -63,8 +67,10 @@ exports.saveStravaEvent = (async (event) => {
             if (!user.stravaExpiresAt || today > user.stravaExpiresAt) {
                 // Must refresh users access token
                 let req = {"uid" : user.id, "refresh_token" : user.stravaRefreshToken};
+                console.log(`Calling refreshToken with stravaRefreshToken: ${user.stravaRefreshToken}, stravaAccessToken: ${user.stravaAccessToken}`);
+
                 refreshToken(req).then(stravaInfo => {
-                    console.log(`Refreshed stravaAccessToken: ${stravaAccessToken}`);
+                    console.log(`Refreshed stravaInfo.access_token: ${stravaInfo.access_token}`);
                     updateActivity(user, stravaInfo.access_token, stravaActivityId);
                 }).catch(err => {
                     console.error(`Error in refreshToken - ${err}`);

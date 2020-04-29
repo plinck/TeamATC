@@ -12,7 +12,8 @@ const refreshToken = ((req, res) => {
             refresh_token = req.refresh_token;
             uid = req.uid;
         } else {
-            return reject(`Error oin stravaRefreshToken - invalid parm - must provide uid and refresh_token`);
+            console.error(`Error in stravaRefreshToken - invalid parm - must provide uid and refresh_token`);
+            return reject(`Error in stravaRefreshToken - invalid parm - must provide uid and refresh_token`);
         }
 
         const params = {
@@ -32,7 +33,7 @@ const refreshToken = ((req, res) => {
         console.log(`URIRequest: ${URIRequest}`);
 
         axios.post(URIRequest).then((res) => {
-            console.log("Successfully sent strava token refresh srequest.  response info");
+            console.log("Successfully sent strava token refresh request");
 
             // MJUST break up response since FB functions can not resolve this complex
             // res object as it has circular reference.  It causes an error;
@@ -47,6 +48,7 @@ const refreshToken = ((req, res) => {
             // NOW, save the strava info to the user account, maybe do in client
             // Must Save access_toke, refresh_token, expires_at, accepted_scopes
             updateUserWithStrava(uid, clientResponse).then (() => {
+                console.log(`Successfully updated strava user with data: ${JSON.stringify(clientResponse, null, 4)}`);
                 resolve(clientResponse);
             }).catch((err) => {
                 console.error(`FB Func: stravaRefreshToken in updateUserWithStrava -- Error : ${err}`);

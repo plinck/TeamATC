@@ -38,10 +38,10 @@ const updateUserWithStrava = ((uid, stravaInfo, deauthorize) => {
         let dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
 
         dbUsersRef.doc(uid).set(userStravaUpdate, { merge: true }).then(() => {
-            console.log("User successfully updated with Strava Info!");
+            console.log(`updateUserWithStrava User successfully updated with Strava Info : ${JSON.stringify(userStravaUpdate, null, 4)}`);
             resolve();
         }).catch((err) =>{
-            console.error("Batch failed: ", err);
+            console.error("updateUserWithStrava failed: ", err);
             reject(err);
         });
 
