@@ -17,8 +17,7 @@ const updateActivity = ((user, accessToken, stravaActivityId) => {
             { headers: { 'Authorization': `Bearer ${stravaAccessToken}` } }
         ).then((res) => {
             // console.log(`activity from Strava: ${JSON.stringify(res.data, null, 4)}`);
-            // console.log(`Success retrieving activity from Strava`);
-            console.log(`Success retrieving activity from Strava Type: ${res.data}, id: ${res.data.id}`);
+            console.log(`Success retrieving activity from Strava Type: ${res.data.type}, id: ${res.data.id}`);
 
             //Now add the activity to DB
             addStravaActivity(user, res.data).then(res => {
@@ -37,7 +36,7 @@ const updateActivity = ((user, accessToken, stravaActivityId) => {
 
 exports.saveStravaEvent = ( (event) => {
     // console.log(`In saveStravaEvent with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}`);
-    // console.log(JSON.stringify(event,null,4));
+    console.log(JSON.stringify(event,null,4));
 
     // make sure its an activity create event
     if (event.aspect_type !== "create" || event.object_type !== "activity") {
@@ -51,6 +50,7 @@ exports.saveStravaEvent = ( (event) => {
     let foundUser = false;
     let user = {};
     let dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
+    console.log(`Looking for Strave Athlete ith id: ${stravaAthleteId} in user collection`);
     dbUsersRef.where("stravaAthleteId", "==", stravaAthleteId).limit(1).get().then((querySnapshot) => {
         console.log(`saveStravaEvent - "dbUsersRef after where clause" before foreach()`);
         querySnapshot.forEach(doc => {
