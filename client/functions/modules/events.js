@@ -17,7 +17,9 @@ const updateActivity = ((user, accessToken, stravaActivityId) => {
             { headers: { 'Authorization': `Bearer ${stravaAccessToken}` } }
         ).then((res) => {
             // console.log(`activity from Strava: ${JSON.stringify(res.data, null, 4)}`);
-            console.log(`Success retrieving activity from Strava`);
+            // console.log(`Success retrieving activity from Strava`);
+            console.log(`Success retrieving activity from Strava Type: ${res.data}, id: ${res.data.id}`);
+
             //Now add the activity to DB
             addStravaActivity(user, res.data).then(res => {
                 console.log(`Activity added to firestore successful`);
@@ -34,8 +36,8 @@ const updateActivity = ((user, accessToken, stravaActivityId) => {
 });
 
 exports.saveStravaEvent = ( (event) => {
-    console.log(`In saveStravaEvent with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}`);
-    console.log(JSON.stringify(event,null,4));
+    // console.log(`In saveStravaEvent with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}`);
+    // console.log(JSON.stringify(event,null,4));
 
     // make sure its an activity create event
     if (event.aspect_type !== "create" || event.object_type !== "activity") {
@@ -48,9 +50,7 @@ exports.saveStravaEvent = ( (event) => {
   
     let foundUser = false;
     let user = {};
-    console.log(`saveStravaEvent - "dbUsersRef before let`);
     let dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
-    console.log(`saveStravaEvent - "dbUsersRef before where`);
     dbUsersRef.where("stravaAthleteId", "==", stravaAthleteId).limit(1).get().then((querySnapshot) => {
         console.log(`saveStravaEvent - "dbUsersRef after where clause" before foreach()`);
         querySnapshot.forEach(doc => {
@@ -58,7 +58,6 @@ exports.saveStravaEvent = ( (event) => {
             user = doc.data();
             user.id = doc.id;
             user.stravaExpiresAt = user.stravaExpiresAt ? user.stravaExpiresAt.toDate() : null;
-            console.log(`saveStravaEvent - "dbUsersRef.where clause" foundUser`);
         });
         if (foundUser) {
             console.log(`Found User with Athlete Id ${stravaAthleteId}, displayName: ${user.displayName}`);
@@ -70,13 +69,13 @@ exports.saveStravaEvent = ( (event) => {
                 console.log(`Calling refreshToken with stravaRefreshToken: ${user.stravaRefreshToken}, stravaAccessToken: ${user.stravaAccessToken}`);
 
                 refreshToken(req).then(stravaInfo => {
-                    console.log(`Refreshed stravaInfo.access_token: ${stravaInfo.access_token}`);
+                    // console.log(`Refreshed stravaInfo.access_token: ${stravaInfo.access_token}`);
                     updateActivity(user, stravaInfo.access_token, stravaActivityId);
                 }).catch(err => {
                     console.error(`Error in refreshToken - ${err}`);
                 });
             } else {
-                console.log(`Used user.stravaAccessToken: ${user.stravaAccessToken}`);
+                // console.log(`Used user.stravaAccessToken: ${user.stravaAccessToken}`);
                 updateActivity(user, user.stravaAccessToken, stravaActivityId);
             }
         } else {

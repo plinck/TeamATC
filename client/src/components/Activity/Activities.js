@@ -8,6 +8,7 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import PoolIcon from '@material-ui/icons/Pool';
 import DirectionsBikeIcon from '@material-ui/icons/DirectionsBike';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
+import BuildIcon from '@material-ui/icons/Build';
 
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import Activity from './Activity';
@@ -116,6 +117,7 @@ class Activities extends React.Component {
         if (this.state.typeFilter === "Swim") return activities.filter(act => act.activityType === "Swim")
         if (this.state.typeFilter === "Bike") return activities.filter(act => act.activityType === "Bike")
         if (this.state.typeFilter === "Run") return activities.filter(act => act.activityType === "Run")
+        if (this.state.typeFilter === "Other") return activities.filter(act => act.activityType === "Other")
     }
 
     // ************************************************************
@@ -380,6 +382,9 @@ class Activities extends React.Component {
                             </Tooltip>
                             <Tooltip title="Run">
                                 <Button onClick={() => this.filterByType("Run")} variant={this.state.typeFilter === "Run" ? "contained" : "outlined"}><DirectionsRunIcon /></Button>
+                            </Tooltip>
+                            <Tooltip title="Other">
+                                <Button onClick={() => this.filterByType("Other")} variant={this.state.typeFilter === "Other" ? "contained" : "outlined"}><BuildIcon /></Button>
                             </Tooltip>
                         </ButtonGroup>
                     </Grid>

@@ -5,26 +5,46 @@ const { APP_CONFIG } = require("./FirebaseEnvironment.js");
 // Local - non-exported functions
 // ===============================================================
 const addStravaActivity = ((user, stravaActivity) => {
-    console.log(`In addStravaActivity with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}`);
-
+    
     let stavaActivityDistanceUnits = "Miles";
     let stavaActivityDistance = 0.0;
     let stravaActivityType = "";
-    if (stravaActivity.type.toLowerCase() === "swim") {
-        stravaActivityType = "Swim";
-        stavaActivityDistanceUnits = "Yards";
-        //convert meters to yards
-        stavaActivityDistance = stravaActivity.distance * 1.09361;
-    } else if (stravaActivity.type.toLowerCase() === "ride") {
-        stravaActivityType = "Bike";
-        // meters to miles
-        stavaActivityDistance = stravaActivity.distance * 1.09361 / 1760;   
-    } else if (stravaActivity.type.toLowerCase() === "run") {
-        stravaActivityType = "Run";
-        stavaActivityDistance = stravaActivity.distance * 1.09361 / 1760;   
-    } else {
-        stravaActivityType = "Other";
-        stavaActivityDistance = stravaActivity.distance * 1.09361 / 1760;   
+    console.log(`Strava Activity. Type: ${stravaActivity.type.toLowerCase()}, id: ${stravaActivity.id}`);
+    switch (stravaActivity.type.toLowerCase()) {
+        case "swim":
+            stravaActivityType = "Swim";
+            stavaActivityDistanceUnits = "Yards";
+            //convert meters to yards
+            stavaActivityDistance = stravaActivity.distance * 1.09361;
+            break;
+        case "ride":
+            stravaActivityType = "Bike";
+            // meters to miles
+            stavaActivityDistance = stravaActivity.distance * 1.09361 / 1760;   
+            break;
+        case "virtualride":
+            stravaActivityType = "Bike";
+            stavaActivityDistance = stravaActivity.distance * 1.09361 / 1760;   
+            break;
+        case "handcycle":
+            stravaActivityType = "Bike";
+            stavaActivityDistance = stravaActivity.distance * 1.09361 / 1760;   
+            break;
+        case "run":
+            stravaActivityType = "Run";
+            stavaActivityDistance = stravaActivity.distance * 1.09361 / 1760;   
+            break;
+        case "virtualrun":
+            stravaActivityType = "Run";
+            stavaActivityDistance = stravaActivity.distance * 1.09361 / 1760;   
+            break;
+        case "walk":
+            stravaActivityType = "Run";
+            stavaActivityDistance = stravaActivity.distance * 1.09361 / 1760;   
+            break;
+        default:
+            stravaActivityType = "Other";
+            stavaActivityDistance = stravaActivity.distance * 1.09361 / 1760;   
     }
 
     return new Promise((resolve, reject) => {

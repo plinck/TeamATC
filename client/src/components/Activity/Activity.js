@@ -106,7 +106,7 @@ class Activity extends React.Component {
         } else if ((activityType.toLowerCase() === "run")) {
             activityIcon = "/images/icons8-running-50.png";
         } else {
-            activityIcon = "/images/icons8-triathlon-50.png";      // unknown
+            activityIcon = "/images/icons8-triceps-50.png";      // unknown
         }
 
         // Can only edit or delete your activities
