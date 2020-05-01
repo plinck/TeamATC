@@ -9,6 +9,10 @@ const admin = require("firebase-admin");
 const storageBucket = "teamatc-challenge.appspot.com";
 const databaseURL = "https://teamatc-challenge.firebaseio.com";
 
+const env = require('./.env-strava-config.json');
+// databaseURL = env.firebase.databaseURL;
+// storageBucket = env.firebase.storageBucket;
+ 
 const serviceAccount = require(path.join(
     __dirname,
     "./.serviceAccountKey.json"
@@ -16,8 +20,8 @@ const serviceAccount = require(path.join(
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: databaseURL,
-    storageBucket: storageBucket
+    databaseURL: env.firebase.databaseURL,
+    storageBucket: env.firebase.storageBucket
 });
 
 module.exports = admin;

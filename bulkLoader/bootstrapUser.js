@@ -628,6 +628,43 @@ async function createTestActivities () {
     return;
 }
 
+async function createRealtimeDBTestActivities() {
+    var realtimeDB = admin.database();
+    var dbRef = realtimeDB.ref("ATC/prod/activities");
+
+    let totalActivities = 10000;
+    let i = 0;
+
+    for (i = 0; i < totalActivities; i++) {
+        // get random stuff for activity
+
+        let activity = {
+            teamName: "Perf Test Team",
+            teamUid: "AzPOnjrWGlxFISFFBr5E",
+            activityName: `Activity nbr: ${i}`,
+            activityDateTime: new Date(),
+            activityType: "Bike",
+            distance: 20.0,
+            distanceUnits: "Miles",
+            duration: 1.0,
+            email: "paul.linck@gmail.com",
+            displayName: "Paul Linck",
+            uid: "O9viDWnDDcb8NGTWsibRF2D2MVJ3",
+            stravaActivity: false,
+            stravaActivityId: null
+        };
+        // Get a key for a new Post.
+        var newActivityKey = realtimeDB.ref().child('ATC/prod/activities').push().key;
+
+        // Write the new post's data simultaneously in the posts list and the user's post list.
+        var updates = {};
+        updates['/ATC/prod/activities/' + newActivityKey] = activity;
+        realtimeDB.ref().update(updates);       
+    }
+    console.log(`Last Activitiy Added : ${i}`);
+    return;
+  }
+
 
 // Main menu
 function mainMenu() {
@@ -641,7 +678,8 @@ function mainMenu() {
         //setUsersChallenge: setUsersChallenge,
         // copyProdToBack: Backup.copyProdToBack,
         //copyDevToProd: copyDevToProd,
-        createTestActivities: createTestActivities,
+        // createTestActivities: createTestActivities,
+        createRealtimeDBTestActivities: createRealtimeDBTestActivities,
         QUIT: exitProgram
     };
 
