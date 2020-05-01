@@ -632,26 +632,27 @@ async function createRealtimeDBTestActivities() {
     var realtimeDB = admin.database();
     var dbRef = realtimeDB.ref("ATC/prod/activities");
 
-    let totalActivities = 10000;
+    let totalActivities = 20000;
     let i = 0;
 
-    for (i = 0; i < totalActivities; i++) {
+    for (i = 10000; i < totalActivities; i++) {
         // get random stuff for activity
 
         let activity = {
-            teamName: "Perf Test Team",
-            teamUid: "AzPOnjrWGlxFISFFBr5E",
             activityName: `Activity nbr: ${i}`,
             activityDateTime: new Date(),
             activityType: "Bike",
+            challengeUid: "B7ilHMG5povjQ6M1sgnF",
+            displayName: "Paul Linck",
             distance: 20.0,
             distanceUnits: "Miles",
             duration: 1.0,
             email: "paul.linck@gmail.com",
-            displayName: "Paul Linck",
-            uid: "O9viDWnDDcb8NGTWsibRF2D2MVJ3",
             stravaActivity: false,
-            stravaActivityId: null
+            stravaActivityId: null,
+            teamName: "Perf Test Team",
+            teamUid: "AzPOnjrWGlxFISFFBr5E",
+            uid: "O9viDWnDDcb8NGTWsibRF2D2MVJ3",
         };
         // Get a key for a new Post.
         var newActivityKey = realtimeDB.ref().child('ATC/prod/activities').push().key;
