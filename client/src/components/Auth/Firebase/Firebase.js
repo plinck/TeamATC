@@ -1,6 +1,7 @@
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import 'firebase/database';
 import 'firebase/functions';
 import 'firebase/storage';
 import 'firebase/performance';
@@ -47,6 +48,7 @@ class Firebase {
     this.functions = firebase.functions();
     this.storage = firebase.storage();
     this.perf = firebase.performance();
+    this.realtimeDB = firebase.database();
   }
 
   doGetCurrentUser = () => {
