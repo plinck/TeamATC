@@ -7,6 +7,7 @@ class ActivityListener {
     static perf = undefined;
 
     static createActivityListener = (challengeUid) => {
+        this.perf = Util.getFirestorePerf();
         return new Promise((resolve, reject) => {
 
             console.log(`Created activity listener with challengeUid: ${challengeUid}`);
@@ -65,10 +66,64 @@ class ActivityListener {
                 traceFullRetrieval.stop();    
                 resolve(ActivityListener.activities);
             }, (err) => {
+                traceGetChanges.stop();
+                traceFullRetrieval.stop();    
                 console.error(`Error attaching listener: ${err}`);
                 reject(`Error attaching listener: ${err}`);
             }); // Create listener
         }); // Promise
+    }
+
+    static createRealtimeDBActivityListener() {
+        this.perf = Util.getFirestorePerf();
+        return new Promise((resolve, reject) => {
+            const traceCreateListener =  this.perf.trace('traceCreateListener');
+            const traceGetChanges = this.perf.trace('traceGetChanges');
+            traceCreateListener.start();
+            let traceCreateListenerT1 = new Date();
+    
+            const realtimeDB = Util.getFirebaseRealtimeDB();
+            let activityRef = realtimeDB.ref("ATC/prod/activities");
+
+            activityRef.once('value', (snapshot) => {
+                traceCreateListener.stop();
+                let traceCreateListenerT2 = new Date();
+                let traceCreateListenerDiff = traceCreateListenerT2.getTime() - traceCreateListenerT1.getTime();
+                console.log(`traceCreateListenerDiff time is milliseconds: ${traceCreateListenerDiff}`);
+    
+                traceGetChanges.start();
+                snapshot.forEach(function(childSnapshot) {
+                  let newActivity = childSnapshot.val();
+                  newActivity.id = childSnapshot.key;
+                  ActivityListener.activities.push(newActivity);
+                });
+                traceGetChanges.stop();
+      
+                resolve(ActivityListener.activities);
+            }, (err) => {
+                traceGetChanges.stop();
+                traceCreateListener.stop();
+                console.error(`Error gettng activities in listener: ${err}`);
+                reject(`Error gettng activities in listener: ${err}`);
+            });
+
+            // activityRef.on('child_added', (data) => {
+            //     let newActivity = data.val();
+            //     newActivity.id = data.key;
+            //     newActivity.activityDateTime = newActivity.activityDateTime.toDate();
+            //     ActivityListener.activities.push(newActivity);
+            //     resolve(ActivityListener.activities);
+            // });
+
+        }); // Promise
+
+        // commentsRef.on('child_changed', function(data) {
+        // setCommentValues(postElement, data.key, data.val().text, data.val().author);
+        // });
+
+        // commentsRef.on('child_removed', function(data) {
+        // deleteComment(postElement, data.key);
+        // });
     }
 }
 
