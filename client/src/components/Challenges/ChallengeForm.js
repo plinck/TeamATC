@@ -202,7 +202,7 @@ const ChallengeForm = (props) => {
         }
     }, [props.id]);
 
-    console.log(`Challenge: ${JSON.stringify(challenge)}`);
+    // console.log(`Challenge: ${JSON.stringify(challenge)}`);
 
     return (
         <Card>

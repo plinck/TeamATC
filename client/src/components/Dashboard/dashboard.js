@@ -100,6 +100,7 @@ class Dashboard extends React.PureComponent {
             traceCalculateTotals.stop();
             this.setState({loadingFlag: false});
         }).catch( err => {
+            traceFullRetrieval.stop();
             console.error(`Error attaching listener: ${err}`);
             this.setState({loadingFlag: false});
         });
@@ -114,7 +115,7 @@ class Dashboard extends React.PureComponent {
         traceFullRetrieval.start();
         let traceFullRetrievalT1 = new Date();
 
-        ActivityListener.createRealtimeDBActivityListener().then( activities => {
+        ActivityListener.createRealtimeDBActivityListener(challengeUid).then( activities => {
             traceFullRetrieval.incrementMetric('nbrActivities', activities.length);
             traceFullRetrieval.stop();
             let traceFullRetrievalT2 = new Date();
@@ -126,6 +127,7 @@ class Dashboard extends React.PureComponent {
             traceCalculateTotals.stop();
             this.setState({loadingFlag: false});
         }).catch( err => {
+            traceFullRetrieval.stop();
             console.error(`Error attaching listener: ${err}`);
             this.setState({loadingFlag: false});
         });

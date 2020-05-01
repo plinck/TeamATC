@@ -74,7 +74,7 @@ class ActivityListener {
         }); // Promise
     }
 
-    static createRealtimeDBActivityListener() {
+    static createRealtimeDBActivityListener(challengeUid) {
         this.perf = Util.getFirestorePerf();
         return new Promise((resolve, reject) => {
             const traceCreateListener =  this.perf.trace('traceCreateListener');
@@ -85,7 +85,7 @@ class ActivityListener {
             const realtimeDB = Util.getFirebaseRealtimeDB();
             let activityRef = realtimeDB.ref("ATC/prod/activities");
 
-            activityRef.once('value', (snapshot) => {
+            activityRef.orderByChild('challengeUid').equalTo(challengeUid).once('value', (snapshot) => {
                 traceCreateListener.stop();
                 let traceCreateListenerT2 = new Date();
                 let traceCreateListenerDiff = traceCreateListenerT2.getTime() - traceCreateListenerT1.getTime();
