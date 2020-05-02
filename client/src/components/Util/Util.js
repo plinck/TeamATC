@@ -141,10 +141,16 @@ class Util {
     });
   }
 
-  static getFirebasePerf = () => {
+  static getFirebaseDb = () => {
     const firebase = new Firebase();
     const db = firebase.db;
     return db;
+  }
+  
+  static getFirebaseRealtimeDB = () => {
+    const firebase = new Firebase();
+    const realtimeDB = firebase.realtimeDB;
+    return realtimeDB;
   }
 
   static getFirestorePerf = () => {

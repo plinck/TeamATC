@@ -17,6 +17,7 @@ import Util from "../Util/Util";
 import GoogleMap from './GoogleMap/GoogleMap';
 import TeamWidget from './TeamWidget/TeamWidget';
 import ChallengeDB from '../Challenges/ChallengeDB';
+import ActivityListener from "../Activity/ActivityListener";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
@@ -79,81 +80,54 @@ class Dashboard extends React.PureComponent {
     }
 
     createListener(challengeUid) {
-        const traceCreateListener =  this.perf.trace('traceCreateListener');
-        const traceFullRetrieval = this.perf.trace('traceFullRetrieval');
-        const traceGetChanges = this.perf.trace('traceGetChanges');
-        const traceCalculateTotals = this.perf.trace('traceCalculateTotals');
-        traceCreateListener.start();
-        traceFullRetrieval.start();
-        
-        // kill the listener if exists
-        if (this.activityListener) {
-            this.activityListener();
-        }
         // This is just to show something on the page while its loading
-
         this.setState({loadingFlag: true});
-        this.renderTotals(this.state.activities);                    
-        
-        let allDBRefs = Util.getChallengeDependentRefs(challengeUid);
-        const dbActivitiesRef = allDBRefs.dbActivitiesRef;
+        this.renderTotals(this.state.activities);    
+        const traceCalculateTotals =  this.perf.trace('traceCalculateTotals');
+        const traceFullRetrieval = this.perf.trace('traceFullRetrievalFirestore');
+        traceFullRetrieval.start();
+        let traceFullRetrievalT1 = new Date();
 
-        let ref = dbActivitiesRef.orderBy("activityDateTime", "desc");
-        this.activityListener = ref.onSnapshot((querySnapshot) => {
-            traceCreateListener.stop();
-
-            let activities = this.state.activities;
-            this.setState({loadingFlag: true});
-            let activity = {};
-
-            traceGetChanges.start();
-            querySnapshot.docChanges().forEach(change => {
-        
-                if (change.type === "added") {
-                    activity = change.doc.data();
-                    activity.id = change.doc.id;
-                    activity.activityDateTime = activity.activityDateTime.toDate();
-                    activities.push(activity);
-                }
-                if (change.type === "modified") {
-                    activity = change.doc.data();
-                    activity.id = change.doc.id;
-                    activity.activityDateTime = activity.activityDateTime.toDate();
-
-                    // swap activity in array with new
-                    let oldActivityAndIndex = this.searchForActivity(activity.id, "id", activities);
-                    if (oldActivityAndIndex) {
-                        // replace current activity in array with new one
-                        activities[oldActivityAndIndex.index] = activity;
-                    }
-                }
-                if (change.type === "removed") {
-                    // console.log(`Removed Activity: ${change.doc.id}`);
-                    activity = change.doc.data();
-                    activity.id = change.doc.id;
-                    activity.activityDateTime = activity.activityDateTime.toDate();
-
-                    // Delete activity from array 
-                    let oldActivityAndIndex = this.searchForActivity(activity.id, "id", activities);
-                    if (oldActivityAndIndex) {
-                        // remove it
-                        activities.splice(oldActivityAndIndex.index, 1);
-                    }
-                }
-                // render every so often to keep things flowing
-                // didnt help
-                // if (nbrActivities % 2500 === 0) {
-                //     this.renderTotals(activities);                    
-                // }
-            });
-            traceGetChanges.stop();
+        ActivityListener.createActivityListener(challengeUid).then( activities => {
             traceFullRetrieval.incrementMetric('nbrActivities', activities.length);
+            traceFullRetrieval.stop();
+            let traceFullRetrievalT2 = new Date();
+            let traceFullRetrievalDiff = traceFullRetrievalT2.getTime() - traceFullRetrievalT1.getTime();
+            console.log(`traceFullRetrievalDiff time is milliseconds: ${traceFullRetrievalDiff}`);
+
             traceCalculateTotals.start();
             this.renderTotals(activities);
             traceCalculateTotals.stop();
             this.setState({loadingFlag: false});
-            traceFullRetrieval.stop();    
-        }, (err) => {
+        }).catch( err => {
+            traceFullRetrieval.stop();
+            console.error(`Error attaching listener: ${err}`);
+            this.setState({loadingFlag: false});
+        });
+    }
+
+    createListenerAlt(challengeUid) {
+        // This is just to show something on the page while its loading
+        this.setState({loadingFlag: true});
+        this.renderTotals(this.state.activities);    
+        const traceCalculateTotals =  this.perf.trace('traceCalculateTotals');
+        const traceFullRetrieval = this.perf.trace('traceFullRetrievalRealtimeDB');
+        traceFullRetrieval.start();
+        let traceFullRetrievalT1 = new Date();
+
+        ActivityListener.createRealtimeDBActivityListener(challengeUid).then( activities => {
+            traceFullRetrieval.incrementMetric('nbrActivities', activities.length);
+            traceFullRetrieval.stop();
+            let traceFullRetrievalT2 = new Date();
+            let traceFullRetrievalDiff = traceFullRetrievalT2.getTime() - traceFullRetrievalT1.getTime();
+            console.log(`traceFullRetrievalDiff time is milliseconds: ${traceFullRetrievalDiff}`);
+
+            traceCalculateTotals.start();
+            this.renderTotals(activities);
+            traceCalculateTotals.stop();
+            this.setState({loadingFlag: false});
+        }).catch( err => {
+            traceFullRetrieval.stop();
             console.error(`Error attaching listener: ${err}`);
             this.setState({loadingFlag: false});
         });
@@ -176,8 +150,7 @@ class Dashboard extends React.PureComponent {
         ChallengeDB.getFiltered().then(challenges => {
             let currentChallenge = challenges.filter(challenge => challenge.id === challengeId)
             this.setState({ challenge: currentChallenge[0] })
-        })
-            .catch(err => console.log(err));
+        }).catch(err => console.error(err));
     }
 
     componentDidMount() {
@@ -259,7 +232,7 @@ class Dashboard extends React.PureComponent {
             return (
                 <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
                     {this.state.loadingFlag ?
-                        <Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading Map ...</p> </Grid>
+                        <Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading/Calculating ...</p> </Grid>
                     : ""}
 
                     <Container maxWidth="xl">

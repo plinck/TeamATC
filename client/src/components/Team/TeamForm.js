@@ -103,7 +103,7 @@ const TeamForm = (props) => {
         }
     }, [props.id]);
 
-    console.log(`Team: ${JSON.stringify(team)}`);
+    // console.log(`Team: ${JSON.stringify(team)}`);
 
     return (
         <Card>

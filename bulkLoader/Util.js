@@ -10,6 +10,11 @@ const CHALLENGE="gjS1mgcnjGOOmbH51vuK";
 
 class Util {
 
+    static getRealtimeDB () {
+      return admin.database();
+
+    }
+
     static getBaseDBRefs (challengeUid) {
         if (!challengeUid) {
           challengeUid = CHALLENGE;

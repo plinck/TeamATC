@@ -126,8 +126,8 @@ class Register extends React.Component {
                 // try to refresh token
                 this.setState({ message: `Error adding user ${err}` });
             });
-        }).catch(_ => {
-            const message = <div>Can not register - Not a valid Member <a href="mailto:info@atlantatriclub.com">Contact Support</a></div>
+        }).catch(err => {
+            const message = <div>Can not register - Not a valid Member - {err}<a href="mailto:info@atlantatriclub.com">Contact Support</a></div>
             this.setState({ message: message });
         });
     }
