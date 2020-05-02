@@ -22,6 +22,10 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import AddIcon from "@material-ui/icons/Add";
 import { Fab, Container, Grid, Card, CardContent, Button, CardActions, Typography } from "@material-ui/core";
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 
 import moment from "moment";
 
@@ -147,7 +151,6 @@ class ActivityForm extends React.Component {
     handleChange = event => {
         const name = event.target.name;
         const value = event.target.value;
-        console.log(`handleChange name: ${name} value: ${value}`)
 
         this.setState((prevState) => ({
             activity: {                   
@@ -156,10 +159,24 @@ class ActivityForm extends React.Component {
             }}), () => this.enableButton());    
     };
 
+    handlePullownChange = event => {
+        const name = event.target.name;
+        const value = event.target.value;
+        const teamName = this.state.teamLookup[value];
+
+        console.log(`handlePullownChange name: ${name} value: ${value}`)
+
+        this.setState((prevState) => ({
+            activity: {                   
+                ...prevState.activity,    
+                [name]: value,      
+                teamName: teamName,      
+            }}), () => this.enableButton());    
+    };
+
     handleAutoCompleteChanges = pname => (event, values) => {
         const name = pname;
         const value = values;
-        console.log(`handleAutoCompleteChanges name: ${name} value: ${value}`)
 
         // Set Units
         let distanceUnits = "Miles";
@@ -373,8 +390,8 @@ class ActivityForm extends React.Component {
             activity.displayName = this.props.user.displayName;
             activity.challengeUid = this.props.user.challengeUid;
             activity.email = this.props.user.authUser.email;
-            activity.teamName = this.props.user.teamName;
-            activity.teamUid = this.props.user.teamUid;
+            activity.teamName = activity.teamName ? activity.teamName : this.props.user.teamName;
+            activity.teamUid = activity.teamUid ? activity.teamUid : this.props.user.teamUid;
             activity.uid = this.props.user.authUser.uid;
         }
 
@@ -487,20 +504,20 @@ class ActivityForm extends React.Component {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
         
-        // if (typeof this.state.teams === 'undefined') {
-        //     console.error("Fatal Error")
-        //     return (<div> <p>FATAL ERROR Gettng teams, something goofy going on ...</p> </div>)
-        // }
-        // if (this.state.teams === null) {
-        //     // console.log("No teams yet")
-        //     return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
-        // }
+        if (typeof this.state.teams === 'undefined') {
+            console.error("Fatal Error")
+            return (<div> <p>FATAL ERROR Gettng teams, something goofy going on ...</p> </div>)
+        }
+        if (this.state.teams === null) {
+            // console.log("No teams yet")
+            return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
+        }
 
         // Commented out the state vars that dont get mutated on this screen
         // these may be needed if a admin is editting
 
         let activity = this.state.activity;
-        let { message } = this.state;
+        let { message, teams } = this.state;
 
         // Dont use props to set the team and user for activity unless its NEW, if exissts use from state / current record
         if (!activity.id) {
@@ -509,8 +526,8 @@ class ActivityForm extends React.Component {
                 activity.displayName = this.props.user.displayName;
                 activity.challengeUid = this.props.user.challengeUid;
                 activity.email = this.props.user.authUser.email;
-                activity.teamName = this.props.user.teamName;
-                activity.teamUid = this.props.user.teamUid;
+                activity.teamName = activity.teamName ? activity.teamName : this.props.user.teamName;
+                activity.teamUid = activity.teamUid ? activity.teamUid : this.props.user.teamUid;
                 activity.uid = this.props.user.authUser.uid;
             }
         } else {
@@ -587,30 +604,6 @@ class ActivityForm extends React.Component {
                                                             variant="outlined"
                                                         />}
                                                 />
-
-                                                {/*
-                                        <FormControl variant="outlined" required>
-                                            <InputLabel id="activityTypeLabel">Activity Type</InputLabel>
-                                            <Select
-                                                labelId="activityTypeLabel"
-                                                id="activityType"
-                                                value={activityType}
-                                                name="activityType"
-                                                type="text"
-                                                margin="normal"
-                                                style={{marginTop: 16, padding: 0}}
-                                                className={classes.textField}
-                                                autoHighlight
-                                                autoComplete="text"
-                                                onChange={this.handleChange}
-                                                >
-                                                <MenuItem value={"Swim"}>Swim</MenuItem>
-                                                <MenuItem value={"Bike"}>Bike</MenuItem>
-                                                <MenuItem value={"Run"}>Run</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                        */}
-
                                                 <TextField
                                                     id="distance"
                                                     name="distance"
@@ -660,6 +653,25 @@ class ActivityForm extends React.Component {
                                                     onChange={this.floatNumberOnChange}
                                                 />
 
+                                            <FormControl variant="outlined" required className={classes.formControl}>
+                                                <InputLabel id="teamNameLabel">Team Name</InputLabel>
+                                                <Select
+                                                    labelId="teamNameLabel"
+                                                    id="teamUid"
+                                                    value={activity.teamUid}
+                                                    name="teamUid"
+                                                    style={{ marginTop: 16, padding: 0 }}
+                                                    onChange={this.handlePullownChange}
+                                                    label="Team Name"
+                                                    type="text">
+                                                    {teams.map((team, i) => {
+                                                        return (
+                                                            <MenuItem key={i} value={team.id}>{team.name}</MenuItem>
+                                                        );
+                                                    })}
+                                                </Select>
+                                            </FormControl>
+        
                                             </form>
 
                                         </div>
