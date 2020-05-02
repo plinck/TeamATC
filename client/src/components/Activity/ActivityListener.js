@@ -13,8 +13,8 @@ class ActivityListener {
             console.log(`Created activity listener with challengeUid: ${challengeUid}`);
             ActivityListener.perf = Util.getFirestorePerf();
             
-            const traceCreateListener =  this.perf.trace('traceCreateListener');
-            const traceFullRetrieval = this.perf.trace('traceFullRetrieval');
+            const traceCreateListener =  this.perf.trace('traceCreateListenerFirestore');
+            const traceFullRetrieval = this.perf.trace('traceFullRetrievalFirestore');
             const traceGetChanges = this.perf.trace('traceGetChanges');
             traceCreateListener.start();
             traceFullRetrieval.start();
@@ -66,8 +66,6 @@ class ActivityListener {
                 traceFullRetrieval.stop();    
                 resolve(ActivityListener.activities);
             }, (err) => {
-                traceGetChanges.stop();
-                traceFullRetrieval.stop();    
                 console.error(`Error attaching listener: ${err}`);
                 reject(`Error attaching listener: ${err}`);
             }); // Create listener
@@ -77,8 +75,8 @@ class ActivityListener {
     static createRealtimeDBActivityListener(challengeUid) {
         this.perf = Util.getFirestorePerf();
         return new Promise((resolve, reject) => {
-            const traceCreateListener =  this.perf.trace('traceCreateListener');
-            const traceGetChanges = this.perf.trace('traceGetChanges');
+            const traceCreateListener =  this.perf.trace('traceCreateListenerRealtimeDB');
+            const traceGetChanges = this.perf.trace('traceGetChangesRealtimeDB');
             traceCreateListener.start();
             let traceCreateListenerT1 = new Date();
     
@@ -101,8 +99,6 @@ class ActivityListener {
       
                 resolve(ActivityListener.activities);
             }, (err) => {
-                traceGetChanges.stop();
-                traceCreateListener.stop();
                 console.error(`Error gettng activities in listener: ${err}`);
                 reject(`Error gettng activities in listener: ${err}`);
             });

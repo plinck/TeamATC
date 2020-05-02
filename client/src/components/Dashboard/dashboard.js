@@ -79,12 +79,12 @@ class Dashboard extends React.PureComponent {
         this.setState({ layouts });
     }
 
-    createListenerAlt(challengeUid) {
+    createListener(challengeUid) {
         // This is just to show something on the page while its loading
         this.setState({loadingFlag: true});
         this.renderTotals(this.state.activities);    
         const traceCalculateTotals =  this.perf.trace('traceCalculateTotals');
-        const traceFullRetrieval = this.perf.trace('traceFullRetrieval');
+        const traceFullRetrieval = this.perf.trace('traceFullRetrievalFirestore');
         traceFullRetrieval.start();
         let traceFullRetrievalT1 = new Date();
 
@@ -106,12 +106,12 @@ class Dashboard extends React.PureComponent {
         });
     }
 
-    createListener(challengeUid) {
+    createListenerAlt(challengeUid) {
         // This is just to show something on the page while its loading
         this.setState({loadingFlag: true});
         this.renderTotals(this.state.activities);    
         const traceCalculateTotals =  this.perf.trace('traceCalculateTotals');
-        const traceFullRetrieval = this.perf.trace('traceFullRetrieval');
+        const traceFullRetrieval = this.perf.trace('traceFullRetrievalRealtimeDB');
         traceFullRetrieval.start();
         let traceFullRetrievalT1 = new Date();
 

@@ -15,7 +15,7 @@ import ActivityPage from './components/Activity/ActivityPage';
 import ActivityForm from './components/Activity/ActivityForm';
 import UserPage from './components/User/UserPage';
 import UserForm from './components/User/UserForm.jsx';
-import Register from './components/Auth/Register/Register';
+import Register from './components/Auth/Register/Register.jsx';
 import Challenges from './components/Challenges/Challenges';
 import Teams from './components/Team/Teams';
 import OAuthRedirect from './components/Strava/OAuthRedirect.jsx';
