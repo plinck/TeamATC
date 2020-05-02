@@ -33,21 +33,35 @@ import FitActivity from "./FitActivity.js"
 
 
 const INITIAL_STATE = {
+    activity: {
+        id: undefined,
+        activityName: "",
+        activityDateTime: "",
+        activityType: "",
+        challengeUid: "",
+        displayName: "",
+        distance: "",
+        distanceUnits: "",
+        duration: "",
+        email: "",
+        stravaAcvitiy: false,
+        stravaAcvitiyId: "",
+        teamUid: "",
+        teamName: "",
+        uid: "",
+    },
+
+    dateTimeString: "",
+
+    fitFileToUpload: null,
+    fitFileLoaded: false,
+
     updateButtonDisabled: true,
-    uid: "",
-    email: "",
-    displayName: "",
-    teamUid: "",
-    teamName: "",
-    activityName: "",
-    activityDateTime: "",
-    activityDateTimeString: "",
-    activityType: "",
-    distance: "",
-    distanceUnits: "",
-    duration: "",
 
     challenge: undefined,
+
+    challenges: undefined,
+    challengeLookup: undefined,
 
     teams: null,
     teamLookup: null,
@@ -79,17 +93,14 @@ class ActivityForm extends React.Component {
         this._isMounted = false;
 
         this.state = { ...INITIAL_STATE };
-        this.state.id = this.props.id;
-
-        this.state.fitFileToUpload = null;
-        this.state.fitFileLoaded = false;
+        this.state.activity.id = this.props.id;
 
         //set the date field to be current date by default
         let jsDate = new Date();
-        this.state.activityDateTime = jsDate;
+        this.state.activity.activityDateTime = jsDate;
 
         const dateTimeString = moment(jsDate).format("MM-DD-YYYY");
-        this.state.activityDateTimeString = dateTimeString;
+        this.state.dateTimeString = dateTimeString;
     }
 
     componentWillUnmount() {
@@ -101,8 +112,8 @@ class ActivityForm extends React.Component {
         
         if (this.props.user.challengeUid) {
             // only get activity if its an update, otherwise assume new
-            if (this.state.id) {
-                this.fetchActivity(this.state.id);
+            if (this.state.activity.id) {
+                this.fetchActivity(this.state.activity.id);
             }  
             // Get current challenge info - should be part of state maybe eventually
             this.fetchCurrentChallenge(this.props.user.challengeUid);
@@ -112,8 +123,8 @@ class ActivityForm extends React.Component {
 
     componentDidUpdate(prevProps) {
         if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
-            if (this.state.id) {
-                this.fetchActivity(this.state.id);
+            if (this.state.activity.id) {
+                this.fetchActivity(this.state.activity.id);
             }  
             console.log(this.props.user.challengeUid)
             this.fetchCurrentChallenge(this.props.user.challengeUid);
@@ -122,70 +133,58 @@ class ActivityForm extends React.Component {
     }
 
     enableButton = () => {
-        if (this.state.activityName && this.state.activityDateTime && this.state.activityDateTimeString && this.state.activityType && this.state.distance && this.state.duration) {
-            this.setState({ updateButtonDisabled: false });
+        if (this.state.activity.activityName && 
+            this.state.activity.activityDateTime &&
+            this.state.activity.activityType &&
+            this.state.activity.distance &&
+            this.state.activity.duration) {
+                this.setState({ updateButtonDisabled: false });
         } else {
             this.setState({ updateButtonDisabled: true });
         }
     }
 
-    handleChange = name => event => {
-        if (event.target.value) {
-            this.setState({ [name]: parseInt(event.target.value) }, () => this.enableButton());
-        }
-        else {
-            this.setState({ [name]: 0 }, () => this.enableButton());
-        }
+    handleChange = event => {
+        const name = event.target.name;
+        const value = event.target.value;
+        console.log(`handleChange name: ${name} value: ${value}`)
+
+        this.setState((prevState) => ({
+            activity: {                   
+                ...prevState.activity,    
+                [name]: value,      
+            }}), () => this.enableButton());    
     };
 
-    // used for autocomplete component
-    onTagsChange = (event, value) => {
-        //console.log(`Values: ${value}`)
-        let distanceUnits = "Miles";
-        switch (value) {
-            case "Swim":
-                distanceUnits = "Yards";
-                break;
-            case "Bike":
-                distanceUnits = "Miles";
-                break;
-            case "Run":
-                distanceUnits = "Miles";
-                break;
-            default:
-                distanceUnits = "Miles";
-        }
-        this.setState({
-            activityType: value,
-            distanceUnits: distanceUnits
-        }, () => this.enableButton());
-    }
+    handleAutoCompleteChanges = pname => (event, values) => {
+        const name = pname;
+        const value = values;
+        console.log(`handleAutoCompleteChanges name: ${name} value: ${value}`)
 
-    onChange = event => {
         // Set Units
         let distanceUnits = "Miles";
-        if (event.target.name === "activityType") {
-            switch (event.target.value) {
+        if (name === "activityType") {
+            switch (value) {
                 case "Swim":
                     distanceUnits = "Yards";
-                    break;
-                case "Bike":
-                    distanceUnits = "Miles";
-                    break;
-                case "Run":
-                    distanceUnits = "Miles";
                     break;
                 default:
                     distanceUnits = "Miles";
             }
-            this.setState({
-                [event.target.name]: event.target.value,
-                distanceUnits: distanceUnits
-            }, () => this.enableButton());
+            //this.setState({ [name]: parseInt(event.target.value) }, () => this.enableButton());
+
+            this.setState((prevState) => ({
+                activity: {                   // object that we want to update
+                    ...prevState.activity,    // keep all other key-value pairs
+                    [name]: value,      // update the value of specific key
+                    distanceUnits: distanceUnits
+                }}), () => this.enableButton());    
         } else {
-            this.setState({
-                [event.target.name]: event.target.value,
-            }, () => this.enableButton());
+            this.setState((prevState) => ({
+                activity: {                   
+                    ...prevState.activity,    
+                    [name]: value,      
+                }}), () => this.enableButton());    
         }
     };
 
@@ -194,11 +193,14 @@ class ActivityForm extends React.Component {
     floatNumberOnChange = (event) => {
         const floatRegExp = /^\d{0,6}\.{0,1}(\d{0,2})?$/;
 
+        const name = event.target.name;
         const value = event.target.value
         if (value === '' || floatRegExp.test(value)) {
-            this.setState({
-                [event.target.name]: event.target.value,
-            }, () => this.enableButton());
+            this.setState((prevState) => ({
+                activity: {                   
+                    ...prevState.activity,    
+                    [name]: value,      
+                }}), () => this.enableButton());    
         }
     }
 
@@ -207,21 +209,25 @@ class ActivityForm extends React.Component {
     dateNumberOnChange = (event) => {
         const floatRegExp = /^\d{0,2}-{0,1}\d{0,2}-{0,1}(\d{0,4})$/;
 
+        const name = event.target.name;
         const value = event.target.value
         if (value === '' || floatRegExp.test(value)) {
-            this.setState({
-                [event.target.name]: event.target.value,
-            }, () => this.enableButton());
-        }
+            this.setState((prevState) => ({
+                activity: {                   
+                    ...prevState.activity,    
+                    [name]: value,      
+                }}), () => this.enableButton());    
+            }
     }
 
     // Handle Date Picker Change
     handleDateChange = date => {
-        this.setState({
-            activityDateTime: date
-        });
-    };
-
+        this.setState((prevState) => ({
+            activity: {                   
+                ...prevState.activity,    
+                activityDateTime: date,      
+            }}), () => this.enableButton());    
+        };
 
     fitFileChange = (event) => {
         event.preventDefault();
@@ -241,22 +247,27 @@ class ActivityForm extends React.Component {
             let fitData = new FitActivity(fitFileToUpload);
             fitData.processFitFile().then(activity => {
                 // add the additional fields from state/props
-                this.setState({
-                    uid: this.props.user.authUser.uid,
-                    email: this.props.user.authUser.email,
-                    displayName: this.props.user.displayName,
-                    teamName: this.props.user.teamName,
-                    teamUid: this.props.user.teamUid,
-
-                    activityName: activity.activityName,
-                    activityDateTime: activity.activityDateTime,
-                    activityDateTimeString: activity.activityDateTimeString,
-                    activityType: activity.activityType,
-                    distance: activity.distance,
-                    distanceUnits: activity.distanceUnits,
-                    duration: activity.duration,
+                this.setState((prevState) => ({
+                    activity: {                   
+                        ...prevState.activity,  
+                        activityName: activity.activityName,
+                        activityDateTime: activity.activityDateTime,
+                        activityType: activity.activityType,
+                        challengeUid: this.props.user.challengeUid,
+                        displayName: this.props.user.displayName,
+                        distance: activity.distance,
+                        distanceUnits: activity.distanceUnits,
+                        duration: activity.duration,      
+                        email: this.props.user.authUser.email,
+                        stravaAcvitiy: false,
+                        stravaAcvitiyId: "",
+                        teamName: this.props.user.teamName,
+                        teamUid: this.props.user.teamUid,
+                        uid: this.props.user.authUser.uid,
+                    },
+                    dateTimeString: activity.activityDateTimeString,
                     message: `Uploaded FIT file, make any changes and hit <CREATE> to save`
-                }, () => this.enableButton());
+                    }), () => this.enableButton());    
             }).catch(err => {
                 this.setState({ message: `Error processing fit file ${err}` });
                 return;
@@ -269,30 +280,24 @@ class ActivityForm extends React.Component {
         ActivityDB.get(id).then(activity => {
             let jsDate = new Date(activity.activityDateTime);
             const dateTimeString = moment(jsDate).format("MM-DD-YYYY");
-
             this.setState({
-                activityName: activity.activityName,
-                activityDateTime: activity.activityDateTime,
-                activityDateTimeString: dateTimeString,
-                activityType: activity.activityType,
-                distance: activity.distance,
-                distanceUnits: activity.distanceUnits,
-                duration: activity.duration,
-                uid: activity.uid,
-                displayName: activity.displayName,
-                email: activity.email,
-                teamUid: activity.teamUid,
-                teamName: activity.teamName
-            }, () => this.enableButton());
+                activity: {    
+                    ...activity,  
+                },
+                dateTimeString: dateTimeString,
+                }, () => this.enableButton());    
         });
     }
 
     // Get the users info
     fetchUser() {
         UserDB.getCurrentUser().then(user => {
-            this.setState({
-                teamName: user.teamName
-            });
+            this.setState((prevState) => ({
+                activity: {    
+                    ...prevState.activity,  
+                    teamName: user.teamName
+                }
+            }));
         });
     }
 
@@ -309,11 +314,10 @@ class ActivityForm extends React.Component {
                 teams: teams,
                 teamLookup: teamLookup
             });
-        })
-            .catch(err => {
-                console.error(`Error getting teams ${err}`);
-                this.setState({ message: `Error getting teams ${err}` });
-            });
+        }).catch(err => {
+            console.error(`Error getting teams ${err}`);
+            this.setState({ message: `Error getting teams ${err}` });
+        });
     }
 
     // get current challenge for this user
@@ -323,18 +327,15 @@ class ActivityForm extends React.Component {
             this.setState({
                 challenge: challenge
             });
-        })
-            .catch(err => {
-                console.error(`Error getting current challenge ${err}`);
-                this.setState({ message: `Error getting current challenge ${err}` });
-            });
+        }).catch(err => {
+            console.error(`Error getting current challenge ${err}`);
+            this.setState({ message: `Error getting current challenge ${err}` });
+        });
     }
 
     validateActivity() {
         // Using date picker, so date is date -- create string from date
-        let activity = this.state;
-        // activity.activityDateTime = jsDate;
-        activity.activityDateTimeString = moment(activity.activityDateTime).format('MM-DD-YYYY');
+        let activity = this.state.activity;
 
         // Validate Date to be no later than today and within the range of the challenge
         let now = new Date().getTime();
@@ -356,7 +357,7 @@ class ActivityForm extends React.Component {
             return false;
         }
 
-        // This is added so a challenge can be *paused* 
+        // This is added so a challenge can be *paused* which is STUPID and I wont do it ever
         if (this.props.user.challengeShutdownStartDate && this.props.user.challengeShutdownEndDate) {
             const startOfShutdownDay = moment(this.props.user.challengeShutdownStartDate).startOf("day").toDate();
             const endOfShutdownDay = moment(this.props.user.challengeShutdownEndDate).endOf("day").toDate();
@@ -367,14 +368,14 @@ class ActivityForm extends React.Component {
             }
         }
 
-
         // If NEW activity, set the info to the current users info, if not use what is there so admiin can update
-        if (!this.state.id) {
-            activity.email = this.props.user.authUser.email;
+        if (!this.state.activity.id) {
             activity.displayName = this.props.user.displayName;
-            activity.uid = this.props.user.authUser.uid;
+            activity.challengeUid = this.props.user.challengeUid;
+            activity.email = this.props.user.authUser.email;
             activity.teamName = this.props.user.teamName;
             activity.teamUid = this.props.user.teamUid;
+            activity.uid = this.props.user.authUser.uid;
         }
 
         if (!activity.uid || activity.uid.length < 1) {
@@ -435,12 +436,11 @@ class ActivityForm extends React.Component {
         activity.duration = Number(activity.duration);
 
         // If all good, update or it to firestore
-        if (this.state.id) {
+        if (this.state.activity.id) {
             this.updateActivity(activity);
         } else {
             this.createActivity(activity);
         }
-
 
         return true;
     }
@@ -451,7 +451,7 @@ class ActivityForm extends React.Component {
             this.setState({ message: `Activity Successfully Updated` });
             // Redirect to dashboard
             this.props.history.push({
-                pathname: '/dashboard'
+                pathname: '/activities'
             });
         }).catch(err => {
             this.setState({ message: `Error updating activity ${err}` });
@@ -464,7 +464,7 @@ class ActivityForm extends React.Component {
             this.setState({ message: `Activity Successfully Created` });
             // Redirect to dashboard
             this.props.history.push({
-                pathname: '/dashboard'
+                pathname: '/activities'
             });
         }).catch(err => {
             this.setState({ message: `Error creating activity ${err}` });
@@ -498,34 +498,24 @@ class ActivityForm extends React.Component {
 
         // Commented out the state vars that dont get mutated on this screen
         // these may be needed if a admin is editting
-        var {
-            uid,
-            email,
-            displayName,
-            teamUid,
-            teamName,
-            activityName,
-            activityDateTime,
-            activityType,           // swim, bike, run
-            distance,
-            distanceUnits,
-            duration,
-            message
-        } = this.state;
+
+        let activity = this.state.activity;
+        let { message } = this.state;
 
         // Dont use props to set the team and user for activity unless its NEW, if exissts use from state / current record
-        if (!this.state.id) {
+        if (!activity.id) {
             // console.log(`using current users session info for activity add`);
             if (this.props.user.authUser) {
-                uid = this.props.user.uid ? this.props.user.uid : "";
-                email = this.props.user.email ? this.props.user.email : "";
-                displayName = this.props.user.displayName ? this.props.user.displayName : "";
-                teamUid = this.props.user.teamUid ? this.props.user.teamUid : "";
-                teamName = this.props.user.teamName ? this.props.user.teamName : "";
+                activity.displayName = this.props.user.displayName;
+                activity.challengeUid = this.props.user.challengeUid;
+                activity.email = this.props.user.authUser.email;
+                activity.teamName = this.props.user.teamName;
+                activity.teamUid = this.props.user.teamUid;
+                activity.uid = this.props.user.authUser.uid;
             }
         } else {
             // console.log(`using current activity info for activity updates`);
-            console.log(`user/team info is uid: ${uid}, email: ${email}, displayName: ${displayName}, teamUid: ${teamUid}, teamName: ${teamName}, `);
+            console.log(`user/team info is uid: ${activity.uid}, email: ${activity.email}, displayName: ${activity.displayName}, teamUid: ${activity.teamUid}, teamName: ${activity.teamName}, `);
         }
 
         if (this.props.user.authUser) {
@@ -536,16 +526,16 @@ class ActivityForm extends React.Component {
                             <Card>
                                 <CardContent>
                                     {message != null ? <p className="blue-text">{message}</p> : ""}
-                                    <Typography variant="h5" gutterBottom component="h2">New Activity for {displayName} on Team "{teamName}"</Typography>
+                                    <Typography variant="h5" gutterBottom component="h2">New Activity for {activity.displayName} on Team "{activity.teamName}"</Typography>
 
                                     <label>{`Activity Date: `}
                                     </label>
                                     <DatePicker
                                         id="activityDateTime"
                                         name="activityDateTime"
-                                        value={activityDateTime}
+                                        value={activity.activityDateTime}
 
-                                        selected={activityDateTime}
+                                        selected={activity.activityDateTime}
                                         onSelect={date => this.handleDateChange(date)} //when day is clicked
                                         onChange={date => this.handleDateChange(date)} //only when value has changed
 
@@ -563,7 +553,7 @@ class ActivityForm extends React.Component {
                                                 <TextField
                                                     id="activityName"
                                                     name="activityName"
-                                                    value={activityName}
+                                                    value={activity.activityName}
                                                     label="Activity Name"
                                                     placeholder="Silk Sheets Long Ride"
                                                     inputProps={{
@@ -573,35 +563,16 @@ class ActivityForm extends React.Component {
                                                     variant="outlined"
                                                     autoComplete="text"
                                                     margin="normal"
-                                                    onChange={this.onChange}
+                                                    onChange={this.handleChange}
                                                 />
-
-                                                {/*
-                                        <TextField
-                                            id="activityDateTimeString"
-                                            name="activityDateTimeString"
-                                            value={activityDateTimeString}
-                                            label="Date"
-                                            placeholder="12-09-2019"
-                                            inputProps={{
-                                                style: {padding: 18} 
-                                            }}                              
-                                            className={classes.textField}
-                                            variant="outlined"
-                                            autoComplete="date"
-                                            margin="normal"
-                                            onChange={this.dateNumberOnChange}
-                                        />  
-                                        */}
-
                                                 <Autocomplete
                                                     id="activityType"
-                                                    value={activityType}
+                                                    value={activity.activityType}
                                                     name="activityType"
                                                     autoHighlight
                                                     margin="normal"
                                                     style={{ marginTop: 16, padding: 0 }}
-                                                    onChange={this.onTagsChange}
+                                                    onChange={this.handleAutoCompleteChanges("activityType")}
                                                     options={[
                                                         'Swim',
                                                         'Bike',
@@ -631,7 +602,7 @@ class ActivityForm extends React.Component {
                                                 className={classes.textField}
                                                 autoHighlight
                                                 autoComplete="text"
-                                                onChange={this.onChange}
+                                                onChange={this.handleChange}
                                                 >
                                                 <MenuItem value={"Swim"}>Swim</MenuItem>
                                                 <MenuItem value={"Bike"}>Bike</MenuItem>
@@ -643,7 +614,7 @@ class ActivityForm extends React.Component {
                                                 <TextField
                                                     id="distance"
                                                     name="distance"
-                                                    value={distance}
+                                                    value={activity.distance}
                                                     label="Distance"
                                                     placeholder="20.0"
                                                     inputProps={{
@@ -660,7 +631,7 @@ class ActivityForm extends React.Component {
                                                     disabled
                                                     id="distanceUnits"
                                                     name="distanceUnits"
-                                                    value={distanceUnits}
+                                                    value={activity.distanceUnits}
                                                     label="Units"
                                                     placeholder="30.0"
                                                     inputProps={{
@@ -670,13 +641,13 @@ class ActivityForm extends React.Component {
                                                     variant="outlined"
                                                     autoComplete="text"
                                                     margin="normal"
-                                                    onChange={this.onChange}
+                                                    onChange={this.handleChange}
                                                 />
 
                                                 <TextField
                                                     id="duration"
                                                     name="duration"
-                                                    value={duration}
+                                                    value={activity.duration}
                                                     label="Duration (hours)"
                                                     placeholder="1.5"
                                                     inputProps={{
@@ -702,7 +673,7 @@ class ActivityForm extends React.Component {
                                         name="action"
                                         type="submit"
                                         onClick={this.onSubmitHandler}>
-                                        {this.state.id ? "Update" : "Create"}
+                                        {activity.id ? "Update" : "Create"}
                                     </Button>
 
                                     <label htmlFor="file">
@@ -730,7 +701,7 @@ class ActivityForm extends React.Component {
             )
         } else {
             return (
-                <Redirect to="/dashboard" />
+                <Redirect to="/" />
             )
         }
 

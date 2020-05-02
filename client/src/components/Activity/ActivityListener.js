@@ -13,11 +13,8 @@ class ActivityListener {
             console.log(`Created activity listener with challengeUid: ${challengeUid}`);
             ActivityListener.perf = Util.getFirestorePerf();
             
-            const traceCreateListener =  this.perf.trace('traceCreateListenerFirestore');
             const traceFullRetrieval = this.perf.trace('traceFullRetrievalFirestore');
             const traceGetChanges = this.perf.trace('traceGetChanges');
-            traceCreateListener.start();
-            traceFullRetrieval.start();
 
             if (ActivityListener.activityListener) {
                 ActivityListener.activityListener();
@@ -27,8 +24,8 @@ class ActivityListener {
             const dbActivitiesRef = allDBRefs.dbActivitiesRef;
 
             let ref = dbActivitiesRef.orderBy("activityDateTime", "desc");
+            traceFullRetrieval.start();
             ActivityListener.activityListener = ref.onSnapshot((querySnapshot) => {
-                traceCreateListener.stop();
 
                 traceGetChanges.start();
                 querySnapshot.docChanges().forEach(change => {
