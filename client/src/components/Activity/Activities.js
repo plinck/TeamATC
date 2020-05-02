@@ -474,7 +474,7 @@ class Activities extends React.Component {
             );
         } else {
             return (
-                <Redirect to="/dashboard" />
+                <Redirect to="/" />
             );
         } // if (this.props.user.authUser)
     }// render()

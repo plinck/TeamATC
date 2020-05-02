@@ -147,7 +147,7 @@ class Users extends React.Component {
             );
         } else if (this.props.user.authUser) {
             return (
-                <Redirect to="/dashboard" />
+                <Redirect to="/activities" />
             );
         } else {
             return (

@@ -118,7 +118,7 @@ class Register extends React.Component {
                 // Now Create the user in firestore
                 UserDB.addAuthUserToFirestore(authUser, user).then((id) => {
                     this.setState({ message: "New User Added. " });
-                    this.props.history.push("/dashboard");
+                    this.props.history.push("/activities");
                 }).catch(err => {
                     this.setState({ message: err.message });
                 });

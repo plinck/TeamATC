@@ -10,7 +10,7 @@ const Modal = props => {
                     <h5>distance: {props.distance}</h5>
                 </div>
                 <div className="modal-footer">
-                    <Link to="/dashboard" className="modal-close waves-effect waves-green btn-flat">Accept</Link>
+                    <Link to="/activities" className="modal-close waves-effect waves-green btn-flat">Accept</Link>
                 </div>
             </div>
         </div>

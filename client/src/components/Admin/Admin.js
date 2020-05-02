@@ -51,7 +51,7 @@ class Admin extends React.Component {
             );
         } else if (this.props.user.authUser) {
             return (
-                <Redirect to="/dashboard" />
+                <Redirect to="/actitivies" />
             );
         } else {
             return (

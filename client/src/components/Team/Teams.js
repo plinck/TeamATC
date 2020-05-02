@@ -80,7 +80,7 @@ const Teams = (props) => {
             // User now assigned to new team
             setMessage(`joined team ${teamName}`);
             props.history.push({
-                pathname: '/dashboard'
+                pathname: '/activities'
             });
         }).catch(err => {
             console.error(`Error joining team: ${teamUid} for user: ${props.uid}`);
