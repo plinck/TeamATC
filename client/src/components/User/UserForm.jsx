@@ -427,10 +427,10 @@ class UserForm extends React.Component {
         //     console.error("Fatal Error")
         //     return (<div> <p>FATAL ERROR Gettng teams, something goofy going on ...</p> </div>)
         // }
-        if (!challenges || challenges === null) {
-            console.log("No challenges yet")
-            return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
-        }
+        // if (!challenges || challenges === null) {
+        //     console.log("No challenges yet")
+        //     return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
+        // }
         // if (!teams || teams === null) {
         //     console.log("No teams yet")
         //     return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
