@@ -13,16 +13,15 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-
-// For select input field
-// import InputLabel from "@material-ui/core/InputLabel";
-// import MenuItem from "@material-ui/core/MenuItem";
-// import Select from "@material-ui/core/Select";
-// import CircularProgress from '@material-ui/core/CircularProgress';
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import UserAuthAPI from "./UserAuthAPI";
 import UserDB from "./UserDB"
 import TeamDB from "../Team/TeamDB";
+import ChallengeDB from "../Challenges/ChallengeDB";
 import { Container, Grid, Card, CardContent, Typography, CardActions } from '@material-ui/core';
 
 const styles = theme => ({
@@ -83,39 +82,48 @@ class UserForm extends React.Component {
         super(props);
 
         this.state = {
-        user : {
-            id: this.props.id,
-            challengeUid : "",
-            displayName : "",
-            email: "",
-            firstName: "",
-            isAdmin: false,
-            isTeamLead: false,
-            isModerator: false,
-            isUser: false,
-            lastName: "",
-            phoneNumber: "",
-            photoURL: "",
-            primaryRole: "",
-            stravaAccessToken: "",
-            stravaAthleteId : "",
-            stravaExpiresAt: null,
-            stravaRefreshToken: "",
-            stravaUserAuth : false,
-            teamName: "",
-            teamUid: "",
-            uid: this.props.id
-        },
+            user : {
+                id: this.props.id,
+                challengeUid : "",
+                displayName : "",
+                email: "",
+                firstName: "",
+                isAdmin: false,
+                isTeamLead: false,
+                isModerator: false,
+                isUser: false,
+                lastName: "",
+                phoneNumber: "",
+                photoURL: "",
+                primaryRole: "",
+                stravaAccessToken: "",
+                stravaAthleteId : "",
+                stravaExpiresAt: null,
+                stravaRefreshToken: "",
+                stravaUserAuth : false,
+                teamName: "",
+                teamUid: "",
+                uid: this.props.id
+            },
 
-        message: "",
-        teams: null,
-        teamLookup: null
+            challenge: "",
+
+            challenges: [],
+            challengeLookup: {},
+
+            teams: [],
+            teamLookup: {},
+            
+            message: "",
         };
     }
 
     fetchUser = (id) => {
         UserDB.get(id).then(user => {
             this.setState({ user : user });
+            if (user.challengeUid) {
+                this.fetchTeams(user.challengeUid); 
+            }
         }).catch(err => {
             console.error(`Error getting user ${err}`);
             this.setState({ error: `Error getting user ${err}` });
@@ -124,17 +132,40 @@ class UserForm extends React.Component {
 
     // get available teams for select list
     // Dont use for now
-    fetchTeams() {
-        TeamDB.getTeams().then(teams => {
+    fetchTeams(challengeUid) {
+        console.log(`Fetching teams for challengeUid: ${challengeUid}`);
+        if (challengeUid) {
+            TeamDB.getTeamsInChallenge(challengeUid).then(teams => {
+                // Convert array of teams to key value unqie pairs for easy lookup on primary key
+                let teamLookup = {}
+                teams.forEach(team => {
+                    teamLookup[team.id] = team.name;
+                });
+                console.log(`Fetched teams: ${JSON.stringify(teams, null,2)}`);
+                this.setState({
+                    teams: teams,
+                    teamLookup: teamLookup
+                });
+            }).catch(err => {
+                console.error(`Error getting teams ${err}`);
+                this.setState({ error: `Error getting teams ${err}` });
+            });
+        }
+    }
+
+    // get available teams for select list
+    // Dont use for now
+    fetchChallenges() {
+        ChallengeDB.getFiltered().then(challenges => {
             // Convert array of teams to key value unqie pairs for easy lookup on primary key
-            let teamLookup = {}
-            teams.forEach(team => {
-                teamLookup[team.id] = team.name;
+            let challengeLookup = {}
+            challenges.forEach(challenge => {
+                challengeLookup[challenge.id] = challenge.name;
             });
 
             this.setState({
-                teams: teams,
-                teamLookup: teamLookup
+                challenges: challenges,
+                challengeLookup: challengeLookup
             });
         }).catch(err => {
             console.error(`Error getting teams ${err}`);
@@ -142,11 +173,46 @@ class UserForm extends React.Component {
         });
     }
 
+    // get current challenge for this user
+    fetchCurrentChallenge(challengeId) {
+        console.log(`Current challengeId: ${challengeId}`);
+        ChallengeDB.get(challengeId).then(challenge => {
+            this.setState({
+                challenge: challenge
+            });
+        }).catch(err => {
+            console.error(`Error getting current challenge ${err}`);
+            this.setState({ message: `Error getting current challenge ${err}` });
+        });
+    }
+
     componentDidMount() {
         // only get user if its an update, otherwise assume new
         if (this.state.user.id) {
             this.fetchUser(this.state.user.id);
-        } else {
+        } 
+        let currentChallengeUid = undefined;
+        if (this.state.user.challengeUid) {
+            currentChallengeUid = this.state.user.challengeUid;
+        } 
+        // this.fetchCurrentChallenge(currentChallengeUid);
+        this.fetchChallenges();  // for pulldown so doesnt matter if user exists yet
+        this.fetchTeams(currentChallengeUid);  // for pulldown so doesnt matter if user exists yet
+    }
+
+    componentDidUpdate(prevProps) {
+        console.log(`component did update`);
+        if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
+            if (this.state.user.id) {
+                this.fetchUser(this.state.user.id);
+            }  
+            let currentChallengeUid = undefined;
+            if (this.state.user.challengeUid) {
+                currentChallengeUid = this.state.user.challengeUid;
+            } 
+            // this.fetchCurrentChallenge(currentChallengeUid);
+            this.fetchChallenges();  // for pulldown so doesnt matter if user exists yet
+            this.fetchTeams(currentChallengeUid);  // for pulldown so doesnt matter if user exists yet
         }
     }
 
@@ -165,38 +231,38 @@ class UserForm extends React.Component {
         // First, create the auth user in firebase
         // must be done on server for security reasons
         UserAuthAPI.createAuthUser(user).then(authUser => {
-        // Temp override these due to errors in storing null values.
-        authUser.user.displayName = user.displayName ? user.displayName : "";
-        authUser.user.lastName = user.lastName ? user.lastName : "";
-        authUser.user.firstName = user.firstName ? user.firstName : "";
-        authUser.user.phoneNumber = user.phoneNumber ? user.phoneNumber : "";
-        authUser.user.photoURL = user.photoURL ? user.photoUR : "";
+            // Temp override these due to errors in storing null values.
+            authUser.user.displayName = user.displayName ? user.displayName : "";
+            authUser.user.lastName = user.lastName ? user.lastName : "";
+            authUser.user.firstName = user.firstName ? user.firstName : "";
+            authUser.user.phoneNumber = user.phoneNumber ? user.phoneNumber : "";
+            authUser.user.photoURL = user.photoURL ? user.photoUR : "";
 
-        // Now Create the user in firestore
-        UserDB.addAuthUserToFirestore(authUser, user).then((id) => {
-            this.setState({
-                message: "New User Added.",
-                id: id
-            });
-            // comment out doing password reset on create as it confuses people and always 
-            // times out by the time they get the email to reset
-            // this.props.firebase.doPasswordReset(user.email).then(() => {
-            //   this.setState({
-            //     message: "New User Added.  Password reset Link sent - user must reset password login",
-            //     id: id
-            //   });
-            // }).catch(err => {
-            //   console.error(`Error resettting user pw in firebase.doPasswordReset ${err}`);
-            //   this.setState({ message: err.message });
-            // });
+           // Now Create the user in firestore
+            UserDB.addAuthUserToFirestore(authUser, user).then((id) => {
+                this.setState({
+                    message: "New User Added.",
+                    id: id
+                });
+                // comment out doing password reset on create as it confuses people and always 
+                // times out by the time they get the email to reset
+                // this.props.firebase.doPasswordReset(user.email).then(() => {
+                //   this.setState({
+                //     message: "New User Added.  Password reset Link sent - user must reset password login",
+                //     id: id
+                //   });
+                // }).catch(err => {
+                //   console.error(`Error resettting user pw in firebase.doPasswordReset ${err}`);
+                //   this.setState({ message: err.message });
+                // });
             }).catch(err => {
                 console.error(`Error adding user in UserDB.addAuthUserToFirestore ${err}, msg: ${err.message}`);
                 this.setState({ message: `Error adding user in UserDB.addAuthUserToFirestore ${err}, msg: ${err.message}` });
             });
-            }).catch(err => {
-                console.error(`Error adding user in UserAuthAPI.createAuthUser(user) ${err}`);
-                this.setState({ message: `Error adding auth user in UserAuthAPI.createAuthUser msg: ${err}` });
-            });
+        }).catch(err => {
+            console.error(`Error adding user in UserAuthAPI.createAuthUser(user) ${err}`);
+            this.setState({ message: `Error adding auth user in UserAuthAPI.createAuthUser msg: ${err}` });
+        });
     }
 
     updateUser = () => {
@@ -250,6 +316,37 @@ class UserForm extends React.Component {
                 [name]: value       // update the value of specific key
             }
         }))
+    };
+
+    handleChallengeChange = event => {
+        const name = event.target.name;
+        const value = event.target.value;
+        const challengeUid = value;
+
+        console.log(`handleChallengeChange name: ${name} value: ${value}`)
+
+        this.fetchTeams(challengeUid);  // for pulldown so doesnt matter if user exists yet
+
+        this.setState((prevState) => ({
+            user: {                   
+                ...prevState.user,    
+                [name]: value,      
+            }}));  
+    };
+
+    handleTeamChange = event => {
+        const name = event.target.name;
+        const value = event.target.value;
+        const teamName = this.state.teamLookup[value];
+
+        console.log(`handleTeamChange name: ${name} value: ${value}`)
+
+        this.setState((prevState) => ({
+            user: {                   
+                ...prevState.user,    
+                [name]: value,  
+                [teamName]: teamName    
+            }}));    
     };
 
     // Make Admin
@@ -309,6 +406,9 @@ class UserForm extends React.Component {
             message,
         } = this.state;
 
+        const challenges = this.state.challenges;
+        const teams = this.state.teams;
+
         let buttonText, emailEnabled;
         if (this.state.user.id) {
             buttonText = "Update";
@@ -327,10 +427,16 @@ class UserForm extends React.Component {
         //     console.error("Fatal Error")
         //     return (<div> <p>FATAL ERROR Gettng teams, something goofy going on ...</p> </div>)
         // }
-        // if (this.state.teams === null) {
+        if (!challenges || challenges === null) {
+            console.log("No challenges yet")
+            return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
+        }
+        // if (!teams || teams === null) {
         //     console.log("No teams yet")
         //     return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
         // }
+
+        console.log(`rendering with ${challenges.length} challenges and ${teams ? teams.length : 0} teams `);
 
         return (
             <div className={classes.root}>
@@ -338,31 +444,8 @@ class UserForm extends React.Component {
                 <Card>
                     <CardContent>
                     <p>{message}</p>
-                    <Typography gutterBottom variant="h5" component="h2">User (Role: {user.primaryRole}, challenge: {this.props.user.challengeName})</Typography>
+                    <Typography gutterBottom variant="h5" component="h2">User (Role: {user.primaryRole}, challenge: {user.challengeName})</Typography>
                     <form onSubmit={this.saveUser} >
-
-                        {/* Dont usee teams for now - wait unti l you have challenge properly integrated
-                        <FormControl variant="outlined" required className={classes.formControl}>
-                        <InputLabel id="teamNameLabel">Team Name</InputLabel>
-                        <Select
-                        labelId="teamNameLabel"
-                        id="teamUid"
-                        name="teamUid"
-                        type="text"
-                        margin="normal"
-                        style={{marginTop: 16, marginBottom: 16, marginLeft: 0, marginRight: 0, padding: 0}}
-                        value={teamUid}
-                        onChange={this.onChange}
-                        className={classes.textField}>
-                        
-                        {teams.map((team) => {
-                        return (
-                            <MenuItem value={team.id}>{team.name}</MenuItem>
-                            );
-                        })} 
-                        </Select>
-                        </FormControl>
-                        */}
 
                         <TextField
                             disabled={!emailEnabled}
@@ -434,6 +517,42 @@ class UserForm extends React.Component {
                             margin="normal"
                             onChange={this.onChange}
                         />
+                        <FormControl variant="outlined" required className={classes.formControl}>
+                            <InputLabel id="challengeNameLabel">Challenge Name</InputLabel>
+                            <Select
+                                labelId="challengeNameLabel"
+                                id="challengeUid"
+                                value={user.challengeUid}
+                                name="challengeUid"
+                                style={{ marginTop: 16, padding: 0 }}
+                                onChange={this.handleChallengeChange}
+                                label="Challenge Name"
+                                type="text">
+                                {challenges.map((challenge, i) => {
+                                    return (
+                                        <MenuItem key={i} value={challenge.id}>{challenge.name}</MenuItem>
+                                    );
+                                })}
+                            </Select>
+                        </FormControl>
+                        <FormControl variant="outlined" required className={classes.formControl}>
+                            <InputLabel id="teamNameLabel">Team Name</InputLabel>
+                            <Select
+                                labelId="teamNameLabel"
+                                id="teamUid"
+                                value={user.teamUid}
+                                name="teamUid"
+                                style={{ marginTop: 16, padding: 0 }}
+                                onChange={this.handleTeamChange}
+                                label="Team Name"
+                                type="text">
+                                {teams.map((team, i) => {
+                                    return (
+                                        <MenuItem key={i} value={team.id}>{team.name}</MenuItem>
+                                    );
+                                })}
+                            </Select>
+                        </FormControl>
 
                     </form>
 

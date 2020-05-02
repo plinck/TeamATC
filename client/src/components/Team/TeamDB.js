@@ -29,6 +29,29 @@ class TeamDB {
         });
     }
 
+    // Everything from top down must be async or awaits do NOT wait
+    static getTeamsInChallenge = (challengeUid) => {
+        return new Promise((resolve, reject) => {
+            const allDBRefs = Util.getChallengeDependentRefs(challengeUid);
+            const dbTeamsRef = allDBRefs.dbTeamsRef;
+
+            dbTeamsRef.orderBy("name").get().then((querySnapshot) => {
+                let teams = [];
+                querySnapshot.forEach(doc => {
+                    let team = {};
+                    team = doc.data();
+                    team.id = doc.id;
+
+                    teams.push(team);
+                });
+                console.log(`Retrieved ${teams.length} teams`);
+                return (resolve(teams));
+            }).catch(err => {
+                reject(`Error getting teams for challenge: ${err}`);
+            });    
+        });
+    }
+
     // -------------------------------------------------------------------------------------------------
     // Activities : getTeamsWithActivities - get all actiities with their firstName lastName
     // This isnt SUPER effecient since it gets all users even if they havent had an activity

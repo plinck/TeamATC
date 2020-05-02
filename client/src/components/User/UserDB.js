@@ -138,8 +138,10 @@ class UserDB {
         // make a copy --i.e. not a reference
         let newUser = {...user};
         // Delete the id field since you do not want in db as it is they key
-        if (newUser.id) {
-            delete newUser.id;
+        try {
+            delete newUser.id
+        } catch {
+            // no op - dont care
         }
 
         return new Promise(async (resolve, reject) => {
@@ -169,13 +171,15 @@ class UserDB {
         console.log(`trying to update user in fb: ${user}`);
         let newUser = {...user};
         // Delete the id field since you do not want in db as it is they key
-        if (newUser.id) {
-            delete newUser.id;
+        try {
+            delete newUser.id
+        } catch {
+            // no op - dont care
         }
 
         return new Promise(async (resolve, reject) => {
             // update
-            console.log("User updated, user=", user);
+            console.log("User updated, newUser=", newUser);
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
             dbUsersRef.doc(user.id).set(newUser, {
                 merge: true
@@ -254,15 +258,26 @@ class UserDB {
         // e.g. this function is ploymorphic so it can handle setting lots of userInfo or just seeding the firestore collection
         if (userInfo) {
             user = {
+                challengeUid: userInfo.challengeUid ? userInfo.challengeUid : "",
                 displayName: `${userInfo.firstName} ${userInfo.lastName}`,
+                email: userInfo.email.toLowerCase(),
                 firstName: userInfo.firstName,
+                isAdmin: userInfo.isAdmin ? true : false,
+                isModerator: userInfo.isModerator ? true : false,
+                isTeamLead: userInfo.isTeamLead ? true : false,
+                isUser: userInfo.isUser ? true : false,
                 lastName: userInfo.lastName,
                 phoneNumber: userInfo.phoneNumber ? userInfo.phoneNumber : "",
-                uid: authUser.user.uid,
-                email: userInfo.email.toLowerCase(),
                 photoURL: userInfo.photoURL ? userInfo.photoURL : "",
+                primaryRole: userInfo.primaryRole ? userInfo.primaryRole : "User",
+                stravaAccessToken: userInfo.stravaAccessToken ? userInfo.stravaAccessToken : "",
+                stravaAthleteId : userInfo.stravaAthleteId ? userInfo.stravaAthleteId : "",
+                stravaExpiresAt: userInfo.stravaExpiresAt ? userInfo.stravaExpiresAt : null,
+                stravaRefreshToken: userInfo.stravaRefreshToken ? userInfo.stravaRefreshToken : "",
+                stravaUserAuth : userInfo.stravaUserAuth ? userInfo.stravaUserAuth : false,    
                 teamName: userInfo.teamName ? userInfo.teamName : "",
-                teamUid: userInfo.teamUid ? userInfo.teamUid : ""
+                teamUid: userInfo.teamUid ? userInfo.teamUid : "",
+                uid: authUser.user.uid,
             };
         } else {
             user = {
@@ -301,8 +316,6 @@ class UserDB {
             });
         });
     }
-
-
 
     // Update user's claims / role
     static updateClaims (uid, claims) {
