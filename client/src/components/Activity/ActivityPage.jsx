@@ -1,5 +1,5 @@
 import React from 'react';
-import ActivityForm from "./ActivityForm";
+import ActivityForm from "./ActivityForm.jsx";
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({

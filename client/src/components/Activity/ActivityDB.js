@@ -145,6 +145,7 @@ class ActivityDB {
                     if (doc.exists) {
                         // update
                         let activity = doc.data();
+                        activity.id = doc.id;
                         activity.activityDateTime = activity
                             .activityDateTime
                             .toDate();
@@ -164,25 +165,18 @@ class ActivityDB {
     // Add a single activity based on id
     static create = (activity) => {
         return new Promise((resolve, reject) => {
+            let newActivity = {...activity};
+            // Delete the id field since you do not want in db as it is they key
+            try {
+                delete newActivity.id;
+            } catch {
+                // no op - dont care
+            }
+    
             Util.promiseGetChallengeDBRefs().then ( dbRefs => {
                 const dbActivitiesRef = dbRefs.dbActivitiesRef;
             
-                dbActivitiesRef.add({
-                    teamName: activity.teamName,
-                    teamUid: activity.teamUid
-                        ? activity.teamUid
-                        : null,
-                    activityName: activity.activityName,
-                    activityDateTime: activity.activityDateTime,
-                    activityType: activity.activityType,
-                    distance: activity.distance,
-                    distanceUnits: activity.distanceUnits,
-                    duration: activity.duration,
-                    email: activity.email,
-                    displayName: activity.displayName,
-                    uid: activity.uid
-                })
-                .then(() => {
+                dbActivitiesRef.add(newActivity).then(() => {
                     console.log("Firestore activity successfully added");
                     return resolve();
                 }).catch((error) => {
@@ -198,25 +192,18 @@ class ActivityDB {
 
     static update = (activity) => {
         return new Promise((resolve, reject) => {
+            let newActivity = {...activity};
+            // Delete the id field since you do not want in db as it is they key
+            try {
+                delete newActivity.id;
+            } catch {
+                // no op - dont care
+            }
+
             Util.promiseGetChallengeDBRefs().then ( dbRefs => {
                 const dbActivitiesRef = dbRefs.dbActivitiesRef;
             
-                dbActivitiesRef.doc(activity.id).set({
-                    teamName: activity.teamName,
-                    teamUid: activity.teamUid
-                        ? activity.teamUid
-                        : null,
-                    activityName: activity.activityName,
-                    activityDateTime: activity.activityDateTime,
-                    activityType: activity.activityType,
-                    distance: activity.distance,
-                    distanceUnits: activity.distanceUnits,
-                    duration: activity.duration,
-                    email: activity.email,
-                    displayName: activity.displayName,
-                    uid: activity.uid
-                }, {merge: true})
-                .then(() => {
+                dbActivitiesRef.doc(activity.id).set(newActivity, {merge: true}).then(() => {
                     console.log("Firestore activity successfully updated");
                     return resolve();
                 }).catch((error) => {

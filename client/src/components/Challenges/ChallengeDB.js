@@ -12,25 +12,22 @@ class ChallengeDB {
             .orderBy("startDate", "desc")
 
         return new Promise((resolve, reject) => {
-            ref
-                .get()
-                .then((querySnapshot) => {
-                    let challenges = [];
-                    querySnapshot.forEach(doc => {
-                        let challenge = {};
-                        challenge = doc.data();
-                        challenge.id = doc.id;
-                        challenge.startDate = challenge.startDate.toDate();
-                        challenge.endDate = challenge.endDate.toDate();
-                        challenge.challengeShutdownStartDate = challenge.challengeShutdownStartDate ? challenge.challengeShutdownStartDate.toDate() : null;
-                        challenge.challengeShutdownEndDate = challenge.challengeShutdownStartDate ? challenge.challengeShutdownEndDate.toDate() : null;       
-                        challenges.push(challenge);
-                    });
-                    resolve(challenges);
-                })
-                .catch(err => {
-                    reject(err);
+            ref.get().then((querySnapshot) => {
+                let challenges = [];
+                querySnapshot.forEach(doc => {
+                    let challenge = {};
+                    challenge = doc.data();
+                    challenge.id = doc.id;
+                    challenge.startDate = challenge.startDate.toDate();
+                    challenge.endDate = challenge.endDate.toDate();
+                    challenge.challengeShutdownStartDate = challenge.challengeShutdownStartDate ? challenge.challengeShutdownStartDate.toDate() : null;
+                    challenge.challengeShutdownEndDate = challenge.challengeShutdownStartDate ? challenge.challengeShutdownEndDate.toDate() : null;       
+                    challenges.push(challenge);
                 });
+                resolve(challenges);
+            }).catch(err => {
+                reject(err);
+            });
         });
     }
 

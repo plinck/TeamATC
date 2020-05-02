@@ -15,6 +15,7 @@ class UserPage extends React.Component {
     //   return null;
     // }
 
+    console.log(`Invoking user form with id: ${id}`);
     return ( 
       <div>
         <UserForm 
