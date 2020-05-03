@@ -44,7 +44,7 @@ const Landing = (props) => {
 
     if (props.user.authUser) {
         return (
-            <Redirect to="/activities" />
+            <Redirect to="/dashboard" />
         );
     }
 

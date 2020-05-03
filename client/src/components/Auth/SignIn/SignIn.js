@@ -215,7 +215,7 @@ class SignInFormBase extends React.Component {
             <div className={classes.root}>
                 <Container className={classes.container}>
                     <AuthUserContext.Consumer>
-                        {user => user.authUser ? <Redirect to="/activities" /> : null}
+                        {user => user.authUser ? <Redirect to="/dashboard" /> : null}
                     </AuthUserContext.Consumer>
                     <Grid container
                         justify="center">
