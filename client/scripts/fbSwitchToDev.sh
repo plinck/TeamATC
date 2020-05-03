@@ -1,10 +1,12 @@
 # Set Environment variables - no need - get from client
 
-# copy prod env to ensure deplaying prod
+# copy DEV env to ensure deplaying DEV
 cd ~/GitHub/firebase/TeamATC/client
-cp .env-dev-project .env
-cp .firebaserc-dev-project .firebaserc
-cp functions/.serviceAccountKey-dev-project.json functions/.serviceAccountKey.json
-cp functions/.env-strava-config-dev-project.json functions/.env-strava-config.json
+cp .env-DEV .env
+cp .firebaserc-DEV .firebaserc
+cp functions/.serviceAccountKey-DEV.json functions/.serviceAccountKey.json
+cp functions/.env-strava-config-DEV.json functions/.env-strava-config.json
+cp ../bulkloader/.serviceAccountKey-DEV.json ../bulkloader/.serviceAccountKey.json
+cp ../bulkloader/.env-strava-config-DEV.json ../bulkloader/.env-strava-config.json
 #firebase login paul@msporttech.com
 firebase use triclubchallengedev
