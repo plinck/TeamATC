@@ -118,7 +118,16 @@ class ActivityForm extends React.Component {
             // only get activity if its an update, otherwise assume new
             if (this.state.activity.id) {
                 this.fetchActivity(this.state.activity.id);
-            }  
+            }  else {
+                const teamName = this.props.user.teamName ? this.props.user.teamName : "";
+                const teamUid = this.props.user.teamUid ? this.props.user.teamUid: "";
+                this.setState((prevState) => ({
+                    activity: {                   
+                        ...prevState.activity,    
+                        teamUid: teamUid,      
+                        teamName: teamName,      
+                    }}));    
+            }
             // Get current challenge info - should be part of state maybe eventually
             this.fetchCurrentChallenge(this.props.user.challengeUid);
             this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
@@ -129,7 +138,16 @@ class ActivityForm extends React.Component {
         if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
             if (this.state.activity.id) {
                 this.fetchActivity(this.state.activity.id);
-            }  
+            }  else {
+                const teamName = this.props.user.teamName ? this.props.user.teamName : "";
+                const teamUid = this.props.user.teamUid ? this.props.user.teamUid: "";
+                this.setState((prevState) => ({
+                    activity: {                   
+                        ...prevState.activity,    
+                        teamUid: teamUid,      
+                        teamName: teamName,      
+                    }}));    
+            }
             console.log(this.props.user.challengeUid)
             this.fetchCurrentChallenge(this.props.user.challengeUid);
             this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
@@ -500,7 +518,7 @@ class ActivityForm extends React.Component {
         const { classes } = this.props;
 
         // Some props take time to get ready so return null when uid not avaialble
-        if (this.props.user.uid === null) {
+        if (!this.props.user) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
         
@@ -518,22 +536,23 @@ class ActivityForm extends React.Component {
 
         let activity = this.state.activity;
         let { message, teams } = this.state;
+        console.log(`Activity Team: ${activity.teamUid}/${activity.teamName}`);
 
         // Dont use props to set the team and user for activity unless its NEW, if exissts use from state / current record
         if (!activity.id) {
             // console.log(`using current users session info for activity add`);
-            if (this.props.user.authUser) {
-                activity.displayName = this.props.user.displayName;
-                activity.challengeUid = this.props.user.challengeUid;
-                activity.email = this.props.user.authUser.email;
-                activity.teamName = activity.teamName ? activity.teamName : this.props.user.teamName;
-                activity.teamUid = activity.teamUid ? activity.teamUid : this.props.user.teamUid;
-                activity.uid = this.props.user.authUser.uid;
-            }
+            activity.displayName = this.props.user.displayName;
+            activity.challengeUid = this.props.user.challengeUid;
+            activity.email = this.props.user.authUser.email;
+            activity.teamName = activity.teamName ? activity.teamName : this.props.user.teamName;
+            activity.teamUid = activity.teamUid ? activity.teamUid : this.props.user.teamUid;
+            activity.uid = this.props.user.authUser.uid;
         } else {
             // console.log(`using current activity info for activity updates`);
             console.log(`user/team info is uid: ${activity.uid}, email: ${activity.email}, displayName: ${activity.displayName}, teamUid: ${activity.teamUid}, teamName: ${activity.teamName}, `);
         }
+
+        console.log(`Activity Team: ${activity.teamUid}/${activity.teamName}`);
 
         if (this.props.user.authUser) {
             return (
