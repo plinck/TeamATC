@@ -401,6 +401,11 @@ class UserForm extends React.Component {
     render() {
         const { classes } = this.props;
 
+        if (!this.props.user) {
+            console.log("No user yet")
+            return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
+        }
+
         const {
             user,
             message,
@@ -422,6 +427,8 @@ class UserForm extends React.Component {
             user.firstName !== "" &&
             user.lastName !== "" &&
             user.phoneNumber !== "";
+
+            
 
         // if (typeof this.state.teams === 'undefined') {
         //     console.error("Fatal Error")
