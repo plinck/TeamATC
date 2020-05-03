@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router';
 import { withRouter } from 'react-router-dom';
 
-import Users from "../User/Users"
+import Users from "../User/Users.jsx"
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Container, Grid, Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';

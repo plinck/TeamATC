@@ -5,7 +5,7 @@ import TeamDB from "./TeamDB"
 import TeamForm from './TeamForm';
 import Team from "./Team"
 import UserDB from "../User/UserDB.js"
-import TeamMembersModal from './TeamMembersModal';
+import TeamMembersModal from './TeamMembersModal.jsx';
 import { ORG } from "../Environment/Environment"
 
 const useStyles = makeStyles(theme => ({
