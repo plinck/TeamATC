@@ -85,22 +85,46 @@ class Dashboard extends React.PureComponent {
         this.renderTotals(this.state.activities);    
         const traceCalculateTotals =  this.perf.trace('traceCalculateTotals');
         const traceFullRetrieval = this.perf.trace('traceFullRetrievalFirestore');
-        traceFullRetrieval.start();
+        try {
+            traceFullRetrieval.start();
+        } catch {
+            console.error("traceFullRetrieval not started ...")
+        }
+
         let traceFullRetrievalT1 = new Date();
 
         ActivityListener.createActivityListener(challengeUid).then( activities => {
-            traceFullRetrieval.incrementMetric('nbrActivities', activities.length);
-            traceFullRetrieval.stop();
+            try {
+                traceFullRetrieval.incrementMetric('nbrActivities', activities.length);
+                traceFullRetrieval.stop();
+            } catch {
+                //
+            }
+
             let traceFullRetrievalT2 = new Date();
             let traceFullRetrievalDiff = traceFullRetrievalT2.getTime() - traceFullRetrievalT1.getTime();
             console.log(`traceFullRetrievalDiff time is milliseconds: ${traceFullRetrievalDiff}`);
-
-            traceCalculateTotals.start();
+            try {
+                traceCalculateTotals.start();
+            } catch {
+                console.error("traceCalculateTotals not started ...")
+            }
+    
             this.renderTotals(activities);
-            traceCalculateTotals.stop();
+            try {
+                traceCalculateTotals.stop();
+            } catch {
+                //
+            }
+
             this.setState({loadingFlag: false});
         }).catch( err => {
-            traceFullRetrieval.stop();
+            try {
+                traceFullRetrieval.stop();
+            } catch {
+                //
+            }
+
             console.error(`Error attaching listener: ${err}`);
             this.setState({loadingFlag: false});
         });
@@ -112,22 +136,46 @@ class Dashboard extends React.PureComponent {
         this.renderTotals(this.state.activities);    
         const traceCalculateTotals =  this.perf.trace('traceCalculateTotals');
         const traceFullRetrieval = this.perf.trace('traceFullRetrievalRealtimeDB');
-        traceFullRetrieval.start();
+        try {
+            traceFullRetrieval.start();
+        } catch {
+            console.error("traceFullRetrieval not started ...")
+        }
+
         let traceFullRetrievalT1 = new Date();
 
         ActivityListener.createRealtimeDBActivityListener(challengeUid).then( activities => {
-            traceFullRetrieval.incrementMetric('nbrActivities', activities.length);
-            traceFullRetrieval.stop();
+            try {
+                traceFullRetrieval.incrementMetric('nbrActivities', activities.length);
+                traceFullRetrieval.stop();
+            } catch {
+                //
+            }
+
             let traceFullRetrievalT2 = new Date();
             let traceFullRetrievalDiff = traceFullRetrievalT2.getTime() - traceFullRetrievalT1.getTime();
             console.log(`traceFullRetrievalDiff time is milliseconds: ${traceFullRetrievalDiff}`);
-
-            traceCalculateTotals.start();
+            try {
+                traceCalculateTotals.start();
+            } catch {
+                console.error("traceCalculateTotals not started ...")
+            }
+    
             this.renderTotals(activities);
-            traceCalculateTotals.stop();
+            try {
+                traceCalculateTotals.stop();
+            } catch {
+                //
+            }
+
             this.setState({loadingFlag: false});
         }).catch( err => {
-            traceFullRetrieval.stop();
+            try {
+                traceFullRetrieval.stop();
+            } catch {
+                //
+            }
+
             console.error(`Error attaching listener: ${err}`);
             this.setState({loadingFlag: false});
         });

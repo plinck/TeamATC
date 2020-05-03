@@ -13,7 +13,7 @@ class ActivityListener {
             console.log(`Created activity listener with challengeUid: ${challengeUid}`);
             ActivityListener.perf = Util.getFirestorePerf();
             
-            const traceFullRetrieval = this.perf.trace('traceFullRetrievalFirestore');
+            const traceFullRetrieval = this.perf.trace('traceFullRetrievalFirestore');;
             const traceGetChanges = this.perf.trace('traceGetChanges');
 
             if (ActivityListener.activityListener) {
@@ -24,10 +24,19 @@ class ActivityListener {
             const dbActivitiesRef = allDBRefs.dbActivitiesRef;
 
             let ref = dbActivitiesRef.orderBy("activityDateTime", "desc");
-            traceFullRetrieval.start();
-            ActivityListener.activityListener = ref.onSnapshot((querySnapshot) => {
+            try {
+                traceFullRetrieval.start();
+            } catch {
+                console.error("traceFullRetrieval not started ...")
+            }
 
-                traceGetChanges.start();
+            ActivityListener.activityListener = ref.onSnapshot((querySnapshot) => {
+                try {
+                    traceGetChanges.start();
+                } catch {
+                    console.error("traceGetChanges not started ...")
+                }
+    
                 querySnapshot.docChanges().forEach(change => {
                     if (change.type === "added") {
                         let newActivity = change.doc.data();
@@ -58,9 +67,19 @@ class ActivityListener {
                         });            
                     }
                 });
-                traceGetChanges.stop();
-                traceFullRetrieval.incrementMetric('nbrActivities', ActivityListener.activities.length);
-                traceFullRetrieval.stop();    
+                try {
+                    traceGetChanges.stop();
+                } catch {
+                    //
+                }
+
+                try {
+                    traceFullRetrieval.incrementMetric('nbrActivities', ActivityListener.activities.length);
+                    traceFullRetrieval.stop();    
+                } catch {
+                    //
+                }
+
                 resolve(ActivityListener.activities);
             }, (err) => {
                 console.error(`Error attaching listener: ${err}`);
@@ -74,26 +93,44 @@ class ActivityListener {
         return new Promise((resolve, reject) => {
             const traceCreateListener =  this.perf.trace('traceCreateListenerRealtimeDB');
             const traceGetChanges = this.perf.trace('traceGetChangesRealtimeDB');
-            traceCreateListener.start();
+            try {
+                traceCreateListener.start();
+            } catch {
+                console.error("traceCreateListener not started ...")
+            }
+
             let traceCreateListenerT1 = new Date();
     
             const realtimeDB = Util.getFirebaseRealtimeDB();
             let activityRef = realtimeDB.ref("ATC/prod/activities");
 
             activityRef.orderByChild('challengeUid').equalTo(challengeUid).once('value', (snapshot) => {
-                traceCreateListener.stop();
+                try {
+                    traceCreateListener.stop();
+                } catch {
+                    //
+                }
+
                 let traceCreateListenerT2 = new Date();
                 let traceCreateListenerDiff = traceCreateListenerT2.getTime() - traceCreateListenerT1.getTime();
                 console.log(`traceCreateListenerDiff time is milliseconds: ${traceCreateListenerDiff}`);
+                try {
+                    traceGetChanges.start();
+                } catch {
+                    console.error("traceGetChanges not started ...")
+                }
     
-                traceGetChanges.start();
                 snapshot.forEach(function(childSnapshot) {
                   let newActivity = childSnapshot.val();
                   newActivity.id = childSnapshot.key;
                   ActivityListener.activities.push(newActivity);
                 });
-                traceGetChanges.stop();
-      
+                try {
+                    traceGetChanges.stop();
+                } catch {
+                    //
+                }
+
                 resolve(ActivityListener.activities);
             }, (err) => {
                 console.error(`Error gettng activities in listener: ${err}`);
