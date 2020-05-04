@@ -30,6 +30,7 @@ class ActivityListener {
                 console.error("traceFullRetrieval not started ...")
             }
 
+            ActivityListener.activities = [];
             ActivityListener.activityListener = ref.onSnapshot((querySnapshot) => {
                 try {
                     traceGetChanges.start();
