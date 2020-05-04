@@ -387,6 +387,9 @@ class CalculateTotals {
             const isFound = uResult.userOrTeamUid === activity.teamUid;
             return isFound;
         });
+        if (activity.displayName === "Tim Myers" || activity.displayName === "Stephanie Tobben") {
+            console.log(`Tim/Steph Activity: teamUid: "${activity.teamUid}", idx:${idx}, passed teamUid: ${teamUid}`);
+        }
 
         if (idx > -1) {       // Found, results for this oone so add to it
             // console.log(`found team: ${teamResults[idx].userOrTeamName} at idx: ${idx}`)
