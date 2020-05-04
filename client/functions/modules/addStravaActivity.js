@@ -10,6 +10,15 @@ const addStravaActivity = ((user, stravaActivity) => {
     let stavaActivityDistance = 0.0;
     let stravaActivityType = "";
     console.log(`Strava Activity. Type: ${stravaActivity.type.toLowerCase()}, id: ${stravaActivity.id}`);
+    console.log(`addStravaActivity. Athlete Id ${user.stravaAthleteId},
+        displayName: ${user.displayName},
+        challengeUid: ${user.challengeUid},
+        teamName: ${user.challengeUid},
+        strava ActivyId: ${stravaActivity.id},
+        Type: ${stravaActivity.type.toLowerCase()},
+        Time: ${new Date(stravaActivity.start_date)}
+    `);
+
     switch (stravaActivity.type.toLowerCase()) {
         case "swim":
             stravaActivityType = "Swim";
@@ -76,7 +85,7 @@ const addStravaActivity = ((user, stravaActivity) => {
         // USe set so as not to duplicste activities
         const activityKey = `${stravaActivity.athlete.id}-${stravaActivity.id}`;
         dbActivitiesRef.doc(activityKey).set(activity).then(() => {
-            console.log("Firestore activity successfully added");
+            console.log(`Firestore activity successfully added with id ${activityKey} for user: ${user.displayName}`);
             resolve();
         }).catch((err) => {
             console.err(`Firestore activity add failed`);

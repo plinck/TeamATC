@@ -11,7 +11,7 @@ class SignOutButton extends React.Component {
   handleSignout = async (event) => {
     await this.props.firebase.doSignOut();
     console.log("Logged out");
-    this.props.history.push("/signin");
+    this.props.history.push("/");
   }
 
   render() {

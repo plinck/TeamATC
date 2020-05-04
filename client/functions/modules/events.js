@@ -9,7 +9,13 @@ const { addStravaActivity } = require("./addStravaActivity");
 const updateActivity = ((user, accessToken, stravaActivityId) => {
     const stravaAccessToken = accessToken;
     // get the activity
-    console.log(`In updateActivity for strava activity id: ${stravaActivityId}`);
+    console.log(`In updateActivity. Athlete Id ${user.stravaAthleteId},
+        displayName: ${user.displayName},
+        challengeUid: ${user.challengeUid},
+        teamName: ${user.challengeUid},
+        strava ActivyId: ${stravaActivityId},
+        `);
+
     if (stravaAccessToken) {
         const URIRequest = `https://www.strava.com/api/v3/activities/${stravaActivityId}`;
         console.log(`URIRequest: ${URIRequest}`);
@@ -43,7 +49,7 @@ exports.saveStravaEvent = ( (event) => {
         console.log(`In saveStravaEvent -- aspect_type and object_type is NOT new activity`);
         return;
     }
-    console.log(`In saveStravaEvent -- found new activity`);
+    console.log(`In saveStravaEvent -- new activity`);
     let stravaAthleteId = event.owner_id;
     let stravaActivityId = event.object_id;
   
@@ -52,7 +58,6 @@ exports.saveStravaEvent = ( (event) => {
     let dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
     console.log(`Looking for Strave Athlete ith id: ${stravaAthleteId} in user collection`);
     dbUsersRef.where("stravaAthleteId", "==", stravaAthleteId).limit(1).get().then((querySnapshot) => {
-        console.log(`saveStravaEvent - "dbUsersRef after where clause" before foreach()`);
         querySnapshot.forEach(doc => {
             foundUser = true;
             user = doc.data();
@@ -60,7 +65,8 @@ exports.saveStravaEvent = ( (event) => {
             user.stravaExpiresAt = user.stravaExpiresAt ? user.stravaExpiresAt.toDate() : null;
         });
         if (foundUser) {
-            console.log(`Found User with Athlete Id ${stravaAthleteId}, displayName: ${user.displayName}`);
+            console.log(`Found User. Athlete Id ${stravaAthleteId}, displayName: ${user.displayName},
+                challengeUid: ${user.challengeUid}, teamName: ${user.challengeUid} `);
             // check to make sure access token not expired
             let today = new Date();
             if (!user.stravaExpiresAt || today > user.stravaExpiresAt) {

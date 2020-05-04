@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import SignOutButton from '../Auth/SignOut/SignOut';
+import SignOutButton from '../Auth/SignOut/SignOut.jsx';
 import AppBar from '@material-ui/core/AppBar';
 import { makeStyles } from '@material-ui/core/styles';
 import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
