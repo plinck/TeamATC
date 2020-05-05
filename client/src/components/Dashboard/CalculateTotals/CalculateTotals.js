@@ -10,6 +10,8 @@ class CalculateTotals {
     // I will get it working and then optimize
 
     static totals (activities, teamUid, teamName, uid, displayName) {
+        // console.log(`CalculateTotals.totals. teamUid:${teamUid} teamName:${teamName} uid:${uid} displayName:${displayName}`);
+
         let newTotals = {
             nbrActivities: 0,
             distanceTotal: 0,
@@ -77,8 +79,8 @@ class CalculateTotals {
         // loop through array counting by team
         for (let i = 0; i < activities.length; i++) {
             // get resulsts
-            newUserResults = this.calulateUserResults(userResults, activities[i]);
-            newTeamResults = this.calulateTeamResults(teamResults, activities[i]);
+            newUserResults = this.calulateUserResults(userResults, activities[i], uid);
+            newTeamResults = this.calulateTeamResults(teamResults, activities[i], teamUid);
 
             // Add everything for totals
             newTotals.nbrActivities += 1;
@@ -387,9 +389,9 @@ class CalculateTotals {
             const isFound = uResult.userOrTeamUid === activity.teamUid;
             return isFound;
         });
-        if (activity.displayName === "Tim Myers" || activity.displayName === "Stephanie Tobben") {
-            console.log(`Tim/Steph Activity: teamUid: "${activity.teamUid}", idx:${idx}, passed teamUid: ${teamUid}`);
-        }
+        // if (activity.displayName === "Tim Myers" || activity.displayName === "Stephanie Tobben") {
+        //     console.log(`Tim/Steph Activity: teamUid: "${activity.teamUid}", idx:${idx}, passed teamUid: "${teamUid}"`);
+        // }
 
         if (idx > -1) {       // Found, results for this oone so add to it
             // console.log(`found team: ${teamResults[idx].userOrTeamName} at idx: ${idx}`)
