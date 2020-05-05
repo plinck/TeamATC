@@ -27,7 +27,11 @@ exports.listenForCreateActivity = functions.firestore
         newActivity.id = snap.id;
         newActivity.activityDateTime = newActivity.activityDateTime.toDate();
         console.log(`new activity: ${JSON.stringify(newActivity, null,2)}`);
-        
+
+        const calculateLeaderboards = new CalculateLeaderboards();
+        calculateLeaderboards.calulateNewResults(challenge, newActivity);
+    
+
         return true;
 });
 

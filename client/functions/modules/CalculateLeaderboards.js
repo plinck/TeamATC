@@ -36,6 +36,9 @@ const INITIAL_RECORD =
     otherDurationTotal: 0,
 }
 let isRunning = undefined;
+let static_overallResults = {...INITIAL_RECORD};
+let static_userResults = [];
+let static_teamResults = [];
 
 class CalculateLeaderboards {
 
@@ -66,9 +69,13 @@ class CalculateLeaderboards {
                 });
                 console.log(`Nbr of Activities: ${activities.length}`);
                 const results = this.totals(this.challenge, activities);
-                console.log(`Overall Results: ${JSON.stringify(results.overallResults, null, 2)}`);
-                console.log(`Nbr Team Results: ${results.teamResults.length}`);
-                console.log(`Nbr User Results: ${esults.userResults.length}`);
+                static_overallResults = results.overallResults;
+                static_userResuts = results.teamResults;
+                static_teamResuts = userResults.length;
+        
+                console.log(`Overall Results: ${JSON.stringify(static_overallResults, null, 2)}`);
+                console.log(`Nbr Team Results: ${static_userResuts.length}`);
+                console.log(`Nbr User Results: ${static_teamResuts.length}`);
 
                 isRunning = false;
                 //resolve(activities);
@@ -250,6 +257,36 @@ class CalculateLeaderboards {
                 break;
         }
         return newResult;
+    }
+
+    calulateNewResults(challenge, activity) {
+        let oldOverallResults = static_overallResults;
+
+        console.log(`previous nbr: ${oldOverallResults.nbrActivities}`);
+        console.log(`previous distance: ${oldOverallResults.distanceTotal}`);
+        console.log(`previous pointsTotal: ${oldOverallResults.pointsTotal}`);
+        console.log(`previous durationTotal: ${oldOverallResults.durationTotal}`);
+        
+        static_overallResults.nbrActivities += 1;
+        const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
+        newResult.distanceTotal += distanceInMiles;
+
+        static_overallResults.distanceTotal += activity.distanceInMiles;
+        static_overallResults.durationTotal += activity.durationTotal;
+        switch (activity.activityType) {
+            case "Swim":
+                static_overallResults.pointsTotal += activity.pointsTotal * 10;
+                break;
+            case "Bike":
+                static_overallResults.pointsTotal += activity.pointsTotal * 1;
+                break;
+            case "Run":
+                static_overallResults.pointsTotal += activity.pointsTotal * 3;
+                break;
+            default:
+                static_overallResults.pointsTotal += activity.pointsTotal;
+                break;
+        }
     }
 
 } // class
