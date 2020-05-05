@@ -4,7 +4,7 @@ import {
   Route,
 } from 'react-router-dom';
 
-import Navigation from './components/Navigation/Navigation';
+import Navigation from './components/Navigation/Navigation.jsx';
 import LandingPage from './components/Landing/Landing';
 import Dashboard from './components/Dashboard/dashboard';
 import Account from './components/Account/Account';

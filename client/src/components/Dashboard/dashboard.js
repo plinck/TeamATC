@@ -183,6 +183,7 @@ class Dashboard extends React.PureComponent {
 
     // This is to render interim without waiting for all to be done.
     renderTotals(activities) {
+        // console.log(`renderTotals ,teamUid:${this.props.user.teamUid} teamName:${this.props.user.teamName} uid:${this.props.user.uid} displayName:${this.props.user.displayName}`);
         const totals = CalculateTotals.totals(activities,
             this.props.user.teamUid, this.props.user.teamName,
             this.props.user.uid, this.props.user.displayName);

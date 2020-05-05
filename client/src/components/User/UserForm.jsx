@@ -226,7 +226,7 @@ class UserForm extends React.Component {
         const user = this.state.user;
 
         // set team name from ID - Save for later when callenge is also selected
-        // user.teamName = this.state.teamLookup[this.state.teamUid]
+        // user.teamName = this.state.teamLookup[user.teamUid]
 
         // First, create the auth user in firebase
         // must be done on server for security reasons
@@ -240,10 +240,14 @@ class UserForm extends React.Component {
 
            // Now Create the user in firestore
             UserDB.addAuthUserToFirestore(authUser, user).then((id) => {
-                this.setState({
+                this.setState((prevState) => ({
+                    user: {                   
+                        ...prevState.user,   
+                        [id]: id      
+                    },
                     message: "New User Added.",
-                    id: id
-                });
+                }));
+            
                 // comment out doing password reset on create as it confuses people and always 
                 // times out by the time they get the email to reset
                 // this.props.firebase.doPasswordReset(user.email).then(() => {
@@ -269,6 +273,7 @@ class UserForm extends React.Component {
         console.log(`updating db with user.uid:${this.state.user.uid}`);
 
         const user = this.state.user;
+        console.log(`user.teamName: ${user.teamName}`);
         // set team name from ID - SAVE THIS FOR LATER SINCE IT NEEDS TO BE BASED ON Selected Challenge
         // remove team stuff when adding user
         // user.teamName = this.state.teamLookup[this.state.teamUid]
@@ -345,7 +350,7 @@ class UserForm extends React.Component {
             user: {                   
                 ...prevState.user,    
                 [name]: value,  
-                [teamName]: teamName    
+                teamName: teamName    
             }}));    
     };
 
