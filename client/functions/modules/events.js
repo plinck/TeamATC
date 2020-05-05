@@ -9,12 +9,7 @@ const { addStravaActivity } = require("./addStravaActivity");
 const updateActivity = ((user, accessToken, stravaActivityId) => {
     const stravaAccessToken = accessToken;
     // get the activity
-    console.log(`In updateActivity. Athlete Id ${user.stravaAthleteId},
-        displayName: ${user.displayName},
-        challengeUid: ${user.challengeUid},
-        teamName: ${user.challengeUid},
-        strava ActivyId: ${stravaActivityId},
-        `);
+    console.log(`In updateActivity. Athlete Id ${user.stravaAthleteId},displayName: ${user.displayName},challengeUid: ${user.challengeUid},teamName: ${user.teamName},strava ActivyId: ${stravaActivityId},`);
 
     if (stravaAccessToken) {
         const URIRequest = `https://www.strava.com/api/v3/activities/${stravaActivityId}`;
@@ -65,8 +60,7 @@ exports.saveStravaEvent = ( (event) => {
             user.stravaExpiresAt = user.stravaExpiresAt ? user.stravaExpiresAt.toDate() : null;
         });
         if (foundUser) {
-            console.log(`Found User. Athlete Id ${stravaAthleteId}, displayName: ${user.displayName},
-                challengeUid: ${user.challengeUid}, teamName: ${user.challengeUid} `);
+            console.log(`Found User. Athlete Id ${stravaAthleteId}, displayName: ${user.displayName}, challengeUid: ${user.challengeUid}, teamName: ${user.teamName} `);
             // check to make sure access token not expired
             let today = new Date();
             if (!user.stravaExpiresAt || today > user.stravaExpiresAt) {

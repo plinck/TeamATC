@@ -10,14 +10,7 @@ const addStravaActivity = ((user, stravaActivity) => {
     let stavaActivityDistance = 0.0;
     let stravaActivityType = "";
     console.log(`Strava Activity. Type: ${stravaActivity.type.toLowerCase()}, id: ${stravaActivity.id}`);
-    console.log(`addStravaActivity. Athlete Id ${user.stravaAthleteId},
-        displayName: ${user.displayName},
-        challengeUid: ${user.challengeUid},
-        teamName: ${user.challengeUid},
-        strava ActivyId: ${stravaActivity.id},
-        Type: ${stravaActivity.type.toLowerCase()},
-        Time: ${new Date(stravaActivity.start_date)}
-    `);
+    console.log(`addStravaActivity. Athlete Id ${user.stravaAthleteId},displayName: ${user.displayName},challengeUid: ${user.challengeUid},teamName: ${user.teamName},strava ActivyId: ${stravaActivity.id},Type: ${stravaActivity.type.toLowerCase()},Time: ${new Date(stravaActivity.start_date)}`);
 
     switch (stravaActivity.type.toLowerCase()) {
         case "swim":
