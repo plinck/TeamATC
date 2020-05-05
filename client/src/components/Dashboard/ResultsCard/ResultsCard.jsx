@@ -4,17 +4,26 @@ import { Link } from "react-router-dom";
 import LaunchIcon from '@material-ui/icons/Launch';
 import './Result.css'
 import { Table, TableHead, TableBody, TableCell, TableRow, Card, CardContent, Tooltip } from '@material-ui/core';
-import TeamResultsModal from './TeamResultsModal';
+import TeamResultsModal from './TeamResultsModal.jsx';
+import UserResultsModal from './UserResultsModal.jsx';
 
 const ResultsCard = (props) => {
     const [openTeamResults, setOpenTeamResults] = useState(false)
+    const [openUserResults, setOpenUserResults] = useState(false)
 
     const handleClickTeamResults = () => {
         setOpenTeamResults(true)
     }
+    const handleClickUserResults = () => {
+        setOpenUserResults(true)
+    }
 
     const handleClose = () => {
         setOpenTeamResults(false)
+    }
+
+    const handleCloseUser = () => {
+        setOpenUserResults(false)
     }
 
     // wait for props
@@ -37,11 +46,19 @@ const ResultsCard = (props) => {
                 }}>{onlyTeams ? "Team Leaderboard" : "Individual Leaders"}
             </Link>
             <div style={{ float: 'right' }}>
-                <Tooltip title="Show Results">
-                    <div onClick={handleClickTeamResults}>
+                {onlyTeams ? 
+                    <Tooltip title="Show Results">
+                        <div onClick={handleClickTeamResults}>
+                            <LaunchIcon />
+                        </div>
+                    </Tooltip>
+                    :
+                    <Tooltip title="Show Results">
+                    <div onClick={handleClickUserResults}>
                         <LaunchIcon />
                     </div>
-                </Tooltip>
+                    </Tooltip>
+                }
             </div>
         </Box>
 
@@ -56,6 +73,7 @@ const ResultsCard = (props) => {
         <Card style={{ height: '100%' }}>
             <CardContent>
                 <TeamResultsModal id="TeamResultsModal" handleClose={handleClose} open={openTeamResults} teamTotals={teamTotals} userTotals={userTotals} />
+                <UserResultsModal id="UserResultsModal" handleClose={handleCloseUser} open={openUserResults} userTotals={userTotals} />
                 {leaderboardTitleRow}
                 <Table size="small">
                     <TableHead>

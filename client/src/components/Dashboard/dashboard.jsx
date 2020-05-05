@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import CalculateTotals from "./CalculateTotals/CalculateTotals.js"
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Redirect } from "react-router";
-import ResultsCard from "./ResultsCard/ResultsCard";
+import ResultsCard from "./ResultsCard/ResultsCard.jsx";
 import ActivitiesCard from './ActivitiesCard/ActivitiesCard';
 import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";

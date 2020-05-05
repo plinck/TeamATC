@@ -9,7 +9,7 @@ const Result = (props) => {
         return (null);
     }
 
-    console.log(props)
+    //console.log(props)
 
     // Band odd rows for clarity
     let rowBg = "";
