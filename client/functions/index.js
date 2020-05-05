@@ -2,14 +2,41 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
-const ENV = require("./modules/FirebaseEnvironment.js");
+const { APP_CONFIG } = require("./modules/FirebaseEnvironment.js");
+const challenge = {
+    id : "5XuThS03PcQQ1IasPQif",
+}
+
+const CalculateLeaderboards = require("./modules/CalculateLeaderboards.js")
+// Run the calculations in the background
+
+exports.scheduledFunction = functions.pubsub.schedule('every 5 minutes').onRun((context) => {
+    console.log('This will be run every 5 minutes!');
+    const calculateLeaderboards = new CalculateLeaderboards();
+    calculateLeaderboards.run();
+    return null;
+});
+
+exports.listenForCreateActivity = functions.firestore
+    .document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/challenges/${challenge.id}/activities/{activityId}`)
+    .onCreate((snap, context) => {
+        // Get an object representing the document
+        // e.g. {'name': 'Marie', 'age': 66}
+        let newActivity = {};
+        newActivity = snap.data();
+        newActivity.id = snap.id;
+        newActivity.activityDateTime = newActivity.activityDateTime.toDate();
+        console.log(`new activity: ${JSON.stringify(newActivity, null,2)}`);
+        
+        return true;
+});
 
 exports.setEnviromentFromClient = functions.https.onCall((environment, context) => {
     console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
-    ENV.set(environment.org, environment.env, environment.challengeUid);
+    set(environment.org, environment.env, environment.challengeUid);
     
-    console.log(`Saved environment ${ENV.APP_CONFIG.ORG}, ${ENV.APP_CONFIG.ENV}, ${ENV.APP_CONFIG.CHALLENGEUID}`);
-    return {message: `Saved environment ${ENV.APP_CONFIG.ORG}, ${ENV.APP_CONFIG.ENV}, ${ENV.APP_CONFIG.CHALLENGEUID}`};
+    console.log(`Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`);
+    return {message: `Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`};
 });
 
 // ===============================================================================================
@@ -59,12 +86,12 @@ exports.fBFupdateTeam = functions.https.onCall((req, res) => {
     let challengeUid = req.challengeUid;
     let team = req.team;
 
-    console.log(`In fBFupdateTeam with: ORG: ${ENV.APP_CONFIG.ORG}, ENV: ${ENV.APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
+    console.log(`In fBFupdateTeam with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
     return new Promise((resolve, reject) => {
         let activitiesRef = undefined;
-        let dbUsersRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("users");
+        let dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
         if (challengeUid && challengeUid != "") {
-            activitiesRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection(`activities`);
+            activitiesRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection(`activities`);
         }
 
         let batch = admin.firestore().batch();
@@ -94,11 +121,11 @@ exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
     let challengeUid = req.challengeUid;
     let team = req.team;
 
-    console.log(`In fBFupdateActivityTeamName with: ORG: ${ENV.APP_CONFIG.ORG}, ENV: ${ENV.APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
+    console.log(`In fBFupdateActivityTeamName with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
     return new Promise((resolve, reject) => {
         let activitiesRef = undefined;
         if (challengeUid && challengeUid != "") {
-            activitiesRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection(`activities`);
+            activitiesRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection(`activities`);
         }
 
         let batch = admin.firestore().batch();
