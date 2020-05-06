@@ -1,9 +1,9 @@
 import * as admin from 'firebase-admin';
 import { APP_CONFIG } from "./FirebaseEnvironment";
 
-import Activity from "./Interfaces/Activity";
-import Result from "./Interfaces/Result";
-import Challenge from "./Interfaces/Challenge";
+import Activity from "./interfaces/Activity";
+import Result from "./interfaces/Result";
+import Challenge from "./interfaces/Challenge";
 
 // type ClientResult = {
 //     refresh_token: string;

@@ -3,33 +3,47 @@ import * as admin from 'firebase-admin';
 import { envSet, APP_CONFIG } from "./modules/FirebaseEnvironment";
 admin.initializeApp(functions.config().firebase);
 
-const challenge = {
-    id : "5XuThS03PcQQ1IasPQif",
-}
+import { Leaderboard } from "./modules/Leaderboard";
+import Activity from "./modules/interfaces/Activity";
+// import Result from "./Interfaces/Result";
+import Challenge from "./modules/interfaces/Challenge";
+const challenge = new Challenge();
 
-const { calculateLeaderboards, calulateNewResults } = require("./modules/CalculateLeaderboards.js");
+// const challenge = {
+//     id : "5XuThS03PcQQ1IasPQif",
+// }
+// 
+// const { calculateLeaderboards, calulateNewResults } = require("./modules/CalculateLeaderboards.js");
 // Run the calculations in the background
 
 exports.scheduledFunction = functions.pubsub.schedule('every 5 minutes').onRun((context) => {
     console.log('This will be run every 5 minutes!');
     // const calculateLeaderboards = new CalculateLeaderboards();
-    calculateLeaderboards();
+    const leaderboard:Leaderboard = new Leaderboard();
+    leaderboard.calculateLeaderboards().then((res) => {
+        console.log(`completed calculating leaderboards`);
+    }).catch((err: Error) => {
+        console.error(err);
+    });
+
     return null;
 });
 
 exports.listenForCreateActivity = functions.firestore
     .document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/challenges/${challenge.id}/activities/{activityId}`)
-    .onCreate((snap, context) => {
+    .onCreate((doc, context) => {
         // Get an object representing the document
         // e.g. {'name': 'Marie', 'age': 66}
-        const newActivity = snap.data();
-        newActivity.id = snap.id;
-        newActivity.activityDateTime = newActivity.activityDateTime.toDate();
-        console.log(`new activity: ${JSON.stringify(newActivity, null,2)}`);
+        const docData:FirebaseFirestore.DocumentData = doc.data();
+        docData.id = doc.id;
+        docData.activityDateTime = docData.activityDateTime.toDate();
+        const newActivity:Activity = docData as Activity;
+        console.log(`new activity: ${newActivity}`);
 
         // const calculateLeaderboards = new CalculateLeaderboards();
-        calulateNewResults(challenge, newActivity);
-
+        const leaderboard:Leaderboard = new Leaderboard();
+        leaderboard.calulateNewResults(challenge, newActivity);
+    
         return true;
 });
 
