@@ -56,7 +56,10 @@
     "start": "react-scripts --max_old_space_size=4096 start",
     "build": "react-scripts --max_old_space_size=4096 build",
     "test": "react-scripts --max_old_space_size=4096 test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "cd functions && npm run setenv && cd .. && sudo firebase deploy",
+    "deployhost": "cd functions && npm run setenv && cd .. && sudo firebase deploy --except functions",
+    "deployfunctions": "cd functions && npm run setenv && firebase deploy --only functions"
   },
   "eslintConfig": {
     "extends": "react-app"

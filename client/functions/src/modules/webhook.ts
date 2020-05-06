@@ -11,9 +11,9 @@ app.get('/strava', (req, res) => {
      // Your verify token. Should be a random string.
         const VERIFY_TOKEN = "STRAVA";
         // Parses the query params
-        let mode = req.query['hub.mode'];
-        let token = req.query['hub.verify_token'];
-        let challenge = req.query['hub.challenge'];
+        const mode = req.query['hub.mode'];
+        const token = req.query['hub.verify_token'];
+        const challenge = req.query['hub.challenge'];
 
         // Checks if a token and mode is in the query string of the request
         if (mode && token) {
@@ -65,11 +65,11 @@ app.get('/subscribe', (req, res) => {
         console.log(`URIRequest: ${URIRequest}`);
         request.post(
             URIRequest,null,
-            (error: any, res: any, body: any) => {
+            (error: any, response: any, body: any) => {
               if (error) {
                 console.error("Error from POST: ", error)
               }
-              console.log(`statusCode: ${res.statusCode}`)
+              console.log(`statusCode: ${response.statusCode}`)
               console.log("Body from POST: ", body)
             }
         )

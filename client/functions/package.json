@@ -1,17 +1,20 @@
 {
-    "main": "lib/module.js",
     "name": "functions",
     "description": "Cloud Functions for Firebase",
     "scripts": {
         "lint": "tslint --project tsconfig.json",
-        "build": "./node_modules/.bin/tsc",
+        "build": "./node_modules/.bin/tslint --project tsconfig.json && ./node_modules/.bin/tsc",
         "watch": "tsc --watch",
         "serve": "firebase serve --only functions",
         "shell": "firebase functions:shell",
         "start": "npm run shell",
-        "deploy": "firebase deploy --only functions",
+        "deploy": "npm run setenv && cd .. && sudo firebase deploy",
+        "deployhost": "npm run setenv && cd .. && sudo firebase deploy --except functions",
+        "deployfunctions": "npm run setenv && firebase deploy --only functions",
+        "setenv": "test -f .env-strava-config.json && firebase functions:config:unset env && firebase functions:config:set env=\"$(cat .env-strava-config.json)\" || echo \"Please add the file env.json before deploy.\"",
         "logs": "firebase functions:log"
     },
+    "main": "lib/index.js",
     "dependencies": {
         "@types/request": "^2.48.4",
         "axios": "^0.19.2",
@@ -24,8 +27,8 @@
         "request": "^2.88.2"
     },
     "devDependencies": {
-        "tslint": "^5.20.1",
-        "typescript": "^2.9.2"
+        "tslint": "^6.1.2",
+        "typescript": "^3.8.3"
     },
     "private": true,
     "engines": {

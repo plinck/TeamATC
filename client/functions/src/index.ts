@@ -22,7 +22,7 @@ exports.listenForCreateActivity = functions.firestore
     .onCreate((snap, context) => {
         // Get an object representing the document
         // e.g. {'name': 'Marie', 'age': 66}
-        let newActivity = snap.data();
+        const newActivity = snap.data();
         newActivity.id = snap.id;
         newActivity.activityDateTime = newActivity.activityDateTime.toDate();
         console.log(`new activity: ${JSON.stringify(newActivity, null,2)}`);
@@ -85,19 +85,15 @@ exports.webhook = webhook.strava;
 exports.fBFupdateTeam = functions.https.onCall((req, res) => {
     console.log(`In fBFupdateTeam with: req ${JSON.stringify(req)}`);
 
-    let challengeUid = req.challengeUid;
-    let team = req.team;
+    const challengeUid = req.challengeUid;
+    const team = req.team;
 
     console.log(`In fBFupdateTeam with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
     return new Promise((resolve, reject) => {
-        let activitiesRef = undefined;
-        let dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
-        if (challengeUid && challengeUid != "") {
-            activitiesRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection(`activities`);
-        }
+        const dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
 
-        let batch = admin.firestore().batch();
-        let allUsersOnTeamRef = dbUsersRef.where("teamUid", "==", team.id)
+        const batch = admin.firestore().batch();
+        const allUsersOnTeamRef = dbUsersRef.where("teamUid", "==", team.id)
         allUsersOnTeamRef.get().then((querySnapshot) => {
             querySnapshot.forEach(doc => {
                 batch.set(doc.ref, {
@@ -120,18 +116,18 @@ exports.fBFupdateTeam = functions.https.onCall((req, res) => {
 exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
     console.log(`In fBFupdateActivityTeamName with: req ${JSON.stringify(req)}`);
 
-    let challengeUid = req.challengeUid;
-    let team = req.team;
+    const challengeUid = req.challengeUid;
+    const team = req.team;
 
     console.log(`In fBFupdateActivityTeamName with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
     return new Promise((resolve, reject) => {
         let activitiesRef = undefined;
-        if (challengeUid && challengeUid != "") {
+        if (challengeUid && challengeUid !== "") {
             activitiesRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection(`activities`);
         }
 
-        let batch = admin.firestore().batch();
-        let allActivitiessOnTeamRef = activitiesRef.where("teamUid", "==", team.id)
+        const batch = admin.firestore().batch();
+        const allActivitiessOnTeamRef = activitiesRef.where("teamUid", "==", team.id)
         allActivitiessOnTeamRef.get().then((querySnapshot) => {
             querySnapshot.forEach(doc => {
                 batch.set(doc.ref, {

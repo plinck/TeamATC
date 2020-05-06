@@ -1,14 +1,12 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    // strict is used for hardcore
-    "strict": true,
     "strictNullChecks": false,
     "module": "commonjs",
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",
     "sourceMap": true,
+    "strict": true,
     "lib": ["es2017"],
     "target": "es2017"
   },

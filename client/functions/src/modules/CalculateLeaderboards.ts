@@ -3,7 +3,6 @@
 // etc by team and by uuser and by all
 // refactor to pull out of dashboard.
 import * as admin from 'firebase-admin';
-
 import { APP_CONFIG } from "./FirebaseEnvironment";
 
 const INITIAL_RECORD =
@@ -36,11 +35,14 @@ const INITIAL_RECORD =
     otherNbrActivities: 0,
     otherDurationTotal: 0,
 }
-let g_isRunning = undefined;
+let g_isRunning: boolean = false;
 let g_overallResults = {...INITIAL_RECORD};
 let g_userResults = [];
 let g_teamResults = [];
-const g_challenge = {
+interface Challenge {
+    id : string,
+}
+const g_challenge:Challenge = {
     id : "5XuThS03PcQQ1IasPQif",
 }
 
@@ -53,10 +55,9 @@ const calculateLeaderboards = async () => {
         // get All Activities for challenge
         const dbActivitiesRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(g_challenge.id).collection(`activities`);
         dbActivitiesRef.get().then((querySnapshot) => {
-            let activities = [];
+            const activities: any = [];
             querySnapshot.forEach(doc => {
-                let activity = {};
-                activity = doc.data();
+                const activity = doc.data();
                 activity.id = doc.id;
                 activity.activityDateTime = activity
                     .activityDateTime
@@ -85,22 +86,23 @@ const calculateLeaderboards = async () => {
     }
 }
 
-const totals = (challenge, activities) => {
+const totals = (challenge: Challenge, activities:any) => {
     // console.log("totals() started ...");
     let overallResults = {...INITIAL_RECORD};
     let userResults = [];
     let teamResults = [];
 
     // loop through array counting by team
-    for (let i = 0; i < activities.length; i++) {
+    // for (let i = 0; i < activities.length; i++) {
+    for (const activity of activities) {
         // get resulsts
-        overallResults = calulateOverallResults(challenge, overallResults, activities[i]);
-        teamResults = calulateTeamResults(challenge, teamResults, activities[i]);
-        userResults = calulateUserResults(challenge, userResults, activities[i]);
+        overallResults = calulateOverallResults(challenge, overallResults, activity);
+        teamResults = calulateTeamResults(challenge, teamResults, activity);
+        userResults = calulateUserResults(challenge, userResults, activity);
     }
 
     // Sort the team and user results based on total points DESC          
-    userResults.sort((a, b) => {
+    userResults.sort((a:any, b:any) => {
         const totalA = a.pointsTotal;
         const totalB = b.pointsTotal;
 
@@ -113,7 +115,7 @@ const totals = (challenge, activities) => {
         return comparison * -1;  // Invert so it will sort in descending order
     });
 
-    teamResults.sort((a, b) => {
+    teamResults.sort((a:any, b:any) => {
         const totalA = a.pointsTotal;
         const totalB = b.pointsTotal;
 
@@ -126,14 +128,14 @@ const totals = (challenge, activities) => {
         return comparison * -1;  // Invert so it will sort in descending order
     });
 
-    let allResults = { overallResults, teamResults, userResults };
+    const allResults = { overallResults, teamResults, userResults };
     // console.log(`All Results: ${JSON.stringify(allResults, null, 2)}`);
 
     return (allResults);
 }
 
 // Calculate overall results
-const calulateOverallResults = (challenge, result, activity) => {
+const calulateOverallResults = (challenge: Challenge, result:any, activity:any) => {
     // console.log("totals() started ...");
 
     let newResult = result;
@@ -145,19 +147,17 @@ const calulateOverallResults = (challenge, result, activity) => {
 }
 
 // Calculate user results
-const calulateUserResults = (challenge, results, activity) => {
+const calulateUserResults = (challenge:Challenge, results:any, activity:any) => {
     // console.log("calulateUserResults() started ...");
 
-    let newResult = {};
-    let idx = results.findIndex((result) => {
+    let newResult = {...INITIAL_RECORD};
+    const idx = results.findIndex((result:any) => {
         const foundIdx = result.uid === activity.uid;
         return foundIdx;
     });
 
     if (idx > -1) {       // Found, results for this oone so add to it
         newResult = results[idx];
-    } else {
-        newResult = {...INITIAL_RECORD};
     }
     // Record Type Info
     newResult.userRecord = true;
@@ -167,7 +167,7 @@ const calulateUserResults = (challenge, results, activity) => {
     newResult = computeRecordTotals(challenge, newResult, activity);
 
     // Updated the array of users results - each user has a record
-    let newResultsArray = results;
+    const newResultsArray = results;
     if (idx > -1) {       // Found, results for this oone so add to it
         newResultsArray[idx] = newResult;
     } else {
@@ -178,20 +178,18 @@ const calulateUserResults = (challenge, results, activity) => {
 }
 
 // Calculate user results
-const calulateTeamResults = (challenge, results, activity) => {
+const calulateTeamResults = (challenge:Challenge, results:any, activity:any) => {
     // console.log("calulateTeamResults() started ...");
 
-    let newResult = {};
-    let idx = results.findIndex((result) => {
+    let newResult = {...INITIAL_RECORD};
+    const idx = results.findIndex((result:any) => {
         const foundIdx = result.teamUid === activity.teamUid;
         return foundIdx;
     });
 
     if (idx > -1) {       // Found, results for this oone so add to it
         newResult = results[idx];
-    } else {
-        newResult = {...INITIAL_RECORD};
-    }
+    } 
     // Record Type Info
     newResult.teamRecord = true;
     newResult.teamUid = activity.teamUid;
@@ -200,7 +198,7 @@ const calulateTeamResults = (challenge, results, activity) => {
     newResult = computeRecordTotals(challenge, newResult, activity);
 
     // Updated the array of users results - each user has a record
-    let newResultsArray = results;
+    const newResultsArray = results;
     if (idx > -1) {       // Found, results for this oone so add to it
         newResultsArray[idx] = newResult;
     } else {
@@ -210,7 +208,7 @@ const calulateTeamResults = (challenge, results, activity) => {
     return (newResultsArray);
 }
 
-const computeRecordTotals = (challenge, newResult, activity) => {
+const computeRecordTotals = (challenge:Challenge, newResult:any, activity:any) => {
     // console.log("computeRecordTotals() started ...");
 
     const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
@@ -255,13 +253,13 @@ const computeRecordTotals = (challenge, newResult, activity) => {
     return newResult;
 }
 
-const calulateNewResults = (challenge, activity) => {
+const calulateNewResults = (challenge:Challenge, activity:any) => {
     console.log(`previous nbr: ${g_overallResults.nbrActivities}`);
     console.log(`previous distance: ${g_overallResults.distanceTotal}`);
     console.log(`previous pointsTotal: ${g_overallResults.pointsTotal}`);
     console.log(`previous durationTotal: ${g_overallResults.durationTotal}`);
 
-    let overallResults = calulateOverallResults(challenge, g_overallResults, activity);
+    const overallResults = calulateOverallResults(challenge, g_overallResults, activity);
     g_overallResults = overallResults;
     // teamResults = calulateTeamResults(challenge, g_teamResults, activity);
     // userResults = calulateUserResults(challenge, g_userResults, activity);

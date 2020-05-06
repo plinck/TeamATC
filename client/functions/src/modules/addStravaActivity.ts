@@ -50,7 +50,7 @@ const addStravaActivity = ((user : any, stravaActivity : any) => {
     }
 
     return new Promise((resolve, reject) => {
-        let activity = {
+        const activity = {
             activityDateTime: new Date(stravaActivity.start_date),
             activityName: stravaActivity.name,
             activityType: stravaActivityType,

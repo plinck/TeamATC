@@ -2,6 +2,13 @@ import axios from 'axios';
 import { FUNCTIONS_CONFIG } from "./FirebaseEnvironment";
 import { updateUserWithStrava } from "./updateUserWithStrava";
 
+interface ClientResponse {
+    refresh_token: string,
+    access_token: string,
+    expires_at: number,
+    expires_in: number,
+}
+
 const refreshToken = ((req: any) => {
     return new Promise((resolve, reject) => {
         console.log(`called stravaRefreshToken with request`);
@@ -13,7 +20,7 @@ const refreshToken = ((req: any) => {
             uid = req.uid;
         } else {
             console.error(`Error in stravaRefreshToken - invalid parm - must provide uid and refresh_token`);
-            return reject(`Error in stravaRefreshToken - invalid parm - must provide uid and refresh_token`);
+            reject(`Error in stravaRefreshToken - invalid parm - must provide uid and refresh_token`);
         }
 
         const params = {
@@ -38,7 +45,7 @@ const refreshToken = ((req: any) => {
             // MJUST break up response since FB functions can not resolve this complex
             // res object as it has circular reference.  It causes an error;
             // Unhandled error RangeError: Maximum call stack size exceeded
-            const clientResponse = {
+            const clientResponse: ClientResponse = {
                 refresh_token: res.data.refresh_token,
                 access_token: res.data.access_token,
                 expires_at: res.data.expires_at,
