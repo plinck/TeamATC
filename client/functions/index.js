@@ -1,3 +1,9 @@
+/* jshint strict: true */
+/* jshint esversion: 6 */
+/* jslint vars: true */
+/*jslint node: true */
+"use strict";
+
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
@@ -7,13 +13,13 @@ const challenge = {
     id : "5XuThS03PcQQ1IasPQif",
 }
 
-const CalculateLeaderboards = require("./modules/CalculateLeaderboards.js")
+const { calculateLeaderboards, calulateNewResults } = require("./modules/CalculateLeaderboards.js");
 // Run the calculations in the background
 
 exports.scheduledFunction = functions.pubsub.schedule('every 5 minutes').onRun((context) => {
     console.log('This will be run every 5 minutes!');
-    const calculateLeaderboards = new CalculateLeaderboards();
-    calculateLeaderboards.run();
+    // const calculateLeaderboards = new CalculateLeaderboards();
+    calculateLeaderboards();
     return null;
 });
 
@@ -28,9 +34,8 @@ exports.listenForCreateActivity = functions.firestore
         newActivity.activityDateTime = newActivity.activityDateTime.toDate();
         console.log(`new activity: ${JSON.stringify(newActivity, null,2)}`);
 
-        const calculateLeaderboards = new CalculateLeaderboards();
-        calculateLeaderboards.calulateNewResults(challenge, newActivity);
-    
+        // const calculateLeaderboards = new CalculateLeaderboards();
+        calulateNewResults(challenge, newActivity);
 
         return true;
 });
