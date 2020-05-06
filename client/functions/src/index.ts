@@ -1,14 +1,8 @@
-/* jshint strict: true */
-/* jshint esversion: 6 */
-/* jslint vars: true */
-/*jslint node: true */
-"use strict";
-
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
+import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
+import { envSet, APP_CONFIG } from "./modules/FirebaseEnvironment";
 admin.initializeApp(functions.config().firebase);
 
-const { APP_CONFIG } = require("./modules/FirebaseEnvironment.js");
 const challenge = {
     id : "5XuThS03PcQQ1IasPQif",
 }
@@ -28,8 +22,7 @@ exports.listenForCreateActivity = functions.firestore
     .onCreate((snap, context) => {
         // Get an object representing the document
         // e.g. {'name': 'Marie', 'age': 66}
-        let newActivity = {};
-        newActivity = snap.data();
+        let newActivity = snap.data();
         newActivity.id = snap.id;
         newActivity.activityDateTime = newActivity.activityDateTime.toDate();
         console.log(`new activity: ${JSON.stringify(newActivity, null,2)}`);
@@ -42,7 +35,7 @@ exports.listenForCreateActivity = functions.firestore
 
 exports.setEnviromentFromClient = functions.https.onCall((environment, context) => {
     console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
-    set(environment.org, environment.env, environment.challengeUid);
+    envSet(environment.org, environment.env, environment.challengeUid);
     
     console.log(`Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`);
     return {message: `Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`};

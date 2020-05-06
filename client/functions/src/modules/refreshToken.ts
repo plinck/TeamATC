@@ -1,13 +1,13 @@
-const axios = require('axios');
-const {FUNCTIONS_CONFIG} = require("./FirebaseEnvironment.js");
-const {updateUserWithStrava} = require("./updateUserWithStrava");
+import axios from 'axios';
+import { FUNCTIONS_CONFIG } from "./FirebaseEnvironment";
+import { updateUserWithStrava } from "./updateUserWithStrava";
 
-const refreshToken = ((req, res) => {
+const refreshToken = ((req: any) => {
     return new Promise((resolve, reject) => {
         console.log(`called stravaRefreshToken with request`);
         console.log(req);
         let refresh_token = undefined;
-        let uid = undefined;
+        let uid : string = undefined;
         if (req && req.refresh_token && req.uid) {
             refresh_token = req.refresh_token;
             uid = req.uid;
@@ -32,7 +32,7 @@ const refreshToken = ((req, res) => {
 
         console.log(`URIRequest: ${URIRequest}`);
 
-        axios.post(URIRequest).then((res) => {
+        axios.post(URIRequest).then((res: any) => {
             console.log("Successfully sent strava token refresh request");
 
             // MJUST break up response since FB functions can not resolve this complex
@@ -47,7 +47,7 @@ const refreshToken = ((req, res) => {
 
             // NOW, save the strava info to the user account, maybe do in client
             // Must Save access_toke, refresh_token, expires_at, accepted_scopes
-            updateUserWithStrava(uid, clientResponse).then (() => {
+            updateUserWithStrava(uid, clientResponse, false).then (() => {
                 console.log(`Successfully updated strava user with data: ${JSON.stringify(clientResponse, null, 4)}`);
                 resolve(clientResponse);
             }).catch((err) => {
@@ -61,4 +61,4 @@ const refreshToken = ((req, res) => {
     });
 });
 
-module.exports = { refreshToken };
+export { refreshToken };

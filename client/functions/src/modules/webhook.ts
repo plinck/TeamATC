@@ -1,9 +1,8 @@
-const functions = require('firebase-functions');
-const request = require('request');
-const cors = require('cors')({origin: true});
-const express = require('express');
-const {FUNCTIONS_CONFIG} = require("./FirebaseEnvironment.js");
-const events = require("./events");
+import * as functions from 'firebase-functions';
+import * as request from 'request';
+import * as express from 'express';
+import { FUNCTIONS_CONFIG } from "./FirebaseEnvironment";
+import { saveStravaEvent } from "./events";
 
 const app = express();
 
@@ -39,7 +38,7 @@ app.post('/strava', async (req, res) => {
   const event = req.body;
   console.log('[STRAVA] Event ' + event.aspect_type + ': ' + event.object_type + ' (' + event.object_id + ') for ' + event.owner_id + ' (updates: ' + JSON.stringify(event.updates) + ' @ ' + event.event_time);
   // save event as activity
-  events.saveStravaEvent(event);
+  saveStravaEvent(event);
 
   return res.status(200).json({ success: true });
 });
@@ -66,7 +65,7 @@ app.get('/subscribe', (req, res) => {
         console.log(`URIRequest: ${URIRequest}`);
         request.post(
             URIRequest,null,
-            (error, res, body) => {
+            (error: any, res: any, body: any) => {
               if (error) {
                 console.error("Error from POST: ", error)
               }

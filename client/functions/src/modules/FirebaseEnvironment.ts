@@ -21,7 +21,7 @@ let APP_CONFIG = {
 }
 
 // Set env vars
-const set = (org, env, challengeUid) => {
+const envSet = (org, env, challengeUid) => {
     APP_CONFIG.ORG = org;
     APP_CONFIG.ENV = env;
     APP_CONFIG.CHALLENGEUID = challengeUid;
@@ -37,4 +37,4 @@ const getAppConfig = () => {
     return APP_CONFIG;
 };
 
-module.exports = { set, getFunctionsConfig, getAppConfig, FUNCTIONS_CONFIG, APP_CONFIG };
+export { envSet, getFunctionsConfig, getAppConfig, FUNCTIONS_CONFIG, APP_CONFIG };

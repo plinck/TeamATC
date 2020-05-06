@@ -2,8 +2,9 @@
 // This class goes through the entiure array and calculates all the totals, subtiotals, rtesults
 // etc by team and by uuser and by all
 // refactor to pull out of dashboard.
-const admin = require('firebase-admin');
-const { APP_CONFIG } = require("./FirebaseEnvironment.js");
+import * as admin from 'firebase-admin';
+
+import { APP_CONFIG } from "./FirebaseEnvironment";
 
 const INITIAL_RECORD =
 {
@@ -272,4 +273,4 @@ const calulateNewResults = (challenge, activity) => {
 
 }
 
-module.exports = { calculateLeaderboards, calulateNewResults };
+export { calculateLeaderboards, calulateNewResults };

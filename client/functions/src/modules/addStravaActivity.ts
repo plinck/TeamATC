@@ -1,10 +1,10 @@
-const admin = require('firebase-admin');
-const { APP_CONFIG } = require("./FirebaseEnvironment.js");
+import * as admin from 'firebase-admin';
+import { APP_CONFIG } from "./FirebaseEnvironment";
 
 // ===============================================================
 // Local - non-exported functions
 // ===============================================================
-const addStravaActivity = ((user, stravaActivity) => {
+const addStravaActivity = ((user : any, stravaActivity : any) => {
     
     let stavaActivityDistanceUnits = "Miles";
     let stavaActivityDistance = 0.0;
@@ -51,19 +51,20 @@ const addStravaActivity = ((user, stravaActivity) => {
 
     return new Promise((resolve, reject) => {
         let activity = {
-            teamName: user.teamName ? user.teamName : "",
-            teamUid: user.teamUid ? user.teamUid : null,
-            activityName: stravaActivity.name,
             activityDateTime: new Date(stravaActivity.start_date),
+            activityName: stravaActivity.name,
             activityType: stravaActivityType,
+            challengeUid: user.challengeUid ? user.challengeUid : null,
+            displayName: user.displayName ? user.displayName : "",
             distance: stavaActivityDistance,
             distanceUnits: stavaActivityDistanceUnits,
             duration: stravaActivity.elapsed_time / 3600,
             email: user.email ? user.email : "",
-            displayName: user.displayName ? user.displayName : "",
-            uid: user.id,
             stravaActivity : true,
-            stravaActivityId : stravaActivity.id
+            stravaActivityId : stravaActivity.id,
+            teamName: user.teamName ? user.teamName : "",
+            teamUid: user.teamUid ? user.teamUid : null,
+            uid: user.id,
         }
         if (user.challengeUid) {
             activity.challengeUid = user.challengeUid;
@@ -80,8 +81,8 @@ const addStravaActivity = ((user, stravaActivity) => {
         dbActivitiesRef.doc(activityKey).set(activity).then(() => {
             console.log(`Firestore activity successfully added with id ${activityKey} for user: ${user.displayName}`);
             resolve();
-        }).catch((err) => {
-            console.err(`Firestore activity add failed`);
+        }).catch((err : any) => {
+            console.error(`Firestore activity add failed`);
             reject(`Firestore activity add failed with error: ${err}`);
         });
 
@@ -89,4 +90,4 @@ const addStravaActivity = ((user, stravaActivity) => {
     
 });
 
-module.exports = { addStravaActivity };
+export { addStravaActivity };

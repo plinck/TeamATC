@@ -1,5 +1,5 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
+import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
 
 exports.authDeleteUser = functions.https.onCall((req, context) => {
     let uid = req.uid;

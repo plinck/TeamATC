@@ -1,10 +1,10 @@
-const admin = require('firebase-admin');
-const {APP_CONFIG} = require("./FirebaseEnvironment.js");
+import * as admin from 'firebase-admin';
+import { APP_CONFIG } from "./FirebaseEnvironment";
 
 // ===============================================================
 // Local - non-exported functions
 // ===============================================================
-const updateUserWithStrava = ((uid, stravaInfo, deauthorize) => {
+const updateUserWithStrava = ((uid: string, stravaInfo: any, deauthorize: boolean) => {
     console.log(`In updateUserWithStrava with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}`);
     
     return new Promise((resolve, reject) => {
@@ -49,4 +49,4 @@ const updateUserWithStrava = ((uid, stravaInfo, deauthorize) => {
     
 });
 
-module.exports = { updateUserWithStrava };
+export { updateUserWithStrava };

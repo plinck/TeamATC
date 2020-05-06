@@ -1,12 +1,13 @@
-const admin = require('firebase-admin');
-const axios = require('axios');
-const { APP_CONFIG } = require("./FirebaseEnvironment.js");
-const { refreshToken } = require("./refreshToken");;
-const { addStravaActivity } = require("./addStravaActivity");
+import * as admin from 'firebase-admin';
+import axios from 'axios';
+import { APP_CONFIG } from "./FirebaseEnvironment";
+import { refreshToken } from "./refreshToken";
+import { addStravaActivity } from "./addStravaActivity";
+
 // ===============================================================
 // local not exported/helperfunctions
 // ===============================================================
-const updateActivity = ((user, accessToken, stravaActivityId) => {
+const updateActivity = ((user: any, accessToken:string, stravaActivityId: string) => {
     const stravaAccessToken = accessToken;
     // get the activity
     console.log(`In updateActivity. Athlete Id ${user.stravaAthleteId},displayName: ${user.displayName},challengeUid: ${user.challengeUid},teamName: ${user.teamName},strava ActivyId: ${stravaActivityId},`);
@@ -35,7 +36,7 @@ const updateActivity = ((user, accessToken, stravaActivityId) => {
 
 });
 
-exports.saveStravaEvent = ( (event) => {
+const saveStravaEvent = ( (event : any) => {
     // console.log(`In saveStravaEvent with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}`);
     console.log(JSON.stringify(event,null,4));
 
@@ -49,7 +50,7 @@ exports.saveStravaEvent = ( (event) => {
     let stravaActivityId = event.object_id;
   
     let foundUser = false;
-    let user = {};
+    let user: any = null;
     let dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
     console.log(`Looking for Strave Athlete ith id: ${stravaAthleteId} in user collection`);
     dbUsersRef.where("stravaAthleteId", "==", stravaAthleteId).limit(1).get().then((querySnapshot) => {
@@ -81,9 +82,11 @@ exports.saveStravaEvent = ( (event) => {
         } else {
             console.error(`Can not find user with stravaAthleteId:${stravaAthleteId}`);
         }
-    }).catch((err) =>{
+    }).catch((err: any) =>{
         console.error(`Error retrieving user with stravaAthleteId:${stravaAthleteId} , error: ${err}`);
     });
 
     return;
 });
+
+export { saveStravaEvent };
