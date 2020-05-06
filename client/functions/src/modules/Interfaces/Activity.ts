@@ -1,30 +1,32 @@
 class Activity {
-    id:string = "";
-    activityName:string = "";
-    activityDateTime:string = "";
-    activityType:string = "";
-    challengeUid:string = "";
-    displayName:string = "";
-    distance:string = "";
-    distanceUnits:string = "";
-    duration:string = "";
-    email:string = "";
+    id:string;
+    activityName:string;
+    activityDateTime:Date;
+    activityType:string;
+    challengeUid:string;
+    displayName:string;
+    distance:number;
+    distanceUnits:string;
+    duration:number;
+    durationUnits:string;
+    email:string;
     stravaAcvitiy:boolean = false;
-    stravaAcvitiyId:string = "";
-    teamUid:string = "";
-    teamName:string = "";
-    uid:string = "";
+    stravaAcvitiyId:string;
+    teamUid:string;
+    teamName:string;
+    uid:string;
 
-    constructur() {
+    constructor() {
         this.id = "";
         this.activityName = "";
-        this.activityDateTime = "";
+        this.activityDateTime = new Date();
         this.activityType = "";
         this.challengeUid = "";
         this.displayName = "";
-        this.distance = "";
+        this.distance = 0;
         this.distanceUnits = "";
-        this.duration = "";
+        this.duration = 0;
+        this.durationUnits = "Hours";
         this.email = "";
         this.stravaAcvitiy = false;
         this.stravaAcvitiyId = "";

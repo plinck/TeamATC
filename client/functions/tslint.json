@@ -71,6 +71,10 @@
     // Disallow duplicate imports in the same file.
     "no-duplicate-imports": true,
 
+    // Static this usage can be confusing for newcomers. It can also become imprecise when used with extended
+    // classes when a static this of a parent class no longer specifically refers to the parent class.
+    "static-this": true,
+
 
     // -- Strong Warnings --
     // These rules should almost never be needed, but may be included due to legacy code.

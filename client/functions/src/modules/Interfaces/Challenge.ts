@@ -16,7 +16,7 @@ class Challenge {
     mapCalculation: string;
 
     // Note - An argument which has a default value is optional by definition, as stated in the docs
-    constructor(private challengeId:string = "5XuThS03PcQQ1IasPQif") {
+    constructor(challengeId:string = "5XuThS03PcQQ1IasPQif") {
         this.id = challengeId;
         this.description = "";
         this.endDate = new Date();

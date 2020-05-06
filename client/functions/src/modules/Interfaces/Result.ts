@@ -27,7 +27,7 @@ class Result {
     otherNbrActivities: number;
     otherDurationTotal: number;
 
-    constructur() {
+    constructor() {
         this.overalRecord = false;
         this.teamRecord = false;
         this.teamUid = "";
