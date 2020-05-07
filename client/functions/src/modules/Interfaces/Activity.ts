@@ -36,4 +36,4 @@ class Activity {
     }
 }
 
-export default Activity;
+export { Activity };

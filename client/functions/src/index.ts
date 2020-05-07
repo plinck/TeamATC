@@ -4,13 +4,13 @@ import { envSet, APP_CONFIG } from "./modules/FirebaseEnvironment";
 admin.initializeApp(functions.config().firebase);
 
 import { Leaderboard } from "./modules/Leaderboard";
-import Activity from "./modules/interfaces/Activity";
+import { Activity } from "./modules/interfaces/Activity";
 // import { Result } from "./modules/interfaces/Result";
-import Challenge from "./modules/interfaces/Challenge";
+import { Challenge } from "./modules/interfaces/Challenge";
 import { AllResults } from './modules/interfaces/Types';
-const hardCodedChallenge = new Challenge();
+const hardCodedChallengeUid = "5XuThS03PcQQ1IasPQif";
 
-exports.scheduledFunction = functions.pubsub.schedule('every 5 minutes').onRun((context) => {
+exports.scheduledFunction = functions.pubsub.schedule('every 60 minutes').onRun((context) => {
     console.log('This will be run every 5 minutes!');
     // const calculateLeaderboards = new CalculateLeaderboards();
     const leaderboard:Leaderboard = new Leaderboard();
@@ -24,7 +24,7 @@ exports.scheduledFunction = functions.pubsub.schedule('every 5 minutes').onRun((
 });
 
 exports.listenForCreateActivity = functions.firestore
-    .document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/challenges/${hardCodedChallenge.id}/activities/{activityId}`)
+    .document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/challenges/${hardCodedChallengeUid}/activities/{activityId}`)
     .onCreate((doc, context) => {
         // Get an object representing the document
         // e.g. {'name': 'Marie', 'age': 66}
@@ -36,7 +36,8 @@ exports.listenForCreateActivity = functions.firestore
 
         // const calculateLeaderboards = new CalculateLeaderboards();
         const leaderboard:Leaderboard = new Leaderboard();
-        leaderboard.calulateNewResults(hardCodedChallenge, newActivity);
+        const challenge = new Challenge(hardCodedChallengeUid);
+        leaderboard.calulateNewResults(challenge, newActivity);
     
         return true;
 });

@@ -1,10 +1,10 @@
 import * as admin from 'firebase-admin';
 import { APP_CONFIG } from "./FirebaseEnvironment";
 
-import Activity from "./interfaces/Activity";
-import Challenge from "./interfaces/Challenge";
+import { Activity } from "./interfaces/Activity";
 import { Result } from "./interfaces/Result";
 import { AllResults } from "./interfaces/Types";
+import { Challenge } from "./interfaces/Challenge";
 
 class Leaderboard {
     private static isRunning: boolean = false;

@@ -35,4 +35,4 @@ class Challenge {
     }
 }
 
-export default Challenge;
+export { Challenge };
