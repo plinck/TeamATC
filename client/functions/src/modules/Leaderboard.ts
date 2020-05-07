@@ -37,23 +37,45 @@ class Leaderboard {
                     Leaderboard.userResults = results.teamResults;
                     Leaderboard.teamResults = results.teamResults;
             
-                    console.log(`Overall Results: ${JSON.stringify(Leaderboard.overallResults, null, 2)}`);
+                    console.log(`Nbr Overall Activities: ${Leaderboard.overallResults.nbrActivities}`);
                     console.log(`Nbr Team Results: ${Leaderboard.userResults.length}`);
                     console.log(`Nbr User Results: ${Leaderboard.teamResults.length}`);
-        
-                    Leaderboard.isRunning = false;
-                    resolve();
+
+                    console.log(`Saving all results to challenge ${results.challengeUid}`);
+                    this.saveResults(results).then (() => {
+                        console.log(`Saved all results to challenge ${results.challengeUid}`);
+                        Leaderboard.isRunning = false;
+                        resolve();
+                    }).catch ((err1: Error) => {
+                        const error = new Error(`Error saving results for challenge ${Leaderboard.challenge.id} -- ${err1} : "Leaderboard.ts", line: 50`);
+                        console.error(error);
+                        Leaderboard.isRunning = false;  
+                        reject(error);  
+                    });
                 }).catch((err: Error) => {
-                    const error = new Error(`Error retrieving activities for challenge ${Leaderboard.challenge.id} -- ${err} : "Leaderboard.ts", 51`);
-                    console.error(error);
+                    console.error(err);
                     Leaderboard.isRunning = false;
-                    reject(error);
+                    reject(err);
                 });
             } else {
                 console.log("Leaderboard.calculateLeaderboards() already running -- so not started ...");
                 resolve();
             }
         }); // Promise
+    }
+
+    private saveResults(allResults:AllResults) {
+        return new Promise<any>((resolve:any, reject:any) => {
+            const dbResultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
+            // must convert all results to regualr json object or firestore gives errors
+            dbResultsRef.doc(allResults.challengeUid).set(JSON.parse(JSON.stringify(allResults))).then (() => {
+                resolve();
+            }).catch (err => {
+                const error = new Error(`Error saving results for challenge ${allResults.challengeUid} -- ${err} : "Leaderboard.ts", line: 73`);
+                console.error(error);
+                reject(error);
+            });
+        });//promsie
     }
 
     private totals(challenge: Challenge, activities:Array<Activity>): AllResults {
@@ -98,7 +120,7 @@ class Leaderboard {
             return comparison * -1;  // Invert so it will sort in descending order
         });
     
-        const allResults: AllResults = { overallResults, teamResults, userResults };
+        const allResults: AllResults = {challengeUid: challenge.id, overallResults, teamResults, userResults};
     
         return (allResults);
     }    
@@ -110,7 +132,7 @@ class Leaderboard {
         newResult.overalRecord = true;
     
         newResult = this.computeRecordTotals(challenge, newResult, activity);
-    
+
         return (newResult);
     }    
     // Calculate team results
@@ -215,32 +237,62 @@ class Leaderboard {
                 newResult.otherDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
                 break;
         }
+        // Assign the challnge to make sure totals apply to correct one
+        newResult.challengeUid = challenge.id;
+
         return newResult;
     }    
 
     public calulateNewResults(challenge:Challenge, activity:Activity):any {
-        console.log(`previous nbr: ${Leaderboard.overallResults.nbrActivities}`);
-        console.log(`previous distance: ${Leaderboard.overallResults.distanceTotal}`);
-        console.log(`previous pointsTotal: ${Leaderboard.overallResults.pointsTotal}`);
-        console.log(`previous durationTotal: ${Leaderboard.overallResults.durationTotal}`);
-    
-        const overallResults = this.calulateOverallResults(challenge, Leaderboard.overallResults, activity);
-        Leaderboard.overallResults = overallResults;
-        // teamResults = calulateTeamResults(challenge, g_teamResults, activity);
-        // userResults = calulateUserResults(challenge, g_userResults, activity);
-    
-        console.log(`new nbr: ${Leaderboard.overallResults.nbrActivities}`);
-        console.log(`new distance: ${Leaderboard.overallResults.distanceTotal}`);
-        console.log(`new pointsTotal: ${Leaderboard.overallResults.pointsTotal}`);
-        console.log(`new durationTotal: ${Leaderboard.overallResults.durationTotal}`);
+        if (!Leaderboard.isRunning) {
+            if (Leaderboard.overallResults.challengeUid === challenge.id) {
+                console.log(`previous challengeUid: ${Leaderboard.overallResults.challengeUid}`);
+                console.log(`previous nbr: ${Leaderboard.overallResults.nbrActivities}`);
+                console.log(`previous distance: ${Leaderboard.overallResults.distanceTotal}`);
+                console.log(`previous pointsTotal: ${Leaderboard.overallResults.pointsTotal}`);
+                console.log(`previous durationTotal: ${Leaderboard.overallResults.durationTotal}`);
+            
+                const overallResults = this.calulateOverallResults(challenge, Leaderboard.overallResults, activity);
+                Leaderboard.overallResults = overallResults;
+                // teamResults = calulateTeamResults(challenge, g_teamResults, activity);
+                // userResults = calulateUserResults(challenge, g_userResults, activity);
+            
+                console.log(`new challengeUid: ${Leaderboard.overallResults.challengeUid}`);
+                console.log(`new nbr: ${Leaderboard.overallResults.nbrActivities}`);
+                console.log(`new distance: ${Leaderboard.overallResults.distanceTotal}`);
+                console.log(`new pointsTotal: ${Leaderboard.overallResults.pointsTotal}`);
+                console.log(`new durationTotal: ${Leaderboard.overallResults.durationTotal}`);
+            } else {
+                const error = new Error(`Leaderboard challenge is: ${Leaderboard.overallResults.challengeUid}, passed challenge is ${challenge.id}, refetching from DB. "file: Leaderboard.ts", line: 265`);
+                console.error(error);
+                }
+        } else {
+            const error = new Error(`Leaderboard.isRunning--cant update totals--check if added "file: Leaderboard.ts", line: 261`);
+            console.error(error);
+        }
     }
 
     public static getResults(challenge:Challenge):AllResults {
-        const overallResults = Leaderboard.overallResults;
-        const teamResults = Leaderboard.teamResults;
-        const userResults = Leaderboard.userResults;
+        // only get resukts if challenge matches
+        if (Leaderboard.overallResults.challengeUid === challenge.id) {
+            console.log(`passed challenge.id: ${challenge.id}`);
+            console.log(`challengeUid: ${Leaderboard.overallResults.challengeUid}`);
 
-        return ({overallResults, teamResults, userResults});
+            const overallResults = Leaderboard.overallResults;
+            const teamResults = Leaderboard.teamResults;
+            const userResults = Leaderboard.userResults;
+
+            return ({challengeUid: overallResults.challengeUid, overallResults, teamResults, userResults});
+        } else {
+            const error = new Error(`Leaderboard challenge is: ${Leaderboard.overallResults.challengeUid}, passed challenge is ${challenge.id}, refetching from DB. "file: Leaderboard.ts", line: 286`);
+            console.error(error);
+
+            const overallResults = new Result();
+            const teamResults = new Array<Result>();
+            const userResults = new Array<Result>();
+
+            return ({challengeUid: challenge.id, overallResults, teamResults, userResults});
+        }
     }
 
 }//class

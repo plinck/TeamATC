@@ -54,6 +54,7 @@ const saveStravaEvent = ( (event : any) => {
     const dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
     console.log(`Looking for Strave Athlete ith id: ${stravaAthleteId} in user collection`);
     dbUsersRef.where("stravaAthleteId", "==", stravaAthleteId).limit(1).get().then((querySnapshot) => {
+        console.log(`User Collection Size: ${querySnapshot.size}`);
         querySnapshot.forEach(doc => {
             foundUser = true;
             user = doc.data();

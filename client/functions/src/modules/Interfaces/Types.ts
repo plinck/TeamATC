@@ -31,6 +31,7 @@ type ResultType = {
 }
 
 type AllResults = {
+    challengeUid: string,
     overallResults: Result,
     teamResults: Array<Result>,
     userResults: Array<Result>
