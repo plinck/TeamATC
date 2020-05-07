@@ -1,27 +1,25 @@
-const functions = require('firebase-functions');
-const fs = require('fs')
+import * as functions from 'firebase-functions';
+import * as fs from "fs";
 
 let FUNCTIONS_CONFIG = functions.config().env;
 
 // This is for running FB functions locally
-/*
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.REACT_APP_RUN_FUNCTIONS_LOCALLY === 'local') {
   if (fs.existsSync('../.env-strava-config.json')) {
     const env = require('../.env-strava-config.json');
     console.log("running functions locally");
     FUNCTIONS_CONFIG = env;
   }
 }
-*/
 
-let APP_CONFIG = {
+const APP_CONFIG = {
     ORG : functions.config().env.app.org,
     ENV : functions.config().env.app.env,
     CHALLENGEUID : ""    
 }
 
 // Set env vars
-const set = (org, env, challengeUid) => {
+const envSet = (org:string, env:string, challengeUid:string) => {
     APP_CONFIG.ORG = org;
     APP_CONFIG.ENV = env;
     APP_CONFIG.CHALLENGEUID = challengeUid;
@@ -37,4 +35,4 @@ const getAppConfig = () => {
     return APP_CONFIG;
 };
 
-module.exports = { set, getFunctionsConfig, getAppConfig, FUNCTIONS_CONFIG, APP_CONFIG };
+export { envSet, getFunctionsConfig, getAppConfig, FUNCTIONS_CONFIG, APP_CONFIG };

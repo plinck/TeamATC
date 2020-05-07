@@ -2,22 +2,32 @@
     "name": "functions",
     "description": "Cloud Functions for Firebase",
     "scripts": {
+        "lint": "tslint --project tsconfig.json",
+        "build": "./node_modules/.bin/tslint --project tsconfig.json && ./node_modules/.bin/tsc",
+        "watch": "tsc --watch",
         "serve": "firebase serve --only functions",
         "shell": "firebase functions:shell",
         "start": "npm run shell",
-        "deploy": "firebase deploy --only functions",
+        "deploy": "cd .. && npm run build && cd functions && npm run setenv && cd .. && firebase deploy",
+        "deployhost": "cd .. && npm run build && cd functions && npm run setenv && cd .. && firebase deploy --except functions",
+        "deployfunctions": "npm run setenv && firebase deploy --only functions",
+        "setenv": "test -f .env-strava-config.json && firebase functions:config:unset env && firebase functions:config:set env=\"$(cat .env-strava-config.json)\"",
         "logs": "firebase functions:log"
     },
+    "main": "lib/index.js",
     "dependencies": {
+        "@types/request": "^2.48.4",
         "axios": "^0.19.2",
         "cors": "^2.8.5",
         "express": "^4.17.1",
         "firebase": "^7.8.1",
-        "firebase-admin": "^8.10.0",
-        "firebase-functions": "^3.5.0",
-        "firebase-tools": "^7.12.1",
-        "querystring": "^0.2.0",
+        "firebase-admin": "^8.11.0",
+        "firebase-functions": "^3.6.1",
         "request": "^2.88.2"
+    },
+    "devDependencies": {
+        "tslint": "^6.1.2",
+        "typescript": "^3.8.3"
     },
     "private": true,
     "engines": {

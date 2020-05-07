@@ -1,9 +1,8 @@
-const functions = require('firebase-functions');
-const request = require('request');
-const cors = require('cors')({origin: true});
-const express = require('express');
-const {FUNCTIONS_CONFIG} = require("./FirebaseEnvironment.js");
-const events = require("./events");
+import * as functions from 'firebase-functions';
+import * as request from 'request';
+import * as express from 'express';
+import { FUNCTIONS_CONFIG } from "./FirebaseEnvironment";
+import { saveStravaEvent } from "./events";
 
 const app = express();
 
@@ -12,9 +11,9 @@ app.get('/strava', (req, res) => {
      // Your verify token. Should be a random string.
         const VERIFY_TOKEN = "STRAVA";
         // Parses the query params
-        let mode = req.query['hub.mode'];
-        let token = req.query['hub.verify_token'];
-        let challenge = req.query['hub.challenge'];
+        const mode = req.query['hub.mode'];
+        const token = req.query['hub.verify_token'];
+        const challenge = req.query['hub.challenge'];
 
         // Checks if a token and mode is in the query string of the request
         if (mode && token) {
@@ -39,7 +38,7 @@ app.post('/strava', async (req, res) => {
   const event = req.body;
   console.log('[STRAVA] Event ' + event.aspect_type + ': ' + event.object_type + ' (' + event.object_id + ') for ' + event.owner_id + ' (updates: ' + JSON.stringify(event.updates) + ' @ ' + event.event_time);
   // save event as activity
-  events.saveStravaEvent(event);
+  saveStravaEvent(event);
 
   return res.status(200).json({ success: true });
 });
@@ -66,11 +65,11 @@ app.get('/subscribe', (req, res) => {
         console.log(`URIRequest: ${URIRequest}`);
         request.post(
             URIRequest,null,
-            (error, res, body) => {
+            (error: any, response: any, body: any) => {
               if (error) {
                 console.error("Error from POST: ", error)
               }
-              console.log(`statusCode: ${res.statusCode}`)
+              console.log(`statusCode: ${response.statusCode}`)
               console.log("Body from POST: ", body)
             }
         )

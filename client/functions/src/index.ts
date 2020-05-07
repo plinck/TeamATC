@@ -1,15 +1,63 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
+import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
+import { envSet, APP_CONFIG } from "./modules/FirebaseEnvironment";
 admin.initializeApp(functions.config().firebase);
 
-const ENV = require("./modules/FirebaseEnvironment.js");
+import { Leaderboard } from "./modules/Leaderboard";
+import { Activity } from "./modules/interfaces/Activity";
+// import { Result } from "./modules/interfaces/Result";
+import { Challenge } from "./modules/interfaces/Challenge";
+import { AllResults } from './modules/interfaces/Types';
+const hardCodedChallengeUid = "5XuThS03PcQQ1IasPQif";
+
+exports.scheduledFunction = functions.pubsub.schedule('every 5 minutes').onRun((context) => {
+    console.log('Recalculate totals will be run every 5 minutes!');
+    const leaderboard:Leaderboard = new Leaderboard();
+    leaderboard.calculateLeaderboards().then(() => {
+        console.log(`completed calculating leaderboards`);
+    }).catch((err: Error) => {
+        console.error(err);
+    });
+
+    return null;
+});
+
+exports.listenForCreateActivity = functions.firestore
+    .document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/challenges/${hardCodedChallengeUid}/activities/{activityId}`)
+    .onCreate((doc, context) => {
+        // Get an object representing the document
+        // e.g. {'name': 'Marie', 'age': 66}
+        const docData:FirebaseFirestore.DocumentData = doc.data();
+        docData.id = doc.id;
+        docData.activityDateTime = docData.activityDateTime.toDate();
+        const newActivity:Activity = docData as Activity;
+        console.log(`new activity: ${newActivity}`);
+
+        const leaderboard:Leaderboard = new Leaderboard();
+        const challenge = new Challenge(hardCodedChallengeUid);
+        leaderboard.calulateNewResults(challenge, newActivity);
+    
+        return true;
+});
+
+exports.getChallengeResults = functions.https.onCall((req:any, context:any):any => {
+    return new Promise((resolve, reject) => {
+        const challenge = new Challenge(req.challengeUid);
+        const allResults:AllResults = Leaderboard.getResults(challenge);
+
+        console.log(`Overall nbrActivities: ${allResults.overallResults.nbrActivities}`);
+        console.log(`Overall distance: ${allResults.overallResults.distanceTotal}`);
+        console.log(`Overall pointsTotal: ${allResults.overallResults.pointsTotal}`);
+        console.log(`Overall durationTotal: ${allResults.overallResults.durationTotal}`);
+    });//promise
+});
 
 exports.setEnviromentFromClient = functions.https.onCall((environment, context) => {
     console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
-    ENV.set(environment.org, environment.env, environment.challengeUid);
+    envSet(environment.org, environment.env, environment.challengeUid);
     
-    console.log(`Saved environment ${ENV.APP_CONFIG.ORG}, ${ENV.APP_CONFIG.ENV}, ${ENV.APP_CONFIG.CHALLENGEUID}`);
-    return {message: `Saved environment ${ENV.APP_CONFIG.ORG}, ${ENV.APP_CONFIG.ENV}, ${ENV.APP_CONFIG.CHALLENGEUID}`};
+    console.log(`Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`);
+    return {message: `Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`};
 });
 
 // ===============================================================================================
@@ -56,19 +104,15 @@ exports.webhook = webhook.strava;
 exports.fBFupdateTeam = functions.https.onCall((req, res) => {
     console.log(`In fBFupdateTeam with: req ${JSON.stringify(req)}`);
 
-    let challengeUid = req.challengeUid;
-    let team = req.team;
+    const challengeUid = req.challengeUid;
+    const team = req.team;
 
-    console.log(`In fBFupdateTeam with: ORG: ${ENV.APP_CONFIG.ORG}, ENV: ${ENV.APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
+    console.log(`In fBFupdateTeam with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
     return new Promise((resolve, reject) => {
-        let activitiesRef = undefined;
-        let dbUsersRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("users");
-        if (challengeUid && challengeUid != "") {
-            activitiesRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection(`activities`);
-        }
+        const dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
 
-        let batch = admin.firestore().batch();
-        let allUsersOnTeamRef = dbUsersRef.where("teamUid", "==", team.id)
+        const batch = admin.firestore().batch();
+        const allUsersOnTeamRef = dbUsersRef.where("teamUid", "==", team.id)
         allUsersOnTeamRef.get().then((querySnapshot) => {
             querySnapshot.forEach(doc => {
                 batch.set(doc.ref, {
@@ -91,18 +135,18 @@ exports.fBFupdateTeam = functions.https.onCall((req, res) => {
 exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
     console.log(`In fBFupdateActivityTeamName with: req ${JSON.stringify(req)}`);
 
-    let challengeUid = req.challengeUid;
-    let team = req.team;
+    const challengeUid = req.challengeUid;
+    const team = req.team;
 
-    console.log(`In fBFupdateActivityTeamName with: ORG: ${ENV.APP_CONFIG.ORG}, ENV: ${ENV.APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
+    console.log(`In fBFupdateActivityTeamName with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
     return new Promise((resolve, reject) => {
         let activitiesRef = undefined;
-        if (challengeUid && challengeUid != "") {
-            activitiesRef = admin.firestore().collection(ENV.APP_CONFIG.ORG).doc(ENV.APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection(`activities`);
+        if (challengeUid && challengeUid !== "") {
+            activitiesRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection(`activities`);
         }
 
-        let batch = admin.firestore().batch();
-        let allActivitiessOnTeamRef = activitiesRef.where("teamUid", "==", team.id)
+        const batch = admin.firestore().batch();
+        const allActivitiessOnTeamRef = activitiesRef.where("teamUid", "==", team.id)
         allActivitiessOnTeamRef.get().then((querySnapshot) => {
             querySnapshot.forEach(doc => {
                 batch.set(doc.ref, {
