@@ -5,16 +5,10 @@ admin.initializeApp(functions.config().firebase);
 
 import { Leaderboard } from "./modules/Leaderboard";
 import Activity from "./modules/interfaces/Activity";
-// import Result from "./Interfaces/Result";
+// import { Result } from "./modules/interfaces/Result";
 import Challenge from "./modules/interfaces/Challenge";
-const challenge = new Challenge();
-
-// const challenge = {
-//     id : "5XuThS03PcQQ1IasPQif",
-// }
-// 
-// const { calculateLeaderboards, calulateNewResults } = require("./modules/CalculateLeaderboards.js");
-// Run the calculations in the background
+import { AllResults } from './modules/interfaces/Types';
+const hardCodedChallenge = new Challenge();
 
 exports.scheduledFunction = functions.pubsub.schedule('every 5 minutes').onRun((context) => {
     console.log('This will be run every 5 minutes!');
@@ -30,7 +24,7 @@ exports.scheduledFunction = functions.pubsub.schedule('every 5 minutes').onRun((
 });
 
 exports.listenForCreateActivity = functions.firestore
-    .document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/challenges/${challenge.id}/activities/{activityId}`)
+    .document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/challenges/${hardCodedChallenge.id}/activities/{activityId}`)
     .onCreate((doc, context) => {
         // Get an object representing the document
         // e.g. {'name': 'Marie', 'age': 66}
@@ -42,9 +36,21 @@ exports.listenForCreateActivity = functions.firestore
 
         // const calculateLeaderboards = new CalculateLeaderboards();
         const leaderboard:Leaderboard = new Leaderboard();
-        leaderboard.calulateNewResults(challenge, newActivity);
+        leaderboard.calulateNewResults(hardCodedChallenge, newActivity);
     
         return true;
+});
+
+exports.getChallengeResults = functions.https.onCall((req:any, context:any):any => {
+    return new Promise((resolve, reject) => {
+        const challenge = new Challenge(req.challengeUid);
+        const allResults:AllResults = Leaderboard.getResults(challenge);
+
+        console.log(`Overall nbrActivities: ${allResults.overallResults.nbrActivities}`);
+        console.log(`Overall distance: ${allResults.overallResults.distanceTotal}`);
+        console.log(`Overall pointsTotal: ${allResults.overallResults.pointsTotal}`);
+        console.log(`Overall durationTotal: ${allResults.overallResults.durationTotal}`);
+    });//promise
 });
 
 exports.setEnviromentFromClient = functions.https.onCall((environment, context) => {

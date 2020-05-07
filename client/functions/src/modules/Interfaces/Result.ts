@@ -58,4 +58,4 @@ class Result {
     }
 }
 
-export default Result;
+export { Result };

@@ -2,19 +2,9 @@ import * as admin from 'firebase-admin';
 import { APP_CONFIG } from "./FirebaseEnvironment";
 
 import Activity from "./interfaces/Activity";
-import Result from "./interfaces/Result";
 import Challenge from "./interfaces/Challenge";
-
-// type ClientResult = {
-//     refresh_token: string;
-//     access_token: string;
-// };
-
-type AllResults = {
-    overallResults: Result,
-    teamResults: Array<Result>,
-    userResults: Array<Result>
-};
+import { Result } from "./interfaces/Result";
+import { AllResults } from "./interfaces/Types";
 
 class Leaderboard {
     private static isRunning: boolean = false;
@@ -24,12 +14,12 @@ class Leaderboard {
     private static challenge:Challenge = new Challenge("5XuThS03PcQQ1IasPQif");
 
     public calculateLeaderboards() {
-        console.log("calculateLeaderboards() started ...");
+        console.log("Leaderboard.calculateLeaderboards() started ...");
         return new Promise<any>((resolve:any, reject:any) => {
 
             if (!Leaderboard.isRunning) {
                 Leaderboard.isRunning = true;
-                console.log("calculateLeaderboards() running ...");
+                console.log("Leaderboard.calculateLeaderboards() running ...");
                 // get All Activities for challenge
                 const dbActivitiesRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(Leaderboard.challenge.id).collection(`activities`);
                 dbActivitiesRef.get().then((querySnapshot) => {
@@ -60,7 +50,7 @@ class Leaderboard {
                     reject(error);
                 });
             } else {
-                console.log("calculateLeaderboards() already running -- so not started ...");
+                console.log("Leaderboard.calculateLeaderboards() already running -- so not started ...");
                 resolve();
             }
         }); // Promise
@@ -245,7 +235,7 @@ class Leaderboard {
         console.log(`new durationTotal: ${Leaderboard.overallResults.durationTotal}`);
     }
 
-    public getResults(challenge:Challenge, activity:Activity):AllResults {
+    public static getResults(challenge:Challenge):AllResults {
         const overallResults = Leaderboard.overallResults;
         const teamResults = Leaderboard.teamResults;
         const userResults = Leaderboard.userResults;
