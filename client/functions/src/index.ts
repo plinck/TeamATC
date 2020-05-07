@@ -10,8 +10,8 @@ import { Challenge } from "./modules/interfaces/Challenge";
 import { AllResults } from './modules/interfaces/Types';
 const hardCodedChallengeUid = "5XuThS03PcQQ1IasPQif";
 
-exports.scheduledFunction = functions.pubsub.schedule('every 60 minutes').onRun((context) => {
-    console.log('This will be run every 5 minutes!');
+exports.scheduledFunction = functions.pubsub.schedule('every 5 minutes').onRun((context) => {
+    console.log('Recalculate totals will be run every 5 minutes!');
     // const calculateLeaderboards = new CalculateLeaderboards();
     const leaderboard:Leaderboard = new Leaderboard();
     leaderboard.calculateLeaderboards().then((res) => {
