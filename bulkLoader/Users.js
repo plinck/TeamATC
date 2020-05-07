@@ -66,15 +66,18 @@ class Users {
                     let firstName = memberArray[0].trim().toLowerCase();
                     let lastName = memberArray[1].trim().toLowerCase();
                     let email = memberArray[2].trim().toLowerCase();
-                    let teamName = memberArray[3].trim();
-    
+                    let password = memberArray.length > 3 ? memberArray[3].trim() : "";
+                    let teamName = memberArray.length > 4 ? memberArray[4].trim() : "";
+
                     lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
                     firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
     
                     let member = {
                         lastName: lastName,
                         firstName: firstName,
-                        email: email
+                        email: email,
+                        password: password,
+                        teamName: teamName
                     };
                     //console.log(`Member: ${JSON.stringify(member)}`); 
                     return (member);
@@ -82,11 +85,18 @@ class Users {
     
                 let _ = SAAMembers.map((member) => {
                     // console.log(`Trying to update ${JSON.stringify(member)}`);
+                    let newMember = member;
+                    try {
+                        delete newMember.password;
+                        delete newMember.teamName;
+                    } catch (err) {
+                        // do nothing
+                    }
     
                     // use email address as key to overwrite duplicates
                     dbATCMembersRef
-                        .doc(member.email)
-                        .set(member)
+                        .doc(newMember.email)
+                        .set(newMember)
                         .then(memberId => {
                             //console.log(`Updated member ${JSON.stringify(member)} with id: ${memberId}`);
                         })
@@ -190,8 +200,9 @@ class Users {
                     let firstName = userArray[0].trim().toLowerCase();
                     let lastName = userArray[1].trim().toLowerCase();
                     let email = userArray[2].trim().toLowerCase();
-                    let teamName = userArray[3].trim();
-    
+                    let password = userArray.length > 3 ? userArray[3].trim() : "";
+                    let teamName = userArray.length > 4 ? userArray[4].trim() : "";
+
                     lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1)
                     firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1)
     
@@ -206,7 +217,9 @@ class Users {
                         lastName: lastName,
                         primaryRole : "User",
                         teamName: teamName,
-                        teamUid: teamUid
+                        teamUid: teamUid,
+
+                        password: password,
                     };
                     //console.log(`user: ${JSON.stringify(user)}`); 
                     return (user);
@@ -217,7 +230,14 @@ class Users {
                     let authUser = await Users.authCreateUser(user);
                     console.log(`Addding user: ${authUser.uid}, ${user.firstName}, ${user.lastName}`);
 
-                    dbUsersRef.doc(authUser.uid).set(user).then(userInfo => {
+                    let newUser = user;
+                    try {
+                        delete newUser.password;
+                    } catch (err) {
+
+                    }
+
+                    dbUsersRef.doc(authUser.uid).set(newUser).then(userInfo => {
                         //console.log(`Updated user ${JSON.stringify(user)} with id: ${userId}`);
                     }).catch(err => {
                         console.error(`error updating user: ${err}`);
