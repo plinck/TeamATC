@@ -12,7 +12,6 @@ const hardCodedChallengeUid = "5XuThS03PcQQ1IasPQif";
 
 exports.scheduledFunction = functions.pubsub.schedule('every 5 minutes').onRun((context) => {
     console.log('Recalculate totals will be run every 5 minutes!');
-    // const calculateLeaderboards = new CalculateLeaderboards();
     const leaderboard:Leaderboard = new Leaderboard();
     leaderboard.calculateLeaderboards().then((res) => {
         console.log(`completed calculating leaderboards`);
@@ -34,7 +33,6 @@ exports.listenForCreateActivity = functions.firestore
         const newActivity:Activity = docData as Activity;
         console.log(`new activity: ${newActivity}`);
 
-        // const calculateLeaderboards = new CalculateLeaderboards();
         const leaderboard:Leaderboard = new Leaderboard();
         const challenge = new Challenge(hardCodedChallengeUid);
         leaderboard.calulateNewResults(challenge, newActivity);
