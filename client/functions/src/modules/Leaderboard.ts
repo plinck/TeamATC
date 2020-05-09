@@ -1,12 +1,14 @@
 import * as admin from 'firebase-admin';
+import * as functions from 'firebase-functions';
 import { APP_CONFIG } from "./FirebaseEnvironment";
 
 import { Activity } from "./interfaces/Activity";
 import { Result } from "./interfaces/Result";
-import { AllResults } from "./interfaces/Types";
+import { AllResults } from "./Interfaces/Result.Types";
 import { Challenge } from "./interfaces/Challenge";
 
 class Leaderboard {
+    private static firstoreListenerRunning: boolean = false;
     private static isRunning: boolean = false;
     private static overallResults: Result = new Result();
     private static teamResults: Array<Result> = [];
@@ -294,6 +296,38 @@ class Leaderboard {
             return ({challengeUid: challenge.id, overallResults, teamResults, userResults});
         }
     }
+
+    public static listenForActivityUpdates(challenge:Challenge):any {
+
+        return new Promise<any>((resolve:any, reject:any) => {
+            let challengeUid: string;
+            if (challenge.id) {
+                challengeUid = challenge.id;
+            } else {
+                reject(`Error listening for activities - no challenge provided, Leaderboard.ts, line: 307`);
+            }
+            // if (!Leaderboard.firstoreListenerRunning) {
+                Leaderboard.firstoreListenerRunning = true;
+                console.log(`firing onCreate Listener ${Leaderboard.firstoreListenerRunning}`);
+                functions.firestore.document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/challenges/${challengeUid}/activities/{activityId}`)
+                    .onCreate((doc: functions.firestore.DocumentSnapshot, context: functions.EventContext):any => {
+                        // Get an object representing the document
+                        // e.g. {'name': 'Marie', 'age': 66}
+                        const docData:FirebaseFirestore.DocumentData = doc.data();
+                        docData.id = doc.id;
+                        docData.activityDateTime = docData.activityDateTime.toDate();
+                        const newActivity:Activity = docData as Activity;
+                        console.log(`new activity: ${newActivity}`);
+
+                        const leaderboard:Leaderboard = new Leaderboard();
+                        const newChallenge = new Challenge(challengeUid);
+                        leaderboard.calulateNewResults(newChallenge, newActivity);
+                        resolve(true);
+                });
+            // }
+        }); // Promise
+    }
+
 
 }//class
 

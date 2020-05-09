@@ -4,11 +4,11 @@ import { envSet, APP_CONFIG } from "./modules/FirebaseEnvironment";
 admin.initializeApp(functions.config().firebase);
 
 import { Leaderboard } from "./modules/Leaderboard";
-import { Activity } from "./modules/interfaces/Activity";
+// import { Activity } from "./modules/interfaces/Activity";
 // import { Result } from "./modules/interfaces/Result";
 import { Challenge } from "./modules/interfaces/Challenge";
-import { AllResults } from './modules/interfaces/Types';
-const hardCodedChallengeUid = "5XuThS03PcQQ1IasPQif";
+import { AllResults } from './modules/Interfaces/Result.Types';
+// const hardCodedChallengeUid = "5XuThS03PcQQ1IasPQif";
 
 exports.scheduledFunction = functions.pubsub.schedule('every 60 minutes').onRun((context) => {
     console.log('Recalculate totals will be run every 60 minutes!');
@@ -22,33 +22,37 @@ exports.scheduledFunction = functions.pubsub.schedule('every 60 minutes').onRun(
     return null;
 });
 
-exports.listenForCreateActivity = functions.firestore
-    .document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/challenges/${hardCodedChallengeUid}/activities/{activityId}`)
-    .onCreate((doc, context) => {
-        // Get an object representing the document
-        // e.g. {'name': 'Marie', 'age': 66}
-        const docData:FirebaseFirestore.DocumentData = doc.data();
-        docData.id = doc.id;
-        docData.activityDateTime = docData.activityDateTime.toDate();
-        const newActivity:Activity = docData as Activity;
-        console.log(`new activity: ${newActivity}`);
+// exports.listenForCreateActivity = functions.firestore
+//     .document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/challenges/${hardCodedChallengeUid}/activities/{activityId}`)
+//     .onCreate((doc, context) => {
+//         // Get an object representing the document
+//         // e.g. {'name': 'Marie', 'age': 66}
+//         const docData:FirebaseFirestore.DocumentData = doc.data();
+//         docData.id = doc.id;
+//         docData.activityDateTime = docData.activityDateTime.toDate();
+//         const newActivity:Activity = docData as Activity;
+//         console.log(`new activity: ${newActivity}`);
 
-        const leaderboard:Leaderboard = new Leaderboard();
-        const challenge = new Challenge(hardCodedChallengeUid);
-        leaderboard.calulateNewResults(challenge, newActivity);
+//         const leaderboard:Leaderboard = new Leaderboard();
+//         const challenge = new Challenge(hardCodedChallengeUid);
+//         leaderboard.calulateNewResults(challenge, newActivity);
     
-        return true;
-});
+//         return true;
+// });
 
 exports.getChallengeResults = functions.https.onCall((req:any, context:any):any => {
     return new Promise((resolve, reject) => {
         const challenge = new Challenge(req.challengeUid);
-        const allResults:AllResults = Leaderboard.getResults(challenge);
-
-        console.log(`Overall nbrActivities: ${allResults.overallResults.nbrActivities}`);
-        console.log(`Overall distance: ${allResults.overallResults.distanceTotal}`);
-        console.log(`Overall pointsTotal: ${allResults.overallResults.pointsTotal}`);
-        console.log(`Overall durationTotal: ${allResults.overallResults.durationTotal}`);
+        Leaderboard.listenForActivityUpdates(challenge).then ((res: Boolean) => {
+            const allResults:AllResults = Leaderboard.getResults(challenge);
+            console.log(`Overall nbrActivities: ${allResults.overallResults.nbrActivities}`);
+            console.log(`Overall distance: ${allResults.overallResults.distanceTotal}`);
+            console.log(`Overall pointsTotal: ${allResults.overallResults.pointsTotal}`);
+            console.log(`Overall durationTotal: ${allResults.overallResults.durationTotal}`);
+            resolve(allResults);
+        }).catch((err2: Error) => {
+            resolve(err2);
+        });
     });//promise
 });
 
