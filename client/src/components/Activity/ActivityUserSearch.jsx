@@ -24,14 +24,13 @@ export default function ActivityUserSearch({ searchForActivities }) {
     <div style={{ width: 300, margin: "0px 0px 15px 0px" }}>
       <Autocomplete
         autoHighlight
-        disableClearable
         onChange={(e, val) => searchForActivities(val)}
         options={filterActivities()}
         renderInput={(params) => (
           <TextField
             {...params}
             label="Search Users By Name"
-            InputProps={{ ...params.InputProps, type: "search" }}
+            InputProps={{ ...params.InputProps }}
           />
         )}
       />

@@ -284,6 +284,7 @@ class Activities extends React.Component {
 
   // Search for Activities by User
   searchForActivities = (val, lastActivityDoc) => {
+    if (!val) return;
     let filterObj = {
       filterName: "displayName",
       filterValue: val,
