@@ -3,25 +3,19 @@ import { APP_CONFIG } from "./FirebaseEnvironment";
 
 import { Activity } from "./interfaces/Activity";
 import { Result } from "./interfaces/Result";
-import { AllResults } from "./interfaces/Types";
+import { AllResults } from "./Interfaces/Result.Types";
 import { Challenge } from "./interfaces/Challenge";
+import { ResultsDB } from './db/ResultsDB';
 
 class Leaderboard {
-    private static isRunning: boolean = false;
-    private static overallResults: Result = new Result();
-    private static teamResults: Array<Result> = [];
-    private static userResults: Array<Result> = [];
-    private static challenge:Challenge = new Challenge("5XuThS03PcQQ1IasPQif");
 
-    public calculateLeaderboards() {
-        console.log("Leaderboard.calculateLeaderboards() started ...");
+    public calculateLeaderboards(challenge: Challenge) {
         return new Promise<any>((resolve:any, reject:any) => {
+            console.log("Leaderboard.calculateLeaderboards() started ...");
 
-            if (!Leaderboard.isRunning) {
-                Leaderboard.isRunning = true;
-                console.log("Leaderboard.calculateLeaderboards() running ...");
+                console.log(`Leaderboard.calculateLeaderboards(${challenge.id}) running ...`);
                 // get All Activities for challenge
-                const dbActivitiesRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(Leaderboard.challenge.id).collection(`activities`);
+                const dbActivitiesRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(challenge.id).collection(`activities`);
                 dbActivitiesRef.get().then((querySnapshot) => {
                     const activities = Array<Activity>();
                     querySnapshot.forEach(doc => {
@@ -32,50 +26,29 @@ class Leaderboard {
                         activities.push(activity);
                     });
                     console.log(`Nbr of Activities: ${activities.length}`);
-                    const results = this.totals(Leaderboard.challenge, activities);
-                    Leaderboard.overallResults = results.overallResults;
-                    Leaderboard.userResults = results.teamResults;
-                    Leaderboard.teamResults = results.teamResults;
+                    const allResuts = this.totals(challenge, activities);
             
-                    console.log(`Nbr Overall Activities: ${Leaderboard.overallResults.nbrActivities}`);
-                    console.log(`Nbr Team Results: ${Leaderboard.userResults.length}`);
-                    console.log(`Nbr User Results: ${Leaderboard.teamResults.length}`);
+                    console.log(`Nbr Overall Activities: ${allResuts.overallResults.nbrActivities}`);
+                    console.log(`Nbr Team Results: ${allResuts.userResults.length}`);
+                    console.log(`Nbr User Results: ${allResuts.teamResults.length}`);
 
-                    console.log(`Saving all results to challenge ${results.challengeUid}`);
-                    this.saveResults(results).then (() => {
-                        console.log(`Saved all results to challenge ${results.challengeUid}`);
-                        Leaderboard.isRunning = false;
-                        resolve();
+                    console.log(`Saving all results to challenge ${allResuts.challengeUid}`);
+                    // Must Save now
+                    const resultsDB:ResultsDB = new ResultsDB();
+                    resultsDB.save(allResuts).then (() => {
+                        console.log(`Saved all results to challenge ${allResuts.challengeUid}`);
+                        resolve(allResuts);
                     }).catch ((err1: Error) => {
-                        const error = new Error(`Error saving results for challenge ${Leaderboard.challenge.id} -- ${err1} : "Leaderboard.ts", line: 50`);
+                        const error = new Error(`Error saving results for challenge ${challenge.id} -- ${err1} : "Leaderboard.ts", line: 42`);
                         console.error(error);
-                        Leaderboard.isRunning = false;  
                         reject(error);  
                     });
+
                 }).catch((err: Error) => {
                     console.error(err);
-                    Leaderboard.isRunning = false;
                     reject(err);
                 });
-            } else {
-                console.log("Leaderboard.calculateLeaderboards() already running -- so not started ...");
-                resolve();
-            }
         }); // Promise
-    }
-
-    private saveResults(allResults:AllResults) {
-        return new Promise<any>((resolve:any, reject:any) => {
-            const dbResultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
-            // must convert all results to regualr json object or firestore gives errors
-            dbResultsRef.doc(allResults.challengeUid).set(JSON.parse(JSON.stringify(allResults))).then (() => {
-                resolve();
-            }).catch (err => {
-                const error = new Error(`Error saving results for challenge ${allResults.challengeUid} -- ${err} : "Leaderboard.ts", line: 73`);
-                console.error(error);
-                reject(error);
-            });
-        });//promsie
     }
 
     private totals(challenge: Challenge, activities:Array<Activity>): AllResults {
@@ -243,56 +216,59 @@ class Leaderboard {
         return newResult;
     }    
 
-    public calulateNewResults(challenge:Challenge, activity:Activity):any {
-        if (!Leaderboard.isRunning) {
-            if (Leaderboard.overallResults.challengeUid === challenge.id) {
-                console.log(`previous challengeUid: ${Leaderboard.overallResults.challengeUid}`);
-                console.log(`previous nbr: ${Leaderboard.overallResults.nbrActivities}`);
-                console.log(`previous distance: ${Leaderboard.overallResults.distanceTotal}`);
-                console.log(`previous pointsTotal: ${Leaderboard.overallResults.pointsTotal}`);
-                console.log(`previous durationTotal: ${Leaderboard.overallResults.durationTotal}`);
-            
-                const overallResults = this.calulateOverallResults(challenge, Leaderboard.overallResults, activity);
-                Leaderboard.overallResults = overallResults;
-                // teamResults = calulateTeamResults(challenge, g_teamResults, activity);
-                // userResults = calulateUserResults(challenge, g_userResults, activity);
-            
-                console.log(`new challengeUid: ${Leaderboard.overallResults.challengeUid}`);
-                console.log(`new nbr: ${Leaderboard.overallResults.nbrActivities}`);
-                console.log(`new distance: ${Leaderboard.overallResults.distanceTotal}`);
-                console.log(`new pointsTotal: ${Leaderboard.overallResults.pointsTotal}`);
-                console.log(`new durationTotal: ${Leaderboard.overallResults.durationTotal}`);
-            } else {
-                const error = new Error(`Leaderboard challenge is: ${Leaderboard.overallResults.challengeUid}, passed challenge is ${challenge.id}, refetching from DB. "file: Leaderboard.ts", line: 265`);
-                console.error(error);
-                }
-        } else {
-            const error = new Error(`Leaderboard.isRunning--cant update totals--check if added "file: Leaderboard.ts", line: 261`);
-            console.error(error);
-        }
+    public calculateNewResults(challenge:Challenge, activity:Activity):any {
+        return new Promise<any>((resolve:any, reject:any) => {
+            const leaderboard: Leaderboard = new Leaderboard();
+            leaderboard.getResults(challenge).then((allResults:AllResults) => {
+                console.log(`Old Overall nbrActivities: ${allResults.overallResults.nbrActivities}`);
+                console.log(`Old Overall distance: ${allResults.overallResults.distanceTotal}`);
+                console.log(`Old Overall pointsTotal: ${allResults.overallResults.pointsTotal}`);
+                console.log(`Old Overall durationTotal: ${allResults.overallResults.durationTotal}`);
+
+                const newAllResults = allResults;
+                newAllResults.challengeUid = challenge.id;
+                newAllResults.overallResults = this.calulateOverallResults(challenge, allResults.overallResults, activity);
+                newAllResults.teamResults = this.calulateTeamResults(challenge, allResults.teamResults, activity);
+                newAllResults.userResults = this.calulateUserResults(challenge, allResults.userResults, activity);
+                console.log(`New Overall nbrActivities: ${newAllResults.overallResults.nbrActivities}`);
+                console.log(`New Overall distance: ${newAllResults.overallResults.distanceTotal}`);
+                console.log(`New Overall pointsTotal: ${newAllResults.overallResults.pointsTotal}`);
+                console.log(`New Overall durationTotal: ${newAllResults.overallResults.durationTotal}`);
+
+                // Must Save now
+                const resultsDB:ResultsDB = new ResultsDB();
+                resultsDB.save(newAllResults).then (() => {
+                    console.log(`Saved all results to challenge ${newAllResults.challengeUid}`);
+                    resolve(newAllResults);
+                }).catch ((err1: Error) => {
+                    const error = new Error(`Error saving results for challenge ${challenge.id} -- ${err1} : "Leaderboard.ts", line: 243`);
+                    console.error(error);
+                    reject(error);  
+                });
+    
+                resolve(newAllResults);
+            }).catch(err => {
+                reject(err);
+            });
+        });
     }
 
-    public static getResults(challenge:Challenge):AllResults {
-        // only get resukts if challenge matches
-        if (Leaderboard.overallResults.challengeUid === challenge.id) {
-            console.log(`passed challenge.id: ${challenge.id}`);
-            console.log(`challengeUid: ${Leaderboard.overallResults.challengeUid}`);
+    public getResults(challenge:Challenge) {
+        return new Promise<any>((resolve:any, reject:any) => {
+            const resultsDB: ResultsDB = new ResultsDB();
 
-            const overallResults = Leaderboard.overallResults;
-            const teamResults = Leaderboard.teamResults;
-            const userResults = Leaderboard.userResults;
-
-            return ({challengeUid: overallResults.challengeUid, overallResults, teamResults, userResults});
-        } else {
-            const error = new Error(`Leaderboard challenge is: ${Leaderboard.overallResults.challengeUid}, passed challenge is ${challenge.id}, refetching from DB. "file: Leaderboard.ts", line: 286`);
-            console.error(error);
-
-            const overallResults = new Result();
-            const teamResults = new Array<Result>();
-            const userResults = new Array<Result>();
-
-            return ({challengeUid: challenge.id, overallResults, teamResults, userResults});
-        }
+            resultsDB.get(challenge).then((allResults: AllResults) => {
+                resolve(allResults);
+            }).catch(err => {
+                // Couldnt find - recalc and get
+                this.calculateLeaderboards(challenge).then((allResults: AllResults) => {
+                    // Send back
+                    resolve(allResults);
+                }).catch((err2: Error) => {
+                    reject(err2);
+                });
+            }); 
+        });
     }
 
 }//class
