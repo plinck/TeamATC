@@ -38,7 +38,7 @@ const styles = (theme) => ({
     [theme.breakpoints.up("md")]: {
       height: "79vh",
     },
-    height: "74vh",
+    height: "65.5vh",
   },
   root: {
     [theme.breakpoints.up("md")]: {
@@ -284,6 +284,7 @@ class Activities extends React.Component {
 
   // Search for Activities by User
   searchForActivities = (val, lastActivityDoc) => {
+    if (!val) return;
     let filterObj = {
       filterName: "displayName",
       filterValue: val,
@@ -587,7 +588,12 @@ class Activities extends React.Component {
           <Container maxWidth="xl">
             {sortFilterRow}
             {this.state.isLoading ? (
-              <Grid container style={{ marginTop: "10px" }} justify="center">
+              <Grid
+                container
+                className={classes.act}
+                style={{ marginTop: "10px" }}
+                justify="center"
+              >
                 <CircularProgress /> <p>Loading ...</p>{" "}
               </Grid>
             ) : (
