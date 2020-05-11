@@ -11,7 +11,7 @@ class Leaderboard {
 
     public calculateLeaderboards(challenge: Challenge) {
         return new Promise<any>((resolve:any, reject:any) => {
-            console.log("Leaderboard.calculateLeaderboards() started ...");
+            // console.log("Leaderboard.calculateLeaderboards() started ...");
 
                 console.log(`Leaderboard.calculateLeaderboards(${challenge.id}) running ...`);
                 // get All Activities for challenge
@@ -28,11 +28,11 @@ class Leaderboard {
                     console.log(`Nbr of Activities: ${activities.length}`);
                     const allResuts = this.totals(challenge, activities);
             
-                    console.log(`Nbr Overall Activities: ${allResuts.overallResults.nbrActivities}`);
-                    console.log(`Nbr Team Results: ${allResuts.userResults.length}`);
-                    console.log(`Nbr User Results: ${allResuts.teamResults.length}`);
+                    // console.log(`Nbr Overall Activities: ${allResuts.overallResults.nbrActivities}`);
+                    // console.log(`Nbr Team Results: ${allResuts.userResults.length}`);
+                    // console.log(`Nbr User Results: ${allResuts.teamResults.length}`);
 
-                    console.log(`Saving all results to challenge ${allResuts.challengeUid}`);
+                    // console.log(`Saving all results to challenge ${allResuts.challengeUid}`);
                     // Must Save now
                     const resultsDB:ResultsDB = new ResultsDB();
                     resultsDB.save(allResuts).then (() => {
@@ -221,7 +221,7 @@ class Leaderboard {
             const leaderboard: Leaderboard = new Leaderboard();
             leaderboard.getResults(challenge).then((allResults:AllResults) => {
                 const newAllResults = allResults;
-                console.log(`calculateNewResults newAllResults: ${JSON.stringify(newAllResults.overallResults, null,2)}`);
+                // console.log(`calculateNewResults newAllResults: ${JSON.stringify(newAllResults.overallResults, null,2)}`);
 
                 newAllResults.challengeUid = challenge.id;
                 newAllResults.overallResults = this.calulateOverallResults(challenge, allResults.overallResults, activity);
@@ -251,7 +251,7 @@ class Leaderboard {
             const resultsDB: ResultsDB = new ResultsDB();
 
             resultsDB.getAll(challenge).then((allResults: AllResults) => {
-                console.log(`getResults allResults: ${JSON.stringify(allResults.overallResults, null,2)}`);
+                // console.log(`getResults allResults: ${JSON.stringify(allResults.overallResults, null,2)}`);
                 resolve(allResults);
             }).catch(_ => {
                 // Couldnt find - recalc and get

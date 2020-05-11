@@ -55,7 +55,7 @@ class ResultsDB {
                 });
                 if (foundResults) {
                     const allResults: AllResults = {challengeUid: challenge.id, overallResults: overallResults, teamResults: teamResults, userResults: userResults};
-                    console.log(`getResults allResults: ${JSON.stringify(allResults, null,2)}`);
+                    // console.log(`getResults allResults: ${JSON.stringify(allResults, null,2)}`);
                     resolve(allResults);
                 } else {
                     const error = new Error(`Didnt find any results for challenge : ${challenge.id}, ResultsDB.ts, line: 62`);
@@ -72,7 +72,7 @@ class ResultsDB {
 
     public save(allResults:AllResults) {
         return new Promise<any>((resolve:any, reject:any) => {
-            console.log(`ResultsDB.save -- save challenge ${allResults.challengeUid} document as: ${JSON.stringify(allResults)}`);
+            // console.log(`ResultsDB.save -- save challenge ${allResults.challengeUid} document as: ${JSON.stringify(allResults)}`);
             const dbResultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
             const batch = admin.firestore().batch();
 
@@ -97,10 +97,10 @@ class ResultsDB {
             }
             // Commit the batch
             batch.commit().then(() => {
-                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 88`);
+                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 100`);
                 resolve();
             }).catch((err: Error) =>{
-                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 91`);
+                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 103`);
                 console.error(error);    
                 reject(err);
             });
@@ -186,7 +186,7 @@ class ResultsDB {
 
     public refSaveOrderPromises(allResults:AllResults) {
         return new Promise<any>((resolve:any, reject:any) => {
-            console.log(`ResultsDB.save -- save challenge ${allResults.challengeUid} document as: ${JSON.stringify(allResults)}`);
+            // console.log(`ResultsDB.save -- save challenge ${allResults.challengeUid} document as: ${JSON.stringify(allResults)}`);
             const dbResultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
 
             const overallKey = `${allResults.challengeUid}-OR1`;
@@ -203,7 +203,7 @@ class ResultsDB {
                     dbResultsRef.doc(resultsKey).set(result, { merge: true }).then (() => {
                         // OK, continue
                     }).catch ((err1: Error) => {
-                        const error = new Error(`Error ${err1} - Batch user update failed for team result ${i}, ResultsDB.ts, line: 196`);
+                        const error = new Error(`Error ${err1} - Batch user update failed for team result ${i}, ResultsDB.ts, line: 206`);
                         console.log(error);  
                         // Don worry, continue          
                     });
@@ -228,10 +228,10 @@ class ResultsDB {
                 // return batch.commit();
                 return true;
             }).then(() => {
-                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 221`);
+                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 231`);
                 resolve();
             }).catch((err: Error) =>{
-                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 224`);
+                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 234`);
                 console.error(error);    
                 reject(err);
             });

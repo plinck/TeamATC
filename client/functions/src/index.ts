@@ -47,13 +47,13 @@ exports.listenAllActivityUpdates = functions.firestore
             // deleted - 
             const deletedActivity:Activity = oldDocument as Activity;
             console.log(`Deleted Actvity`);
-            console.log(deletedActivity);
+            // console.log(deletedActivity);
         } else {
             if (oldDocument === null) {
                 // created - 
                 const createdActivity:Activity = document as Activity;
                 console.log(`Created Actvity`);
-                console.log(createdActivity);  
+                // console.log(createdActivity);  
                 leaderboard.calculateNewResults(challenge, newActivity).then((allResults:AllResults) => {
                     console.log(`New Overall Number of Activitis: ${allResults.overallResults.nbrActivities}`);
                 }).catch((err: Error) => {
@@ -69,9 +69,9 @@ exports.listenAllActivityUpdates = functions.firestore
                 // Note - ONLY update activity totals if distance, duration etc fields have changed
                 if ((oldActivity.distance !== updatedActivity.distance) || (oldActivity.duration !== updatedActivity.duration)) {
                     console.log(`Modified Actvity - old`);
-                    console.log(oldActivity);   
+                    // console.log(oldActivity);   
                     console.log(`Modified Actvity - new`);
-                    console.log(updatedActivity);   
+                    // console.log(updatedActivity);   
                 } else {
                     console.log(`Distance / duration did not change - no need to reclc totals`);
                 }
@@ -85,10 +85,10 @@ exports.getChallengeResults = functions.https.onCall((req:any, context:any):any 
         const challenge = new Challenge(req.challengeUid);
         const leaderboard: Leaderboard = new Leaderboard();
         leaderboard.getResults(challenge).then((allResults:AllResults) => {
-            console.log(`Overall nbrActivities: ${allResults.overallResults.nbrActivities}`);
-            console.log(`Overall distance: ${allResults.overallResults.distanceTotal}`);
-            console.log(`Overall pointsTotal: ${allResults.overallResults.pointsTotal}`);
-            console.log(`Overall durationTotal: ${allResults.overallResults.durationTotal}`);
+            // console.log(`Overall nbrActivities: ${allResults.overallResults.nbrActivities}`);
+            // console.log(`Overall distance: ${allResults.overallResults.distanceTotal}`);
+            // console.log(`Overall pointsTotal: ${allResults.overallResults.pointsTotal}`);
+            // console.log(`Overall durationTotal: ${allResults.overallResults.durationTotal}`);
             resolve(allResults);
         }).catch(err => {
             reject(err);
@@ -97,7 +97,7 @@ exports.getChallengeResults = functions.https.onCall((req:any, context:any):any 
 });
 
 exports.setEnviromentFromClient = functions.https.onCall((environment, context) => {
-    console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
+    // console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
     envSet(environment.org, environment.env, environment.challengeUid);
     
     console.log(`Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`);
@@ -151,7 +151,7 @@ exports.listenUserUpdates = functions.firestore
         const documentId = context.params.userId;
 
         const newUser = document as User;
-        console.log(`listenUserUpdates displayName == ${newUser.displayName}`);
+        // console.log(`listenUserUpdates displayName == ${newUser.displayName}`);
         newUser.uid = documentId;
         newUser.displayName = newUser.firstName + " " + newUser.lastName;
         const userDB = new UserDB();
@@ -184,12 +184,12 @@ exports.updateUserActivityDisplayName = functions.https.onCall((req, context: fu
 // ===============================================================================================
 
 exports.fBFupdateTeam = functions.https.onCall((req, res) => {
-    console.log(`In fBFupdateTeam with: req ${JSON.stringify(req)}`);
+    // console.log(`In fBFupdateTeam with: req ${JSON.stringify(req)}`);
 
     const challengeUid = req.challengeUid;
     const team = req.team;
 
-    console.log(`In fBFupdateTeam with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
+    // console.log(`In fBFupdateTeam with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
     return new Promise((resolve, reject) => {
         const dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
 
@@ -203,10 +203,10 @@ exports.fBFupdateTeam = functions.https.onCall((req, res) => {
             });
             return batch.commit();
         }).then(() => {
-            console.log("Batch successfully committed!");
+            console.log("Update Team Batch successfully committed!");
             resolve();
         }).catch((err) =>{
-            console.error("Batch failed: ", err);
+            console.error("Team Batch failed: ", err);
             reject(err);
         });
 
@@ -215,12 +215,12 @@ exports.fBFupdateTeam = functions.https.onCall((req, res) => {
 });
 
 exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
-    console.log(`In fBFupdateActivityTeamName with: req ${JSON.stringify(req)}`);
+    // console.log(`In fBFupdateActivityTeamName with: req ${JSON.stringify(req)}`);
 
     const challengeUid = req.challengeUid;
     const team = req.team;
 
-    console.log(`In fBFupdateActivityTeamName with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
+    // console.log(`In fBFupdateActivityTeamName with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
     return new Promise((resolve, reject) => {
         let activitiesRef = undefined;
         if (challengeUid && challengeUid !== "") {
@@ -237,10 +237,10 @@ exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
             });
             return batch.commit();
         }).then(() => {
-            console.log("Batch successfully committed!");
+            console.log("Activity Team Batch successfully committed!");
             resolve();
         }).catch((err) =>{
-            console.error("Batch failed: ", err);
+            console.error("Activity Team Batch failed: ", err);
             reject(err);
         });
 
