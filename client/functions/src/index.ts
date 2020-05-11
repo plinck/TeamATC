@@ -9,6 +9,8 @@ import { Leaderboard } from "./modules/Leaderboard";
 import { Challenge } from "./modules/interfaces/Challenge";
 import { AllResults } from './modules/Interfaces/Result.Types';
 import { Activity } from './modules/interfaces/Activity';
+import { User } from "./modules/Interfaces/User";
+import { UserDB } from "./modules/db/UserDB";
 
 // exports.scheduledFunction = functions.pubsub.schedule('every 60 minutes').onRun((context) => {
 //     console.log('Recalculate totals will be run every 60 minutes!');
@@ -64,13 +66,17 @@ exports.listenAllActivityUpdates = functions.firestore
                 oldActivity.id = oldDocumentId; 
                 const updatedActivity:Activity = document as Activity;
                 updatedActivity.id = oldDocumentId; 
-                console.log(`Modified Actvity - old`);
-                console.log(oldActivity);   
-                console.log(`Modified Actvity - new`);
-                console.log(updatedActivity);   
-            }   
+                // Note - ONLY update activity totals if distance, duration etc fields have changed
+                if ((oldActivity.distance !== updatedActivity.distance) || (oldActivity.duration !== updatedActivity.duration)) {
+                    console.log(`Modified Actvity - old`);
+                    console.log(oldActivity);   
+                    console.log(`Modified Actvity - new`);
+                    console.log(updatedActivity);   
+                } else {
+                    console.log(`Distance / duration did not change - no need to reclc totals`);
+                }
         }
-    return true;
+    return 0;
 });
 
 exports.getChallengeResults = functions.https.onCall((req:any, context:any):any => {
@@ -130,6 +136,44 @@ exports.authCreateUser = auth.authCreateUser;
 // ===============================================================================================
 const webhook = require('./modules/webhook.js');
 exports.webhook = webhook.strava;
+
+// ===============================================================================================
+// User Batch Updates from denormalizaion
+// ===============================================================================================
+// Listen for changes in users
+exports.listenUserUpdates = functions.firestore
+    .document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/users/{userId}`)
+    .onUpdate((change: functions.Change<functions.firestore.DocumentSnapshot>, context: functions.EventContext) => {
+        console.log(`listenUserUpdates for userId (context.params.userId) == ${context.params.userId}`);
+
+        const document:FirebaseFirestore.DocumentData = change.after.exists ? change.after.data() : null;
+        const documentId = context.params.userId;
+
+        const newUser = document as User;
+        console.log(`listenUserUpdates displayName == ${newUser.displayName}`);
+        newUser.uid = documentId;
+        newUser.displayName = newUser.firstName + " " + newUser.lastName;
+        const userDB = new UserDB();
+        userDB.updateUserActivityDisplayNameWithUser(newUser).then(() => {
+            return true;
+        }).catch((err: Error) => {
+            console.error(err);    
+            return false;
+        });   
+
+    return 0;
+});
+
+// This allows the change to be initiated from client with just the uid (id) for the user
+exports.updateUserActivityDisplayName = functions.https.onCall((req, context: functions.https.CallableContext) => {
+    const userDB = new UserDB();
+    userDB.updateUserActivityDisplayNameWithUid(req.userId).then(() => {
+        return true;
+    }).catch(err => {
+        return false;
+    });   
+    return;
+});
 
 // ===============================================================================================
 // Strava module functions

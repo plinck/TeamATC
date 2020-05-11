@@ -179,6 +179,7 @@ class UserDB {
 
         return new Promise(async (resolve, reject) => {
             // update
+            newUser.displayName = newUser.firstName + " " + newUser.lastName;
             console.log("User updated, newUser=", newUser);
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
             dbUsersRef.doc(user.id).set(newUser, {
