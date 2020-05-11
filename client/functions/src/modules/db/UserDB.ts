@@ -27,7 +27,7 @@ class UserDB {
                     reject(`Can not find user with id: ${userId}`);
                 }
             }).catch((err: Error) => {
-                const error = new Error(`Error retrieving user with id : ${userId}, UserDB.ts, line: 27`);
+                const error = new Error(`Error retrieving user with id : ${userId}, UserDB.ts, line: 30`);
                 console.error(error);
                 reject(error);
             });    
@@ -55,7 +55,7 @@ class UserDB {
                     console.log("Batch user successfully committed!");
                     resolve();
                 }).catch((err: Error) =>{
-                    const error = new Error(`Error ${err} - Batch user update failed for use: ${userId}, UserDB.ts, line: 57`);
+                    const error = new Error(`Error ${err} - Batch user update failed for use: ${userId}, UserDB.ts, line: 58`);
                     console.error(error);    
                     reject(err);
                 });

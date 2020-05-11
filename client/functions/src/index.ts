@@ -54,10 +54,10 @@ exports.listenAllActivityUpdates = functions.firestore
                 const createdActivity:Activity = document as Activity;
                 console.log(`Created Actvity`);
                 console.log(createdActivity);  
-                leaderboard.calculateNewResults(challenge, newActivity).then ((allResults:AllResults) => {
+                leaderboard.calculateNewResults(challenge, newActivity).then((allResults:AllResults) => {
                     console.log(`New Overall Number of Activitis: ${allResults.overallResults.nbrActivities}`);
                 }).catch((err: Error) => {
-                    const error = new Error(`Error calculateNewResults for challnge : ${challenge.id}, index.ts, line: 58`);
+                    const error = new Error(`Error ${err} calculateNewResults for challnge : ${challenge.id}, index.ts, line: 60`);
                     console.error(error);
                 }); 
             } else { 

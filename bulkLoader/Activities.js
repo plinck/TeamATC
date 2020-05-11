@@ -74,8 +74,6 @@ class Activities {
                 teamName: _foundTeam.name,
             }
             if (logged < 10) {
-                // console.log(`Line: ${line}, activity: ${activityFieldsArray}`);
-                //console.log(`Activity Posted: ${JSON.stringify(activityPosted)}`);
                 logged += 1;
             }
 

@@ -53,7 +53,7 @@ class Leaderboard {
 
     private totals(challenge: Challenge, activities:Array<Activity>): AllResults {
         // console.log("totals() started ...");
-        let overallResults = new Result();
+        let overallResults = new Result(challenge.id);
         let userResults: Array<Result> = Array<Result>();
         let teamResults: Array<Result> = Array<Result>();
     
@@ -112,7 +112,7 @@ class Leaderboard {
     private calulateTeamResults(challenge:Challenge, results:Array<Result>, activity:Activity): Array<Result> {
         // console.log("calulateUserResults() started ...");
 
-        let newResult: Result = new Result();
+        let newResult: Result = new Result(challenge.id);
         const idx = results.findIndex((result:Result) => {
             const foundIdx = result.teamUid === activity.teamUid;
             return foundIdx;
@@ -142,7 +142,7 @@ class Leaderboard {
     private calulateUserResults(challenge:Challenge, results:Array<Result>, activity:Activity): Array<Result> {
         // console.log("calulateUserResults() started ...");
 
-        let newResult: Result = new Result();
+        let newResult: Result = new Result(challenge.id);
         const idx = results.findIndex((result:Result) => {
             const foundIdx = result.uid === activity.uid;
             return foundIdx;
@@ -241,7 +241,7 @@ class Leaderboard {
                     console.log(`Saved all results to challenge ${newAllResults.challengeUid}`);
                     resolve(newAllResults);
                 }).catch ((err1: Error) => {
-                    const error = new Error(`Error saving results for challenge ${challenge.id} -- ${err1} : "Leaderboard.ts", line: 243`);
+                    const error = new Error(`Error saving results for challenge ${challenge.id} -- ${err1} : "Leaderboard.ts", line: 244`);
                     console.error(error);
                     reject(error);  
                 });
@@ -257,7 +257,7 @@ class Leaderboard {
         return new Promise<any>((resolve:any, reject:any) => {
             const resultsDB: ResultsDB = new ResultsDB();
 
-            resultsDB.get(challenge).then((allResults: AllResults) => {
+            resultsDB.getAll(challenge).then((allResults: AllResults) => {
                 resolve(allResults);
             }).catch(err => {
                 // Couldnt find - recalc and get
