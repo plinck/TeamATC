@@ -62,7 +62,7 @@ class ResultsDB {
         return new Promise<any>((resolve:any, reject:any) => {
             console.log(`ResultsDB.save -- save challenge ${allResults.challengeUid} document as: ${JSON.stringify(allResults)}`);
             const dbResultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
-            //const batch = admin.firestore().batch();
+            // const batch = admin.firestore().batch();
 
             const overallKey = `${allResults.challengeUid}-OR1`;
             const overallResult = JSON.parse(JSON.stringify(allResults.overallResults));
@@ -98,8 +98,10 @@ class ResultsDB {
                     });
                 }
                 return true;
-            // }).then(() => {
-            //     return batch.commit();
+            }).then(() => {
+                // Commit the batch
+                // return batch.commit();
+                return true;
             }).then(() => {
                 console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 104`);
                 resolve();

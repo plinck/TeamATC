@@ -220,20 +220,11 @@ class Leaderboard {
         return new Promise<any>((resolve:any, reject:any) => {
             const leaderboard: Leaderboard = new Leaderboard();
             leaderboard.getResults(challenge).then((allResults:AllResults) => {
-                console.log(`Old Overall nbrActivities: ${allResults.overallResults.nbrActivities}`);
-                console.log(`Old Overall distance: ${allResults.overallResults.distanceTotal}`);
-                console.log(`Old Overall pointsTotal: ${allResults.overallResults.pointsTotal}`);
-                console.log(`Old Overall durationTotal: ${allResults.overallResults.durationTotal}`);
-
                 const newAllResults = allResults;
                 newAllResults.challengeUid = challenge.id;
                 newAllResults.overallResults = this.calulateOverallResults(challenge, allResults.overallResults, activity);
                 newAllResults.teamResults = this.calulateTeamResults(challenge, allResults.teamResults, activity);
                 newAllResults.userResults = this.calulateUserResults(challenge, allResults.userResults, activity);
-                console.log(`New Overall nbrActivities: ${newAllResults.overallResults.nbrActivities}`);
-                console.log(`New Overall distance: ${newAllResults.overallResults.distanceTotal}`);
-                console.log(`New Overall pointsTotal: ${newAllResults.overallResults.pointsTotal}`);
-                console.log(`New Overall durationTotal: ${newAllResults.overallResults.durationTotal}`);
 
                 // Must Save now
                 const resultsDB:ResultsDB = new ResultsDB();
@@ -241,7 +232,7 @@ class Leaderboard {
                     console.log(`Saved all results to challenge ${newAllResults.challengeUid}`);
                     resolve(newAllResults);
                 }).catch ((err1: Error) => {
-                    const error = new Error(`Error saving results for challenge ${challenge.id} -- ${err1} : "Leaderboard.ts", line: 244`);
+                    const error = new Error(`Error saving results for challenge ${challenge.id} -- ${err1} : "Leaderboard.ts", line: 235`);
                     console.error(error);
                     reject(error);  
                 });
