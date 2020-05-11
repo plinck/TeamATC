@@ -47,13 +47,13 @@ exports.listenAllActivityUpdates = functions.firestore
             // deleted - 
             const deletedActivity:Activity = oldDocument as Activity;
             console.log(`Deleted Actvity`);
-            // console.log(deletedActivity);
+            console.log(deletedActivity);
         } else {
             if (oldDocument === null) {
                 // created - 
                 const createdActivity:Activity = document as Activity;
                 console.log(`Created Actvity`);
-                // console.log(createdActivity);  
+                console.log(createdActivity);  
                 leaderboard.calculateNewResults(challenge, newActivity).then((allResults:AllResults) => {
                     console.log(`New Overall Number of Activitis: ${allResults.overallResults.nbrActivities}`);
                 }).catch((err: Error) => {
@@ -186,7 +186,6 @@ exports.updateUserActivityDisplayName = functions.https.onCall((req, context: fu
 exports.fBFupdateTeam = functions.https.onCall((req, res) => {
     // console.log(`In fBFupdateTeam with: req ${JSON.stringify(req)}`);
 
-    const challengeUid = req.challengeUid;
     const team = req.team;
 
     // console.log(`In fBFupdateTeam with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
