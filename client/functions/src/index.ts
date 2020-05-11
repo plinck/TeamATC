@@ -75,6 +75,7 @@ exports.listenAllActivityUpdates = functions.firestore
                 } else {
                     console.log(`Distance / duration did not change - no need to reclc totals`);
                 }
+            }
         }
     return 0;
 });

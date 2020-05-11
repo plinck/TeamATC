@@ -143,12 +143,13 @@ class UserDB {
         } catch {
             // no op - dont care
         }
+        newUser.displayName = newUser.firstName + " " + newUser.lastName;
 
         return new Promise(async (resolve, reject) => {
             const authUser = await Util.getCurrentAuthUser();
             // we always want uid = id to keep auth and firestore in sync
             authUser.updateProfile({
-                displayName: `${user.firstName} ${user.lastName}`,
+                displayName: newUser.displayName,
                 photoURL: user.photoURL,
             }).then(() => {
                 console.log("Auth Profile for User successfully updated!");
@@ -176,10 +177,11 @@ class UserDB {
         } catch {
             // no op - dont care
         }
+        newUser.displayName = newUser.firstName + " " + newUser.lastName;
 
         return new Promise(async (resolve, reject) => {
             // update
-            newUser.displayName = newUser.firstName + " " + newUser.lastName;
+            newUser.displayName = newUser.displayName;
             console.log("User updated, newUser=", newUser);
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
             dbUsersRef.doc(user.id).set(newUser, {
@@ -298,7 +300,7 @@ class UserDB {
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
                     // update if exists, create if not existing
             dbUsersRef.doc(authUser.user.uid).set({
-                displayName: user.displayName,
+                displayName: user.firstName + " " + user.lastName,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 phoneNumber: user.phoneNumber,
