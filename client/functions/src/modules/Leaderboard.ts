@@ -102,7 +102,7 @@ class Leaderboard {
         // console.log("totals() started ...");
     
         let newResult = result;
-        newResult.overalRecord = true;
+        newResult.overallRecord = true;
     
         newResult = this.computeRecordTotals(challenge, newResult, activity);
 
@@ -221,6 +221,8 @@ class Leaderboard {
             const leaderboard: Leaderboard = new Leaderboard();
             leaderboard.getResults(challenge).then((allResults:AllResults) => {
                 const newAllResults = allResults;
+                console.log(`calculateNewResults newAllResults: ${JSON.stringify(newAllResults.overallResults, null,2)}`);
+
                 newAllResults.challengeUid = challenge.id;
                 newAllResults.overallResults = this.calulateOverallResults(challenge, allResults.overallResults, activity);
                 newAllResults.teamResults = this.calulateTeamResults(challenge, allResults.teamResults, activity);
@@ -249,8 +251,9 @@ class Leaderboard {
             const resultsDB: ResultsDB = new ResultsDB();
 
             resultsDB.getAll(challenge).then((allResults: AllResults) => {
+                console.log(`getResults allResults: ${JSON.stringify(allResults.overallResults, null,2)}`);
                 resolve(allResults);
-            }).catch(err => {
+            }).catch(_ => {
                 // Couldnt find - recalc and get
                 this.calculateLeaderboards(challenge).then((allResults: AllResults) => {
                     // Send back

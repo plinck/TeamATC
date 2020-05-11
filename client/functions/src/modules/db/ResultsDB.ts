@@ -33,25 +33,37 @@ class ResultsDB {
     }
 
     public getAll(challenge: Challenge) {
-        console.log(`ResultsDB.getAll() started for challenge ${challenge.id} ...`);
         return new Promise<any>((resolve:any, reject:any) => {
             const resultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
 
-            const overallKey = `${challenge.id}-OR1`;
-            resultsRef.doc(overallKey).get().then((doc) => {
-                //
-                if (doc.exists) {
-                    const allResults = doc.data() as AllResults;
-                    const overallResults = allResults.overallResults;
-                    const teamResults = allResults.teamResults;
-                    const userResults = allResults.userResults;
-                    resolve({overallResults: overallResults, teamResults: teamResults, userResults: userResults})
+            console.log(`ResultsDB.getAll() started for challenge ${challenge.id} ...`);
+            resultsRef.where("challengeUid", "==", challenge.id).get().then((snap) => {
+                let overallResults: Result;
+                let foundResults: boolean = false;
+                const teamResults: Array<Result> = [];
+                const userResults: Array<Result> = [];
+                snap.forEach(doc => {
+                    const result = doc.data() as Result;
+                    if (result.overallRecord) {
+                        foundResults = true;
+                        overallResults = result;
+                    } else if (result.teamRecord) {
+                        teamResults.push(result);     
+                    } else if (result.userRecord) {
+                        userResults.push(result);     
+                    }
+                });
+                if (foundResults) {
+                    const allResults: AllResults = {challengeUid: challenge.id, overallResults: overallResults, teamResults: teamResults, userResults: userResults};
+                    console.log(`getResults allResults: ${JSON.stringify(allResults, null,2)}`);
+                    resolve(allResults);
                 } else {
-                    console.log(`No results for challenge: ${challenge.id} -- neeed to calculate and create`);
-                    reject(`No results for challenge: ${challenge.id}`)
+                    const error = new Error(`Didnt find any results for challenge : ${challenge.id}, ResultsDB.ts, line: 62`);
+                    console.error(error);
+                    reject(error);
                 }
             }).catch((err: Error) => {
-                const error = new Error(`Error retrieving results for challnge : ${challenge.id}, ResultsDB.ts, line: 54`);
+                const error = new Error(`Error ${err} retrieving results for challenge : ${challenge.id}, ResultsDB.ts, line: 67`);
                 console.error(error);
                 reject(error);
             });    
@@ -62,51 +74,33 @@ class ResultsDB {
         return new Promise<any>((resolve:any, reject:any) => {
             console.log(`ResultsDB.save -- save challenge ${allResults.challengeUid} document as: ${JSON.stringify(allResults)}`);
             const dbResultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
-            // const batch = admin.firestore().batch();
+            const batch = admin.firestore().batch();
 
+            // Overall results - 1 record
             const overallKey = `${allResults.challengeUid}-OR1`;
             const overallResult = JSON.parse(JSON.stringify(allResults.overallResults));
-            // Overall results - 1 record
-            dbResultsRef.doc(overallKey).set(overallResult, { merge: true }).then (() => {
-                return true;
-                // Now do team results
-            }).then(() => {
-                // All teams 
-                for (let i = 0; i < allResults.teamResults.length; i++) {
-                    const result = JSON.parse(JSON.stringify(allResults.teamResults[i]));
-                    const resultsKey = `${allResults.challengeUid}-TR${i}`;
-                    dbResultsRef.doc(resultsKey).set(result, { merge: true }).then (() => {
-                        // OK, continue
-                    }).catch ((err1: Error) => {
-                        const error = new Error(`Error ${err1} - Batch user update failed for team result ${i}, ResultsDB.ts, line: 81`);
-                        console.log(error);  
-                        // Don worry, continue          
-                    });
-                }
-                return true;
-            }).then(() => {
-                // All users 
-                for (let i = 0; i < allResults.userResults.length; i++) {
-                    const result = JSON.parse(JSON.stringify(allResults.userResults[i]));
-                    const resultsKey = `${allResults.challengeUid}-UR${i}`;
-                    dbResultsRef.doc(resultsKey).set(result, { merge: true }).then (() => {
-                        // OK, continue
-                    }).catch ((err1: Error) => {
-                        const error = new Error(`Error ${err1} - Batch user update failed for user result ${i}, ResultsDB.ts, line: 94`);
-                        console.log(error);  
-                        // Don worry, continue          
-                    });
-                }
-                return true;
-            }).then(() => {
-                // Commit the batch
-                // return batch.commit();
-                return true;
-            }).then(() => {
-                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 104`);
+            const overallDocRef =  dbResultsRef.doc(overallKey);
+            batch.set(overallDocRef, overallResult, { merge: true });
+            // All teams 
+            for (let i = 0; i < allResults.teamResults.length; i++) {
+                const resultsKey = `${allResults.challengeUid}-TR${i}`;
+                const result = JSON.parse(JSON.stringify(allResults.teamResults[i]));
+                const resultDocRef =  dbResultsRef.doc(resultsKey);
+                batch.set(resultDocRef, result, { merge: true });
+            }
+            // All users
+            for (let i = 0; i < allResults.userResults.length; i++) {
+                const resultsKey = `${allResults.challengeUid}-UR${i}`;
+                const result = JSON.parse(JSON.stringify(allResults.userResults[i]));
+                const resultDocRef =  dbResultsRef.doc(resultsKey);
+                batch.set(resultDocRef, result, { merge: true });
+            }
+            // Commit the batch
+            batch.commit().then(() => {
+                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 88`);
                 resolve();
             }).catch((err: Error) =>{
-                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 107`);
+                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 91`);
                 console.error(error);    
                 reject(err);
             });
@@ -189,7 +183,86 @@ class ResultsDB {
             });
         });
     }
+
+    public refSaveOrderPromises(allResults:AllResults) {
+        return new Promise<any>((resolve:any, reject:any) => {
+            console.log(`ResultsDB.save -- save challenge ${allResults.challengeUid} document as: ${JSON.stringify(allResults)}`);
+            const dbResultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
+
+            const overallKey = `${allResults.challengeUid}-OR1`;
+            const overallResult = JSON.parse(JSON.stringify(allResults.overallResults));
+            // Overall results - 1 record
+            dbResultsRef.doc(overallKey).set(overallResult, { merge: true }).then (() => {
+                return true;
+                // Now do team results
+            }).then(() => {
+                // All teams 
+                for (let i = 0; i < allResults.teamResults.length; i++) {
+                    const result = JSON.parse(JSON.stringify(allResults.teamResults[i]));
+                    const resultsKey = `${allResults.challengeUid}-TR${i}`;
+                    dbResultsRef.doc(resultsKey).set(result, { merge: true }).then (() => {
+                        // OK, continue
+                    }).catch ((err1: Error) => {
+                        const error = new Error(`Error ${err1} - Batch user update failed for team result ${i}, ResultsDB.ts, line: 196`);
+                        console.log(error);  
+                        // Don worry, continue          
+                    });
+                }
+                return true;
+            }).then(() => {
+                // All users 
+                for (let i = 0; i < allResults.userResults.length; i++) {
+                    const result = JSON.parse(JSON.stringify(allResults.userResults[i]));
+                    const resultsKey = `${allResults.challengeUid}-UR${i}`;
+                    dbResultsRef.doc(resultsKey).set(result, { merge: true }).then (() => {
+                        // OK, continue
+                    }).catch ((err1: Error) => {
+                        const error = new Error(`Error ${err1} - Batch user update failed for user result ${i}, ResultsDB.ts, line: 210`);
+                        console.log(error);  
+                        // Don worry, continue          
+                    });
+                }
+                return true;
+            }).then(() => {
+                // Commit the batch
+                // return batch.commit();
+                return true;
+            }).then(() => {
+                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 221`);
+                resolve();
+            }).catch((err: Error) =>{
+                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 224`);
+                console.error(error);    
+                reject(err);
+            });
+        });//promsie
+    }
+
+    public refTransactionUpdate(allResults:AllResults) {
+        return new Promise<any>((resolve:any, reject:any) => {
+            const dbResultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
+            const docRef1 = dbResultsRef.doc('1');
+            const docRef2 = dbResultsRef.doc('2');
+
+            // As explained in the documentation for the Node.js Client Library update() method, it returns a Transaction
+            // which is "used for chaining method calls." (Note that update() method of the Admin SDK behaves exactly the same way).
+            // So, for example, if within the transaction you want to get a value from a doc, 
+            // increase it and use it to update two documents from two different collections 
+            // you would do as follows:            
+            let newNbractivities: number;
+            admin.firestore().runTransaction(t1 => {
+                return t1.get(docRef1).then(doc => {
+                    newNbractivities = doc.data().nbrActivities + 1;  //You calculate the new value
+                    return t1.update(docRef1 , {nbrActivities : newNbractivities});
+                }).then(t2 => {
+                    return t2.update(docRef2 , {nbrActivities : newNbractivities});
+                });
+            }).then(t3 => {
+                console.log('Transaction success!' + t3);
+            }).catch((err: Error) => {
+                console.log('Transaction failure:', err);
+            });
+        });
+    }
 }
 export { ResultsDB }
-
-

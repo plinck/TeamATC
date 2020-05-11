@@ -2,7 +2,7 @@ import { Result } from "./Result";
 
 type ResultType = {
     challengeUid: string,
-    overalRecord: boolean;
+    overallRecord: boolean;
     teamRecord: boolean;
     teamUid: string;
     teamName: string;

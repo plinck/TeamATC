@@ -1,6 +1,6 @@
 class Result {
     challengeUid: string;
-    overalRecord: boolean;
+    overallRecord: boolean;
     teamRecord: boolean;
     teamUid: string;
     teamName: string;
@@ -33,7 +33,7 @@ class Result {
         if (challengeUid && challengeUid !== "") {
             this.challengeUid = challengeUid;
         }
-        this.overalRecord = false;
+        this.overallRecord = false;
         this.teamRecord = false;
         this.teamUid = "";
         this.teamName = "";
