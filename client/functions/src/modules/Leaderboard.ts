@@ -3,10 +3,10 @@ import { APP_CONFIG } from "./FirebaseEnvironment";
 
 import { Activity } from "./interfaces/Activity";
 import { Result } from "./interfaces/Result";
-import { AllResults } from "./Interfaces/Result.Types";
+import { AllResults } from "./interfaces/Result.Types";
 import { Challenge } from "./interfaces/Challenge";
 import { ResultsDB } from './db/ResultsDB';
-
+import { ActivityUpdateType } from "./interfaces/Common.Types";
 class Leaderboard {
 
     public calculateLeaderboards(challenge: Challenge) {
@@ -52,7 +52,6 @@ class Leaderboard {
     }
 
     private totals(challenge: Challenge, activities:Array<Activity>): AllResults {
-        // console.log("totals() started ...");
         let overallResults = new Result(challenge.id);
         let userResults: Array<Result> = Array<Result>();
         let teamResults: Array<Result> = Array<Result>();
@@ -61,9 +60,9 @@ class Leaderboard {
         // for (let i = 0; i < activities.length; i++) {
         for (const activity of activities) {
             // get resulsts
-            overallResults = this.calulateOverallResults(challenge, overallResults, activity);
-            teamResults = this.calulateTeamResults(challenge, teamResults, activity);
-            userResults = this.calulateUserResults(challenge, userResults, activity);
+            overallResults = this.calulateOverallResults(challenge, overallResults, activity, ActivityUpdateType.create);
+            teamResults = this.calulateTeamResults(challenge, teamResults, activity, ActivityUpdateType.create);
+            userResults = this.calulateUserResults(challenge, userResults, activity, ActivityUpdateType.create);
         }
     
         // Sort the team and user results based on total points DESC          
@@ -98,18 +97,16 @@ class Leaderboard {
         return (allResults);
     }    
 
-    private calulateOverallResults(challenge: Challenge, result:Result, activity:Activity): Result {
-        // console.log("totals() started ...");
-    
+    private calulateOverallResults(challenge: Challenge, result:Result, activity:Activity, updateType: ActivityUpdateType): Result {    
         let newResult = result;
         newResult.overallRecord = true;
     
-        newResult = this.computeRecordTotals(challenge, newResult, activity);
+        newResult = this.computeRecordTotals(challenge, newResult, activity, updateType);
 
         return (newResult);
     }    
     // Calculate team results
-    private calulateTeamResults(challenge:Challenge, results:Array<Result>, activity:Activity): Array<Result> {
+    private calulateTeamResults(challenge:Challenge, results:Array<Result>, activity:Activity, updateType: ActivityUpdateType): Array<Result> {
         // console.log("calulateUserResults() started ...");
 
         let newResult: Result = new Result(challenge.id);
@@ -126,7 +123,7 @@ class Leaderboard {
         newResult.teamUid = activity.teamUid;
         newResult.teamName = activity.teamName;
 
-        newResult = this.computeRecordTotals(challenge, newResult, activity);
+        newResult = this.computeRecordTotals(challenge, newResult, activity, updateType);
 
         // Updated the array of users results - each user has a record
         const newResultsArray = results;
@@ -139,7 +136,7 @@ class Leaderboard {
         return (newResultsArray);
     }
     // Calculate user results
-    private calulateUserResults(challenge:Challenge, results:Array<Result>, activity:Activity): Array<Result> {
+    private calulateUserResults(challenge:Challenge, results:Array<Result>, activity:Activity, updateType: ActivityUpdateType): Array<Result> {
         // console.log("calulateUserResults() started ...");
 
         let newResult: Result = new Result(challenge.id);
@@ -156,7 +153,7 @@ class Leaderboard {
         newResult.uid = activity.uid;
         newResult.displayName = activity.displayName;
 
-        newResult = this.computeRecordTotals(challenge, newResult, activity);
+        newResult = this.computeRecordTotals(challenge, newResult, activity, updateType);
 
         // Updated the array of users results - each user has a record
         const newResultsArray = results;
@@ -169,45 +166,104 @@ class Leaderboard {
         return (newResultsArray);
     }
 
-    private computeRecordTotals(challenge:Challenge, newResult:Result, activity:Activity):Result {
-        // console.log("computeRecordTotals() started ...");
-        const distanceInMiles = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
-        newResult.distanceTotal += distanceInMiles;
-        newResult.durationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
-        newResult.nbrActivities += 1;
-    
-        switch (activity.activityType) {
+    private computePoints(distance: number, activityType: string) : number {
+        let points: number = 0;
+
+        switch (activityType) {
             case "Swim":
-                newResult.pointsTotal += distanceInMiles * 10;
-    
-                newResult.swimNbrActivities += 1;
-                newResult.swimDistanceTotal += activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
-                newResult.swimPointsTotal = newResult.swimDistanceTotal * 10;
-                newResult.swimDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+                points = distance * 10;
                 break;
             case "Bike":
-                newResult.pointsTotal += distanceInMiles;
-    
-                newResult.bikeNbrActivities += 1;
-                newResult.bikeDistanceTotal += activity.distance;
-                newResult.bikePointsTotal = newResult.bikeDistanceTotal;
-                newResult.bikeDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+                points = distance * 1;
                 break;
             case "Run":
-                newResult.pointsTotal += distanceInMiles * 3;
-    
-                newResult.runNbrActivities += 1;
-                newResult.runDistanceTotal += activity.distance;
-                newResult.runPointsTotal = newResult.runDistanceTotal * 3;
-                newResult.runDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+                points = distance * 3;
+                break;
+            case "Other":
+                points = distance * 1;
                 break;
             default:
-                newResult.pointsTotal += distanceInMiles;
-    
-                newResult.otherNbrActivities += 1;
-                newResult.otherDistanceTotal += activity.distance;
-                newResult.otherPointsTotal = newResult.otherDistanceTotal;
-                newResult.otherDurationTotal += activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+                points = distance * 1;
+                break;
+        }
+
+        return points;
+    }
+    // note : on a change the activity will not be the ACTUAL activity but a net of the old and the new in miles and duration
+    private computeRecordTotals(challenge:Challenge, newResult:Result, activity:Activity, updateType: ActivityUpdateType):Result {
+        // console.log("computeRecordTotals() started ...");
+        let distanceInMiles:number = activity.distanceUnits === "Yards" ? activity.distance / 1760 : activity.distance;
+        let durationInHours:number = activity.durationUnits === "Minutes" ? activity.duration / 60 : activity.duration;
+        let points: number;
+        let nbrActivities: number;
+
+        // This helps us do the *net* of an activity
+        switch (updateType) {
+            case ActivityUpdateType.create:
+                points = this.computePoints(distanceInMiles, activity.activityType);
+                nbrActivities = 1;
+                distanceInMiles = distanceInMiles;
+                durationInHours = durationInHours;
+
+                // Overall for this OA, Team or User
+                newResult.distanceTotal += distanceInMiles;
+                newResult.durationTotal += durationInHours;
+                newResult.pointsTotal += points;
+                newResult.nbrActivities += 1;
+                break;
+            case ActivityUpdateType.update:
+                points = this.computePoints(distanceInMiles, activity.activityType);
+                nbrActivities = 0;
+                distanceInMiles = distanceInMiles;
+                durationInHours = durationInHours;
+
+                // Overall for this OA, Team or User
+                newResult.distanceTotal += distanceInMiles;
+                newResult.durationTotal += durationInHours;
+                newResult.pointsTotal += points;
+                newResult.nbrActivities = 0;
+                break;
+            case ActivityUpdateType.delete:
+                points = this.computePoints(distanceInMiles, activity.activityType);
+                points = -points;
+                nbrActivities = -1;
+                distanceInMiles = -distanceInMiles;
+                durationInHours = -durationInHours;
+
+                // Overall for this OA, Team or User
+                newResult.distanceTotal += distanceInMiles;
+                newResult.durationTotal += durationInHours;
+                newResult.pointsTotal += points;
+                newResult.nbrActivities += nbrActivities;
+                break;
+            default:
+                break;
+        }
+        
+        switch (activity.activityType) {
+            case "Swim":
+                newResult.swimPointsTotal += points;
+                newResult.swimNbrActivities += nbrActivities;
+                newResult.swimDistanceTotal += distanceInMiles;
+                newResult.swimDurationTotal += durationInHours;
+                break;
+            case "Bike":    
+                newResult.bikePointsTotal += points;
+                newResult.bikeNbrActivities += nbrActivities;
+                newResult.bikeDistanceTotal += distanceInMiles;
+                newResult.bikeDurationTotal += durationInHours;
+                break;
+            case "Run":
+                newResult.runPointsTotal += points;
+                newResult.runNbrActivities += nbrActivities;
+                newResult.runDistanceTotal += distanceInMiles;
+                newResult.runDurationTotal += durationInHours;
+                break;
+            default:
+                newResult.otherPointsTotal += points;
+                newResult.otherNbrActivities += nbrActivities;
+                newResult.otherDistanceTotal += distanceInMiles;
+                newResult.otherDurationTotal += durationInHours;
                 break;
         }
         // Assign the challnge to make sure totals apply to correct one
@@ -216,18 +272,18 @@ class Leaderboard {
         return newResult;
     }    
 
-    public calculateNewResults(challenge:Challenge, activity:Activity):any {
+    public calculateNewResults(challenge:Challenge, activity:Activity, updateType: ActivityUpdateType):any {
         return new Promise<any>((resolve:any, reject:any) => {
             // DONT update new one if you have to recalc since somehow it gets it
             const resultsDB: ResultsDB = new ResultsDB();
             resultsDB.getAll(challenge).then((allResults: AllResults) => {
                 // console.log(`getResults allResults: ${JSON.stringify(allResults.overallResults, null,2)}`);
-                // if found results, just update them
+                // if found results, just update them - create adds, delete subtracts, modify adds (must pass net)
                 const newAllResults = allResults;
                 newAllResults.challengeUid = challenge.id;
-                newAllResults.overallResults = this.calulateOverallResults(challenge, allResults.overallResults, activity);
-                newAllResults.teamResults = this.calulateTeamResults(challenge, allResults.teamResults, activity);
-                newAllResults.userResults = this.calulateUserResults(challenge, allResults.userResults, activity);
+                newAllResults.overallResults = this.calulateOverallResults(challenge, allResults.overallResults, activity, updateType);
+                newAllResults.teamResults = this.calulateTeamResults(challenge, allResults.teamResults, activity, updateType);
+                newAllResults.userResults = this.calulateUserResults(challenge, allResults.userResults, activity, updateType);
 
                 const saveResultsDB:ResultsDB = new ResultsDB();
                 saveResultsDB.save(newAllResults).then (() => {

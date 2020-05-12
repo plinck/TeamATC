@@ -7,10 +7,11 @@ import { Leaderboard } from "./modules/Leaderboard";
 // import { Activity } from "./modules/interfaces/Activity";
 // import { Result } from "./modules/interfaces/Result";
 import { Challenge } from "./modules/interfaces/Challenge";
-import { AllResults } from './modules/Interfaces/Result.Types';
+import { AllResults } from './modules/interfaces/Result.Types';
 import { Activity } from './modules/interfaces/Activity';
-import { User } from "./modules/Interfaces/User";
+import { User } from "./modules/interfaces/User";
 import { UserDB } from "./modules/db/UserDB";
+import { ActivityUpdateType } from "./modules/interfaces/Common.Types";
 
 // exports.scheduledFunction = functions.pubsub.schedule('every 60 minutes').onRun((context) => {
 //     console.log('Recalculate totals will be run every 60 minutes!');
@@ -23,6 +24,18 @@ import { UserDB } from "./modules/db/UserDB";
 
 //     return null;
 // });
+
+exports.forceRecalculation = functions.https.onCall((req:any, context:any):any => {
+    console.log('Recalculatng totals triggered ...');
+    const leaderboard:Leaderboard = new Leaderboard();
+    leaderboard.calculateLeaderboards(req.challenge).then(() => {
+        console.log(`completed calculating leaderboards`);
+    }).catch((err: Error) => {
+        console.error(err);
+    });
+
+    return null;
+});
 
 // Listen for changes in all documents in the 'challengs' collection and all subcollections
 exports.listenAllActivityUpdates = functions.firestore
@@ -46,13 +59,18 @@ exports.listenAllActivityUpdates = functions.firestore
             // deleted - 
             const deletedActivity:Activity = oldDocument as Activity;
             console.log(`Deleted Actvity`);
-            console.log(deletedActivity);
+            leaderboard.calculateNewResults(challenge, deletedActivity, ActivityUpdateType.delete).then((allResults:AllResults) => {
+                console.log(`New Overall Number of Activitis: ${allResults.overallResults.nbrActivities}`);
+            }).catch((err: Error) => {
+                const error = new Error(`Error ${err} in leaderboard.calculateNewResults for challnge : ${challenge.id}, index.ts, line: 53`);
+                console.error(error);
+            }); 
         } else {
             if (oldDocument === null) {
                 // created - 
                 const createdActivity:Activity = document as Activity;
                 console.log(`Created Actvity`);
-                leaderboard.calculateNewResults(challenge, createdActivity).then((allResults:AllResults) => {
+                leaderboard.calculateNewResults(challenge, createdActivity, ActivityUpdateType.create).then((allResults:AllResults) => {
                     console.log(`New Overall Number of Activitis: ${allResults.overallResults.nbrActivities}`);
                 }).catch((err: Error) => {
                     const error = new Error(`Error ${err} in leaderboard.calculateNewResults for challnge : ${challenge.id}, index.ts, line: 60`);
@@ -66,10 +84,19 @@ exports.listenAllActivityUpdates = functions.firestore
                 updatedActivity.id = oldDocumentId; 
                 // Note - ONLY update activity totals if distance, duration etc fields have changed
                 if ((oldActivity.distance !== updatedActivity.distance) || (oldActivity.duration !== updatedActivity.duration)) {
-                    console.log(`Modified Actvity - old`);
-                    // console.log(oldActivity);   
-                    console.log(`Modified Actvity - new`);
-                    // console.log(updatedActivity);   
+                    console.log(`Modified Actvity`);
+
+                    // Calculate the net change between the new and the old activity
+                    const netActivity = updatedActivity;
+                    netActivity.distance = updatedActivity.distance - oldActivity.distance;
+                    netActivity.duration = updatedActivity.duration - oldActivity.duration;
+
+                    leaderboard.calculateNewResults(challenge, netActivity, ActivityUpdateType.update).then((allResults:AllResults) => {
+                        console.log(`New Overall Number of Activitis: ${allResults.overallResults.nbrActivities}`);
+                    }).catch((err: Error) => {
+                        const error = new Error(`Error ${err} in leaderboard.calculateNewResults for challnge : ${challenge.id}, index.ts, line: 81`);
+                        console.error(error);
+                    }); 
                 } else {
                     console.log(`Distance / duration did not change - no need to reclc totals`);
                 }

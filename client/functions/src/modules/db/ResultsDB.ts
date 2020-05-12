@@ -2,7 +2,7 @@ import * as admin from 'firebase-admin';
 import { APP_CONFIG } from "../FirebaseEnvironment";
 
 import { Result } from "../interfaces/Result";
-import { AllResults } from "../Interfaces/Result.Types";
+import { AllResults } from "../interfaces/Result.Types";
 import { Challenge } from "../interfaces/Challenge";
 
 class ResultsDB {
