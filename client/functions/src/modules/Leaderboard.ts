@@ -218,19 +218,19 @@ class Leaderboard {
 
     public calculateNewResults(challenge:Challenge, activity:Activity):any {
         return new Promise<any>((resolve:any, reject:any) => {
-            const leaderboard: Leaderboard = new Leaderboard();
-            leaderboard.getResults(challenge).then((allResults:AllResults) => {
+            // DONT update new one if you have to recalc since somehow it gets it
+            const resultsDB: ResultsDB = new ResultsDB();
+            resultsDB.getAll(challenge).then((allResults: AllResults) => {
+                // console.log(`getResults allResults: ${JSON.stringify(allResults.overallResults, null,2)}`);
+                // if found results, just update them
                 const newAllResults = allResults;
-                // console.log(`calculateNewResults newAllResults: ${JSON.stringify(newAllResults.overallResults, null,2)}`);
-
                 newAllResults.challengeUid = challenge.id;
                 newAllResults.overallResults = this.calulateOverallResults(challenge, allResults.overallResults, activity);
                 newAllResults.teamResults = this.calulateTeamResults(challenge, allResults.teamResults, activity);
                 newAllResults.userResults = this.calulateUserResults(challenge, allResults.userResults, activity);
 
-                // Must Save now
-                const resultsDB:ResultsDB = new ResultsDB();
-                resultsDB.save(newAllResults).then (() => {
+                const saveResultsDB:ResultsDB = new ResultsDB();
+                saveResultsDB.save(newAllResults).then (() => {
                     console.log(`Saved all results to challenge ${newAllResults.challengeUid}`);
                     resolve(newAllResults);
                 }).catch ((err1: Error) => {
@@ -238,11 +238,15 @@ class Leaderboard {
                     console.error(error);
                     reject(error);  
                 });
-    
-                resolve(newAllResults);
-            }).catch(err => {
-                reject(err);
-            });
+            }).catch(_ => {
+                // Couldnt find - recalc and get
+                this.calculateLeaderboards(challenge).then((allResults: AllResults) => {
+                    // Send back null so doesnt add new activity
+                    resolve(allResults);
+                }).catch((err2: Error) => {
+                    reject(err2);
+                });
+            }); 
         });
     }
 
@@ -252,11 +256,12 @@ class Leaderboard {
 
             resultsDB.getAll(challenge).then((allResults: AllResults) => {
                 // console.log(`getResults allResults: ${JSON.stringify(allResults.overallResults, null,2)}`);
+                // if found rssults, just return
                 resolve(allResults);
             }).catch(_ => {
                 // Couldnt find - recalc and get
                 this.calculateLeaderboards(challenge).then((allResults: AllResults) => {
-                    // Send back
+                    // Send back null so doesnt add new activity
                     resolve(allResults);
                 }).catch((err2: Error) => {
                     reject(err2);

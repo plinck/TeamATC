@@ -33,7 +33,6 @@ exports.listenAllActivityUpdates = functions.firestore
         console.log(`context.params.activityCollectionId == "${context.params.activityCollectionId}"`);
         console.log(`context.params.activityId == "${context.params.activityId}"`);
 
-        const newActivity = change.after.data() as Activity;
         const leaderboard:Leaderboard = new Leaderboard();
         const challenge = new Challenge(context.params.challengeUid);
 
@@ -53,8 +52,7 @@ exports.listenAllActivityUpdates = functions.firestore
                 // created - 
                 const createdActivity:Activity = document as Activity;
                 console.log(`Created Actvity`);
-                console.log(createdActivity);  
-                leaderboard.calculateNewResults(challenge, newActivity).then((allResults:AllResults) => {
+                leaderboard.calculateNewResults(challenge, createdActivity).then((allResults:AllResults) => {
                     console.log(`New Overall Number of Activitis: ${allResults.overallResults.nbrActivities}`);
                 }).catch((err: Error) => {
                     const error = new Error(`Error ${err} in leaderboard.calculateNewResults for challnge : ${challenge.id}, index.ts, line: 60`);

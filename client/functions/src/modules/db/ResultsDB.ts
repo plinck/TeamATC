@@ -58,13 +58,13 @@ class ResultsDB {
                     // console.log(`getResults allResults: ${JSON.stringify(allResults, null,2)}`);
                     resolve(allResults);
                 } else {
-                    const error = new Error(`Didnt find any results for challenge : ${challenge.id}, ResultsDB.ts, line: 61`);
-                    console.error(error);
+                    const error = new Error(`Warning Didnt find any results for challenge : ${challenge.id}, ResultsDB.ts, line: 61`);
+                    console.log(error);
                     reject(error);
                 }
             }).catch((err: Error) => {
-                const error = new Error(`Error ${err} retrieving results for challenge : ${challenge.id}, ResultsDB.ts, line: 66`);
-                console.error(error);
+                const error = new Error(`Warning ${err} retrieving results for challenge : ${challenge.id}, ResultsDB.ts, line: 66`);
+                console.log(error);
                 reject(error);
             });    
         }); //promise
