@@ -1,6 +1,6 @@
 class Result {
     challengeUid: string;
-    overalRecord: boolean;
+    overallRecord: boolean;
     teamRecord: boolean;
     teamUid: string;
     teamName: string;
@@ -28,9 +28,12 @@ class Result {
     otherNbrActivities: number;
     otherDurationTotal: number;
 
-    constructor() {
+    constructor(challengeUid: string) {
         this.challengeUid = "";
-        this.overalRecord = false;
+        if (challengeUid && challengeUid !== "") {
+            this.challengeUid = challengeUid;
+        }
+        this.overallRecord = false;
         this.teamRecord = false;
         this.teamUid = "";
         this.teamName = "";

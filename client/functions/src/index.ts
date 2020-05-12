@@ -9,6 +9,8 @@ import { Leaderboard } from "./modules/Leaderboard";
 import { Challenge } from "./modules/interfaces/Challenge";
 import { AllResults } from './modules/Interfaces/Result.Types';
 import { Activity } from './modules/interfaces/Activity';
+import { User } from "./modules/Interfaces/User";
+import { UserDB } from "./modules/db/UserDB";
 
 // exports.scheduledFunction = functions.pubsub.schedule('every 60 minutes').onRun((context) => {
 //     console.log('Recalculate totals will be run every 60 minutes!');
@@ -52,10 +54,10 @@ exports.listenAllActivityUpdates = functions.firestore
                 const createdActivity:Activity = document as Activity;
                 console.log(`Created Actvity`);
                 console.log(createdActivity);  
-                leaderboard.calculateNewResults(challenge, newActivity).then ((allResults:AllResults) => {
+                leaderboard.calculateNewResults(challenge, newActivity).then((allResults:AllResults) => {
                     console.log(`New Overall Number of Activitis: ${allResults.overallResults.nbrActivities}`);
                 }).catch((err: Error) => {
-                    const error = new Error(`Error calculateNewResults for challnge : ${challenge.id}, index.ts, line: 58`);
+                    const error = new Error(`Error ${err} in leaderboard.calculateNewResults for challnge : ${challenge.id}, index.ts, line: 60`);
                     console.error(error);
                 }); 
             } else { 
@@ -64,13 +66,18 @@ exports.listenAllActivityUpdates = functions.firestore
                 oldActivity.id = oldDocumentId; 
                 const updatedActivity:Activity = document as Activity;
                 updatedActivity.id = oldDocumentId; 
-                console.log(`Modified Actvity - old`);
-                console.log(oldActivity);   
-                console.log(`Modified Actvity - new`);
-                console.log(updatedActivity);   
-            }   
+                // Note - ONLY update activity totals if distance, duration etc fields have changed
+                if ((oldActivity.distance !== updatedActivity.distance) || (oldActivity.duration !== updatedActivity.duration)) {
+                    console.log(`Modified Actvity - old`);
+                    // console.log(oldActivity);   
+                    console.log(`Modified Actvity - new`);
+                    // console.log(updatedActivity);   
+                } else {
+                    console.log(`Distance / duration did not change - no need to reclc totals`);
+                }
+            }
         }
-    return true;
+    return 0;
 });
 
 exports.getChallengeResults = functions.https.onCall((req:any, context:any):any => {
@@ -78,10 +85,10 @@ exports.getChallengeResults = functions.https.onCall((req:any, context:any):any 
         const challenge = new Challenge(req.challengeUid);
         const leaderboard: Leaderboard = new Leaderboard();
         leaderboard.getResults(challenge).then((allResults:AllResults) => {
-            console.log(`Overall nbrActivities: ${allResults.overallResults.nbrActivities}`);
-            console.log(`Overall distance: ${allResults.overallResults.distanceTotal}`);
-            console.log(`Overall pointsTotal: ${allResults.overallResults.pointsTotal}`);
-            console.log(`Overall durationTotal: ${allResults.overallResults.durationTotal}`);
+            // console.log(`Overall nbrActivities: ${allResults.overallResults.nbrActivities}`);
+            // console.log(`Overall distance: ${allResults.overallResults.distanceTotal}`);
+            // console.log(`Overall pointsTotal: ${allResults.overallResults.pointsTotal}`);
+            // console.log(`Overall durationTotal: ${allResults.overallResults.durationTotal}`);
             resolve(allResults);
         }).catch(err => {
             reject(err);
@@ -90,7 +97,7 @@ exports.getChallengeResults = functions.https.onCall((req:any, context:any):any 
 });
 
 exports.setEnviromentFromClient = functions.https.onCall((environment, context) => {
-    console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
+    // console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
     envSet(environment.org, environment.env, environment.challengeUid);
     
     console.log(`Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`);
@@ -132,6 +139,44 @@ const webhook = require('./modules/webhook.js');
 exports.webhook = webhook.strava;
 
 // ===============================================================================================
+// User Batch Updates from denormalizaion
+// ===============================================================================================
+// Listen for changes in users
+exports.listenUserUpdates = functions.firestore
+    .document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/users/{userId}`)
+    .onUpdate((change: functions.Change<functions.firestore.DocumentSnapshot>, context: functions.EventContext) => {
+        console.log(`listenUserUpdates for userId (context.params.userId) == ${context.params.userId}`);
+
+        const document:FirebaseFirestore.DocumentData = change.after.exists ? change.after.data() : null;
+        const documentId = context.params.userId;
+
+        const newUser = document as User;
+        // console.log(`listenUserUpdates displayName == ${newUser.displayName}`);
+        newUser.uid = documentId;
+        newUser.displayName = newUser.firstName + " " + newUser.lastName;
+        const userDB = new UserDB();
+        userDB.updateUserActivityDisplayNameWithUser(newUser).then(() => {
+            return true;
+        }).catch((err: Error) => {
+            console.error(err);    
+            return false;
+        });   
+
+    return 0;
+});
+
+// This allows the change to be initiated from client with just the uid (id) for the user
+exports.updateUserActivityDisplayName = functions.https.onCall((req, context: functions.https.CallableContext) => {
+    const userDB = new UserDB();
+    userDB.updateUserActivityDisplayNameWithUid(req.userId).then(() => {
+        return true;
+    }).catch(err => {
+        return false;
+    });   
+    return;
+});
+
+// ===============================================================================================
 // Strava module functions
 // --------------------------
 // I did oauth function using expores since it was the simplest (maybe only) way
@@ -139,12 +184,11 @@ exports.webhook = webhook.strava;
 // ===============================================================================================
 
 exports.fBFupdateTeam = functions.https.onCall((req, res) => {
-    console.log(`In fBFupdateTeam with: req ${JSON.stringify(req)}`);
+    // console.log(`In fBFupdateTeam with: req ${JSON.stringify(req)}`);
 
-    const challengeUid = req.challengeUid;
     const team = req.team;
 
-    console.log(`In fBFupdateTeam with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
+    // console.log(`In fBFupdateTeam with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
     return new Promise((resolve, reject) => {
         const dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
 
@@ -158,10 +202,10 @@ exports.fBFupdateTeam = functions.https.onCall((req, res) => {
             });
             return batch.commit();
         }).then(() => {
-            console.log("Batch successfully committed!");
+            console.log("Update Team Batch successfully committed!");
             resolve();
         }).catch((err) =>{
-            console.error("Batch failed: ", err);
+            console.error("Team Batch failed: ", err);
             reject(err);
         });
 
@@ -170,12 +214,12 @@ exports.fBFupdateTeam = functions.https.onCall((req, res) => {
 });
 
 exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
-    console.log(`In fBFupdateActivityTeamName with: req ${JSON.stringify(req)}`);
+    // console.log(`In fBFupdateActivityTeamName with: req ${JSON.stringify(req)}`);
 
     const challengeUid = req.challengeUid;
     const team = req.team;
 
-    console.log(`In fBFupdateActivityTeamName with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
+    // console.log(`In fBFupdateActivityTeamName with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
     return new Promise((resolve, reject) => {
         let activitiesRef = undefined;
         if (challengeUid && challengeUid !== "") {
@@ -192,10 +236,10 @@ exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
             });
             return batch.commit();
         }).then(() => {
-            console.log("Batch successfully committed!");
+            console.log("Activity Team Batch successfully committed!");
             resolve();
         }).catch((err) =>{
-            console.error("Batch failed: ", err);
+            console.error("Activity Team Batch failed: ", err);
             reject(err);
         });
 

@@ -11,7 +11,7 @@ class Leaderboard {
 
     public calculateLeaderboards(challenge: Challenge) {
         return new Promise<any>((resolve:any, reject:any) => {
-            console.log("Leaderboard.calculateLeaderboards() started ...");
+            // console.log("Leaderboard.calculateLeaderboards() started ...");
 
                 console.log(`Leaderboard.calculateLeaderboards(${challenge.id}) running ...`);
                 // get All Activities for challenge
@@ -28,11 +28,11 @@ class Leaderboard {
                     console.log(`Nbr of Activities: ${activities.length}`);
                     const allResuts = this.totals(challenge, activities);
             
-                    console.log(`Nbr Overall Activities: ${allResuts.overallResults.nbrActivities}`);
-                    console.log(`Nbr Team Results: ${allResuts.userResults.length}`);
-                    console.log(`Nbr User Results: ${allResuts.teamResults.length}`);
+                    // console.log(`Nbr Overall Activities: ${allResuts.overallResults.nbrActivities}`);
+                    // console.log(`Nbr Team Results: ${allResuts.userResults.length}`);
+                    // console.log(`Nbr User Results: ${allResuts.teamResults.length}`);
 
-                    console.log(`Saving all results to challenge ${allResuts.challengeUid}`);
+                    // console.log(`Saving all results to challenge ${allResuts.challengeUid}`);
                     // Must Save now
                     const resultsDB:ResultsDB = new ResultsDB();
                     resultsDB.save(allResuts).then (() => {
@@ -53,7 +53,7 @@ class Leaderboard {
 
     private totals(challenge: Challenge, activities:Array<Activity>): AllResults {
         // console.log("totals() started ...");
-        let overallResults = new Result();
+        let overallResults = new Result(challenge.id);
         let userResults: Array<Result> = Array<Result>();
         let teamResults: Array<Result> = Array<Result>();
     
@@ -102,7 +102,7 @@ class Leaderboard {
         // console.log("totals() started ...");
     
         let newResult = result;
-        newResult.overalRecord = true;
+        newResult.overallRecord = true;
     
         newResult = this.computeRecordTotals(challenge, newResult, activity);
 
@@ -112,7 +112,7 @@ class Leaderboard {
     private calulateTeamResults(challenge:Challenge, results:Array<Result>, activity:Activity): Array<Result> {
         // console.log("calulateUserResults() started ...");
 
-        let newResult: Result = new Result();
+        let newResult: Result = new Result(challenge.id);
         const idx = results.findIndex((result:Result) => {
             const foundIdx = result.teamUid === activity.teamUid;
             return foundIdx;
@@ -142,7 +142,7 @@ class Leaderboard {
     private calulateUserResults(challenge:Challenge, results:Array<Result>, activity:Activity): Array<Result> {
         // console.log("calulateUserResults() started ...");
 
-        let newResult: Result = new Result();
+        let newResult: Result = new Result(challenge.id);
         const idx = results.findIndex((result:Result) => {
             const foundIdx = result.uid === activity.uid;
             return foundIdx;
@@ -220,20 +220,13 @@ class Leaderboard {
         return new Promise<any>((resolve:any, reject:any) => {
             const leaderboard: Leaderboard = new Leaderboard();
             leaderboard.getResults(challenge).then((allResults:AllResults) => {
-                console.log(`Old Overall nbrActivities: ${allResults.overallResults.nbrActivities}`);
-                console.log(`Old Overall distance: ${allResults.overallResults.distanceTotal}`);
-                console.log(`Old Overall pointsTotal: ${allResults.overallResults.pointsTotal}`);
-                console.log(`Old Overall durationTotal: ${allResults.overallResults.durationTotal}`);
-
                 const newAllResults = allResults;
+                // console.log(`calculateNewResults newAllResults: ${JSON.stringify(newAllResults.overallResults, null,2)}`);
+
                 newAllResults.challengeUid = challenge.id;
                 newAllResults.overallResults = this.calulateOverallResults(challenge, allResults.overallResults, activity);
                 newAllResults.teamResults = this.calulateTeamResults(challenge, allResults.teamResults, activity);
                 newAllResults.userResults = this.calulateUserResults(challenge, allResults.userResults, activity);
-                console.log(`New Overall nbrActivities: ${newAllResults.overallResults.nbrActivities}`);
-                console.log(`New Overall distance: ${newAllResults.overallResults.distanceTotal}`);
-                console.log(`New Overall pointsTotal: ${newAllResults.overallResults.pointsTotal}`);
-                console.log(`New Overall durationTotal: ${newAllResults.overallResults.durationTotal}`);
 
                 // Must Save now
                 const resultsDB:ResultsDB = new ResultsDB();
@@ -241,7 +234,7 @@ class Leaderboard {
                     console.log(`Saved all results to challenge ${newAllResults.challengeUid}`);
                     resolve(newAllResults);
                 }).catch ((err1: Error) => {
-                    const error = new Error(`Error saving results for challenge ${challenge.id} -- ${err1} : "Leaderboard.ts", line: 243`);
+                    const error = new Error(`Error saving results for challenge ${challenge.id} -- ${err1} : "Leaderboard.ts", line: 237`);
                     console.error(error);
                     reject(error);  
                 });
@@ -257,9 +250,10 @@ class Leaderboard {
         return new Promise<any>((resolve:any, reject:any) => {
             const resultsDB: ResultsDB = new ResultsDB();
 
-            resultsDB.get(challenge).then((allResults: AllResults) => {
+            resultsDB.getAll(challenge).then((allResults: AllResults) => {
+                // console.log(`getResults allResults: ${JSON.stringify(allResults.overallResults, null,2)}`);
                 resolve(allResults);
-            }).catch(err => {
+            }).catch(_ => {
                 // Couldnt find - recalc and get
                 this.calculateLeaderboards(challenge).then((allResults: AllResults) => {
                     // Send back

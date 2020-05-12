@@ -1,7 +1,8 @@
 import { Result } from "./Result";
 
 type ResultType = {
-    overalRecord: boolean;
+    challengeUid: string,
+    overallRecord: boolean;
     teamRecord: boolean;
     teamUid: string;
     teamName: string;

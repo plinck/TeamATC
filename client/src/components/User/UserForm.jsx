@@ -273,6 +273,7 @@ class UserForm extends React.Component {
         console.log(`updating db with user.uid:${this.state.user.uid}`);
 
         const user = this.state.user;
+        user.displayName = user.firstName + " " + user.lastName;
         console.log(`user.teamName: ${user.teamName}`);
         // set team name from ID - SAVE THIS FOR LATER SINCE IT NEEDS TO BE BASED ON Selected Challenge
         // remove team stuff when adding user
