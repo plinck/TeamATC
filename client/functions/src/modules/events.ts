@@ -11,11 +11,11 @@ const updateActivity = ((user: any, accessToken:string, stravaActivityId: string
     return new Promise((resolve, reject) => {
         const stravaAccessToken = accessToken;
         // get the activity
-        console.log(`In updateActivity. Athlete Id ${user.stravaAthleteId},displayName: ${user.displayName},challengeUid: ${user.challengeUid},teamName: ${user.teamName},strava ActivyId: ${stravaActivityId},`);
+        // console.log(`In updateActivity. Athlete Id ${user.stravaAthleteId},displayName: ${user.displayName},challengeUid: ${user.challengeUid},teamName: ${user.teamName},strava ActivyId: ${stravaActivityId},`);
 
         if (stravaAccessToken) {
             const URIRequest = `https://www.strava.com/api/v3/activities/${stravaActivityId}`;
-            console.log(`URIRequest: ${URIRequest}`);
+            // console.log(`URIRequest: ${URIRequest}`);
             axios.get(URIRequest,
                 { headers: { 'Authorization': `Bearer ${stravaAccessToken}` } }
             ).then((res) => {
@@ -45,7 +45,7 @@ const updateActivity = ((user: any, accessToken:string, stravaActivityId: string
 const saveStravaEvent = ( (event : any) => {
     return new Promise((resolve, reject) => {
         // console.log(`In saveStravaEvent with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}`);
-        console.log(JSON.stringify(event,null,4));
+        // console.log(JSON.stringify(event,null,4));
 
         // make sure its an activity create event
         if (event.aspect_type !== "create" || event.object_type !== "activity") {
@@ -61,7 +61,7 @@ const saveStravaEvent = ( (event : any) => {
         const dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
         console.log(`Looking for Strava Athlete with id: ${stravaAthleteId} in user collection`);
         dbUsersRef.where("stravaAthleteId", "==", stravaAthleteId).limit(1).get().then((querySnapshot) => {
-            console.log(`User Collection Size: ${querySnapshot.size}`);
+            // console.log(`User Collection Size: ${querySnapshot.size}`);
             querySnapshot.forEach(doc => {
                 foundUser = true;
                 user = doc.data();

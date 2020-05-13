@@ -41,7 +41,7 @@ class Leaderboard {
                         console.log(`Saved all results to challenge ${allResuts.challengeUid}`);
                         resolve(allResuts);
                     }).catch ((err1: Error) => {
-                        const error = new Error(`Error saving results for challenge ${challenge.id} -- ${err1} : "Leaderboard.ts", line: 42`);
+                        const error = new Error(`Error saving results for challenge ${challenge.id} -- ${err1} : "Leaderboard.ts", line: 44`);
                         console.error(error);
                         reject(error);  
                     });
@@ -292,7 +292,7 @@ class Leaderboard {
                     console.log(`Saved all results to challenge ${newAllResults.challengeUid}`);
                     resolve(newAllResults);
                 }).catch ((err1: Error) => {
-                    const error = new Error(`Error saving results for challenge ${challenge.id} -- ${err1} : "Leaderboard.ts", line: 293`);
+                    const error = new Error(`Error saving results for challenge ${challenge.id} -- ${err1} : "Leaderboard.ts", line: 295`);
                     console.error(error);
                     reject(error);  
                 });

@@ -2,7 +2,6 @@ import * as functions from 'firebase-functions';
 import * as request from 'request';
 import * as express from 'express';
 import { FUNCTIONS_CONFIG } from "./FirebaseEnvironment";
-// import { saveStravaEvent } from "./events";
 import { IncomingStravaEventType, StravaEvent } from "./interfaces/StravaEvent";
 import { StravaEventDB } from "./db/StravaEventDB";
 
@@ -23,7 +22,6 @@ app.get('/strava', (req, res) => {
             if (mode === 'subscribe' && token === VERIFY_TOKEN) {     
             // Responds with the challenge token from the request
                 console.log('WEBHOOK_VERIFIED');
-                console.log('hub.challenge', challenge);
                 res.json({"hub.challenge":challenge});
             } else {
                 // Responds with '403 Forbidden' if verify tokens do not match
@@ -37,19 +35,29 @@ app.get('/strava', (req, res) => {
 });
 
 app.post('/strava', async (req, res) => {
-    const event:IncomingStravaEventType = req.body as IncomingStravaEventType;
-    console.log('[STRAVA] Event ' + event.aspect_type + ': ' + event.object_type + ' (' + event.object_id + ') for ' + event.owner_id + ' (updates: ' + JSON.stringify(event.updates) + ' @ ' + event.event_time);
+    const event: IncomingStravaEventType = req.body as IncomingStravaEventType;
+    console.log(`[STRAVA] Event: {
+        aspect_type:${event.aspect_type}
+        @event_time:${event.event_time}
+        object_id:${event.object_id}
+        object_type:${event.object_type}
+        owner_id:${event.owner_id}
+        subscription_id:${event.subscription_id}
+        updates:${JSON.stringify(event.updates)} 
+        }`);
     // save event for later processing
     const newEvent:StravaEvent = new StravaEvent(event);
 
     const stravaEventDB: StravaEventDB = new StravaEventDB();
     stravaEventDB.save(newEvent).then((savedEvent:StravaEvent) => {
-        return res.status(200).json({ success: true });
+        console.log(`Success saving event`);
+        res.status(200).json({ success: true });
+        return;
     }).catch(err => {
-        return res.status(200).json({ success: true });
+        console.log(`Error ${err} saving event`);
+        res.status(200).json({ success: true });
+        return;
     });
-
-
     // saveStravaEvent(event).then(() => {
     //     //return res.status(200).json({ success: true });
     // }).catch(err => {
@@ -57,13 +65,11 @@ app.post('/strava', async (req, res) => {
     // });
     // // I think i need to return quickly from this so strava knows it worked. ...
     // return res.status(200).json({ success: true });
-
 });
 
 app.get('/subscribe', (req, res) => {
         console.log(`called webhooks subscribe`);
         const callbackURL = req.query.callback_url ? req.query.callback_url : FUNCTIONS_CONFIG.strava.callback_url;
-        console.log(`callbackURL: ${callbackURL}`)
 
         const params = {
             client_id: FUNCTIONS_CONFIG.strava.client_id,
@@ -79,15 +85,15 @@ app.get('/subscribe', (req, res) => {
             `&verify_token=${params.verify_token}`
             ;
 
-        console.log(`URIRequest: ${URIRequest}`);
+        // console.log(`URIRequest: ${URIRequest}`);
         request.post(
             URIRequest,null,
             (error: any, response: any, body: any) => {
               if (error) {
                 console.error("Error from POST: ", error)
               }
-              console.log(`statusCode: ${response.statusCode}`)
-              console.log("Body from POST: ", body)
+            //   console.log(`statusCode: ${response.statusCode}`)
+            //   console.log("Body from POST: ", body)
             }
         )
         res.status(200).json({ success: true });

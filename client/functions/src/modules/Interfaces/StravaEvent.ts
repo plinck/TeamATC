@@ -24,7 +24,7 @@ class StravaEvent {
 
     constructor(event?: IncomingStravaEventType) {
         if (event) {
-            this.id = `{event.object_id}`;
+            this.id = `${event.object_id}`;
             this.aspect_type = event.aspect_type;
             this.event_time = event.event_time;
             this.object_id = event.object_id;

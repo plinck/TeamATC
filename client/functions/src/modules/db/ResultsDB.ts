@@ -58,13 +58,11 @@ class ResultsDB {
                     // console.log(`getResults allResults: ${JSON.stringify(allResults, null,2)}`);
                     resolve(allResults);
                 } else {
-                    const error = new Error(`Warning Didnt find any results for challenge : ${challenge.id}, ResultsDB.ts, line: 61`);
-                    console.log(error);
+                    console.log(`Warning Didnt find any results for challenge : ${challenge.id}, ResultsDB.ts, line: 61`);
                     reject(error);
                 }
             }).catch((err: Error) => {
-                const error = new Error(`Warning ${err} retrieving results for challenge : ${challenge.id}, ResultsDB.ts, line: 66`);
-                console.log(error);
+                console.log(`Warning ${err} retrieving results for challenge : ${challenge.id}, ResultsDB.ts, line: 65`);
                 reject(error);
             });    
         }); //promise
@@ -72,7 +70,7 @@ class ResultsDB {
 
     public save(allResults:AllResults) {
         return new Promise<any>((resolve:any, reject:any) => {
-            console.log(`ResultsDB.save -- save challenge ${allResults.challengeUid} document as: ${JSON.stringify(allResults)}`);
+            // console.log(`ResultsDB.save -- save challenge ${allResults.challengeUid} document as: ${JSON.stringify(allResults)}`);
             const dbResultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
             const batch = admin.firestore().batch();
 
@@ -82,7 +80,6 @@ class ResultsDB {
             const overallResult = JSON.parse(JSON.stringify(allResults.overallResults));
             const overallDocRef =  dbResultsRef.doc(overallKey);
             batch.set(overallDocRef, overallResult, { merge: true });
-            console.log(`Batch Set overall results`);
             // All teams 
             for (let i = 0; i < allResults.teamResults.length; i++) {
                 const resultsKey = `${allResults.challengeUid}-TR${i}`;
@@ -91,7 +88,6 @@ class ResultsDB {
                 const resultDocRef =  dbResultsRef.doc(resultsKey);
                 batch.set(resultDocRef, result, { merge: true });
             }
-            console.log(`Batch Set team results`);
             // All users
             for (let i = 0; i < allResults.userResults.length; i++) {
                 const resultsKey = `${allResults.challengeUid}-UR${i}`;
@@ -101,13 +97,12 @@ class ResultsDB {
                 result.updateDateTime = new Date();
                 batch.set(resultDocRef, result, { merge: true });
             }
-            console.log(`Batch Set user results`);
             // Commit the batch
             batch.commit().then(() => {
-                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 100`);
+                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 102`);
                 resolve();
             }).catch((err: Error) =>{
-                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 103`);
+                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 105`);
                 console.error(error);    
                 reject(err);
             });
@@ -210,7 +205,7 @@ class ResultsDB {
                     dbResultsRef.doc(resultsKey).set(result, { merge: true }).then (() => {
                         // OK, continue
                     }).catch ((err1: Error) => {
-                        const error = new Error(`Error ${err1} - Batch user update failed for team result ${i}, ResultsDB.ts, line: 206`);
+                        const error = new Error(`Error ${err1} - Batch user update failed for team result ${i}, ResultsDB.ts, line: 208`);
                         console.log(error);  
                         // Don worry, continue          
                     });
@@ -224,7 +219,7 @@ class ResultsDB {
                     dbResultsRef.doc(resultsKey).set(result, { merge: true }).then (() => {
                         // OK, continue
                     }).catch ((err1: Error) => {
-                        const error = new Error(`Error ${err1} - Batch user update failed for user result ${i}, ResultsDB.ts, line: 210`);
+                        const error = new Error(`Error ${err1} - Batch user update failed for user result ${i}, ResultsDB.ts, line: 222`);
                         console.log(error);  
                         // Don worry, continue          
                     });
@@ -235,10 +230,10 @@ class ResultsDB {
                 // return batch.commit();
                 return true;
             }).then(() => {
-                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 231`);
+                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 233`);
                 resolve();
             }).catch((err: Error) =>{
-                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 234`);
+                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 236`);
                 console.error(error);    
                 reject(err);
             });
