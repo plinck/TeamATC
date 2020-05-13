@@ -2,7 +2,9 @@ import * as functions from 'firebase-functions';
 import * as request from 'request';
 import * as express from 'express';
 import { FUNCTIONS_CONFIG } from "./FirebaseEnvironment";
-import { saveStravaEvent } from "./events";
+// import { saveStravaEvent } from "./events";
+import { IncomingStravaEventType, StravaEvent } from "./interfaces/StravaEvent";
+import { StravaEventDB } from "./db/StravaEventDB";
 
 const app = express();
 
@@ -35,16 +37,26 @@ app.get('/strava', (req, res) => {
 });
 
 app.post('/strava', async (req, res) => {
-    const event = req.body;
+    const event:IncomingStravaEventType = req.body as IncomingStravaEventType;
     console.log('[STRAVA] Event ' + event.aspect_type + ': ' + event.object_type + ' (' + event.object_id + ') for ' + event.owner_id + ' (updates: ' + JSON.stringify(event.updates) + ' @ ' + event.event_time);
-    // save event as activity
-    saveStravaEvent(event).then(() => {
-        //return res.status(200).json({ success: true });
+    // save event for later processing
+    const newEvent:StravaEvent = new StravaEvent(event);
+
+    const stravaEventDB: StravaEventDB = new StravaEventDB();
+    stravaEventDB.save(newEvent).then((savedEvent:StravaEvent) => {
+        return res.status(200).json({ success: true });
     }).catch(err => {
-        //return res.status(200).json({ success: true });
+        return res.status(200).json({ success: true });
     });
-    // I think i need to return quickly from this so strava knows it worked. ...
-    return res.status(200).json({ success: true });
+
+
+    // saveStravaEvent(event).then(() => {
+    //     //return res.status(200).json({ success: true });
+    // }).catch(err => {
+    //     //return res.status(200).json({ success: true });
+    // });
+    // // I think i need to return quickly from this so strava knows it worked. ...
+    // return res.status(200).json({ success: true });
 
 });
 
