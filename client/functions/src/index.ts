@@ -13,8 +13,8 @@ import { User } from "./modules/interfaces/User";
 import { UserDB } from "./modules/db/UserDB";
 import { ActivityUpdateType } from "./modules/interfaces/Common.Types";
 
-// exports.scheduledFunction = functions.pubsub.schedule('every 60 minutes').onRun((context) => {
-//     console.log('Recalculate totals will be run every 60 minutes!');
+// exports.scheduledFunction = functions.pubsub.schedule('5 6 * * *').onRun((context) => {
+//     console.log('This will be run every day at 6:05 AM UTC!');
 //     const leaderboard:Leaderboard = new Leaderboard();
 //     leaderboard.calculateLeaderboards().then(() => {
 //         console.log(`completed calculating leaderboards`);
@@ -27,14 +27,13 @@ import { ActivityUpdateType } from "./modules/interfaces/Common.Types";
 
 exports.forceRecalculation = functions.https.onCall((req:any, context:any):any => {
     console.log('Recalculatng totals triggered ...');
+    const challenge:Challenge = new Challenge(req.challengeUid);
     const leaderboard:Leaderboard = new Leaderboard();
-    leaderboard.calculateLeaderboards(req.challenge).then(() => {
+    return leaderboard.calculateLeaderboards(challenge).then(() => {
         console.log(`completed calculating leaderboards`);
     }).catch((err: Error) => {
         console.error(err);
     });
-
-    return null;
 });
 
 // Listen for changes in all documents in the 'challengs' collection and all subcollections
@@ -59,7 +58,7 @@ exports.listenAllActivityUpdates = functions.firestore
             // deleted - 
             const deletedActivity:Activity = oldDocument as Activity;
             console.log(`Deleted Actvity`);
-            leaderboard.calculateNewResults(challenge, deletedActivity, ActivityUpdateType.delete).then((allResults:AllResults) => {
+            return leaderboard.calculateNewResults(challenge, deletedActivity, ActivityUpdateType.delete).then((allResults:AllResults) => {
                 console.log(`New Overall Number of Activitis: ${allResults.overallResults.nbrActivities}`);
             }).catch((err: Error) => {
                 const error = new Error(`Error ${err} in leaderboard.calculateNewResults for challnge : ${challenge.id}, index.ts, line: 65`);
@@ -70,7 +69,7 @@ exports.listenAllActivityUpdates = functions.firestore
                 // created - 
                 const createdActivity:Activity = document as Activity;
                 console.log(`Created Actvity`);
-                leaderboard.calculateNewResults(challenge, createdActivity, ActivityUpdateType.create).then((allResults:AllResults) => {
+                return leaderboard.calculateNewResults(challenge, createdActivity, ActivityUpdateType.create).then((allResults:AllResults) => {
                     console.log(`New Overall Number of Activitis: ${allResults.overallResults.nbrActivities}`);
                 }).catch((err: Error) => {
                     const error = new Error(`Error ${err} in leaderboard.calculateNewResults for challnge : ${challenge.id}, index.ts, line: 76`);
@@ -91,7 +90,7 @@ exports.listenAllActivityUpdates = functions.firestore
                     netActivity.distance = updatedActivity.distance - oldActivity.distance;
                     netActivity.duration = updatedActivity.duration - oldActivity.duration;
 
-                    leaderboard.calculateNewResults(challenge, netActivity, ActivityUpdateType.update).then((allResults:AllResults) => {
+                    return leaderboard.calculateNewResults(challenge, netActivity, ActivityUpdateType.update).then((allResults:AllResults) => {
                         console.log(`New Overall Number of Activitis: ${allResults.overallResults.nbrActivities}`);
                     }).catch((err: Error) => {
                         const error = new Error(`Error ${err} in leaderboard.calculateNewResults for challnge : ${challenge.id}, index.ts, line: 97`);
@@ -180,25 +179,22 @@ exports.listenUserUpdates = functions.firestore
         newUser.uid = documentId;
         newUser.displayName = newUser.firstName + " " + newUser.lastName;
         const userDB = new UserDB();
-        userDB.updateUserActivityDisplayNameWithUser(newUser).then(() => {
+        return userDB.updateUserActivityDisplayNameWithUser(newUser).then(() => {
             return true;
         }).catch((err: Error) => {
             console.error(err);    
             return false;
         });   
-
-    return 0;
 });
 
 // This allows the change to be initiated from client with just the uid (id) for the user
 exports.updateUserActivityDisplayName = functions.https.onCall((req, context: functions.https.CallableContext) => {
     const userDB = new UserDB();
-    userDB.updateUserActivityDisplayNameWithUid(req.userId).then(() => {
+    return userDB.updateUserActivityDisplayNameWithUid(req.userId).then(() => {
         return true;
     }).catch(err => {
         return false;
     });   
-    return;
 });
 
 // ===============================================================================================

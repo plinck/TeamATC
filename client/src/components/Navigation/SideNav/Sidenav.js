@@ -73,7 +73,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MiniDrawer(props) {
+
+export default function SideNav(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -184,6 +185,27 @@ export default function MiniDrawer(props) {
               <ListItemText>Contact Support</ListItemText>
             </ListItem>
           </a>
+          {props.user && props.user.isAdmin ?  
+            <div>
+              <Divider></Divider>
+              <NavLink className={classes.sideText} to="/admin">
+                <ListItem selected={window.location.pathname === "/admin"} button>
+                  <ListItemIcon>
+                    <PeopleIcon />
+                  </ListItemIcon>
+                  <ListItemText>Users</ListItemText>
+                </ListItem>
+              </NavLink>
+              <NavLink className={classes.sideText} to="/adminfunctions">
+                <ListItem selected={window.location.pathname === "/adminfunctions"} button>
+                  <ListItemIcon>
+                    <DirectionsBikeIcon />
+                  </ListItemIcon>
+                  <ListItemText>Admin</ListItemText>
+                </ListItem>
+              </NavLink>
+            </div>
+           : <div></div>}
           <Divider></Divider>
           <ListItem style={{ textAlign: "center" }}>
             {open ? (

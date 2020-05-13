@@ -29,6 +29,7 @@ type ResultType = {
     otherPointsTotal: number;
     otherNbrActivities: number;
     otherDurationTotal: number;
+    updateDateTime: Date;
 }
 
 type AllResults = {

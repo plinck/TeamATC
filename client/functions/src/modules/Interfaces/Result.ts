@@ -27,6 +27,7 @@ class Result {
     otherPointsTotal: number;
     otherNbrActivities: number;
     otherDurationTotal: number;
+    updateDateTime: Date;
 
     constructor(challengeUid: string) {
         this.challengeUid = "";
@@ -59,7 +60,8 @@ class Result {
         this.otherDistanceTotal = 0;
         this.otherPointsTotal = 0;
         this.otherNbrActivities = 0;
-        this.otherDurationTotal = 0;        
+        this.otherDurationTotal = 0;     
+        this.updateDateTime = new Date();   
     }
 }
 

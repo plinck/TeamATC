@@ -8,7 +8,8 @@ import Navigation from './components/Navigation/Navigation.jsx';
 import LandingPage from './components/Landing/Landing';
 import Dashboard from './components/Dashboard/dashboard.jsx';
 import Account from './components/Account/Account';
-import Admin from './components/Admin/Admin';
+import Admin from './components/Admin/Admin.jsx';
+import AdminFunctions from './components/Admin/AdminFunctions.jsx';
 import Results from './components/Results/Results';
 import Activities from './components/Activity/Activities.jsx';
 import ActivityPage from './components/Activity/ActivityPage.jsx';
@@ -60,6 +61,7 @@ class App extends React.Component {
           <Route exact path="/teams" component={Teams} />
           <Route exact path="/account" component={Account} />
           <Route exact path="/admin" component={Admin} />
+          <Route exact path="/adminfunctions" component={AdminFunctions} />
           <Route exact path="/activities" component={Activities} />
           <Route exact path="/activitypage" component={ActivityPage} />
           <Route exact path="/activityform" component={ActivityForm} />
