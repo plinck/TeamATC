@@ -17,6 +17,7 @@ class Leaderboard {
                 // get All Activities for challenge
                 const dbActivitiesRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(challenge.id).collection(`activities`);
                 dbActivitiesRef.get().then((querySnapshot) => {
+                    console.log(`dbActivitiesRef.get() completed ...`);
                     const activities = Array<Activity>();
                     querySnapshot.forEach(doc => {
                         const docData:FirebaseFirestore.DocumentData = doc.data();
@@ -34,6 +35,7 @@ class Leaderboard {
 
                     // console.log(`Saving all results to challenge ${allResuts.challengeUid}`);
                     // Must Save now
+                    console.log(`Trying to save resultsDB.save(`);
                     const resultsDB:ResultsDB = new ResultsDB();
                     resultsDB.save(allResuts).then (() => {
                         console.log(`Saved all results to challenge ${allResuts.challengeUid}`);

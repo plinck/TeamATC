@@ -35,12 +35,17 @@ app.get('/strava', (req, res) => {
 });
 
 app.post('/strava', async (req, res) => {
-  const event = req.body;
-  console.log('[STRAVA] Event ' + event.aspect_type + ': ' + event.object_type + ' (' + event.object_id + ') for ' + event.owner_id + ' (updates: ' + JSON.stringify(event.updates) + ' @ ' + event.event_time);
-  // save event as activity
-  saveStravaEvent(event);
+    const event = req.body;
+    console.log('[STRAVA] Event ' + event.aspect_type + ': ' + event.object_type + ' (' + event.object_id + ') for ' + event.owner_id + ' (updates: ' + JSON.stringify(event.updates) + ' @ ' + event.event_time);
+    // save event as activity
+    saveStravaEvent(event).then(() => {
+        //return res.status(200).json({ success: true });
+    }).catch(err => {
+        //return res.status(200).json({ success: true });
+    });
+    // I think i need to return quickly from this so strava knows it worked. ...
+    return res.status(200).json({ success: true });
 
-  return res.status(200).json({ success: true });
 });
 
 app.get('/subscribe', (req, res) => {

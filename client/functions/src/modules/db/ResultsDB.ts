@@ -72,29 +72,36 @@ class ResultsDB {
 
     public save(allResults:AllResults) {
         return new Promise<any>((resolve:any, reject:any) => {
-            // console.log(`ResultsDB.save -- save challenge ${allResults.challengeUid} document as: ${JSON.stringify(allResults)}`);
+            console.log(`ResultsDB.save -- save challenge ${allResults.challengeUid} document as: ${JSON.stringify(allResults)}`);
             const dbResultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
             const batch = admin.firestore().batch();
 
             // Overall results - 1 record
             const overallKey = `${allResults.challengeUid}-OR1`;
+            allResults.overallResults.updateDateTime = new Date();
             const overallResult = JSON.parse(JSON.stringify(allResults.overallResults));
             const overallDocRef =  dbResultsRef.doc(overallKey);
             batch.set(overallDocRef, overallResult, { merge: true });
+            console.log(`Batch Set overall results`);
             // All teams 
             for (let i = 0; i < allResults.teamResults.length; i++) {
                 const resultsKey = `${allResults.challengeUid}-TR${i}`;
+                allResults.teamResults[i].updateDateTime = new Date();
                 const result = JSON.parse(JSON.stringify(allResults.teamResults[i]));
                 const resultDocRef =  dbResultsRef.doc(resultsKey);
                 batch.set(resultDocRef, result, { merge: true });
             }
+            console.log(`Batch Set team results`);
             // All users
             for (let i = 0; i < allResults.userResults.length; i++) {
                 const resultsKey = `${allResults.challengeUid}-UR${i}`;
+                allResults.teamResults[i].updateDateTime = new Date();
                 const result = JSON.parse(JSON.stringify(allResults.userResults[i]));
                 const resultDocRef =  dbResultsRef.doc(resultsKey);
+                result.updateDateTime = new Date();
                 batch.set(resultDocRef, result, { merge: true });
             }
+            console.log(`Batch Set user results`);
             // Commit the batch
             batch.commit().then(() => {
                 console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 100`);

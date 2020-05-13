@@ -3,9 +3,10 @@ import { NavLink, Link } from "react-router-dom";
 import SignOutButton from "../Auth/SignOut/SignOut.jsx";
 import AppBar from "@material-ui/core/AppBar";
 import { makeStyles } from "@material-ui/core/styles";
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import AuthUserContext, { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { withRouter } from "react-router-dom";
 import AccountMenu from "../Account/AccountMenu";
+import AdminMenu from "../Admin/AdminMenu.jsx";
 import "./Navigation.css";
 import {
   Fab,
@@ -171,6 +172,9 @@ let Navigation = (props) => {
         </ListItemIcon>
         <ListItemText>
           <NavLink className={classes.mobileButton} to="/admin">
+            Users
+          </NavLink>
+          <NavLink className={classes.mobileButton} to="/adminfunctions">
             Admin
           </NavLink>
         </ListItemText>
@@ -213,7 +217,9 @@ let Navigation = (props) => {
   );
   const navigationAdmin = (
     <div className={classes.navButtonsHide}>
-      <Sidenav></Sidenav>
+      <AuthUserContext.Consumer>
+        {user => <Sidenav {...props} user={user} />}
+      </AuthUserContext.Consumer>
 
       <NavLink className={classes.menuButton} to="/activitypage">
         <Fab size="small" color="primary" aria-label="add">
@@ -224,10 +230,8 @@ let Navigation = (props) => {
       <Button>
         <AccountMenu />
       </Button>
-      <Button>
-        <NavLink className={classes.menuButton} to="/admin">
-          Admin
-        </NavLink>
+      <Button variant="outlined" color="primary">
+        <AdminMenu />
       </Button>
     </div>
   );
