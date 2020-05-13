@@ -24,7 +24,7 @@ const envSet = (org:string, env:string, challengeUid:string) => {
     APP_CONFIG.ENV = env;
     APP_CONFIG.CHALLENGEUID = challengeUid;
     
-    console.log(`Using global environment: ${JSON.stringify(APP_CONFIG, null, 2)}`);  
+    // console.log(`Using global environment: ${JSON.stringify(APP_CONFIG, null, 2)}`);  
     return;
 };
 

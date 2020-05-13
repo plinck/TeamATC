@@ -125,7 +125,7 @@ exports.setEnviromentFromClient = functions.https.onCall((environment, context) 
     // console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
     envSet(environment.org, environment.env, environment.challengeUid);
     
-    console.log(`Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`);
+    // console.log(`Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`);
     return {message: `Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`};
 });
 

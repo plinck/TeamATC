@@ -26,7 +26,7 @@ if (ENV === "prod") {
     CHALLENGE="mFpSMP7oWvriDwIehwzB" 
 }
 
-console.log(`Using global environment ORG: ${ORG}, ENV: ${ENV}  CHALLENGE: ${CHALLENGE}`);  
+// console.log(`Using global environment ORG: ${ORG}, ENV: ${ENV}  CHALLENGE: ${CHALLENGE}`);  
 // console.log(`Using FB_CONFIG: ${JSON.stringify(FB_CONFIG, null, 2)}`);  
 
 class globalEnv {
@@ -36,7 +36,7 @@ class globalEnv {
             ORG: ORG,
             ENV: ENV,
         };
-        console.log(`Using global environment: ${JSON.stringify(env, null, 4)}`);  
+        // console.log(`Using global environment: ${JSON.stringify(env, null, 4)}`);  
         return env;
     };
 }
