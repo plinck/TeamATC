@@ -83,18 +83,17 @@ class ResultsDB {
             // All teams 
             for (let i = 0; i < allResults.teamResults.length; i++) {
                 const resultsKey = `${allResults.challengeUid}-TR${i}`;
-                allResults.teamResults[i].updateDateTime = new Date();
                 const result = JSON.parse(JSON.stringify(allResults.teamResults[i]));
+                result.updateDateTime = new Date();
                 const resultDocRef =  dbResultsRef.doc(resultsKey);
                 batch.set(resultDocRef, result, { merge: true });
             }
             // All users
             for (let i = 0; i < allResults.userResults.length; i++) {
                 const resultsKey = `${allResults.challengeUid}-UR${i}`;
-                allResults.teamResults[i].updateDateTime = new Date();
                 const result = JSON.parse(JSON.stringify(allResults.userResults[i]));
-                const resultDocRef =  dbResultsRef.doc(resultsKey);
                 result.updateDateTime = new Date();
+                const resultDocRef =  dbResultsRef.doc(resultsKey);
                 batch.set(resultDocRef, result, { merge: true });
             }
             // Commit the batch
