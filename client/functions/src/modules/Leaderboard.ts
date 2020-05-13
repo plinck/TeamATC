@@ -290,7 +290,7 @@ class Leaderboard {
                     console.log(`Saved all results to challenge ${newAllResults.challengeUid}`);
                     resolve(newAllResults);
                 }).catch ((err1: Error) => {
-                    const error = new Error(`Error saving results for challenge ${challenge.id} -- ${err1} : "Leaderboard.ts", line: 237`);
+                    const error = new Error(`Error saving results for challenge ${challenge.id} -- ${err1} : "Leaderboard.ts", line: 293`);
                     console.error(error);
                     reject(error);  
                 });

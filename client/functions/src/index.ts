@@ -62,7 +62,7 @@ exports.listenAllActivityUpdates = functions.firestore
             leaderboard.calculateNewResults(challenge, deletedActivity, ActivityUpdateType.delete).then((allResults:AllResults) => {
                 console.log(`New Overall Number of Activitis: ${allResults.overallResults.nbrActivities}`);
             }).catch((err: Error) => {
-                const error = new Error(`Error ${err} in leaderboard.calculateNewResults for challnge : ${challenge.id}, index.ts, line: 53`);
+                const error = new Error(`Error ${err} in leaderboard.calculateNewResults for challnge : ${challenge.id}, index.ts, line: 65`);
                 console.error(error);
             }); 
         } else {
@@ -73,7 +73,7 @@ exports.listenAllActivityUpdates = functions.firestore
                 leaderboard.calculateNewResults(challenge, createdActivity, ActivityUpdateType.create).then((allResults:AllResults) => {
                     console.log(`New Overall Number of Activitis: ${allResults.overallResults.nbrActivities}`);
                 }).catch((err: Error) => {
-                    const error = new Error(`Error ${err} in leaderboard.calculateNewResults for challnge : ${challenge.id}, index.ts, line: 60`);
+                    const error = new Error(`Error ${err} in leaderboard.calculateNewResults for challnge : ${challenge.id}, index.ts, line: 76`);
                     console.error(error);
                 }); 
             } else { 
@@ -94,7 +94,7 @@ exports.listenAllActivityUpdates = functions.firestore
                     leaderboard.calculateNewResults(challenge, netActivity, ActivityUpdateType.update).then((allResults:AllResults) => {
                         console.log(`New Overall Number of Activitis: ${allResults.overallResults.nbrActivities}`);
                     }).catch((err: Error) => {
-                        const error = new Error(`Error ${err} in leaderboard.calculateNewResults for challnge : ${challenge.id}, index.ts, line: 81`);
+                        const error = new Error(`Error ${err} in leaderboard.calculateNewResults for challnge : ${challenge.id}, index.ts, line: 97`);
                         console.error(error);
                     }); 
                 } else {
