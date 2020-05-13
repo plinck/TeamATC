@@ -33,12 +33,12 @@ const updateUserWithStrava = ((uid: string, stravaInfo: any, deauthorize?: boole
             }
 
         }
-        console.log(`In updateUserWithStrava with uid ${uid}, userStravaUpdate: ${JSON.stringify(userStravaUpdate, null,2)}`);
+        console.log(`In updateUserWithStrava with uid ${uid}`);
 
         const dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
 
         dbUsersRef.doc(uid).set(userStravaUpdate, { merge: true }).then(() => {
-            console.log(`updateUserWithStrava User successfully updated with Strava Info : ${JSON.stringify(userStravaUpdate, null, 4)}`);
+            console.log(`updateUserWithStrava User successfully updated with Strava Info`);
             resolve();
         }).catch((err) =>{
             console.error("updateUserWithStrava failed: ", err);

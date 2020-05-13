@@ -55,7 +55,7 @@ const refreshToken = ((req: any) => {
             // NOW, save the strava info to the user account, maybe do in client
             // Must Save access_toke, refresh_token, expires_at, accepted_scopes
             updateUserWithStrava(uid, clientResponse, false).then (() => {
-                console.log(`Successfully updated strava user with data: ${JSON.stringify(clientResponse, null, 4)}`);
+                console.log(`Successfully updated strava user`);
                 resolve(clientResponse);
             }).catch((err) => {
                 console.error(`FB Func: stravaRefreshToken in updateUserWithStrava -- Error : ${err}`);
