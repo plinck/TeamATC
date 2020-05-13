@@ -59,11 +59,11 @@ class ResultsDB {
                     resolve(allResults);
                 } else {
                     console.log(`Warning Didnt find any results for challenge : ${challenge.id}, ResultsDB.ts, line: 61`);
-                    reject(error);
+                    reject(`Warning Didnt find any results for challenge : ${challenge.id}, ResultsDB.ts, line: 61`);
                 }
             }).catch((err: Error) => {
                 console.log(`Warning ${err} retrieving results for challenge : ${challenge.id}, ResultsDB.ts, line: 65`);
-                reject(error);
+                reject(`Warning ${err} retrieving results for challenge : ${challenge.id}, ResultsDB.ts, line: 65`);
             });    
         }); //promise
     }
