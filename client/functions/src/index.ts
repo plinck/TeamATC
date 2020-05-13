@@ -12,6 +12,9 @@ import { Activity } from './modules/interfaces/Activity';
 import { User } from "./modules/interfaces/User";
 import { UserDB } from "./modules/db/UserDB";
 import { ActivityUpdateType } from "./modules/interfaces/Common.Types";
+import { StravaEvent, IncomingStravaEventType } from './modules/interfaces/StravaEvent';
+import { saveStravaEvent } from "./modules/events";
+import { StravaEventDB } from "./modules/db/StravaEventDB";
 
 // exports.scheduledFunction = functions.pubsub.schedule('5 6 * * *').onRun((context) => {
 //     console.log('This will be run every day at 6:05 AM UTC!');
@@ -41,9 +44,7 @@ exports.listenAllActivityUpdates = functions.firestore
     .document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/challenges/{challengeUid}/{activityCollectionId}/{activityId}`)
     .onWrite((change, context) => {
         // If we set `/challenges/challengeid/actitivies/134` to {body: "ride"} then
-        console.log(`context.params.challengeUid == "${context.params.challengeUid}"`);
-        console.log(`context.params.activityCollectionId == "${context.params.activityCollectionId}"`);
-        console.log(`context.params.activityId == "${context.params.activityId}"`);
+        console.log(`context.params.challengeUid == ${context.params.challengeUid}`);
 
         const leaderboard:Leaderboard = new Leaderboard();
         const challenge = new Challenge(context.params.challengeUid);
@@ -101,18 +102,63 @@ exports.listenAllActivityUpdates = functions.firestore
                 }
             }
         }
-    return 0;
 });
+
+// Listen for changes in stravaevents
+exports.listenStravaEvents = functions.firestore
+    .document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/stravaevents/{stravaEventId}`)
+    .onWrite((change, context) => {
+        return new Promise((resolve, reject) => {
+            console.log(`context.params.stravaEventId == ${context.params.stravaEventId}`);
+            const stravaEventId = context.params.stravaEventId;
+
+            const document:FirebaseFirestore.DocumentData = change.after.exists ? change.after.data() : null;
+            if (document === null) {
+                // deleted - ignore
+                resolve();
+            } else {
+                // created or updated - 
+                const createdEvent:StravaEvent = document as StravaEvent;
+                console.log(`Created Event`);
+                if (createdEvent.aspect_type === "create") {
+                    // Save as activity and then delete
+                    const event: IncomingStravaEventType = createdEvent as IncomingStravaEventType;
+                    saveStravaEvent(event).then(() => {
+                        console.log(`Saved activity ...`);
+                        return;
+                    }).then(() => {
+                        const stravaEventDB: StravaEventDB = new StravaEventDB();
+                        stravaEventDB.delete(stravaEventId).then((savedEvent:StravaEvent) => {
+                            console.log(`Success deleting event`);
+                            resolve();
+                        }).catch(err2 => {
+                            console.log(`Error ${err2} deleting event`);
+                            reject(err2);
+                        });                        
+                    }).catch(err => {
+                        reject(err);
+                    });
+                } else {
+                    // just delete it
+                    const stravaEventDB: StravaEventDB = new StravaEventDB();
+                    stravaEventDB.delete(stravaEventId).then((savedEvent:StravaEvent) => {
+                        console.log(`Success deleting event`);
+                        resolve();
+                    }).catch(err3 => {
+                        console.log(`Error ${err3} deleting event`);
+                        reject(err3);
+                    });                        
+                }
+            }
+        }); // Promise
+});
+
 
 exports.getChallengeResults = functions.https.onCall((req:any, context:any):any => {
     return new Promise((resolve, reject) => {
         const challenge = new Challenge(req.challengeUid);
         const leaderboard: Leaderboard = new Leaderboard();
         leaderboard.getResults(challenge).then((allResults:AllResults) => {
-            // console.log(`Overall nbrActivities: ${allResults.overallResults.nbrActivities}`);
-            // console.log(`Overall distance: ${allResults.overallResults.distanceTotal}`);
-            // console.log(`Overall pointsTotal: ${allResults.overallResults.pointsTotal}`);
-            // console.log(`Overall durationTotal: ${allResults.overallResults.durationTotal}`);
             resolve(allResults);
         }).catch(err => {
             reject(err);
