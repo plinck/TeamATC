@@ -224,7 +224,7 @@ exports.listenUserUpdates = functions.firestore
             const newUser = document as User;
             // console.log(`listenUserUpdates displayName == ${newUser.displayName}`);
             // Only Update if old exists and name changed
-            if (!oldUser || newUser.firstName != oldUser.firstName || newUser.lastName != oldUser.lastName) {
+            if (!oldUser || newUser.firstName !== oldUser.firstName || newUser.lastName !== oldUser.lastName) {
                 newUser.uid = documentId;
                 newUser.displayName = newUser.firstName + " " + newUser.lastName;
                 const userDB = new UserDB();
