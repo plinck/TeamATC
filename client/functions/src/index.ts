@@ -169,9 +169,7 @@ exports.getChallengeResults = functions.https.onCall((req:any, context:any):any 
 exports.setEnviromentFromClient = functions.https.onCall((environment, context) => {
     // console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
     envSet(environment.org, environment.env, environment.challengeUid);
-    
-    // console.log(`Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`);
-    return {message: `Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`};
+        return {message: `Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`};
 });
 
 // ===============================================================================================
@@ -215,32 +213,42 @@ exports.webhook = webhook.strava;
 exports.listenUserUpdates = functions.firestore
     .document(`${APP_CONFIG.ORG}/${APP_CONFIG.ENV}/users/{userId}`)
     .onUpdate((change: functions.Change<functions.firestore.DocumentSnapshot>, context: functions.EventContext) => {
-        console.log(`listenUserUpdates for userId (context.params.userId) == ${context.params.userId}`);
+        return new Promise<any>((resolve:any, reject:any) => {
+            console.log(`listenUserUpdates for userId (context.params.userId) == ${context.params.userId}`);
 
-        const document:FirebaseFirestore.DocumentData = change.after.exists ? change.after.data() : null;
-        const documentId = context.params.userId;
+            const documentOld:FirebaseFirestore.DocumentData = change.before.exists ? change.before.data() : null;
+            const document:FirebaseFirestore.DocumentData = change.after.exists ? change.after.data() : null;
+            const documentId = context.params.userId;
 
-        const newUser = document as User;
-        // console.log(`listenUserUpdates displayName == ${newUser.displayName}`);
-        newUser.uid = documentId;
-        newUser.displayName = newUser.firstName + " " + newUser.lastName;
-        const userDB = new UserDB();
-        return userDB.updateUserActivityDisplayNameWithUser(newUser).then(() => {
-            return true;
-        }).catch((err: Error) => {
-            console.error(err);    
-            return false;
-        });   
+            const oldUser = documentOld ? documentOld as User : null;
+            const newUser = document as User;
+            // console.log(`listenUserUpdates displayName == ${newUser.displayName}`);
+            // Only Update if old exists and name changed
+            if (!oldUser || newUser.firstName != oldUser.firstName || newUser.lastName != oldUser.lastName) {
+                newUser.uid = documentId;
+                newUser.displayName = newUser.firstName + " " + newUser.lastName;
+                const userDB = new UserDB();
+                userDB.updateUserActivityDisplayNameWithUser(newUser).then(() => {
+                    resolve(true);
+                }).catch((err: Error) => {
+                    console.error(err);    
+                    reject(err);
+                });   
+            }
+            resolve(true);
+        }); //Promise
 });
 
 // This allows the change to be initiated from client with just the uid (id) for the user
 exports.updateUserActivityDisplayName = functions.https.onCall((req, context: functions.https.CallableContext) => {
-    const userDB = new UserDB();
-    return userDB.updateUserActivityDisplayNameWithUid(req.userId).then(() => {
-        return true;
-    }).catch(err => {
-        return false;
-    });   
+    return new Promise<any>((resolve:any, reject:any) => {
+        const userDB = new UserDB();
+        userDB.updateUserActivityDisplayNameWithUid(req.userId).then(() => {
+            resolve(true);
+        }).catch(err => {
+            reject(err);
+        });   
+    });//Promise
 });
 
 // ===============================================================================================
@@ -252,11 +260,8 @@ exports.updateUserActivityDisplayName = functions.https.onCall((req, context: fu
 
 exports.fBFupdateTeam = functions.https.onCall((req, res) => {
     // console.log(`In fBFupdateTeam with: req ${JSON.stringify(req)}`);
-
-    const team = req.team;
-
-    // console.log(`In fBFupdateTeam with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
     return new Promise((resolve, reject) => {
+        const team = req.team;
         const dbUsersRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("users");
 
         const batch = admin.firestore().batch();
@@ -275,18 +280,14 @@ exports.fBFupdateTeam = functions.https.onCall((req, res) => {
             console.error("Team Batch failed: ", err);
             reject(err);
         });
-
     }); // Promise
-    
 });
 
 exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
     // console.log(`In fBFupdateActivityTeamName with: req ${JSON.stringify(req)}`);
-
     const challengeUid = req.challengeUid;
     const team = req.team;
 
-    // console.log(`In fBFupdateActivityTeamName with: ORG: ${APP_CONFIG.ORG}, ENV: ${APP_CONFIG.ENV}, challengeUid: ${challengeUid}`);
     return new Promise((resolve, reject) => {
         let activitiesRef = undefined;
         if (challengeUid && challengeUid !== "") {
@@ -309,7 +310,5 @@ exports.fBFupdateActivityTeamName = functions.https.onCall((req, res) => {
             console.error("Activity Team Batch failed: ", err);
             reject(err);
         });
-
     }); // Promise
-    
 });
