@@ -10,7 +10,13 @@ class ResultsDB {
     public get(challenge: Challenge) {
         console.log("ResultsDB.get() started ...");
         return new Promise<any>((resolve:any, reject:any) => {
-            const resultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
+            const challengeUid = challenge.id;
+            if (!challengeUid || challengeUid === "") {
+                const error = new Error(`Error challengeUid not valid - Get results failed for challenge: ${challengeUid}, ResultsDB.ts, line: 15`);
+                console.error(error);    
+                reject(error);
+            }
+            const resultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection("results");
 
             resultsRef.doc(challenge.id).get().then((doc) => {
                 //
@@ -25,7 +31,7 @@ class ResultsDB {
                     reject(`No results for challenge: ${challenge.id}`)
                 }
             }).catch((err: Error) => {
-                const error = new Error(`Error retrieving results for challnge : ${challenge.id}, ResultsDB.ts, line: 28`);
+                const error = new Error(`Error retrieving results for challnge : ${challenge.id}, ResultsDB.ts, line: 34`);
                 console.error(error);
                 reject(error);
             });    
@@ -34,7 +40,13 @@ class ResultsDB {
 
     public getAll(challenge: Challenge) {
         return new Promise<any>((resolve:any, reject:any) => {
-            const resultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
+            const challengeUid = challenge.id;
+            if (!challengeUid || challengeUid === "") {
+                const error = new Error(`Error challengeUid not valid - Get all results failed for challenge: ${challengeUid}, ResultsDB.ts, line: 45`);
+                console.error(error);    
+                reject(error);
+            }
+            const resultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection("results");
 
             console.log(`ResultsDB.getAll() started for challenge ${challenge.id} ...`);
             resultsRef.where("challengeUid", "==", challenge.id).get().then((snap) => {
@@ -58,12 +70,12 @@ class ResultsDB {
                     // console.log(`getResults allResults: ${JSON.stringify(allResults, null,2)}`);
                     resolve(allResults);
                 } else {
-                    console.log(`Warning Didnt find any results for challenge : ${challenge.id}, ResultsDB.ts, line: 61`);
-                    reject(`Warning Didnt find any results for challenge : ${challenge.id}, ResultsDB.ts, line: 61`);
+                    console.log(`Warning Didnt find any results for challenge : ${challenge.id}, ResultsDB.ts, line: 73`);
+                    reject(`Warning Didnt find any results for challenge : ${challenge.id}, ResultsDB.ts, line: 73`);
                 }
             }).catch((err: Error) => {
-                console.log(`Warning ${err} retrieving results for challenge : ${challenge.id}, ResultsDB.ts, line: 65`);
-                reject(`Warning ${err} retrieving results for challenge : ${challenge.id}, ResultsDB.ts, line: 65`);
+                console.log(`Warning ${err} retrieving results for challenge : ${challenge.id}, ResultsDB.ts, line: 77`);
+                reject(`Warning ${err} retrieving results for challenge : ${challenge.id}, ResultsDB.ts, line: 77`);
             });    
         }); //promise
     }
@@ -71,7 +83,13 @@ class ResultsDB {
     public save(allResults:AllResults) {
         return new Promise<any>((resolve:any, reject:any) => {
             // console.log(`ResultsDB.save -- save challenge ${allResults.challengeUid} document as: ${JSON.stringify(allResults)}`);
-            const dbResultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
+            const challengeUid = allResults.challengeUid;
+            if (!challengeUid) {
+                const error = new Error(`Error challengeUid not valud - Batch update failed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 88`);
+                console.error(error);    
+                reject(error);
+            }
+            const dbResultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection("results");
             const batch = admin.firestore().batch();
 
             // Overall results - 1 record
@@ -98,10 +116,10 @@ class ResultsDB {
             }
             // Commit the batch
             batch.commit().then(() => {
-                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 102`);
+                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 119`);
                 resolve();
             }).catch((err: Error) =>{
-                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 105`);
+                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 122`);
                 console.error(error);    
                 reject(err);
             });
@@ -111,6 +129,8 @@ class ResultsDB {
     public refBatchUpdate() {
         return new Promise<any>((resolve:any, reject:any) => {
             // Get a new write batch
+            // const dbResultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(challengeUid).collection("results");
+
             const dbResultsRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("results");
             const batch = admin.firestore().batch();
 
@@ -204,7 +224,7 @@ class ResultsDB {
                     dbResultsRef.doc(resultsKey).set(result, { merge: true }).then (() => {
                         // OK, continue
                     }).catch ((err1: Error) => {
-                        const error = new Error(`Error ${err1} - Batch user update failed for team result ${i}, ResultsDB.ts, line: 208`);
+                        const error = new Error(`Error ${err1} - Batch user update failed for team result ${i}, ResultsDB.ts, line: 227`);
                         console.log(error);  
                         // Don worry, continue          
                     });
@@ -218,7 +238,7 @@ class ResultsDB {
                     dbResultsRef.doc(resultsKey).set(result, { merge: true }).then (() => {
                         // OK, continue
                     }).catch ((err1: Error) => {
-                        const error = new Error(`Error ${err1} - Batch user update failed for user result ${i}, ResultsDB.ts, line: 222`);
+                        const error = new Error(`Error ${err1} - Batch user update failed for user result ${i}, ResultsDB.ts, line: 241`);
                         console.log(error);  
                         // Don worry, continue          
                     });
@@ -229,10 +249,10 @@ class ResultsDB {
                 // return batch.commit();
                 return true;
             }).then(() => {
-                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 233`);
+                console.log(`Batch results update successfully committed for challenge: ${allResults.challengeUid}, ResultsDB.ts, line: 252`);
                 resolve();
             }).catch((err: Error) =>{
-                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 236`);
+                const error = new Error(`Error ${err} - Batch user update failed for user: ${allResults.challengeUid}, ResultsDB.ts, line: 255`);
                 console.error(error);    
                 reject(err);
             });
