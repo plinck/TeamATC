@@ -5,6 +5,7 @@ import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/picker
 import DateFnsUtils from '@date-io/date-fns';
 import LocationSearchBar from './LocationSearchBar';
 import Waypoints from './Waypoints';
+import SwimRoutePlanner from './SwimRoutePlanner';
 import AddIcon from "@material-ui/icons/Add";
 import { Fab } from "@material-ui/core";
 import moment from "moment";
@@ -52,7 +53,7 @@ const ChallengeForm = (props) => {
     const CLEAR_CHALLENGE_VALUES = {
         id: undefined,
         description: "",
-        endDate:  moment(new Date('2020-08-18T21:11:54')).endOf("day").toDate(),
+        endDate: moment(new Date('2020-08-18T21:11:54')).endOf("day").toDate(),
         isCurrentChallenge: false,
         name: "",
         photoObj: null,
@@ -60,11 +61,11 @@ const ChallengeForm = (props) => {
         startCity: "",
         endCity: "",
         waypoints: [],
-        isSwim : true,
-        isBike : true,
-        isRun : true,
-        isOther : true,
-        mapCalculation : "all"
+        isSwim: true,
+        isBike: true,
+        isRun: true,
+        isOther: true,
+        mapCalculation: "all"
     }
     const CHALLENGE_INITIAL_VALUES = {
         id: props.id,
@@ -77,11 +78,11 @@ const ChallengeForm = (props) => {
         startCity: "",
         endCity: "",
         waypoints: [],
-        isSwim : true,
-        isBike : true,
-        isRun : true,
-        isOther : true,
-        mapCalculation : "all"
+        isSwim: true,
+        isBike: true,
+        isRun: true,
+        isOther: true,
+        mapCalculation: "all"
     }
     const [challenge, setChallenge] = useState(CHALLENGE_INITIAL_VALUES);
     const [message, setMessage] = React.useState("");
@@ -90,11 +91,12 @@ const ChallengeForm = (props) => {
     // Domain object handlers
     const onChange = ((fieldName, newValue) => {
         console.log(`fieldName: ${fieldName}, newValue: ${newValue}`);
-        setChallenge({...challenge, 
-            [fieldName] : newValue
+        setChallenge({
+            ...challenge,
+            [fieldName]: newValue
         });
     });
-    
+
     const handleDescriptionChange = event => {
         setChallenge({ ...challenge, description: event.target.value })
     };
@@ -267,65 +269,68 @@ const ChallengeForm = (props) => {
                     <Divider />
                     <br />
                     <Typography variant="h5">Create Route (Not Required)</Typography>
-                    <LocationSearchBar value={challenge.startCity} title="Start City" id="startCity"  handleCityChange={handleStartCityChange} />
+                    <LocationSearchBar value={challenge.startCity} title="Start City" id="startCity" handleCityChange={handleStartCityChange} />
                     <LocationSearchBar value={challenge.endCity} title="End City" id="endCity" handleCityChange={handleEndCityChange} />
                     <Waypoints handleAddWaypoint={handleAddWaypoint} handleDelete={handleDelete} waypoints={challenge.waypoints} />
                     <br />
+                    {challenge.isSwim ?
+                        <SwimRoutePlanner />
+                        : null}
                     <hr />
                     <FormControl component="fieldset" className={classes.formControl}>
-                      <FormLabel component="legend">Activity Types</FormLabel>
-                      <FormGroup row>
-                        <FormControlLabel
-                          control={
-                            <Checkbox 
-                                checked={challenge.isSwim}
-                                id="isSwim"
-                                name="isSwim"
-                                value={challenge.isSwim}
-                                onChange={() => onChange("isSwim", !challenge.isSwim)}
+                        <FormLabel component="legend">Activity Types</FormLabel>
+                        <FormGroup row>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={challenge.isSwim}
+                                        id="isSwim"
+                                        name="isSwim"
+                                        value={challenge.isSwim}
+                                        onChange={() => onChange("isSwim", !challenge.isSwim)}
+                                    />
+                                }
+                                label="Swim"
                             />
-                          }
-                          label="Swim"
-                        />
-                        <FormControlLabel
-                          control={
-                            <Checkbox 
-                                checked={challenge.isBike}
-                                id="isBike"
-                                name="isBike"
-                                value={challenge.isBike}
-                                onChange={() => onChange("isBike", !challenge.isBike)}
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={challenge.isBike}
+                                        id="isBike"
+                                        name="isBike"
+                                        value={challenge.isBike}
+                                        onChange={() => onChange("isBike", !challenge.isBike)}
+                                    />
+                                }
+                                label="Bike"
                             />
-                          }
-                          label="Bike"
-                        />
-                        <FormControlLabel
-                          control={
-                            <Checkbox 
-                                checked={challenge.isRun}
-                                id="isRun"
-                                name="isRun"
-                                value={challenge.isRun}
-                                onChange={() => onChange("isRun", !challenge.isRun)}
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={challenge.isRun}
+                                        id="isRun"
+                                        name="isRun"
+                                        value={challenge.isRun}
+                                        onChange={() => onChange("isRun", !challenge.isRun)}
+                                    />
+                                }
+                                label="Run"
                             />
-                          }
-                          label="Run"
-                        />
-                        <FormControlLabel
-                          control={
-                            <Checkbox 
-                                checked={challenge.isOther}
-                                id="isOther"
-                                name="isOther"
-                                value={challenge.isOther}
-                                onChange={() => onChange("isOther", !challenge.isOther)}
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={challenge.isOther}
+                                        id="isOther"
+                                        name="isOther"
+                                        value={challenge.isOther}
+                                        onChange={() => onChange("isOther", !challenge.isOther)}
+                                    />
+                                }
+                                label="Other"
                             />
-                          }
-                          label="Other"
-                        />
-                      </FormGroup>
+                        </FormGroup>
                     </FormControl>
-  
+
                 </form>
             </CardContent>
             <CardActions>
