@@ -23,7 +23,7 @@ class ResultsListener {
             let allDBRefs = Util.getChallengeDependentRefs(challengeUid);
             const dbResultsRef = allDBRefs.dbResultsRef;
 
-            let ref = dbResultsRef.orderBy("resultDateTime", "desc");
+            let ref = dbResultsRef;
             try {
                 traceFullResultsFirestore.start();
             } catch {
@@ -42,13 +42,11 @@ class ResultsListener {
                     if (change.type === "added") {
                         let newResult = change.doc.data();
                         newResult.id = change.doc.id;
-                        newResult.resultDateTime = newResult.resultDateTime.toDate();
                         ResultsListener.results.push(newResult);
                     }
                     if (change.type === "modified") {
                         let newResult = change.doc.data();
                         newResult.id = change.doc.id;
-                        newResult.resultDateTime = newResult.resultDateTime.toDate();
                         ResultsListener.results = ResultsListener.results.filter(result => {
                             if (newResult.id === result.id) {
                                 return newResult;
@@ -61,7 +59,6 @@ class ResultsListener {
                         // console.log(`Removed Result: ${change.doc.id}`);
                         let deletedResult = change.doc.data();
                         deletedResult.id = change.doc.id;
-                        deletedResult.resultDateTime = deletedResult.resultDateTime.toDate();
                         ResultsListener.results.filter(result => {
                             return result.id !== deletedResult.id;
                         });            
