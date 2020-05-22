@@ -56,7 +56,7 @@ class App extends React.Component {
           <Route exact path="/" component={LandingPage} />
           <Route exact path="/signin" component={SignInForm} />
           <Route exact path="/pw-forget" component={PasswordForgetPage} />
-          <Route exact path="/dashboard" component={Dashboard} />
+          <Route exact path="/dashboard" component={DashboardBackend} />
           <Route exact path="/dashboardbackend" component={DashboardBackend} />
           <Route exact path="/results" component={Results} />
           <Route exact path="/challenges" component={Challenges} />
