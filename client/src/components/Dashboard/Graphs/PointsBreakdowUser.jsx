@@ -13,7 +13,7 @@ const PointsBreakdownGraph = (props) => {
 
     const plotGraph = () => {
 
-        let teams = path.slice(0, 5).map((team) => team.userOrTeamName)
+        let teams = path.slice(0, 5).map((team) => team.userRecord ? team.displayName: team.teamName)
         let swimPoints = path.slice(0, 5).map(team => team.swimPointsTotal | 0);
         let bikePoints = path.slice(0, 5).map(team => team.bikePointsTotal | 0);
         let runPoints = path.slice(0, 5).map(team => team.runPointsTotal | 0);

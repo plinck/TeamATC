@@ -193,7 +193,7 @@ const GoogleMap = (props) => {
                                         >
                                 
                                         <Grid style={{ textAlign: "left" }} className={classes.noWrap} item xs md={5}>
-                                            <Typography className={classes.text}>{result.userOrTeamName}</Typography>
+                                            <Typography className={classes.text}>{result.userRecord ? result.displayName: result.teamName}</Typography>
                                             <Typography className={classes.caption} variant="caption">Next:{result.nextLegName}</Typography>
                                         </Grid>
                                         <Grid className={classes.mobile} item xs={false} md={3}>

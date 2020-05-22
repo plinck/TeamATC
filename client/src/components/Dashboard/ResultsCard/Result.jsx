@@ -24,7 +24,7 @@ const Result = (props) => {
         <TableRow key={props.index} style={{ backgroundColor: `${rowBg}` }}>
             {props.result.teamRecord ?
                 <TableCell component="th" scope="row" style={{ fontWeight: "bold" }}>
-                    {props.result.userOrTeamName}
+                    {props.result.userRecord ? props.result.displayName: props.result.teamName}
                 </TableCell>
                 :
                 <TableCell component="th" scope="row" style={{ paddingLeft: "50px" }}>
@@ -32,7 +32,7 @@ const Result = (props) => {
                         <img style={{ maxHeight: '20px' }} src={"/images/me.png"} alt={"me"} />
                         : props.result.isThisMine
                     }
-                    {props.result.userOrTeamName}
+                    {props.result.userRecord ? props.result.displayName: props.result.teamName}
                 </TableCell>
             }
             <TableCell>

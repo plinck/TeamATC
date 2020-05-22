@@ -75,7 +75,7 @@ class TeamResultsModal extends React.Component {
         let combinedResults = [];
         for (let i = 0; i < teamTotals.length; i++) {
             combinedResults.push(teamTotals[i]);
-            let userResultsForThisTeam = this.filterByTeam(userTotals, teamTotals[i].userOrTeamName);
+            let userResultsForThisTeam = this.filterByTeam(userTotals, teamTotals[i].userRecord ? teamTotals[i].displayName : teamTotals[i].teamName);
             combinedResults = [...combinedResults, ...userResultsForThisTeam]
         }
 

@@ -11,8 +11,6 @@ import { Card, CardContent, Box, Tooltip } from '@material-ui/core';
 
 class ActivityTypeBreakdown extends React.Component {
 
-
-
     plotGraph() {
         // Grab props
         // let distanceTotal  = this.props.currentTotalsShare.distanceTotal;
@@ -147,7 +145,7 @@ class ActivityTypeBreakdown extends React.Component {
                         {activityBreakdownTitleRow}
                         <Grid container justify="center">
                             <Grid item>
-                                {this.plotGraph()}
+                                {this.props.currentTotalsShare ? this.plotGraph() : ""}
                             </Grid>
                         </Grid>
                     </CardContent>

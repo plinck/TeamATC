@@ -85,7 +85,7 @@ class Map extends Component {
                     includedDistanceTotal += this.props.challenge.isSwim ? total.swimPointsTotal : 0;
                     includedDistanceTotal += this.props.challenge.isBike ? total.bikeDistanceTotal : 0;
                     includedDistanceTotal += this.props.challenge.isRun ? total.runPointsTotal : 0;
-                    this.putMarkerOnRoute(polyline, includedDistanceTotal, total.userOrTeamName)
+                    this.putMarkerOnRoute(polyline, includedDistanceTotal, total.userRecord ? total.displayName: total.teamName)
                 });
             } else {
                 alert("directions response " + status);
