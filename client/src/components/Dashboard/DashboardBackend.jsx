@@ -184,7 +184,7 @@ class DashboardBackend extends React.PureComponent {
         const { classes } = this.props;
 
         // Some need to catch up for some reason 
-        if (!this.state.totals) {
+        if (!this.state.totals || !this.props.user) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
         if (this.props.user.authUser) {
