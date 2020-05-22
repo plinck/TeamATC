@@ -185,7 +185,7 @@ class DashboardBackend extends React.PureComponent {
         const { classes } = this.props;
 
         // Some need to catch up for some reason 
-        if (!this.state.totals || !this.props.user) {
+        if (!this.state.totals) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
         if (!this.props.user) {
@@ -199,7 +199,7 @@ class DashboardBackend extends React.PureComponent {
         const currentUserResults = userResults.find(result => result.uid === this.props.user.uid);
         const currentTeamResults = teamResults.find(result => result.teamUid === this.props.user.teamUid);
 
-        if (this.props.user.authUser) {
+        if (this.props.user.uid) {
             return (
                 <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
                     {this.state.loadingFlag ?
@@ -287,10 +287,9 @@ class DashboardBackend extends React.PureComponent {
                     </Container>
                 </div >
             );
-        } else {
-            return (
-                <Redirect to="/signin" />
-            );
+        } 
+        else {
+            return (<Grid container style={{ marginTop: '10px' }} justify="center"><p>Not Logged In ...</p> </Grid>)
         }
     }
 }
