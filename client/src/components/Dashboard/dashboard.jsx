@@ -323,13 +323,23 @@ class Dashboard extends React.PureComponent {
                                 />
                             </div>
                             <div key="1" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 6, x: 4, y: 1, minW: 4, minH: 6, maxW: 6 }}>
-                                <ResultsCard teamTotals={this.state.totals.teamResults} userTotals={this.state.totals.userResults} onlyTeams={true} />
+                                <ResultsCard 
+                                    challenge={this.state.challenge}
+                                    teamTotals={this.state.totals.teamResults} 
+                                    userTotals={this.state.totals.userResults} 
+                                    onlyTeams={true} />
                             </div>
                             <div key="2" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 6, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                 <ActivitiesCard name={this.props.user.displayName} activity={myActivities} />
                             </div>
                             <div key="3" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 11, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
-                                <ResultsCard user={this.props.user} teamTotals={this.state.totals.teamResults} userTotals={this.state.totals.userResults} onlyTeams={false} />
+                                <ResultsCard 
+                                    user={this.props.user} 
+                                    challenge={this.state.challenge}
+                                    teamTotals={this.state.totals.teamResults} 
+                                    userTotals={this.state.totals.userResults} 
+                                    onlyTeams={false}
+                                />
                             </div>
                             <div key="4" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 8, x: 0, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown

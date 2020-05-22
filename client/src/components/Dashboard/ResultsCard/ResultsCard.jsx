@@ -69,6 +69,17 @@ const ResultsCard = (props) => {
 
     let uid = props.user ? props.user.uid : null
 
+    const includedTotals = (result) => {
+        let includedDistanceTotal = 0;
+        if (props.challenge) {
+            includedDistanceTotal += props.challenge.isSwim ? result.swimPointsTotal : 0;
+            includedDistanceTotal += props.challenge.isBike ? result.bikePointsTotal : 0;
+            includedDistanceTotal += props.challenge.isRun ? result.runPointsTotal : 0;
+            includedDistanceTotal += props.challenge.isOther ? result.otherPointsTotal : 0;
+        }
+        return includedDistanceTotal;
+    }
+
     return (
         <Card style={{ height: '100%' }}>
             <CardContent>
@@ -80,10 +91,11 @@ const ResultsCard = (props) => {
                         <TableRow>
                             <TableCell style={{ fontWeight: "bold" }}>Name</TableCell>
                             <TableCell style={{ fontWeight: "bold" }}>Total</TableCell>
-                            <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Swim</TableCell>
-                            <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Bike</TableCell>
-                            <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Run</TableCell>
-                            <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Other</TableCell>
+                            {props.challenge && props.challenge.isSwim ? <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Swim</TableCell> : ""}
+                            {props.challenge && props.challenge.isBike ? <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Bike</TableCell> : ""}
+                            {props.challenge && props.challenge.isRun ? <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Run</TableCell> : ""}
+                            {props.challenge && props.challenge.isOther ? <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Other</TableCell> : ""}
+                        
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -94,11 +106,11 @@ const ResultsCard = (props) => {
                                         <img style={{ maxHeight: '18px' }} src={"/images/me.png"} alt={"me"} />
                                     </Tooltip> : null}  {result.userRecord ? result.displayName : result.teamName}
                                 </TableCell>
-                                <TableCell>{result.pointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
-                                <TableCell padding="none" align="right">{result.swimPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
-                                <TableCell padding="none" align="right">{result.bikePointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
-                                <TableCell padding="none" align="right">{result.runPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
-                                <TableCell padding="none" align="right">{result.otherPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
+                                <TableCell>{includedTotals(result).toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
+                                {props.challenge && props.challenge.isSwim ? <TableCell padding="none" align="right">{result.swimPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : ""}
+                                {props.challenge && props.challenge.isBike ? <TableCell padding="none" align="right">{result.bikePointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : ""}
+                                {props.challenge && props.challenge.isRun ? <TableCell padding="none" align="right">{result.runPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : ""}
+                                {props.challenge && props.challenge.isOther ? <TableCell padding="none" align="right">{result.otherPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : ""}
                             </TableRow>
                         ))}
                     </TableBody>
