@@ -6,7 +6,8 @@ import { withStyles } from '@material-ui/core/styles';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Redirect } from "react-router";
 import ResultsCard from "./ResultsCard/ResultsCard.jsx";
-import PointsBreakdownGraph from './Graphs/PointsBreakdowUser.jsx';
+import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
+import PointsBreakdownGraph from './Graphs/PointsBreakdown.jsx';
 import { Container, Grid, CircularProgress } from '@material-ui/core'
 import Util from "../Util/Util";
 import GoogleMapUser from './GoogleMap/GoogleMapUser';
@@ -187,6 +188,17 @@ class DashboardBackend extends React.PureComponent {
         if (!this.state.totals || !this.props.user) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
+        if (!this.props.user) {
+            return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
+        }
+        const overallResults = this.state.totals.filter(total => total.overallRecord);
+        const teamResults = this.state.totals.filter(total => total.teamRecord);
+        const userResults = this.state.totals.filter(total => total.userRecord);
+
+        const currentOverallResults = overallResults && overallResults.length > 0 ? overallResults[0] : undefined;
+        const currentUserResults = userResults.find(result => result.uid === this.props.user.uid);
+        const currentTeamResults = teamResults.find(result => result.teamUid === this.props.user.teamUid);
+
         if (this.props.user.authUser) {
             return (
                 <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
@@ -215,7 +227,7 @@ class DashboardBackend extends React.PureComponent {
                                         start={this.state.challenge.startCity}
                                         end={this.state.challenge.endCity}
                                         waypoints={this.state.challenge.waypoints}
-                                        results={this.state.totals.filter(total => total.userRecord)}
+                                        results={userResults}
                                         endDate={this.state.challenge.endDate}
                                         callbackParent={() => this.onChildChanged()} />
                                 </div> : <></>}
@@ -225,17 +237,45 @@ class DashboardBackend extends React.PureComponent {
                                         challenge={this.props.user.challengeName}
                                     />
                                 </div>
+                                <div key="1" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 6, x: 4, y: 1, minW: 4, minH: 6, maxW: 6 }}>
+                                    <ResultsCard teamTotals={teamResults} userTotals={teamResults} onlyTeams={true} />
+                                </div>
                                 <div key="3" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 11, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                     <ResultsCard user={this.props.user}
-                                        teamTotals={this.state.totals.filter(total => total.teamRecord)}
-                                        userTotals={this.state.totals.filter(total => total.userRecord)}
+                                        teamTotals={teamResults}
+                                        userTotals={userResults}
+                                    />
+                                </div>
+                                <div key="4" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 8, x: 0, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
+                                    <ActivityTypeBreakdown
+                                        title={`Breakdown - All Athletes`}
+                                        currentTotalsShare={currentOverallResults}
+                                    />
+                                </div>
+                                <div key="5" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 8, x: 4, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
+                                    <ActivityTypeBreakdown
+                                        title={`Breakdown - ${this.props.user.displayName}`}
+                                        currentTotalsShare={currentUserResults}
+                                    />
+                                </div>
+                                <div key="6" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 8, x: 8, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
+                                    <ActivityTypeBreakdown
+                                        title={`Breakdown - Team ${this.props.user.teamName}`}
+                                        currentTotalsShare={currentTeamResults}
+                                    />
+                                </div>
+                                <div key="8" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 9, x: 8, y: 4, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
+                                    <PointsBreakdownGraph
+                                        title={`Points by Team`}
+                                        graphType="Team"
+                                        totals={teamResults}
                                     />
                                 </div>
                                 <div key="9" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 9, x: 0, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
                                     <PointsBreakdownGraph
                                         title={`Top Members`}
                                         graphType="User"
-                                        totals={this.state.totals.filter(total => total.userRecord)}
+                                        totals={userResults}
                                     />
                                 </div>
                                 

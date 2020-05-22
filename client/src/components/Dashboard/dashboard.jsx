@@ -11,7 +11,7 @@ import ActivitiesCard from './ActivitiesCard/ActivitiesCard';
 import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
 import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
-import PointsBreakdownGraph from './Graphs/PointsBreakdown';
+import PointsBreakdownGraph from './Graphs/PointsBreakdown.jsx';
 import { Container, Grid, CircularProgress } from '@material-ui/core'
 import Util from "../Util/Util";
 import GoogleMap from './GoogleMap/GoogleMap';
@@ -282,7 +282,6 @@ class Dashboard extends React.PureComponent {
         const currentUserResults = this.state.totals.userResults.find(result => result.uid === this.props.user.uid);
         const currentTeamResults = this.state.totals.teamResults.find(result => result.teamUid === this.props.user.teamUid);
 
-
         let myActivities = this.state.myActivities;
         if (this.props.user.authUser) {
 
@@ -361,14 +360,14 @@ class Dashboard extends React.PureComponent {
                                 <PointsBreakdownGraph
                                     title={`Points by Team`}
                                     graphType="Team"
-                                    totals={this.state.totals}
+                                    totals={this.state.totals.teamResults}
                                 />
                             </div>
                             <div key="9" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 9, x: 0, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
                                 <PointsBreakdownGraph
                                     title={`Top Members`}
                                     graphType="User"
-                                    totals={this.state.totals}
+                                    totals={this.state.totals.userResults}
                                 />
                             </div>
                             <div key="10" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 9, x: 4, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
