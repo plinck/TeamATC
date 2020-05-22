@@ -239,15 +239,19 @@ class DashboardBackend extends React.PureComponent {
                                 </div>
                                 <div key="1" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 6, x: 4, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                     <ResultsCard 
-                                        teamTotals={teamResults}
-                                        userTotals={userResults}
+                                        challenge={this.state.challenge}
+                                        teamTotals={teamResults} 
+                                        userTotals={userResults} 
                                         onlyTeams={true}
                                     />
                                 </div>
                                 <div key="3" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 11, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
-                                    <ResultsCard user={this.props.user}
-                                        teamTotals={teamResults}
-                                        userTotals={userResults}
+                                    <ResultsCard 
+                                        user={this.props.user} 
+                                        challenge={this.state.challenge}
+                                        teamTotals={teamResults} 
+                                        userTotals={userResults} 
+                                        onlyTeams={false}
                                     />
                                 </div>
                                 <div key="4" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 8, x: 0, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>

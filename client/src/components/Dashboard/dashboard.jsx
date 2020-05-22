@@ -338,7 +338,8 @@ class Dashboard extends React.PureComponent {
                                     challenge={this.state.challenge}
                                     teamTotals={this.state.totals.teamResults} 
                                     userTotals={this.state.totals.userResults} 
-                                    onlyTeams={false} />
+                                    onlyTeams={false}
+                                />
                             </div>
                             <div key="4" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 8, x: 0, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
