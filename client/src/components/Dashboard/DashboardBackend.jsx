@@ -215,7 +215,7 @@ class DashboardBackend extends React.PureComponent {
                                         start={this.state.challenge.startCity}
                                         end={this.state.challenge.endCity}
                                         waypoints={this.state.challenge.waypoints}
-                                        results={this.state.totals.map(total => total.userRecord)}
+                                        results={this.state.totals.filter(total => total.userRecord)}
                                         endDate={this.state.challenge.endDate}
                                         callbackParent={() => this.onChildChanged()} />
                                 </div> : <></>}
@@ -226,13 +226,16 @@ class DashboardBackend extends React.PureComponent {
                                     />
                                 </div>
                                 <div key="3" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 11, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
-                                    <ResultsCard user={this.props.user} teamTotals={this.state.totals.map(total => total.teamRecord)} userTotals={this.state.totals.map(total => total.userRecord)} onlyTeams={false} />
+                                    <ResultsCard user={this.props.user}
+                                        teamTotals={this.state.totals.filter(total => total.teamRecord)}
+                                        userTotals={this.state.totals.filter(total => total.userRecord)}
+                                    />
                                 </div>
                                 <div key="9" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 9, x: 0, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
                                     <PointsBreakdownGraph
                                         title={`Top Members`}
                                         graphType="User"
-                                        totals={this.state.totals.map(total => total.userRecord)}
+                                        totals={this.state.totals.filter(total => total.userRecord)}
                                     />
                                 </div>
                                 
