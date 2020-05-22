@@ -5,6 +5,7 @@ import { withFirebase } from '../Firebase/FirebaseContext';
 import UserAuthAPI from '../../User/UserAuthAPI';
 import Session from "../../Util/Session.js";
 import {CHALLENGE} from "../../Environment/Environment";
+import ResultsAPI from "../../Results/ResultsAPI";
 
 // This component WRAPS Firebase and Authentication Context togtehr in 
 // a HOC - Higher Order Component.
@@ -115,8 +116,18 @@ const provideAuthUserContext = Component => {
                     // Listen to current challenge to get name, descirption for pages
                     if (user.challengeUid) {
                         this.setupChallengeListener(user.challengeUid)
+                        ResultsAPI.getChallengeResults(user.challengeUid).then( () => {
+                            // Ignore - no need to process
+                        }).catch(err => {
+                            console.error(`Error in provide auth user context updating challenge results on backend ${err}`)
+                        });
                     } else {
                         this.setupChallengeListener(CHALLENGE)               
+                        ResultsAPI.getChallengeResults(CHALLENGE).then( () => {
+                            // Ignore - no need to process
+                        }).catch(err => {
+                            console.error(`Error in provide auth user context updating challenge results on backend ${err}`)
+                        });
                     }
 
                     this.setState({

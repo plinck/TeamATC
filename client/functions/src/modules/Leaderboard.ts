@@ -154,6 +154,7 @@ class Leaderboard {
         newResult.userRecord = true;
         newResult.uid = activity.uid;
         newResult.displayName = activity.displayName;
+        newResult.teamUid = activity.teamUid;
 
         newResult = this.computeRecordTotals(challenge, newResult, activity, updateType);
 

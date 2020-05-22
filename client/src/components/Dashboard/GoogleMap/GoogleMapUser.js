@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Map from './Map'
+import MapUser from './MapUser'
 //import { Card, CardContent, Grid, Box, Typography, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
 import { Card, CardContent, Grid, Box, Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
@@ -30,7 +30,7 @@ const styles = theme => ({
     }
 })
 
-const GoogleMap = (props) => {
+const GoogleMapUser = (props) => {
     const { classes } = props
     
     const handlePress = (e) => {
@@ -39,8 +39,8 @@ const GoogleMap = (props) => {
     }
 
     const [totalDist, setTotalDist] = useState(0);
-    // teamLegTotals is a copy to teamResults with the next leg info added to it
-    const [teamLegTotals, setTeamLegTotals] = useState(props.teamResults);
+    // legTotals is a copy to Results with the next leg info added to it
+    const [legTotals, setLegTotals] = useState(props.results);
 
     const computeTotalDistance = (result) => {
         let totalDist = 0;
@@ -60,16 +60,16 @@ const GoogleMap = (props) => {
         }
     }
 
-    // Using the teamResults array, attach the leg info to each teams record
+    // Using the results array, attach the leg info to each record
     // legs come from the map component and atre computed after the route is drawn
-    // This function goes through each team and sees whwere they are on the route, then
-    // attaches next legh info to their teamResults record
+    // This function goes through each result and sees whwere they are on the route, then
+    // attaches next legh info to their results record
     // TODO :- Right now the function state values are not displayed on the dashboard
     // unless you go into the debugger.  It must be a timing issuie with state vars but
     // I have yet to figure it out
     const calcNextLegInfo = (legs) => {
-        //Loop through each team
-        for (let k = 0; k < teamLegTotals.length; k++) {
+        //Loop through each result - either by team or User
+        for (let k = 0; k < legTotals.length; k++) {
             let totalDistanceToNextLeg = 0;
             let nextLegName = "";
             let distanceToNextLeg = 0;
@@ -80,11 +80,11 @@ const GoogleMap = (props) => {
             let i = 0;
             // Loop until you find the next leg based on your distance
             // This loop will end where you are "in between" two legs
-            // Then you just need to extract the leg info an attach to team record
-            includedDistanceTotal += props.challenge.isSwim ? teamLegTotals[k].swimPointsTotal : 0;
-            includedDistanceTotal += props.challenge.isBike ? teamLegTotals[k].bikeDistanceTotal : 0;
-            includedDistanceTotal += props.challenge.isRun ? teamLegTotals[k].runPointsTotal : 0;
-            includedDistanceTotal += props.challenge.isOther ? teamLegTotals[k].otherDistanceTotal : 0;
+            // Then you just need to extract the leg info an attach to result record
+            includedDistanceTotal += props.challenge.isSwim ? legTotals[k].swimPointsTotal : 0;
+            includedDistanceTotal += props.challenge.isBike ? legTotals[k].bikeDistanceTotal : 0;
+            includedDistanceTotal += props.challenge.isRun ? legTotals[k].runPointsTotal : 0;
+            includedDistanceTotal += props.challenge.isOther ? legTotals[k].otherDistanceTotal : 0;
 
             for (i = 0; i < legs.length && totalDistanceToNextLeg < includedDistanceTotal ; i++) {
                 let legDistance = legs[i].distance.value / 1000 / 1.609344;  // to miles
@@ -103,13 +103,13 @@ const GoogleMap = (props) => {
                 nextLegCompletionPercent = parseInt((includedDistanceTotal / totalDistanceToNextLeg)  * 100);
             }
 
-            teamLegTotals[k].nextLegName = nextLegName;
-            teamLegTotals[k].distanceToNextLeg = distanceToNextLeg.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            teamLegTotals[k].nextLegCompletionPercent = nextLegCompletionPercent;
-            teamLegTotals[k].includedDistanceTotal = includedDistanceTotal;
-            teamLegTotals[k].includedDistanceTotalDisplay = includedDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            legTotals[k].nextLegName = nextLegName;
+            legTotals[k].distanceToNextLeg = distanceToNextLeg.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            legTotals[k].nextLegCompletionPercent = nextLegCompletionPercent;
+            legTotals[k].includedDistanceTotal = includedDistanceTotal;
+            legTotals[k].includedDistanceTotalDisplay = includedDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
-        setTeamLegTotals(teamLegTotals);
+        setLegTotals(legTotals);
 
     }
 
@@ -134,7 +134,7 @@ const GoogleMap = (props) => {
                 </Box>
                 <Grid container style={{ height: '91%' }} spacing={2}>
                     <Grid style={{ height: "100%", padding: "5px 0px" }} item xs={12} sm={9} md={8} onMouseDown={(e) => handlePress(e)}>
-                        <Map
+                        <MapUser
                             id="myMap"
                             options={{
                                 center: { lat: 37.0902, lng: -95.7129 },
@@ -144,7 +144,7 @@ const GoogleMap = (props) => {
                                 mapTypeControl: false,
                             }}
                             challenge={props.challenge}
-                            teamResults={props.teamResults}
+                            results={props.results}
                             start={props.start}
                             end={props.end}
                             waypoints={props.waypoints}
@@ -165,14 +165,14 @@ const GoogleMap = (props) => {
                             </ul>
                         </Grid>
                         <Grid item xs={12} style={{ textAlign: "center" }}>
-                            <Typography variant="h5">Team Leaders</Typography>
+                            <Typography variant="h5">Leaders</Typography>
                                 <Grid
                                     container
                                     justify="space-between"
                                     alignItems="center"
                                     >
                                     <Grid style={{ textAlign: "left" }} className={classes.mobile} item xs md={5}>
-                                        <Typography className={classes.header}>Team</Typography>
+                                        <Typography className={classes.header}>Name</Typography>
                                     </Grid>
                                     <Grid className={classes.mobile} item xs={false} md={3}>
                                         <Typography className={classes.header}>Distance (mi)</Typography>
@@ -182,7 +182,7 @@ const GoogleMap = (props) => {
                                     </Grid>
                                 </Grid>
                                 <hr></hr>
-                                {teamLegTotals.sort((x, y) => {
+                                {legTotals.sort((x, y) => {
                                         const yDist = y.includedDistanceTotal ? y.includedDistanceTotal : 0;
                                         const xDist = x.includedDistanceTotal ? x.includedDistanceTotal : 0;
                                         return(yDist - xDist);
@@ -193,7 +193,7 @@ const GoogleMap = (props) => {
                                         >
                                 
                                         <Grid style={{ textAlign: "left" }} className={classes.noWrap} item xs md={5}>
-                                            <Typography className={classes.text}>{result.userRecord ? result.displayName: result.teamName}</Typography>
+                                            <Typography className={classes.text}>{result.userRecord ? result.displayName : result.teamRecord ? result.teamName : "all"}</Typography>
                                             <Typography className={classes.caption} variant="caption">Next:{result.nextLegName}</Typography>
                                         </Grid>
                                         <Grid className={classes.mobile} item xs={false} md={3}>
@@ -219,4 +219,4 @@ const GoogleMap = (props) => {
 
 }
 
-export default withStyles(styles)(GoogleMap)
+export default withStyles(styles)(GoogleMapUser)

@@ -3,7 +3,7 @@ import { WidthProvider, Responsive } from "react-grid-layout";
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { withStyles } from '@material-ui/core/styles';
-import CalculateTotals from "./CalculateTotals/CalculateTotals.js"
+import { Leaderboard } from "./CalculateTotals/Leaderboard";
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { Redirect } from "react-router";
 import ResultsCard from "./ResultsCard/ResultsCard.jsx";
@@ -11,7 +11,7 @@ import ActivitiesCard from './ActivitiesCard/ActivitiesCard';
 import ActivityBubble from "./Graphs/ActivityBubble";
 import ActivityByDay from "./Graphs/ActivityByDay";
 import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
-import PointsBreakdownGraph from './Graphs/PointsBreakdown';
+import PointsBreakdownGraph from './Graphs/PointsBreakdown.jsx';
 import { Container, Grid, CircularProgress } from '@material-ui/core'
 import Util from "../Util/Util";
 import GoogleMap from './GoogleMap/GoogleMap';
@@ -184,7 +184,7 @@ class Dashboard extends React.PureComponent {
     // This is to render interim without waiting for all to be done.
     renderTotals(activities) {
         // console.log(`renderTotals ,teamUid:${this.props.user.teamUid} teamName:${this.props.user.teamName} uid:${this.props.user.uid} displayName:${this.props.user.displayName}`);
-        const totals = CalculateTotals.totals(activities,
+        const totals = Leaderboard.calculateLeaderboards(activities,
             this.props.user.teamUid, this.props.user.teamName,
             this.props.user.uid, this.props.user.displayName);
         let myActivities = this.myActivitiesFilter(activities);
@@ -273,11 +273,18 @@ class Dashboard extends React.PureComponent {
         const { classes } = this.props;
 
         // Some need to catch up for some reason - I had to refresh browser after going to activities page
-        if (!this.state.totals || !this.state.totals.userR || !this.state.totals.teamR) {
+        if (!this.state.totals || !this.state.totals.userResults || !this.state.totals.teamResults) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
+        if (!this.props.user) {
+            return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
+        }
+        const currentUserResults = this.state.totals.userResults.find(result => result.uid === this.props.user.uid);
+        const currentTeamResults = this.state.totals.teamResults.find(result => result.teamUid === this.props.user.teamUid);
+
         let myActivities = this.state.myActivities;
         if (this.props.user.authUser) {
+
             return (
                 <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
                     {this.state.loadingFlag ?
@@ -305,7 +312,7 @@ class Dashboard extends React.PureComponent {
                                         start={this.state.challenge.startCity}
                                         end={this.state.challenge.endCity}
                                         waypoints={this.state.challenge.waypoints}
-                                        teamResults={this.state.totals.teamR}
+                                        teamResults={this.state.totals.teamResults}
                                         endDate={this.state.challenge.endDate}
                                         callbackParent={() => this.onChildChanged()} />
                                 </div> : <></>}
@@ -316,30 +323,30 @@ class Dashboard extends React.PureComponent {
                                 />
                             </div>
                             <div key="1" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 6, x: 4, y: 1, minW: 4, minH: 6, maxW: 6 }}>
-                                <ResultsCard teamTotals={this.state.totals.teamR} userTotals={this.state.totals.userR} onlyTeams={true} />
+                                <ResultsCard teamTotals={this.state.totals.teamResults} userTotals={this.state.totals.userResults} onlyTeams={true} />
                             </div>
                             <div key="2" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 6, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                 <ActivitiesCard name={this.props.user.displayName} activity={myActivities} />
                             </div>
                             <div key="3" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 11, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
-                                <ResultsCard user={this.props.user} teamTotals={this.state.totals.teamR} userTotals={this.state.totals.userR} onlyTeams={false} />
+                                <ResultsCard user={this.props.user} teamTotals={this.state.totals.teamResults} userTotals={this.state.totals.userResults} onlyTeams={false} />
                             </div>
                             <div key="4" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 8, x: 0, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
-                                    title={`All Athletes`}
-                                    currentTotalsShare={this.state.totals.all}
+                                    title={`Breakdown - All Athletes`}
+                                    currentTotalsShare={this.state.totals.overallResults}
                                 />
                             </div>
                             <div key="5" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 8, x: 4, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
-                                    title={`${this.props.user.displayName}`}
-                                    currentTotalsShare={this.state.totals.user}
+                                    title={`Breakdown - ${this.props.user.displayName}`}
+                                    currentTotalsShare={currentUserResults}
                                 />
                             </div>
                             <div key="6" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 8, x: 8, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
-                                    title={`Team ${this.props.user.teamName}`}
-                                    currentTotalsShare={this.state.totals.team}
+                                    title={`Breakdown - Team ${this.props.user.teamName}`}
+                                    currentTotalsShare={currentTeamResults}
                                 />
                             </div>
                             <div key="7" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 8, h: 10, x: 0, y: 4, minW: 6, minH: 10, maxW: 12, maxH: 10 }}>
@@ -353,14 +360,14 @@ class Dashboard extends React.PureComponent {
                                 <PointsBreakdownGraph
                                     title={`Points by Team`}
                                     graphType="Team"
-                                    totals={this.state.totals}
+                                    totals={this.state.totals.teamResults}
                                 />
                             </div>
                             <div key="9" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 9, x: 0, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>
                                 <PointsBreakdownGraph
                                     title={`Top Members`}
                                     graphType="User"
-                                    totals={this.state.totals}
+                                    totals={this.state.totals.userResults}
                                 />
                             </div>
                             <div key="10" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 9, x: 4, y: 6, minW: 3, minH: 9, maxW: 6, maxH: 10 }}>

@@ -7,6 +7,7 @@ import {
 import Navigation from './components/Navigation/Navigation.jsx';
 import LandingPage from './components/Landing/Landing';
 import Dashboard from './components/Dashboard/dashboard.jsx';
+import DashboardBackend from './components/Dashboard/DashboardBackend.jsx';
 import Account from './components/Account/Account';
 import Admin from './components/Admin/Admin.jsx';
 import AdminFunctions from './components/Admin/AdminFunctions.jsx';
@@ -56,6 +57,7 @@ class App extends React.Component {
           <Route exact path="/signin" component={SignInForm} />
           <Route exact path="/pw-forget" component={PasswordForgetPage} />
           <Route exact path="/dashboard" component={Dashboard} />
+          <Route exact path="/dashboardbackend" component={DashboardBackend} />
           <Route exact path="/results" component={Results} />
           <Route exact path="/challenges" component={Challenges} />
           <Route exact path="/teams" component={Teams} />

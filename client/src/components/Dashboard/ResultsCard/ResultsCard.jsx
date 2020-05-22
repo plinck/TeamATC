@@ -90,9 +90,9 @@ const ResultsCard = (props) => {
                         {totals.slice(0, 10).map((result, index) => (
                             <TableRow key={index}>
                                 <TableCell component="th" scope="row">
-                                    {uid === result.userOrTeamUid ? <Tooltip title={"This is me"}>
+                                    {uid === (result.userRecord ? result.uid : result.teamUid)  ? <Tooltip title={"This is me"}>
                                         <img style={{ maxHeight: '18px' }} src={"/images/me.png"} alt={"me"} />
-                                    </Tooltip> : null}  {result.userOrTeamName}
+                                    </Tooltip> : null}  {result.userRecord ? result.displayName : result.teamName}
                                 </TableCell>
                                 <TableCell>{result.pointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
                                 <TableCell padding="none" align="right">{result.swimPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>

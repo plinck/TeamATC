@@ -1,4 +1,5 @@
 import React from 'react';
+import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
 
 import './Result.css'
 import { TableCell, TableRow } from '@material-ui/core';
@@ -24,15 +25,15 @@ const Result = (props) => {
         <TableRow key={props.index} style={{ backgroundColor: `${rowBg}` }}>
             {props.result.teamRecord ?
                 <TableCell component="th" scope="row" style={{ fontWeight: "bold" }}>
-                    {props.result.userOrTeamName}
+                    {props.result.userRecord ? props.result.displayName: props.result.teamName}
                 </TableCell>
                 :
                 <TableCell component="th" scope="row" style={{ paddingLeft: "50px" }}>
-                    {props.result.isThisMine ?
+                    {props.result.uid && props.result.uid === props.user.uid ?
                         <img style={{ maxHeight: '20px' }} src={"/images/me.png"} alt={"me"} />
-                        : props.result.isThisMine
+                        : false
                     }
-                    {props.result.userOrTeamName}
+                    {props.result.userRecord ? props.result.displayName: props.result.teamName}
                 </TableCell>
             }
             <TableCell>
@@ -54,4 +55,4 @@ const Result = (props) => {
     )
 }
 
-export default Result;
+export default withAuthUserContext(Result);

@@ -22,15 +22,15 @@ class Map extends Component {
         height: "100%"
     }
 
-    putMarkerOnRoute(polyline, distance, team) {
+    putMarkerOnRoute(polyline, distance, name) {
         if (distance > this.props.totalDist) {
             distance = this.props.totalDist
         }
         let meters = distance * 1000 * 1.609344
         let totalMeters = this.props.totalDist * 1000 * 1.609344
         let label = `<b>Dist: ${parseInt(distance)} </b><br><b> ${parseInt(distance / this.props.totalDist * 100)}% Complete </b>`
-        let title = `${team} - Dist: ${parseInt(distance)} `
-        this.createMarker(polyline.GetPointAtDistance(meters, totalMeters), label, team, title)
+        let title = `${name} - Dist: ${parseInt(distance)} `
+        this.createMarker(polyline.GetPointAtDistance(meters, totalMeters), label, name, title)
     }
 
     calcRoute() {
@@ -77,15 +77,15 @@ class Map extends Component {
                 polyline.setMap(map);
 
                 // calc next leg info calls the parent to attach the next leg info
-                // to each of the teamTotal records
+                // to each of the result records
                 this.props.calcNextLegInfo(response.routes[0].legs);
                 this.props.computeTotalDistance(response);
-                this.props.teamResults.forEach(total => {
+                this.props.results.forEach(total => {
                     let includedDistanceTotal = 0;
                     includedDistanceTotal += this.props.challenge.isSwim ? total.swimPointsTotal : 0;
                     includedDistanceTotal += this.props.challenge.isBike ? total.bikeDistanceTotal : 0;
                     includedDistanceTotal += this.props.challenge.isRun ? total.runPointsTotal : 0;
-                    this.putMarkerOnRoute(polyline, includedDistanceTotal, total.userRecord ? total.displayName: total.teamName)
+                    this.putMarkerOnRoute(polyline, includedDistanceTotal, total.userRecord ? total.displayName : total.teamName);
                 });
             } else {
                 alert("directions response " + status);
@@ -93,10 +93,10 @@ class Map extends Component {
         });
     }
 
-    createMarker(latlng, label, team, title) {
+    createMarker(latlng, label, name, title) {
         let map = this.state.map
         let infowindow = this.state.infowindow
-        var contentString = '<b>' + team + '</b><br>' + label;
+        var contentString = '<b>' + name + '</b><br>' + label;
         var marker = new window.google.maps.Marker({
             position: latlng,
             map: map,

@@ -165,6 +165,7 @@ exports.listenStravaEvents = functions.firestore
 });
 
 
+// Get all resuls for challenge
 exports.getChallengeResults = functions.https.onCall((req:any, context:any):any => {
     return new Promise((resolve, reject) => {
         const challenge = new Challenge(req.challengeUid);

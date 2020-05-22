@@ -23,9 +23,9 @@ class TeamResultsModal extends React.Component {
     //    else return null;
     //  }
 
-    filterByTeam(results, teamNamme) {
+    filterByTeam(results, teamUid) {
         let teamUserResults = results.filter((result) => {
-            if (result.teamName === teamNamme) {
+            if (result.teamUid === teamUid) {
                 return result;
             } else {
                 return false;
@@ -75,7 +75,7 @@ class TeamResultsModal extends React.Component {
         let combinedResults = [];
         for (let i = 0; i < teamTotals.length; i++) {
             combinedResults.push(teamTotals[i]);
-            let userResultsForThisTeam = this.filterByTeam(userTotals, teamTotals[i].userOrTeamName);
+            let userResultsForThisTeam = userTotals.filter(result => result.teamUid === teamTotals[i].teamUid);
             combinedResults = [...combinedResults, ...userResultsForThisTeam]
         }
 
