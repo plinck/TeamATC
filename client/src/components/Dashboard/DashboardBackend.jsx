@@ -4,7 +4,7 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { withStyles } from '@material-ui/core/styles';
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
-import { Redirect } from "react-router";
+// import { Redirect } from "react-router";
 import ResultsCard from "./ResultsCard/ResultsCard.jsx";
 import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
 import PointsBreakdownGraph from './Graphs/PointsBreakdown.jsx';
@@ -13,7 +13,7 @@ import Util from "../Util/Util";
 import GoogleMapUser from './GoogleMap/GoogleMapUser';
 import ChallengeDB from '../Challenges/ChallengeDB';
 import ResultsListener from "../Results/ResultsListener";
-import UserWidget from "./UserWidget/UserWidget.jsx"
+import UserWidget from "./UserWidget/UserWidget.jsx";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
@@ -147,8 +147,8 @@ class DashboardBackend extends React.PureComponent {
                 // console.log(`Detached listener`);
             }
             // console.log(this.props.user.challengeUid)
-            this.createListener(this.props.user.challengeUid)
-            this.fetchData(this.props.user.challengeUid)
+            this.createListener(this.props.user.challengeUid);
+            this.fetchData(this.props.user.challengeUid);
         }
     }
     // Search for object in array based on key using uniqure ID
