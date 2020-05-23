@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import GetAppIcon from "@material-ui/icons/GetApp";
+import { Table, TableBody, TableHead, TableCell, TableRow } from '@material-ui/core';
 
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import Result from "./Result";
@@ -175,40 +176,41 @@ class Results extends React.Component {
     );
 
     if (this.props.user.authUser) {
-      // Conditional rendering
-      let resultView = (
-        <div>
-          <div className={classes.resultStyle}>
-            {userResults.map((result, index) => {
-              return (
-                <div key={index}>
-                  <Result
-                    result={result}
-                    index={index}
-                  />
-                </div>
-              );
-            })}
-            {userResults.length >= 100 ? (
-              <div style={{ textAlign: "center" }}>
-                <Button
-                  onClick={this.getNextPage}
-                  variant="contained"
-                  color="primary"
-                >
-                  Load More
-                </Button>
-              </div>
-            ) : null}
-          </div>
-        </div>
-      );
+      let leaderBoardHeaderRow =
+        <TableHead>
+            <TableRow>
+                <TableCell>Place</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Team</TableCell>
+                <TableCell>Time</TableCell>
+                <TableCell>Progress</TableCell>
+                <TableCell>Total</TableCell>
+                <TableCell align="right">Swim</TableCell>
+                <TableCell align="right">Bike</TableCell>
+                <TableCell align="right">Run</TableCell>
+                <TableCell align="right">Other</TableCell>
+            </TableRow>
+        </TableHead>
 
       return (
         <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
           <Container maxWidth="xl">
             {sortFilterRow}
-            {resultView}
+            <Table size="small" >
+              {leaderBoardHeaderRow}
+              <TableBody>
+                  {userResults.map((result, index) => {
+                    return (
+                      <div key={index}>
+                        <Result
+                          result={result}
+                          index={index}
+                        />
+                      </div>
+                    );
+                  })}
+              </TableBody>
+            </Table>
           </Container>
         </div>
       );

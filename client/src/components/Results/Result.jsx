@@ -75,8 +75,18 @@ class Result extends React.Component {
             rowBg = "yellow";
         }
 
+        // <TableCell>Place</TableCell>
+        // <TableCell>Name</TableCell>
+        // <TableCell>Team</TableCell>
+        // <TableCell>Time</TableCell>
+        // <TableCell>Progress</TableCell>
+        // <TableCell>Total</TableCell>
+
         return (
             <TableRow key={this.props.index} style={{ backgroundColor: `${rowBg}` }}>
+                <TableCell>
+                    {this.props.index}
+                </TableCell>
                 {teamRecord ?
                     <TableCell component="th" scope="row" style={{ fontWeight: "bold" }}>
                         {userRecord ? displayName : teamName}
@@ -90,6 +100,15 @@ class Result extends React.Component {
                         {userRecord ? displayName: teamName}
                     </TableCell>
                 }
+                <TableCell>
+                    {teamName}
+                </TableCell>
+                <TableCell>
+                    {durationTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                </TableCell>
+                <TableCell>
+                    {"total/cTotal"}
+                </TableCell>
                 <TableCell>
                     {pointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 </TableCell>
