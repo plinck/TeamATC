@@ -16,6 +16,7 @@ import { ActivityUpdateType } from "./modules/interfaces/Common.Types";
 import { StravaEvent, IncomingStravaEventType } from './modules/interfaces/StravaEvent';
 import { saveStravaEvent } from "./modules/events";
 import { StravaEventDB } from "./modules/db/StravaEventDB";
+import { DistanceMatrix } from "./modules/DistanceMatrix";
 
 // exports.scheduledFunction = functions.pubsub.schedule('5 6 * * *').onRun((context) => {
 //     console.log('This will be run every day at 6:05 AM UTC!');
@@ -264,6 +265,15 @@ exports.updateUserActivityDisplayName = functions.https.onCall((req, context: fu
             reject(err);
         });   
     });//Promise
+});
+
+// Get distanxe from google
+exports.calcDistanceMatrix = functions.https.onCall((req, context: functions.https.CallableContext) => {
+    console.log("calcDistanceMatrix");
+    console.log(req);
+    const distanceMatrix = new DistanceMatrix();
+    const travelMode =  req.travelMode ? req.travelMode : "DRIVING";
+    return distanceMatrix.calcDistanceMatrix(req.origins, req.destinations, travelMode)
 });
 
 // Update Teams - module functions

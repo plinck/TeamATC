@@ -16,6 +16,8 @@ import FormLabel from '@material-ui/core/FormLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import ChallengeDB from "./ChallengeDB"
+import ChallengeAPI from "./ChallengeAPI"
+
 import Photo from "../Util/Photo.js"
 
 const useStyles = makeStyles(theme => ({
@@ -158,8 +160,9 @@ const ChallengeForm = (props) => {
         }); // Promise
     }
 
-    const handleSave = (event) => {
+    const handleSave = async (event) => {
         event.preventDefault();
+        let res = await ChallengeAPI.calcDistanceMatrix(challenge.startCity, challenge.endCity);
 
         uploadPhotoToGoogleStorage().then(photoObj => {
             console.log(`uploaded photo`);
