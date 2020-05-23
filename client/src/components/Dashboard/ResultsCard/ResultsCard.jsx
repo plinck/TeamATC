@@ -27,7 +27,7 @@ const ResultsCard = (props) => {
     }
 
     // wait for props
-    if (!props.teamTotals) {
+    if (!props.teamTotals || !props.challenge) {
         return (null);
     }
 
@@ -68,8 +68,8 @@ const ResultsCard = (props) => {
     }
 
     let uid = props.user ? props.user.uid : null
-
-    const includedTotals = (result) => {
+    // first set the correct totals bsed on challenge totals used
+    let sortedTotals = totals.map((result) => {
         let includedDistanceTotal = 0;
         if (props.challenge) {
             includedDistanceTotal += props.challenge.isSwim ? result.swimPointsTotal : 0;
@@ -77,8 +77,27 @@ const ResultsCard = (props) => {
             includedDistanceTotal += props.challenge.isRun ? result.runPointsTotal : 0;
             includedDistanceTotal += props.challenge.isOther ? result.otherPointsTotal : 0;
         }
-        return includedDistanceTotal;
-    }
+        result.pointsTotal = includedDistanceTotal;
+        return result;
+
+    });
+
+    // Then sort
+    sortedTotals.sort((a, b) => {
+        const totalA = a.pointsTotal;
+        const totalB = b.pointsTotal;
+
+        let comparison = 0;
+        if (totalA > totalB) {
+            comparison = 1;
+        } else if (totalA < totalB) {
+            comparison = -1;
+        }
+        return comparison * -1;  // Invert so it will sort in descending order
+    });
+    
+    //then only keep top 10
+    sortedTotals = sortedTotals.slice(0, 10);
 
     return (
         <Card style={{ height: '100%' }}>
@@ -99,14 +118,14 @@ const ResultsCard = (props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {totals.slice(0, 10).map((result, index) => (
+                        {sortedTotals.map((result, index) => (
                             <TableRow key={index}>
                                 <TableCell component="th" scope="row">
                                     {uid === (result.userRecord ? result.uid : result.teamUid)  ? <Tooltip title={"This is me"}>
                                         <img style={{ maxHeight: '18px' }} src={"/images/me.png"} alt={"me"} />
                                     </Tooltip> : null}  {result.userRecord ? result.displayName : result.teamName}
                                 </TableCell>
-                                <TableCell>{includedTotals(result).toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
+                                <TableCell>{result.pointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
                                 {props.challenge && props.challenge.isSwim ? <TableCell padding="none" align="right">{result.swimPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : ""}
                                 {props.challenge && props.challenge.isBike ? <TableCell padding="none" align="right">{result.bikePointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : ""}
                                 {props.challenge && props.challenge.isRun ? <TableCell padding="none" align="right">{result.runPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : ""}

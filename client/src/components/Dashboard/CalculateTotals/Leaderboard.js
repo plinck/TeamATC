@@ -1,4 +1,4 @@
-import { Result } from "./Result";
+import { Result } from "../../Results/Result";
 
 class Leaderboard {
 
