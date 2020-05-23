@@ -194,6 +194,34 @@ class DashboardBackend extends React.PureComponent {
         const overallResults = this.state.totals.filter(total => total.overallRecord);
         const teamResults = this.state.totals.filter(total => total.teamRecord);
         const userResults = this.state.totals.filter(total => total.userRecord);
+        // Sort the team and user results based on total points DESC          
+        userResults.sort((a, b) => {
+            const totalA = a.pointsTotal;
+            const totalB = b.pointsTotal;
+    
+            let comparison = 0;
+            if (totalA > totalB) {
+                comparison = 1;
+            } else if (totalA < totalB) {
+                comparison = -1;
+            }
+            return comparison * -1;  // Invert so it will sort in descending order
+        });
+    
+        teamResults.sort((a, b) => {
+            const totalA = a.pointsTotal;
+            const totalB = b.pointsTotal;
+    
+            let comparison = 0;
+            if (totalA > totalB) {
+                comparison = 1;
+            } else if (totalA < totalB) {
+                comparison = -1;
+            }
+            return comparison * -1;  // Invert so it will sort in descending order
+        });
+            
+        
 
         const currentOverallResults = overallResults && overallResults.length > 0 ? overallResults[0] : undefined;
         const currentUserResults = userResults.find(result => result.uid === this.props.user.uid);
