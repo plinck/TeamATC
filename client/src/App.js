@@ -58,9 +58,9 @@ class App extends React.Component {
           <Route exact path="/pw-forget" component={PasswordForgetPage} />
           <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/dashboardbackend" component={DashboardBackend} />
-          <Route exact path="/results" component={Results} />
           <Route exact path="/challenges" component={Challenges} />
           <Route exact path="/teams" component={Teams} />
+          <Route exact path="/results" component={Results} />
           <Route exact path="/account" component={Account} />
           <Route exact path="/admin" component={Admin} />
           <Route exact path="/adminfunctions" component={AdminFunctions} />

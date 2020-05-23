@@ -1,4 +1,4 @@
-class Result {
+class ResultClass {
     challengeUid;
     overallRecord;
     teamRecord;
@@ -65,4 +65,4 @@ class Result {
     }
 }
 
-export { Result };
+export { ResultClass };
