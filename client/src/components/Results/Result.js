@@ -27,7 +27,7 @@ class Result {
     otherPointsTotal;
     otherNbrActivities;
     otherDurationTotal;
-    updateDateTime: Date;
+    updateDateTime;
 
     constructor(challengeUid) {
         this.challengeUid = "";
