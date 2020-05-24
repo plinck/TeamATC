@@ -147,11 +147,17 @@ const ChallengeForm = (props) => {
     const uploadPhotoToGoogleStorage = () => {
         return new Promise((resolve, reject) => {
             if (photoFile) {
-                Photo.uploadPhoto(photoFile, "challenge").then(photoObj => {
+                // first delete the old photo
+                const fileName = challenge.photoObj && challenge.photoObj.fileName ? challenge.photoObj.fileName : "";
+                Photo.deletePhoto(fileName).then(photoObj => {
+                    console.log(`deleted old photo`);
+                    return (Photo.uploadPhoto(photoFile, "challenge"));
+                }).then((photoObj) => {
+                    console.log(`uploaded photo`);
                     photoObj.fileTitle = "challenge";
                     resolve(photoObj);
-                }).catch(err => {
-                    setMessage(`Error uploading photo for challenge ${err}`);
+                }).catch((err) => {
+                    setMessage(`Error uploading photo for challenge ${err.message}`);
                     reject(err);
                 });
             } else {
@@ -162,10 +168,10 @@ const ChallengeForm = (props) => {
 
     const handleSave = async (event) => {
         event.preventDefault();
+        // NOTE: Add a processing popup
         let res = await ChallengeAPI.calcDistanceMatrix(challenge.startCity, challenge.endCity);
 
         uploadPhotoToGoogleStorage().then(photoObj => {
-            console.log(`uploaded photo`);
             // NOW chain promises to update or create challenge
             challenge.photoObj = photoObj ? photoObj : null;
             if (challenge.id) {

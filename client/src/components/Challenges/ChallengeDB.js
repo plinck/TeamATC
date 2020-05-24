@@ -185,8 +185,6 @@ class ChallengeDB {
         });
     }
 
-
-
 }
 
 export default ChallengeDB;
