@@ -56,7 +56,7 @@ class LocationSearchBar extends Component {
             this.props.handleCityChange(addressObject.formatted_address, geometry);
             this.setState(
                 {
-                    city: address[0].long_name,
+                    city: addressObject.formatted_address,
                     fieldValue: addressObject.formatted_address,
                     lat: lat,
                     lng: lng,
