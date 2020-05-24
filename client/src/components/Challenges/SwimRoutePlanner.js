@@ -39,7 +39,6 @@ const SwimRoutePlanner = (props) => {
   let markers = [];
 
   const handleLapsChange = (e) => {
-    console.log(e.target.value)
     if (e.target.value <= 0){
       setLaps(1)
     } else {
@@ -139,7 +138,7 @@ const SwimRoutePlanner = (props) => {
   return (
     <>
       <Script
-        url={`https://maps.googleapis.com/maps/api/js?key=${FB_CONFIG.API_KEY}&libraries=places,drawing`}
+        url={`https://maps.googleapis.com/maps/api/js?key=${FB_CONFIG.API_KEY}&libraries=places`}
         onLoad={handleScriptLoad}
       />
       <br></br>
