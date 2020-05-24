@@ -119,9 +119,10 @@ const ChallengeForm = (props) => {
         setChallenge({ ...challenge, endCity: city })
     }
 
-    const handleAddWaypoint = city => {
+    const handleAddWaypoint = (city, geometry) => {
         let newWaypoint = {
-            location: city
+            location: city,
+            geometry: geometry
         }
         let newWaypoints = challenge.waypoints ? challenge.waypoints : []
         newWaypoints.push(newWaypoint)
@@ -169,7 +170,23 @@ const ChallengeForm = (props) => {
     const handleSave = async (event) => {
         event.preventDefault();
         // NOTE: Add a processing popup
-        let res = await ChallengeAPI.calcDistanceMatrix(challenge.startCity, challenge.endCity);
+        let originArray = [challenge.startCity];
+        let destinationArray = [];
+        challenge.waypoints.forEach(waypoint => {
+            originArray.push(waypoint.location);
+            destinationArray.push(waypoint.location);
+        });
+        destinationArray.push(challenge.endCity);
+        const origins = originArray.join();
+        const destinations  = destinationArray.join();
+
+        try {
+            let res = await ChallengeAPI.calcDistanceMatrix(origins, destinations);
+            console.log(`result from ChallengeAPI.calcDistanceMatrix: ${JSON.stringify(res)}`)
+        } catch (err) {
+            setMessage(`Error calling ChallengeAPI.calcDistanceMatrix ${err}`);
+            return;
+        }
 
         uploadPhotoToGoogleStorage().then(photoObj => {
             // NOW chain promises to update or create challenge
