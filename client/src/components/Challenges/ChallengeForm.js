@@ -54,6 +54,7 @@ const ChallengeForm = (props) => {
     const CLEAR_CHALLENGE_VALUES = {
         id: undefined,
         description: "",
+        challengeDistance: 0,
         endDate:  moment(new Date('2020-08-18T21:11:54')).endOf("day").toDate(),
         isCurrentChallenge: false,
         name: "",
@@ -73,6 +74,7 @@ const ChallengeForm = (props) => {
     const CHALLENGE_INITIAL_VALUES = {
         id: props.id,
         description: "",
+        challengeDistance: 0,
         endDate: moment(new Date('2020-08-18T21:11:54')).endOf("day").toDate(),
         isCurrentChallenge: false,
         name: "",
@@ -177,12 +179,12 @@ const ChallengeForm = (props) => {
         let originArray = [challenge.startCity];
         let destinationArray = [];
         challenge.waypoints.forEach(waypoint => {
-            originArray.push(waypoint.location);
+            // originArray.push(waypoint.location);
             destinationArray.push(waypoint.location);
         });
         destinationArray.push(challenge.endCity);
-        const origins = originArray.join();
-        const destinations  = destinationArray.join();
+        const origins = originArray.join("|");
+        const destinations  = destinationArray.join("|");
 
         try {
             let res = await ChallengeAPI.calcDistanceMatrix(origins, destinations);

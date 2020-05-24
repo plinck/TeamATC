@@ -67,6 +67,7 @@ class ChallengeDB {
             const dbChallengesRef = Util.getBaseDBRefs().dbChallengesRef;
             let challengeNew = {
                 description: challenge.description,
+                challengeDistance: challenge.challengeDistance ? challenge.challengeDistance : 0,
                 endDate: challenge.endDate,
                 isCurrentChallenge: challenge.isCurrentChallenge ? challenge.isCurrentChallenge : false,
                 name: challenge.name,
@@ -102,6 +103,7 @@ class ChallengeDB {
             const dbChallengesRef = Util.getBaseDBRefs().dbChallengesRef;
             let challengeNew = {
                 description: challenge.description,
+                challengeDistance: challenge.challengeDistance ? challenge.challengeDistance : 0,
                 endDate: challenge.endDate,
                 isCurrentChallenge: challenge.isCurrentChallenge ? challenge.isCurrentChallenge : false,
                 name: challenge.name,

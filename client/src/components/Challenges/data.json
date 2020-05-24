@@ -1,0 +1,70 @@
+{
+    "data": {
+        "destination_addresses": ["Knoxville, TN, USA", "Bangor, ME 04401, USA", "Juneau, AK, USA", "Los Angeles, CA, USA", "Houston, TX, USA", "Detroit, MI, USA"],
+        "origin_addresses": ["Atlanta, GA, USA"],
+        "rows": [{
+            "elements": [{
+                "distance": {
+                    "text": "344 km",
+                    "value": 343565
+                },
+                "duration": {
+                    "text": "3 hours 9 mins",
+                    "value": 11343
+                },
+                "status": "OK"
+            }, {
+                "distance": {
+                    "text": "2,095 km",
+                    "value": 2095335
+                },
+                "duration": {
+                    "text": "19 hours 37 mins",
+                    "value": 70609
+                },
+                "status": "OK"
+            }, {
+                "distance": {
+                    "text": "6,024 km",
+                    "value": 6024219
+                },
+                "duration": {
+                    "text": "2 days 18 hours",
+                    "value": 237442
+                },
+                "status": "OK"
+            }, {
+                "distance": {
+                    "text": "3,514 km",
+                    "value": 3514013
+                },
+                "duration": {
+                    "text": "1 day 8 hours",
+                    "value": 115328
+                },
+                "status": "OK"
+            }, {
+                "distance": {
+                    "text": "1,276 km",
+                    "value": 1275904
+                },
+                "duration": {
+                    "text": "11 hours 24 mins",
+                    "value": 41054
+                },
+                "status": "OK"
+            }, {
+                "distance": {
+                    "text": "1,162 km",
+                    "value": 1162446
+                },
+                "duration": {
+                    "text": "10 hours 45 mins",
+                    "value": 38704
+                },
+                "status": "OK"
+            }]
+        }],
+        "status": "OK"
+    }
+}
