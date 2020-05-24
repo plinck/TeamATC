@@ -2,8 +2,13 @@ import React, { useState, useEffect } from "react";
 import Script from "react-load-script";
 import { FB_CONFIG } from "../Environment/Environment";
 import { withStyles } from "@material-ui/core/styles";
-
-import { Typography, TextField, Button } from "@material-ui/core";
+import createEpoly from "../Dashboard/GoogleMap/eploy";
+import {
+  Typography,
+  TextField,
+  Button,
+  InputAdornment,
+} from "@material-ui/core";
 
 const styles = () => ({
   searchBar: {
@@ -29,35 +34,65 @@ const SwimRoutePlanner = (props) => {
 
   const [map, setMap] = useState();
   const [polyline, setPolyline] = useState();
-  const [drawingManager, setDrawingManager] = useState();
+  const [distance, setDistance] = useState();
+  const [laps, setLaps] = useState(1);
+  let markers = [];
+
+  const handleLapsChange = (e) => {
+    console.log(e.target.value)
+    if (e.target.value <= 0){
+      setLaps(1)
+    } else {
+      setLaps(e.target.value)
+    }
+  };
 
   useEffect(() => {
-    if (drawingManager && map) {
-      window.google.maps.event.addListener(
-        drawingManager,
-        "polylinecomplete",
-        (polygon) => onDrawComplete(polygon)
-      );
-      window.google.maps.event.addListener(drawingManager, "set_at", () =>
-        console.log("triggered")
-      );
-      console.log(map);
+    if (polyline && map) {
+      map.addListener("click", addLatLng);
     }
-  }, [map, polyline, drawingManager]);
+  }, [map, polyline]);
+
+  // useEffect(() => {
+  //   if (polyline) {
+  //     onDrawComplete(polyline);
+  //   }
+  // }, [points]);
+
+  const removeMarker = (marker) => {
+    for (var i = 0; i < markers.length; i++) {
+      if (markers[i] === marker) {
+        markers[i].setMap(null);
+        markers.splice(i, 1);
+        polyline.getPath().removeAt(i);
+        onDrawComplete(polyline);
+      }
+    }
+  };
+
+  const addLatLng = (event) => {
+    // Add a new marker at the new plotted point on the polyline.
+    let marker = new window.google.maps.Marker({
+      position: event.latLng,
+      map: map,
+    });
+    markers.push(marker);
+    polyline.getPath().push(event.latLng);
+    window.google.maps.event.addListener(marker, "click", (event) =>
+      removeMarker(marker)
+    );
+    onDrawComplete(polyline);
+  };
 
   const onDrawComplete = (polygon) => {
-    for (var i = 0; i < polygon.getPath().getLength(); i++) {
-      let point = polygon.getPath().getAt(i).toUrlValue(6);
-      console.log(point);
-    }
-    drawingManager.setDrawingMode(null);
-    drawingManager.setOptions({
-      drawingControl: false
-    });
-    setPolyline(polygon);
+    const meters = polygon.Distance();
+    const miles = meters / 1000 / 1.609344; //m ro km to miles
+    console.log(miles);
+    setDistance(miles);
   };
 
   const handleScriptLoad = async () => {
+    createEpoly();
     // Initialize map
     const map = await new window.google.maps.Map(
       document.getElementById("swimMap"),
@@ -69,17 +104,13 @@ const SwimRoutePlanner = (props) => {
     const input = document.getElementById("swim-search-input");
     const searchBox = await new window.google.maps.places.SearchBox(input);
 
-    // Initalize drawing manager
-    const drawingManager = await new window.google.maps.drawing.DrawingManager({
-      drawingMode: window.google.maps.drawing.OverlayType.null,
-      drawingControl: true,
-      drawingControlOptions: {
-        position: window.google.maps.ControlPosition.BOTTOM_CENTER,
-        drawingModes: ["polyline"],
-      },
+    let poly = await new window.google.maps.Polyline({
+      strokeColor: "#000000",
+      strokeOpacity: 1.0,
+      strokeWeight: 3,
     });
-    drawingManager.setMap(map);
-    setDrawingManager(drawingManager);
+    poly.setMap(map);
+    setPolyline(poly);
 
     searchBox.addListener("places_changed", function () {
       let places = searchBox.getPlaces();
@@ -105,16 +136,6 @@ const SwimRoutePlanner = (props) => {
     });
   };
 
-  const clearMap = () => {
-    if (polyline){
-      polyline.setMap(null);
-      setPolyline(null);
-      drawingManager.setOptions({
-        drawingControl: true
-      });
-    }
-  };
-
   return (
     <>
       <Script
@@ -135,9 +156,23 @@ const SwimRoutePlanner = (props) => {
         }}
       />
       <div id="swimMap" style={{ height: "500px", width: "100%" }} />
-      <Button variant="contained" color="primary" onClick={clearMap}>
-        Clear Map
-      </Button>
+      <Typography variant="h6">
+        Route Distance: {distance ? distance.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0} miles
+      </Typography>
+      <TextField
+        id="standard-number"
+        label="Number of Laps"
+        type="number"
+        variant="outlined"
+        value={laps}
+        onChange={handleLapsChange}
+        InputProps={{
+          endAdornment: <InputAdornment position="end">Laps</InputAdornment>,
+        }}
+      />
+      <Typography variant="h6">
+        Total Distance: {distance ? (distance * laps).toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0} miles
+      </Typography>
     </>
   );
 };
