@@ -20,13 +20,18 @@ class DistanceMatrix {
             };
 
             client.distancematrix(distanceMatrixRequest).then((res: DistanceMatrixResponse) => {
-                console.log(`Created google distance matrix successful`);
-                const rows:Array<DistanceMatrixRow> = res.data.rows;
-                const elements: Array<DistanceMatrixRowElement> = res.data.rows && res.data.rows.length > 0 ? res.data.rows[0].elements : [];
-                console.log(res.data);
-                console.log(rows);
-                console.log(elements);
-                resolve(elements);
+                if (res.data.status === "OK") {
+                    console.log(`Created google distance matrix successful`);
+                    const rows:Array<DistanceMatrixRow> = res.data.rows;
+                    const elements: Array<DistanceMatrixRowElement> = res.data.rows && res.data.rows.length > 0 ? res.data.rows[0].elements : [];
+                    console.log(res.data);
+                    console.log(JSON.stringify(rows));
+                    console.log(JSON.stringify(elements));
+                    resolve(elements);
+                } else {
+                    console.error(`Error creating distance matrix: ${res.data.error_message}`);
+                    reject(`Error creating distance matrix: ${res.data.error_message}`);    
+                }
             }).catch(err => {
                 console.error(`Error creating distance matrix ${err}`);
                 reject(`Error creating distance matrix ${err}`);
