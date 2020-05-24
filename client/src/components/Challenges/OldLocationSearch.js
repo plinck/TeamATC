@@ -56,8 +56,8 @@ class LocationSearchBar extends Component {
             this.props.handleCityChange(addressObject.formatted_address, geometry);
             this.setState(
                 {
-                    city: addressObject.formatted_address,
-                    fieldValue: addressObject.formatted_address,
+                    city: address[0].long_name,
+                    fieldValue: address[0].long_name,
                     lat: lat,
                     lng: lng,
                     query: addressObject.formatted_address,
@@ -66,9 +66,8 @@ class LocationSearchBar extends Component {
         }
     }
 
-    handleFieldValueChange = event => {
-        console.log(`hanleFieldValueChange: event ${event.target.name}:${event.target.value}`);
-        this.setState({ [event.target.name]: event.target.value });
+    hanleFieldValueChange = event => {
+        this.setState({ [event.target.name ]: event.target.value });
     };
 
     componentDidMount() {

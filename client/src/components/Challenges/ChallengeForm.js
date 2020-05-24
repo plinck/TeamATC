@@ -60,7 +60,9 @@ const ChallengeForm = (props) => {
         photoObj: null,
         startDate: moment(new Date()).startOf("day").toDate(),
         startCity: "",
+        startCityGeometry: "",
         endCity: "",
+        endCityGeometry: "",
         waypoints: [],
         isSwim : true,
         isBike : true,
@@ -77,7 +79,9 @@ const ChallengeForm = (props) => {
         photoObj: null,
         startDate: moment(new Date()).startOf("day").toDate(),
         startCity: "",
+        startCityGeometry: "",
         endCity: "",
+        endCityGeometry: "",
         waypoints: [],
         isSwim : true,
         isBike : true,
@@ -112,11 +116,11 @@ const ChallengeForm = (props) => {
         setChallenge({ ...challenge, startDate: startOfDay })
     };
 
-    const handleStartCityChange = city => {
-        setChallenge({ ...challenge, startCity: city })
+    const handleStartCityChange = (city, geometry) => {
+        setChallenge({ ...challenge, startCity: city, startCityGeometry: geometry })
     }
-    const handleEndCityChange = city => {
-        setChallenge({ ...challenge, endCity: city })
+    const handleEndCityChange = (city, geometry) => {
+        setChallenge({ ...challenge, endCity: city, endCityGeometry: geometry })
     }
 
     const handleAddWaypoint = (city, geometry) => {
