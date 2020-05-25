@@ -106,11 +106,13 @@ class Util {
     const dbChallengeMembersRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);
     const dbActivitiesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`activities`);
     const dbTeamsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`teams`);
+    const dbResultsRef = firebase.db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`results`);
 
     return {
       dbChallengeMembersRef: dbChallengeMembersRef,
       dbActivitiesRef: dbActivitiesRef,
       dbTeamsRef: dbTeamsRef,
+      dbResultsRef: dbResultsRef
     }
   }
 

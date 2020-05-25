@@ -9,16 +9,11 @@ import { Card, CardContent, Box } from '@material-ui/core';
 const PointsBreakdownGraph = (props) => {
 
     let path = "";
-    if (props.graphType === "Team") {
-        path = props.totals.teamR
-    } else if (props.graphType === "User") {
-        path = props.totals.userR
-    }
-
+    path = props.totals;
 
     const plotGraph = () => {
 
-        let teams = path.slice(0, 5).map((team) => team.userOrTeamName)
+        let teams = path.slice(0, 5).map((team) => team.userRecord ? team.displayName: team.teamName)
         let swimPoints = path.slice(0, 5).map(team => team.swimPointsTotal | 0);
         let bikePoints = path.slice(0, 5).map(team => team.bikePointsTotal | 0);
         let runPoints = path.slice(0, 5).map(team => team.runPointsTotal | 0);
