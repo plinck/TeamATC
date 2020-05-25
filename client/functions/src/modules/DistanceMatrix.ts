@@ -12,7 +12,7 @@ class DistanceMatrix {
         return new Promise(async (resolve, reject) => {
             console.log(`in get calcDistanceMatrix promise`);
             
-            if (!originArray || originArray.length < 1 || !destinationArray || destinationArray.length < 1) {
+            if (!originArray || originArray.length < 1 || originArray[0] === "" || !destinationArray || destinationArray.length < 1 || destinationArray[0] === "") {
                 console.error(`Error in calcDistanceMatrix - invalid origin and destination array`);
                 reject(`Error in calcDistanceMatrix - invalid origin and destination array`);    
             }
