@@ -36,6 +36,7 @@ const SwimRoutePlanner = (props) => {
   const [polyline, setPolyline] = useState();
   const [distance, setDistance] = useState();
   const [laps, setLaps] = useState(1);
+  const [points, setPoints] = useState([]);
   let markers = [];
 
   const handleLapsChange = (e) => {
@@ -45,6 +46,10 @@ const SwimRoutePlanner = (props) => {
       setLaps(e.target.value)
     }
   };
+
+  useEffect(() => {
+    console.log(points)
+  }, [points])
 
   useEffect(() => {
     if (polyline && map) {
@@ -172,6 +177,8 @@ const SwimRoutePlanner = (props) => {
       <Typography variant="h6">
         Total Distance: {distance ? (distance * laps).toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0} miles
       </Typography>
+      <br/>
+      <Button variant='contained' color='primary'>Save Route</Button>
     </>
   );
 };
