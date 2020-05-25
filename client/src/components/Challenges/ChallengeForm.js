@@ -183,10 +183,12 @@ const ChallengeForm = (props) => {
             destinationArray.push(waypoint.location);
         });
         destinationArray.push(challenge.endCity);
+        let challengeDistance = 0;
 
         try {
             let res = await ChallengeAPI.calcDistanceMatrix(originArray, destinationArray);
-            console.log(`result from ChallengeAPI.calcDistanceMatrix: ${JSON.stringify(res)}`)
+            challengeDistance = res.data;
+            console.log(`result (challengeDistance) from ChallengeAPI.calcDistanceMatrix: ${challengeDistance}`)
         } catch (err) {
             setMessage(`Error calling ChallengeAPI.calcDistanceMatrix ${err}`);
             return;
@@ -195,6 +197,7 @@ const ChallengeForm = (props) => {
         uploadPhotoToGoogleStorage().then(photoObj => {
             // NOW chain promises to update or create challenge
             challenge.photoObj = photoObj ? photoObj : null;
+            challenge.challengeDistance = challengeDistance;
             if (challenge.id) {
                 ChallengeDB.update(challenge);
             } else {
