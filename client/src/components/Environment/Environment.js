@@ -1,5 +1,6 @@
 const ORG=process.env.REACT_APP_FIREBASE_ORG;
 const ENV=process.env.REACT_APP_FIREBASE_ENV;
+const BACKDASH=process.env.REACT_APP_DASHBOARD;
 
 // Firebase
 const FB_CONFIG = {
@@ -42,4 +43,4 @@ class globalEnv {
 }
 
 export default globalEnv;
-export { ORG, ENV, CHALLENGE, FB_CONFIG, STRAVA_CONFIG };
+export { ORG, ENV, CHALLENGE, FB_CONFIG, STRAVA_CONFIG, BACKDASH };

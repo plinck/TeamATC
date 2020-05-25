@@ -24,6 +24,8 @@ import OAuthRedirect from './components/Strava/OAuthRedirect.jsx';
 import StravaTestPage from './components/Strava/StravaTestPage.jsx';
 import { Toolbar } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+import { BACKDASH } from "./components/Environment/Environment";
+
 
 // Auth components
 import SignInForm from './components/Auth/SignIn/SignIn';
@@ -56,8 +58,17 @@ class App extends React.Component {
           <Route exact path="/" component={LandingPage} />
           <Route exact path="/signin" component={SignInForm} />
           <Route exact path="/pw-forget" component={PasswordForgetPage} />
-          <Route exact path="/dashboard" component={Dashboard} />
-          <Route exact path="/dashboardbackend" component={DashboardBackend} />
+          {BACKDASH === "0" ?
+            <>
+            <Route exact path="/dashboard" component={Dashboard} />
+            <Route exact path="/dashboardalternate" component={DashboardBackend} />
+            </>
+            :
+            <>
+            <Route exact path="/dashboard" component={DashboardBackend} />
+            <Route exact path="/dashboardalternate" component={Dashboard} />   
+            </>       
+          }
           <Route exact path="/challenges" component={Challenges} />
           <Route exact path="/teams" component={Teams} />
           <Route exact path="/results" component={Results} />
