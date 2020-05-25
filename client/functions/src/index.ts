@@ -16,6 +16,7 @@ import { ActivityUpdateType } from "./modules/interfaces/Common.Types";
 import { StravaEvent, IncomingStravaEventType } from './modules/interfaces/StravaEvent';
 import { saveStravaEvent } from "./modules/events";
 import { StravaEventDB } from "./modules/db/StravaEventDB";
+import { DistanceMatrix } from "./modules/DistanceMatrix";
 
 // exports.scheduledFunction = functions.pubsub.schedule('5 6 * * *').onRun((context) => {
 //     console.log('This will be run every day at 6:05 AM UTC!');
@@ -168,6 +169,7 @@ exports.listenStravaEvents = functions.firestore
 // Get all resuls for challenge
 exports.getChallengeResults = functions.https.onCall((req:any, context:any):any => {
     return new Promise((resolve, reject) => {
+        console.log(`in get challenge results promise`);
         const challenge = new Challenge(req.challengeUid);
         const leaderboard: Leaderboard = new Leaderboard();
         leaderboard.getResults(challenge).then((allResults:AllResults) => {
@@ -179,7 +181,7 @@ exports.getChallengeResults = functions.https.onCall((req:any, context:any):any 
 });
 
 exports.setEnviromentFromClient = functions.https.onCall((environment, context) => {
-    // console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
+    console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
     envSet(environment.org, environment.env, environment.challengeUid);
         return {message: `Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`};
 });
@@ -264,6 +266,15 @@ exports.updateUserActivityDisplayName = functions.https.onCall((req, context: fu
             reject(err);
         });   
     });//Promise
+});
+
+// Get distanxe from google
+exports.calcDistanceMatrix = functions.https.onCall((req, context: functions.https.CallableContext) => {
+    console.log("calcDistanceMatrix");
+    console.log(req);
+    const distanceMatrix = new DistanceMatrix();
+    const travelMode =  req.travelMode ? req.travelMode : "DRIVING";
+    return distanceMatrix.calcDistanceMatrix(req.origins, req.destinations, travelMode)
 });
 
 // Update Teams - module functions

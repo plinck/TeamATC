@@ -18,6 +18,7 @@ const APP_CONFIG = {
     CHALLENGEUID : ""    
 }
 
+const GOOGLE_API_KEY = functions.config().env.googleApiKey;
 // Set env vars
 const envSet = (org:string, env:string, challengeUid:string) => {
     APP_CONFIG.ORG = org;
@@ -35,4 +36,4 @@ const getAppConfig = () => {
     return APP_CONFIG;
 };
 
-export { envSet, getFunctionsConfig, getAppConfig, FUNCTIONS_CONFIG, APP_CONFIG };
+export { envSet, getFunctionsConfig, getAppConfig, FUNCTIONS_CONFIG, APP_CONFIG, GOOGLE_API_KEY };
