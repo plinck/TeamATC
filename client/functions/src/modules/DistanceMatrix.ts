@@ -8,7 +8,14 @@ class DistanceMatrix {
     // console.log(`In fBFupdateTeam with: req ${JSON.stringify(req)}`);
     public calcDistanceMatrix(originArray: Array<string>, destinationArray:  Array<string>, travelMode: string) {
         // need to loop through each origin and calc distance sine the limit for one call is 10, this will allow as many as needed
+        console.log(`in get calcDistanceMatrix`);
         return new Promise(async (resolve, reject) => {
+            console.log(`in get calcDistanceMatrix promise`);
+            
+            if (!originArray || originArray.length < 1 || !destinationArray || destinationArray.length < 1) {
+                console.error(`Error in calcDistanceMatrix - invalid origin and destination array`);
+                reject(`Error in calcDistanceMatrix - invalid origin and destination array`);    
+            }
             console.log(`runnng calcDistanceMatrix with originArray ${originArray}, destinationArray: ${destinationArray}`);
             try {
                 let totalDistance = 0;
