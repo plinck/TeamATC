@@ -1,0 +1,91 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isUserAdmin() {
+  		return request.auth.uid != null && get(/databases/$(database)/documents/MST/prod/users/$(request.auth.uid)).data.isAdmin
+  	}
+    
+    match /MST/prod/users/{userID} {
+      allow list: if request.auth.uid != null;
+    	allow get: if request.auth.uid == userID || isUserAdmin();
+    	allow delete: if request.auth.uid == userID || isUserAdmin();
+    	allow update: if request.auth.uid == userID || isUserAdmin();
+      allow create: if request.auth.uid == request.resource.data.id || isUserAdmin();
+    }
+    
+    match /MST/prod/ATCMembers/{email} {
+    	allow read: if true;
+    	allow delete: if request.auth.email == email || isUserAdmin();
+    	allow update: if request.auth.email == email || isUserAdmin();
+      allow create: if request.auth.email != request.resource.data.email || isUserAdmin();
+    }
+    
+    match /MST/prod/challenges/{challengeDoc} {
+      allow read: if request.auth.uid != null;
+    	allow delete: if isUserAdmin();
+    	allow update: if isUserAdmin();
+      allow create: if isUserAdmin();
+
+    	match /activities/{activityId} {
+        allow read: if request.auth.uid != null;
+        allow delete: if request.auth.uid == resource.data.uid || isUserAdmin();
+        allow update: if request.auth.uid == resource.data.uid || isUserAdmin();
+        allow create: if request.auth.uid == request.resource.data.uid || isUserAdmin();
+      }
+      
+      match /teams/{teamId} {
+        allow read: if request.auth.uid != null;
+        allow delete: if isUserAdmin();
+        allow update: if isUserAdmin();
+        allow create: if isUserAdmin();
+      }
+      
+      match /results/{resultId} {
+        allow read: if request.auth.uid != null;
+        allow delete: if isUserAdmin();
+        allow update: if isUserAdmin();
+        allow create: if isUserAdmin();
+      }
+    }
+  
+    function isDevUserAdmin() {
+  		return request.auth.uid != null && get(/databases/$(database)/documents/MST/dev/users/$(request.auth.uid)).data.isAdmin
+  	}
+    
+    match /MST/dev/users/{userID} {
+    	allow read: if request.auth.uid == userID || isDevUserAdmin();
+    	allow delete: if request.auth.uid == userID || isDevUserAdmin();
+    	allow update: if request.auth.uid == userID || isDevUserAdmin();
+      allow create: if request.auth.uid == request.resource.data.id || isDevUserAdmin();
+    }
+    
+    match /MST/dev/ATCMembers/{email} {
+    	allow read: if request.auth.uid != null;
+    	allow delete: if request.auth.email == email || isDevUserAdmin();
+    	allow update: if request.auth.email == email || isDevUserAdmin();
+      allow create: if request.auth.email != request.resource.data.email || isDevUserAdmin();
+    }
+    
+    match /MST/dev/challenges/{challengeDoc} {
+      allow read: if request.auth.uid != null;
+    	allow delete: if isDevUserAdmin();
+    	allow update: if isDevUserAdmin();
+      allow create: if isDevUserAdmin();
+
+    	match /activities/{activityId} {
+        allow read: if request.auth.uid != null;
+        allow delete: if request.auth.uid == resource.data.uid || isDevUserAdmin();
+        allow update: if request.auth.uid == resource.data.uid || isDevUserAdmin();
+        allow create: if request.auth.uid == request.resource.data.uid || isDevUserAdmin();
+      }
+      
+      match /teams/{teamId} {
+        allow read: if request.auth.uid != null;
+        allow delete: if isDevUserAdmin();
+        allow update: if isDevUserAdmin();
+        allow create: if isDevUserAdmin();
+      }
+    }
+  }
+}
