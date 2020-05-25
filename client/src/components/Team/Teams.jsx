@@ -101,7 +101,10 @@ const Teams = (props) => {
     // i.e. if you dont use optional parameter (array of properities to watch), it
     // will fire this function every single time the component is refreshed which isnt cool.
     useEffect(() => {
-        fetchData();
+        TeamDB.getTeams().then(teams => {
+            setTeams(teams);
+            // Each time you refresh, make sure the currnt id is cleared
+        }).catch(err => setMessage(err));
     }, [props.user]);
 
     const userCanUpdateTeam = (props.user && props.user.isAdmin) ? true : false;
