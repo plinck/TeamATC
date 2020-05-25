@@ -179,15 +179,13 @@ const ChallengeForm = (props) => {
         let originArray = [challenge.startCity];
         let destinationArray = [];
         challenge.waypoints.forEach(waypoint => {
-            // originArray.push(waypoint.location);
+            originArray.push(waypoint.location);
             destinationArray.push(waypoint.location);
         });
         destinationArray.push(challenge.endCity);
-        const origins = originArray.join("|");
-        const destinations  = destinationArray.join("|");
 
         try {
-            let res = await ChallengeAPI.calcDistanceMatrix(origins, destinations);
+            let res = await ChallengeAPI.calcDistanceMatrix(originArray, destinationArray);
             console.log(`result from ChallengeAPI.calcDistanceMatrix: ${JSON.stringify(res)}`)
         } catch (err) {
             setMessage(`Error calling ChallengeAPI.calcDistanceMatrix ${err}`);
