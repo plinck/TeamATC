@@ -9,57 +9,30 @@ import {
   Typography,
 } from "@material-ui/core";
 import GetAppIcon from "@material-ui/icons/GetApp";
-import { Table, TableBody, TableHead, TableCell, TableRow } from '@material-ui/core';
+
 
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
-import Result from "./Result";
 import { ResultsDB } from "./ResultsDB";
 
 import { withStyles } from "@material-ui/core/styles";
 // eslint-disable-next-line no-unused-vars
 import { CSVLink } from "react-csv";
+import EnhancedTable from "./EnhancedTable";
 
 const styles = (theme) => ({
   resultStyle: {
-    width: "100%",
-    overflow: "auto",
     [theme.breakpoints.up("md")]: {
-      height: "79vh",
-    },
-    height: "65.5vh",
-  },
-  root: {
-    [theme.breakpoints.up("md")]: {
+      height: "90vh",
       marginLeft: "57px",
     },
+    height: "91vh",
     paddingTop: "10px",
   },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
+  tableContainer: {
+    overflow: "auto",
   },
-  progress: {
-    margin: theme.spacing(2),
-  },
-  container: {
-    display: "flex",
-    flexWrap: "wrap",
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
-  inputFix: {
-    marginTop: 50,
-  },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 200,
-  },
-  //style for font size
-  resize: {
-    fontSize: 200,
+  tableHead: {
+    fontWeight: 600,
   },
   csvButton: {
     [theme.breakpoints.down("md")]: {
@@ -75,7 +48,6 @@ class Results extends React.Component {
 
     this.state = {
       results: [],
-      orderBy: "None",
     };
   }
 
@@ -84,25 +56,33 @@ class Results extends React.Component {
     const challengeUid = this.props.user.challengeUid;
     if (challengeUid && challengeUid !== "") {
       const resultsDB = new ResultsDB();
-      resultsDB.getAll(challengeUid).then( results => {
-        this.setState({results: results});
-      }).catch(err => {
-        console.error(`${err}`);
-
-      });
+      resultsDB
+        .getAll(challengeUid)
+        .then((results) => {
+          this.setState({ results: results });
+        })
+        .catch((err) => {
+          console.error(`${err}`);
+        });
     }
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
+    if (
+      this.props.user.challengeUid &&
+      this.props.user.challengeUid !== prevProps.user.challengeUid
+    ) {
       const challengeUid = this.props.user.challengeUid;
       if (challengeUid && challengeUid !== "") {
         const resultsDB = new ResultsDB();
-        resultsDB.getAll(challengeUid).then( results => {
-          this.setState({results: results});
-        }).catch(err => {
-          console.error(`${err}`);
-        });
+        resultsDB
+          .getAll(challengeUid)
+          .then((results) => {
+            this.setState({ results: results });
+          })
+          .catch((err) => {
+            console.error(`${err}`);
+          });
       }
     }
   }
@@ -116,7 +96,11 @@ class Results extends React.Component {
     const { classes } = this.props;
 
     // Some props take time to get ready so return null when uid not avaialble
-    if (this.props.user.uid === null || !this.props.user.challengeUid || this.props.user.challengeUid === "") {
+    if (
+      this.props.user.uid === null ||
+      !this.props.user.challengeUid ||
+      this.props.user.challengeUid === ""
+    ) {
       return (
         <Grid container style={{ marginTop: "10px" }} justify="center">
           <CircularProgress /> <p>Loading ...</p>{" "}
@@ -134,7 +118,6 @@ class Results extends React.Component {
       );
     }
 
-    let orderBy = this.state.orderBy;
     let overallResults = this.state.results.overallResults;
     let teamResults = this.state.results.teamResults;
     let userResults = this.state.results.userResults;
@@ -147,70 +130,45 @@ class Results extends React.Component {
     }
 
     const sortFilterRow = (
-      <Grid container>
-        <Grid
-          container
-          item
-          xs={12}
-          direction="row"
-          justify="space-between"
-          alignItems="center"
-        >
-          <Grid item xs={6}>
-            <Typography variant="h4">Results</Typography>
-          </Grid>
-          <Grid item xs={6} style={{ textAlign: "right" }}>
-            <CSVLink
-              className={classes.csvButton}
-              data={userResults}
-              filename={"results.csv"}
-              target="_blank"
-            >
-              <Button color="default" startIcon={<GetAppIcon />}>
-                Export CSV
-              </Button>
-            </CSVLink>
-          </Grid>
+      <Grid
+        container
+        item
+        xs={12}
+        direction="row"
+        justify="space-between"
+        alignItems="center"
+      >
+        <Grid item xs={6}>
+          <Typography variant="h4">Results</Typography>
+        </Grid>
+        <Grid item xs={6} style={{ textAlign: "right" }}>
+          <CSVLink
+            className={classes.csvButton}
+            data={userResults}
+            filename={"results.csv"}
+            target="_blank"
+          >
+            <Button color="default" startIcon={<GetAppIcon />}>
+              Export CSV
+            </Button>
+          </CSVLink>
         </Grid>
       </Grid>
     );
 
     if (this.props.user.authUser) {
-      let leaderBoardHeaderRow =
-        <TableHead>
-            <TableRow>
-                <TableCell>Place</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Team</TableCell>
-                <TableCell>Time</TableCell>
-                <TableCell>Progress</TableCell>
-                <TableCell>Total</TableCell>
-                <TableCell align="right">Swim</TableCell>
-                <TableCell align="right">Bike</TableCell>
-                <TableCell align="right">Run</TableCell>
-                <TableCell align="right">Other</TableCell>
-            </TableRow>
-        </TableHead>
-
       return (
-        <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
+        <div
+          style={{ backgroundColor: "#f2f2f2", overflow: 'scroll' }}
+          className={classes.resultStyle}
+        >
           <Container maxWidth="xl">
-            {sortFilterRow}
-            <Table size="small" >
-              {leaderBoardHeaderRow}
-              <TableBody>
-                  {userResults.map((result, index) => {
-                    return (
-                      <div key={index}>
-                        <Result
-                          result={result}
-                          index={index}
-                        />
-                      </div>
-                    );
-                  })}
-              </TableBody>
-            </Table>
+            <Grid container>
+              {sortFilterRow}
+              <Grid item xs={12} className={classes.tableContainer}>
+                <EnhancedTable data={userResults} />
+              </Grid>
+            </Grid>
           </Container>
         </div>
       );
