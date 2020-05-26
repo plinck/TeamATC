@@ -259,7 +259,7 @@ class AccountForm extends React.Component {
                                         component="span"
                                         aria-label="add"
                                         variant="extended">
-                                        <AddIcon /> Select Image
+                                        <AddIcon /> Profile Photo
                                     </Fab>{this.state.photoFile ? this.state.photoFile.name : null}
                                 </label>  
                                 <CardMedia
