@@ -11,6 +11,8 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import AddIcon from "@material-ui/icons/Add";
+import { Fab } from "@material-ui/core";
 
 // For select input field
 import InputLabel from "@material-ui/core/InputLabel";
@@ -20,7 +22,9 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import UserDB from "../User/UserDB";
 import TeamDB from "../Team/TeamDB";
-import { Container, Grid, Card, CardContent, Typography, CardActions } from '@material-ui/core';
+import { Container, Grid, Card, CardMedia, CardContent, Typography, CardActions } from '@material-ui/core';
+
+import Photo from "../Util/Photo.js"
 
 const styles = theme => ({
     container: {
@@ -76,6 +80,7 @@ class AccountForm extends React.Component {
                 lastName: "",
                 phoneNumber: "",
                 photoURL: "",
+                photoObj: "",
                 primaryRole: "",
                 stravaAccessToken: "",
                 stravaAthleteId : "",
@@ -88,7 +93,8 @@ class AccountForm extends React.Component {
             },
             message: "",
             teams: null,
-            teamLookup: null
+            teamLookup: null,
+            photoFile: null
         }
     }
 
@@ -138,14 +144,48 @@ class AccountForm extends React.Component {
         // set team name from ID
         user.teamName = this.state.teamLookup[this.state.user.teamUid]
 
-        UserDB.updateCurrent(user).then(user => {
-            // set message to show update
-            this.setState({ message: "Account Updated" });
+        this.uploadPhotoToGoogleStorage().then(photoObj => {
+            // NOW chain promises to update
+            user.photoObj = photoObj ? photoObj : null;
+            UserDB.updateCurrent(user);
+        }).then(res => {
+            this.setState({ message: "Account Updated", photoFile: null });
         }).catch(err => {
-            // set message to show update
             this.setState({ message: `Error updating account ${err}` });
-        });
+        })
     };
+
+    handlePhotoUpload = (event) => {
+        event.preventDefault();
+
+        if (event.target.files.length > 0) {
+            console.log(event.target.files[0]);
+            const photoFile = event.target.files[0];
+            this.setState({photoFile: photoFile});
+        }
+    }
+
+    uploadPhotoToGoogleStorage = () => {
+        return new Promise((resolve, reject) => {
+            if (this.state.photoFile) {
+                // first delete the old photo
+                const fileName = this.state.user.photoObj && this.state.user.photoObj.fileName ? this.state.user.photoObj.fileName : "";
+                Photo.deletePhoto(fileName).then(photoObj => {
+                    console.log(`deleted old user photo`);
+                    return (Photo.uploadPhoto(this.state.photoFile, "user"));
+                }).then((photoObj) => {
+                    console.log(`uploaded user photo`);
+                    photoObj.fileTitle = "user";
+                    resolve(photoObj);
+                }).catch((err) => {
+                    this.setState({message: `Error uploading photo for user ${err.message}`});
+                    reject(err);
+                });
+            } else {
+                resolve(null);
+            }
+        }); // Promise
+    }
 
     onChange = event => {
         const name = event.target.name;
@@ -198,9 +238,34 @@ class AccountForm extends React.Component {
                 <Grid container>
                     <Grid item xs={12}>
                         <Card>
+  
                             <CardContent>
                                 <Typography variant="subtitle2">{message}</Typography>
                                 <Typography gutterBottom component="h2" variant="h5">User Profile (Role: {user.primaryRole}, challenge: {this.props.user.challengeName})</Typography>
+                                <label htmlFor="file">
+                                    <input
+                                        id="file"
+                                        name="file"
+                                        type="file"
+                                        accept="image/png, image/jpeg"
+                                        onChange={this.handlePhotoUpload}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <Fab
+                                        color="secondary"
+                                        size="small"
+                                        component="span"
+                                        aria-label="add"
+                                        variant="extended">
+                                        <AddIcon /> Select Image
+                                    </Fab>{this.state.photoFile ? this.state.photoFile.name : ""}
+                                </label>  
+                                <CardMedia
+                                    style={{ height: '250px',  width: '250px'}}
+                                    image={user.photoObj ? user.photoObj.url : "/images/smallbusiness.jpg"}
+                                    title={user.photoObj ? user.photoObj.fileName : ""}
+                                />
+
                                 <form className={classes.container} onSubmit={this.updateUser} >
 
                                     <FormControl variant="outlined" required className={classes.formControl}>
@@ -275,6 +340,7 @@ class AccountForm extends React.Component {
                                             style: { padding: "18px", width: "100%" }
                                         }}
                                     />
+                                    {/*}
                                     <TextField
                                         id="photoURL"
                                         name="photoURL"
@@ -287,6 +353,7 @@ class AccountForm extends React.Component {
                                         type="text"
                                         onChange={this.onChange}
                                     />
+                                    */}
 
                                 </form>
 
