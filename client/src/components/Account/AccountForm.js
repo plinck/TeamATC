@@ -79,7 +79,6 @@ class AccountForm extends React.Component {
                 isUser: false,
                 lastName: "",
                 phoneNumber: "",
-                photoURL: "",
                 photoObj: "",
                 primaryRole: "",
                 stravaAccessToken: "",
@@ -342,21 +341,6 @@ class AccountForm extends React.Component {
                                             style: { padding: "18px", width: "100%" }
                                         }}
                                     />
-                                    {/*}
-                                    <TextField
-                                        id="photoURL"
-                                        name="photoURL"
-                                        value={user.photoURL ? user.photoURL : ""}
-                                        label="Photo URL"
-                                        multiline
-                                        variant="outlined"
-                                        placeholder="http://www.image.com/image.png"
-                                        className={classes.textField}
-                                        type="text"
-                                        onChange={this.onChange}
-                                    />
-                                    */}
-
                                 </form>
 
                                 <form className="Container">

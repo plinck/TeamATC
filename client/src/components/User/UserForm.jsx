@@ -94,7 +94,7 @@ class UserForm extends React.Component {
                 isUser: false,
                 lastName: "",
                 phoneNumber: "",
-                photoURL: "",
+                photoObj: {},
                 primaryRole: "",
                 stravaAccessToken: "",
                 stravaAthleteId : "",
@@ -236,14 +236,15 @@ class UserForm extends React.Component {
             authUser.user.lastName = user.lastName ? user.lastName : "";
             authUser.user.firstName = user.firstName ? user.firstName : "";
             authUser.user.phoneNumber = user.phoneNumber ? user.phoneNumber : "";
-            authUser.user.photoURL = user.photoURL ? user.photoUR : "";
+            authUser.user.photoURL = user.photoObj ? user.photoObj.url : "";
 
            // Now Create the user in firestore
             UserDB.addAuthUserToFirestore(authUser, user).then((id) => {
+
                 this.setState((prevState) => ({
                     user: {                   
                         ...prevState.user,   
-                        [id]: id      
+                        id: id      
                     },
                     message: "New User Added.",
                 }));
@@ -434,21 +435,6 @@ class UserForm extends React.Component {
             user.lastName !== "" &&
             user.phoneNumber !== "";
 
-            
-
-        // if (typeof this.state.teams === 'undefined') {
-        //     console.error("Fatal Error")
-        //     return (<div> <p>FATAL ERROR Gettng teams, something goofy going on ...</p> </div>)
-        // }
-        // if (!challenges || challenges === null) {
-        //     console.log("No challenges yet")
-        //     return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
-        // }
-        // if (!teams || teams === null) {
-        //     console.log("No teams yet")
-        //     return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
-        // }
-
         console.log(`rendering with ${challenges.length} challenges and ${teams ? teams.length : 0} teams `);
 
         return (
@@ -518,18 +504,6 @@ class UserForm extends React.Component {
                             }}
                         />
 
-                        <TextField
-                            id="photoURL"
-                            name="photoURL"
-                            value={user.photoURL ? user.photoURL : ""}
-                            label="Photo URL"
-                            variant="outlined"
-                            placeholder="http://www.image.com/image.png"
-                            className={classes.textField}
-                            type="text"
-                            margin="normal"
-                            onChange={this.onChange}
-                        />
                         <FormControl variant="outlined" required className={classes.formControl}>
                             <InputLabel id="challengeNameLabel">Challenge Name</InputLabel>
                             <Select

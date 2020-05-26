@@ -67,7 +67,6 @@ class Register extends React.Component {
         noError: false,
         firstName: "",
         lastName: "",
-        photoURL: "",
         email: "",
         password: "",
         phoneNumber: "",

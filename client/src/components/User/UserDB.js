@@ -148,10 +148,11 @@ class UserDB {
         return new Promise(async (resolve, reject) => {
             const authUser = await Util.getCurrentAuthUser();
             // we always want uid = id to keep auth and firestore in sync
-            authUser.updateProfile({
-                displayName: newUser.displayName,
-                photoURL: user.photoObj ? user.photoObj.url : ""
-            }).then(() => {
+            const profileUpdate = {displayName: newUser.displayName};
+            if (newUser.photoObj && newUser.photoObj.url && newUser.photoObj.url !== "") {
+                profileUpdate.photoURL = newUser.photoObj.url;
+            }
+            authUser.updateProfile(profileUpdate).then(() => {
                 console.log("Auth Profile for User successfully updated!");
                 const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
                 dbUsersRef.doc(user.id).set(newUser, { merge: true }).then(() => {
@@ -269,8 +270,8 @@ class UserDB {
                 isTeamLead: userInfo.isTeamLead ? true : false,
                 isUser: userInfo.isUser ? true : false,
                 lastName: userInfo.lastName,
-                phoneNumber: userInfo.phoneNumber ? userInfo.phoneNumber : "",
-                photoURL: userInfo.photoURL ? userInfo.photoURL : "",
+                phoneNumber: userInfo.phoneNumber ? userInfo.phoneNumber : "",    
+                photoObj: userInfo.photoObj ? userInfo.photoObj : {fileName: "", fileTitle: "", url: ""},
                 primaryRole: userInfo.primaryRole ? userInfo.primaryRole : "User",
                 stravaAccessToken: userInfo.stravaAccessToken ? userInfo.stravaAccessToken : "",
                 stravaAthleteId : userInfo.stravaAthleteId ? userInfo.stravaAthleteId : "",
@@ -289,7 +290,6 @@ class UserDB {
                 phoneNumber: authUser.user.phoneNumber ? authUser.user.phoneNumber : "",
                 uid: authUser.user.uid,
                 email: authUser.user.email.toLowerCase(),
-                photoURL: authUser.user.photoURL ? authUser.user.photoURL : "",
                 teamName: user.teamName ? user.teamName : "",
                 teamUid: user.teamUid ? user.teamUid : ""
             };
@@ -298,18 +298,7 @@ class UserDB {
         return new Promise((resolve, reject) => {
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
                     // update if exists, create if not existing
-            dbUsersRef.doc(authUser.user.uid).set({
-                displayName: user.firstName + " " + user.lastName,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                phoneNumber: user.phoneNumber,
-                uid: user.uid,
-                email: user.email,
-                photoURL: user.photoURL,
-                teamName: user.teamName,
-                teamUid: user.teamUid
-
-            }).then(() => {
+            dbUsersRef.doc(authUser.user.uid).set(user, {merge: true} ).then(() => {
                 console.log("Users updated with ID: ", authUser.user.uid);
                 resolve(authUser.user.uid);
             }).catch(err => {
