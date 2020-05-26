@@ -150,7 +150,7 @@ class UserDB {
             // we always want uid = id to keep auth and firestore in sync
             authUser.updateProfile({
                 displayName: newUser.displayName,
-                photoURL: user.photoURL,
+                photoURL: user.photoObj ? user.photoObj.url : ""
             }).then(() => {
                 console.log("Auth Profile for User successfully updated!");
                 const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;

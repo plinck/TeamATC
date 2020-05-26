@@ -146,7 +146,9 @@ class AccountForm extends React.Component {
 
         this.uploadPhotoToGoogleStorage().then(photoObj => {
             // NOW chain promises to update
-            user.photoObj = photoObj ? photoObj : null;
+            if (photoObj) {
+                user.photoObj = photoObj;
+            }
             UserDB.updateCurrent(user);
         }).then(res => {
             this.setState({ message: "Account Updated", photoFile: null });
@@ -167,7 +169,7 @@ class AccountForm extends React.Component {
 
     uploadPhotoToGoogleStorage = () => {
         return new Promise((resolve, reject) => {
-            if (this.state.photoFile) {
+            if (this.state.photoFile && this.state.photoFile !== "" ) {
                 // first delete the old photo
                 const fileName = this.state.user.photoObj && this.state.user.photoObj.fileName ? this.state.user.photoObj.fileName : "";
                 Photo.deletePhoto(fileName).then(photoObj => {
@@ -258,7 +260,7 @@ class AccountForm extends React.Component {
                                         aria-label="add"
                                         variant="extended">
                                         <AddIcon /> Select Image
-                                    </Fab>{this.state.photoFile ? this.state.photoFile.name : ""}
+                                    </Fab>{this.state.photoFile ? this.state.photoFile.name : null}
                                 </label>  
                                 <CardMedia
                                     style={{ height: '250px',  width: '250px'}}
