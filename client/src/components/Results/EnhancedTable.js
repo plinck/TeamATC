@@ -63,8 +63,8 @@ const useStyles = makeStyles((theme) => ({
 export default function EnhancedTable({ data }) {
   const rows = data;
   const classes = useStyles();
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("place");
+  const [order, setOrder] = React.useState("desc");
+  const [orderBy, setOrderBy] = React.useState("pointsTotal");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
