@@ -191,9 +191,12 @@ class DashboardBackend extends React.PureComponent {
         if (!this.props.user) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
-        const overallResults = this.state.totals.filter(total => total.overallRecord);
-        const teamResults = this.state.totals.filter(total => total.teamRecord);
-        const userResults = this.state.totals.filter(total => total.userRecord);
+        // const overallResults = this.state.totals.filter(total => total.overallRecord);
+        // const teamResults = this.state.totals.filter(total => total.teamRecord);
+        // const userResults = this.state.totals.filter(total => total.userRecord);
+        const overallResults = this.props.user.results.filter(total => total.overallRecord);
+        const teamResults = this.props.user.results.filter(total => total.teamRecord);
+        const userResults = this.props.user.results.filter(total => total.userRecord);
         // Sort the team and user results based on total points DESC          
         userResults.sort((a, b) => {
             const totalA = a.pointsTotal;
