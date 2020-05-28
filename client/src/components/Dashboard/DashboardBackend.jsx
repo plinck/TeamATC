@@ -133,7 +133,7 @@ class DashboardBackend extends React.PureComponent {
         this.setState({ layouts: JSON.parse(JSON.stringify(layouts)) });
         // console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
         if (this.props.user.challengeUid) {
-            this.createListener(this.props.user.challengeUid)
+            // this.createListener(this.props.user.challengeUid)
             this.fetchData(this.props.user.challengeUid)
         }
     }
@@ -147,7 +147,7 @@ class DashboardBackend extends React.PureComponent {
                 // console.log(`Detached listener`);
             }
             // console.log(this.props.user.challengeUid)
-            this.createListener(this.props.user.challengeUid);
+            // this.createListener(this.props.user.challengeUid);
             this.fetchData(this.props.user.challengeUid);
         }
     }
@@ -185,18 +185,16 @@ class DashboardBackend extends React.PureComponent {
         const { classes } = this.props;
 
         // Some need to catch up for some reason 
-        if (!this.state.totals) {
-            return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
-        }
-        if (!this.props.user) {
+        // if (!this.state.totals) {
+        if (!this.props.user || !this.props.user.results) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
         // const overallResults = this.state.totals.filter(total => total.overallRecord);
         // const teamResults = this.state.totals.filter(total => total.teamRecord);
         // const userResults = this.state.totals.filter(total => total.userRecord);
-        const overallResults = this.props.user.results.filter(total => total.overallRecord);
-        const teamResults = this.props.user.results.filter(total => total.teamRecord);
-        const userResults = this.props.user.results.filter(total => total.userRecord);
+        const overallResults = this.props.context.results.filter(total => total.overallRecord);
+        const teamResults = this.props.context.results.filter(total => total.teamRecord);
+        const userResults = this.props.context.results.filter(total => total.userRecord);
         // Sort the team and user results based on total points DESC          
         userResults.sort((a, b) => {
             const totalA = a.pointsTotal;
@@ -223,8 +221,6 @@ class DashboardBackend extends React.PureComponent {
             }
             return comparison * -1;  // Invert so it will sort in descending order
         });
-            
-        
 
         const currentOverallResults = overallResults && overallResults.length > 0 ? overallResults[0] : undefined;
         const currentUserResults = userResults.find(result => result.uid === this.props.user.uid);
@@ -258,6 +254,7 @@ class DashboardBackend extends React.PureComponent {
                                         start={this.state.challenge.startCity}
                                         end={this.state.challenge.endCity}
                                         waypoints={this.state.challenge.waypoints}
+                                        updatedResults={this.props.context.updatedResults}
                                         results={userResults}
                                         endDate={this.state.challenge.endDate}
                                         callbackParent={() => this.onChildChanged()} />
