@@ -73,45 +73,6 @@ class DashboardBackend extends React.PureComponent {
         this.setState({ layouts });
     }
 
-    createListener(challengeUid) {
-        // This is just to show something on the page while its loading
-        this.setState({loadingFlag: true});
-        this.renderTotals(this.state.totals);    
-        const traceFullRetrieval = this.perf.trace('traceFullRetrievalFirestore');
-        try {
-            traceFullRetrieval.start();
-        } catch {
-            console.error("traceFullRetrieval not started ...")
-        }
-
-        let traceFullRetrievalT1 = new Date();
-
-        ResultsListener.createResultsListener(challengeUid).then( results => {
-            try {
-                traceFullRetrieval.incrementMetric('nbrResults', results.length);
-                traceFullRetrieval.stop();
-            } catch {
-                //
-            }
-
-            let traceFullRetrievalT2 = new Date();
-            let traceFullRetrievalDiff = traceFullRetrievalT2.getTime() - traceFullRetrievalT1.getTime();
-            console.log(`traceFullRetrievalDiff time is milliseconds: ${traceFullRetrievalDiff}`);
-    
-            this.renderTotals(results);
-
-            this.setState({loadingFlag: false});
-        }).catch( err => {
-            try {
-                traceFullRetrieval.stop();
-            } catch {
-                //
-            }
-
-            console.error(`Error attaching listener: ${err}`);
-            this.setState({loadingFlag: false});
-        });
-    }
     // This is to render interim without waiting for all to be done.
     renderTotals(results) {
         // console.log(`renderTotals ,teamUid:${this.props.user.teamUid} teamName:${this.props.user.teamName} uid:${this.props.user.uid} displayName:${this.props.user.displayName}`);
@@ -133,7 +94,6 @@ class DashboardBackend extends React.PureComponent {
         this.setState({ layouts: JSON.parse(JSON.stringify(layouts)) });
         // console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
         if (this.props.user.challengeUid) {
-            // this.createListener(this.props.user.challengeUid)
             this.fetchData(this.props.user.challengeUid)
         }
     }
@@ -147,7 +107,6 @@ class DashboardBackend extends React.PureComponent {
                 // console.log(`Detached listener`);
             }
             // console.log(this.props.user.challengeUid)
-            // this.createListener(this.props.user.challengeUid);
             this.fetchData(this.props.user.challengeUid);
         }
     }
