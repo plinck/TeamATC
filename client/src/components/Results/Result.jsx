@@ -27,6 +27,15 @@ const styles = (theme) => ({
 });
 
 class Result extends React.Component {
+  calcPercentComplete(total, challengeDistance) {
+    if (challengeDistance === 0) {
+      return ("100%");
+    } else {
+      const percent = total/challengeDistance * 100;
+      const displayPercent = percent.toFixed(0).toString().replace(/\B(?=(\d{0})+(?!\d))/g, ",");
+      return (`${displayPercent}%`);
+    }
+  }
   render() {
     // Deconstruct Props
     const {
@@ -50,6 +59,7 @@ class Result extends React.Component {
       bikePointsTotal,
       bikeNbrActivities,
       bikeDurationTotal,
+      rank,
       runDistanceTotal,
       runPointsTotal,
       runNbrActivities,
@@ -88,7 +98,7 @@ class Result extends React.Component {
       hover
       tabIndex={-1} 
       style={{ backgroundColor: `${rowBg}` }}>
-        <TableCell>{this.props.index + 1}</TableCell>
+        <TableCell>{rank}</TableCell>
         <TableCell>
           {uid && uid === this.props.user.uid ? (
             <img
@@ -108,7 +118,9 @@ class Result extends React.Component {
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
         </TableCell>
-        <TableCell align="right">{"total/cTotal"}</TableCell>
+        <TableCell align="right">
+          {this.props.context.challengeDistance ? this.calcPercentComplete(pointsTotal, this.props.context.challengeDistance) : "NA"}
+        </TableCell>
         <TableCell align="right">
           {pointsTotal
             .toFixed(0)

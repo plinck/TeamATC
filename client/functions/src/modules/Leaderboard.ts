@@ -292,6 +292,7 @@ class Leaderboard {
                 // Sort the team and user results based on total points DESC 
                 newAllResults.userResults = this.sortResultsAndAddRank(newAllResults.userResults);
                 newAllResults.teamResults = this.sortResultsAndAddRank(newAllResults.teamResults);
+                console.log(`newAllResults.userResults with rank: ${JSON.stringify(newAllResults.userResults)}`);
 
                 const saveResultsDB:ResultsDB = new ResultsDB();
                 saveResultsDB.save(newAllResults).then (() => {
