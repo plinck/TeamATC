@@ -33,6 +33,7 @@ const provideAuthUserContext = Component => {
                 teamName: null,
 
                 challengeUid: null,
+                challengeDistance: 0,
                 challengeName: null,
                 challengeShutdownStartDate: null,
                 challengeShutdownEndDate: null,
@@ -197,6 +198,7 @@ const provideAuthUserContext = Component => {
                     // console.log(`Session.challenge: ${JSON.stringify(Session.challenge)}`)
 
                     this.setState({
+                        challengeDistance: challenge.challengeDistance ? challenge.challengeDistance : 0,
                         challengeName: challenge.name,
                         challengeShutdownStartDate: challenge.challengeShutdownStartDate ? challenge.challengeShutdownStartDate.toDate() : null,
                         challengeShutdownEndDate: challenge.challengeShutdownStartDate ? challenge.challengeShutdownEndDate.toDate() : null,     

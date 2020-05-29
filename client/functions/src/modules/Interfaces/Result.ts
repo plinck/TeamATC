@@ -7,6 +7,7 @@ class Result {
     userRecord: boolean;
     uid: string;
     displayName: string;
+    rank: number;
     distanceTotal: number;
     pointsTotal: number;
     durationTotal: number;
@@ -41,6 +42,7 @@ class Result {
         this.userRecord = false;
         this.uid = "";
         this.displayName = "";
+        this.rank = 0;
         this.distanceTotal = 0;
         this.pointsTotal = 0;
         this.durationTotal = 0;
