@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import LaunchIcon from '@material-ui/icons/Launch';
 import './Result.css'
 import { Table, TableHead, TableBody, TableCell, TableRow, Card, CardContent, Tooltip } from '@material-ui/core';
@@ -37,14 +37,19 @@ const ResultsCard = (props) => {
 
     const leaderboardTitleRow =
         <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold">
-            <Link style={{ textDecoration: "none", color: "grey" }}
-                to={{
-                    pathname: "/activities",
-                    state: {
-                        filterByString: "Mine"
-                    }
-                }}>{onlyTeams ? "Team Leaderboard" : "Individual Leaders"}
-            </Link>
+            {onlyTeams ? 
+                <Tooltip title="Show Results">
+                    <span onClick={handleClickTeamResults}>
+                        Team Leaderboard 
+                    </span>
+                </Tooltip>
+                :
+                <Tooltip title="Show Results">
+                    <span onClick={handleClickUserResults}>
+                        Individual Leaders
+                    </span>
+                </Tooltip>
+            }
             <div style={{ float: 'right' }}>
                 {onlyTeams ? 
                     <Tooltip title="Show Results">
