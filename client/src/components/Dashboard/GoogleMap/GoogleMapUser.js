@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MapUser from './MapUser'
 //import { Card, CardContent, Grid, Box, Typography, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
 import { Card, CardContent, Grid, Box, Typography } from '@material-ui/core';
@@ -67,9 +67,10 @@ const GoogleMapUser = (props) => {
     // TODO :- Right now the function state values are not displayed on the dashboard
     // unless you go into the debugger.  It must be a timing issuie with state vars but
     // I have yet to figure it out
-    const calcNextLegInfo = (legs) => {
+    const calcNextLegInfo = (legs, newResults) => {
+        let newLegTotals  = newResults;
         //Loop through each result - either by team or User
-        for (let k = 0; k < legTotals.length; k++) {
+        for (let k = 0; k < newLegTotals.length; k++) {
             let totalDistanceToNextLeg = 0;
             let nextLegName = "";
             let distanceToNextLeg = 0;
@@ -81,10 +82,10 @@ const GoogleMapUser = (props) => {
             // Loop until you find the next leg based on your distance
             // This loop will end where you are "in between" two legs
             // Then you just need to extract the leg info an attach to result record
-            includedDistanceTotal += props.challenge.isSwim ? legTotals[k].swimPointsTotal : 0;
-            includedDistanceTotal += props.challenge.isBike ? legTotals[k].bikeDistanceTotal : 0;
-            includedDistanceTotal += props.challenge.isRun ? legTotals[k].runPointsTotal : 0;
-            includedDistanceTotal += props.challenge.isOther ? legTotals[k].otherDistanceTotal : 0;
+            includedDistanceTotal += props.challenge.isSwim ? newLegTotals[k].swimPointsTotal : 0;
+            includedDistanceTotal += props.challenge.isBike ? newLegTotals[k].bikeDistanceTotal : 0;
+            includedDistanceTotal += props.challenge.isRun ? newLegTotals[k].runPointsTotal : 0;
+            includedDistanceTotal += props.challenge.isOther ? newLegTotals[k].otherDistanceTotal : 0;
 
             for (i = 0; i < legs.length && totalDistanceToNextLeg < includedDistanceTotal ; i++) {
                 let legDistance = legs[i].distance.value / 1000 / 1.609344;  // to miles
@@ -103,13 +104,13 @@ const GoogleMapUser = (props) => {
                 nextLegCompletionPercent = parseInt((includedDistanceTotal / totalDistanceToNextLeg)  * 100);
             }
 
-            legTotals[k].nextLegName = nextLegName;
-            legTotals[k].distanceToNextLeg = distanceToNextLeg.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            legTotals[k].nextLegCompletionPercent = nextLegCompletionPercent;
-            legTotals[k].includedDistanceTotal = includedDistanceTotal;
-            legTotals[k].includedDistanceTotalDisplay = includedDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            newLegTotals[k].nextLegName = nextLegName;
+            newLegTotals[k].distanceToNextLeg = distanceToNextLeg.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            newLegTotals[k].nextLegCompletionPercent = nextLegCompletionPercent;
+            newLegTotals[k].includedDistanceTotal = includedDistanceTotal;
+            newLegTotals[k].includedDistanceTotalDisplay = includedDistanceTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
-        setLegTotals(legTotals);
+        setLegTotals(newLegTotals);
 
     }
 
@@ -126,6 +127,8 @@ const GoogleMapUser = (props) => {
     if (props.challenge.isOther) {
         challengeMapIncludes += "Other "
     }
+    console.log(`updatedResults: ${props.updatedResults}`);
+
     return (
         <Card style={{ height: '100%' }}>
             <CardContent style={{ height: '100%' }} >
@@ -145,6 +148,7 @@ const GoogleMapUser = (props) => {
                             }}
                             challenge={props.challenge}
                             results={props.results}
+                            updatedResults={props.updatedResults}
                             start={props.start}
                             end={props.end}
                             waypoints={props.waypoints}

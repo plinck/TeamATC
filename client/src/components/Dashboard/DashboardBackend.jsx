@@ -73,48 +73,9 @@ class DashboardBackend extends React.PureComponent {
         this.setState({ layouts });
     }
 
-    createListener(challengeUid) {
-        // This is just to show something on the page while its loading
-        this.setState({loadingFlag: true});
-        this.renderTotals(this.state.totals);    
-        const traceFullRetrieval = this.perf.trace('traceFullRetrievalFirestore');
-        try {
-            traceFullRetrieval.start();
-        } catch {
-            console.error("traceFullRetrieval not started ...")
-        }
-
-        let traceFullRetrievalT1 = new Date();
-
-        ResultsListener.createResultsListener(challengeUid).then( results => {
-            try {
-                traceFullRetrieval.incrementMetric('nbrResults', results.length);
-                traceFullRetrieval.stop();
-            } catch {
-                //
-            }
-
-            let traceFullRetrievalT2 = new Date();
-            let traceFullRetrievalDiff = traceFullRetrievalT2.getTime() - traceFullRetrievalT1.getTime();
-            console.log(`traceFullRetrievalDiff time is milliseconds: ${traceFullRetrievalDiff}`);
-    
-            this.renderTotals(results);
-
-            this.setState({loadingFlag: false});
-        }).catch( err => {
-            try {
-                traceFullRetrieval.stop();
-            } catch {
-                //
-            }
-
-            console.error(`Error attaching listener: ${err}`);
-            this.setState({loadingFlag: false});
-        });
-    }
     // This is to render interim without waiting for all to be done.
     renderTotals(results) {
-        // console.log(`renderTotals ,teamUid:${this.props.user.teamUid} teamName:${this.props.user.teamName} uid:${this.props.user.uid} displayName:${this.props.user.displayName}`);
+        // console.log(`renderTotals ,teamUid:${this.props.context.teamUid} teamName:${this.props.context.teamName} uid:${this.props.context.uid} displayName:${this.props.context.displayName}`);
         this.setState({
             totals: results,
         });
@@ -131,24 +92,22 @@ class DashboardBackend extends React.PureComponent {
         this._mounted = true;
         let layouts = getFromLS("layouts") || {};
         this.setState({ layouts: JSON.parse(JSON.stringify(layouts)) });
-        // console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
-        if (this.props.user.challengeUid) {
-            this.createListener(this.props.user.challengeUid)
-            this.fetchData(this.props.user.challengeUid)
+        // console.log(`this.props.context.challengeUid: ${this.props.context.challengeUid}`);
+        if (this.props.context.challengeUid) {
+            this.fetchData(this.props.context.challengeUid)
         }
     }
 
     componentDidUpdate(prevProps) {
         // console.log(`prevProps.user.challengeUid: ${prevProps.user.challengeUid}`);
-        // console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
-        if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
+        // console.log(`this.props.context.challengeUid: ${this.props.context.challengeUid}`);
+        if (this.props.context.challengeUid && this.props.context.challengeUid !== prevProps.user.challengeUid) {
             if (this.resultsListener) {
                 this.resultsListener();
                 // console.log(`Detached listener`);
             }
-            // console.log(this.props.user.challengeUid)
-            this.createListener(this.props.user.challengeUid);
-            this.fetchData(this.props.user.challengeUid);
+            // console.log(this.props.context.challengeUid)
+            this.fetchData(this.props.context.challengeUid);
         }
     }
     // Search for object in array based on key using uniqure ID
@@ -185,15 +144,16 @@ class DashboardBackend extends React.PureComponent {
         const { classes } = this.props;
 
         // Some need to catch up for some reason 
-        if (!this.state.totals) {
+        // if (!this.state.totals) {
+        if (!this.props.context || !this.props.context.results) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
-        if (!this.props.user) {
-            return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
-        }
-        const overallResults = this.state.totals.filter(total => total.overallRecord);
-        const teamResults = this.state.totals.filter(total => total.teamRecord);
-        const userResults = this.state.totals.filter(total => total.userRecord);
+        // const overallResults = this.state.totals.filter(total => total.overallRecord);
+        // const teamResults = this.state.totals.filter(total => total.teamRecord);
+        // const userResults = this.state.totals.filter(total => total.userRecord);
+        const overallResults = this.props.context.results.filter(total => total.overallRecord);
+        const teamResults = this.props.context.results.filter(total => total.teamRecord);
+        const userResults = this.props.context.results.filter(total => total.userRecord);
         // Sort the team and user results based on total points DESC          
         userResults.sort((a, b) => {
             const totalA = a.pointsTotal;
@@ -220,14 +180,12 @@ class DashboardBackend extends React.PureComponent {
             }
             return comparison * -1;  // Invert so it will sort in descending order
         });
-            
-        
 
         const currentOverallResults = overallResults && overallResults.length > 0 ? overallResults[0] : undefined;
-        const currentUserResults = userResults.find(result => result.uid === this.props.user.uid);
-        const currentTeamResults = teamResults.find(result => result.teamUid === this.props.user.teamUid);
+        const currentUserResults = userResults.find(result => result.uid === this.props.context.uid);
+        const currentTeamResults = teamResults.find(result => result.teamUid === this.props.context.teamUid);
 
-        if (this.props.user.uid) {
+        if (this.props.context.uid) {
             return (
                 <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
                     {this.state.loadingFlag ?
@@ -255,14 +213,15 @@ class DashboardBackend extends React.PureComponent {
                                         start={this.state.challenge.startCity}
                                         end={this.state.challenge.endCity}
                                         waypoints={this.state.challenge.waypoints}
+                                        updatedResults={this.props.context.updatedResults}
                                         results={userResults}
                                         endDate={this.state.challenge.endDate}
                                         callbackParent={() => this.onChildChanged()} />
                                 </div> : <></>}
                                 <div key="12" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 4, x: 0, y: 1, minW: 3, minH: 4, maxW: 4, maxH: 5 }}>
                                     <UserWidget
-                                        team={this.props.user.teamName}
-                                        challenge={this.props.user.challengeName}
+                                        team={this.props.context.teamName}
+                                        challenge={this.props.context.challengeName}
                                     />
                                 </div>
                                 <div key="1" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 6, x: 4, y: 1, minW: 4, minH: 6, maxW: 6 }}>
@@ -275,7 +234,7 @@ class DashboardBackend extends React.PureComponent {
                                 </div>
                                 <div key="3" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 11, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                     <ResultsCard 
-                                        user={this.props.user} 
+                                        user={this.props.context} 
                                         challenge={this.state.challenge}
                                         teamTotals={teamResults} 
                                         userTotals={userResults} 
@@ -290,13 +249,13 @@ class DashboardBackend extends React.PureComponent {
                                 </div>
                                 <div key="5" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 8, x: 4, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                     <ActivityTypeBreakdown
-                                        title={`Breakdown - ${this.props.user.displayName}`}
+                                        title={`Breakdown - ${this.props.context.displayName}`}
                                         currentTotalsShare={currentUserResults}
                                     />
                                 </div>
                                 <div key="6" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 8, x: 8, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                     <ActivityTypeBreakdown
-                                        title={`Breakdown - Team ${this.props.user.teamName}`}
+                                        title={`Breakdown - Team ${this.props.context.teamName}`}
                                         currentTotalsShare={currentTeamResults}
                                     />
                                 </div>

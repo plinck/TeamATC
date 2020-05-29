@@ -82,14 +82,14 @@ class Map extends Component {
 
                 // calc next leg info calls the parent to attach the next leg info
                 // to each of the result records
-                this.props.calcNextLegInfo(response.routes[0].legs);
+                this.props.calcNextLegInfo(response.routes[0].legs, this.props.results);
                 this.props.computeTotalDistance(response);
-                this.props.results.forEach(total => {
+                this.props.results.forEach(result => {
                     let includedDistanceTotal = 0;
-                    includedDistanceTotal += this.props.challenge.isSwim ? total.swimPointsTotal : 0;
-                    includedDistanceTotal += this.props.challenge.isBike ? total.bikeDistanceTotal : 0;
-                    includedDistanceTotal += this.props.challenge.isRun ? total.runPointsTotal : 0;
-                    this.putMarkerOnRoute(polyline, includedDistanceTotal, total.userRecord ? total.displayName : total.teamName);
+                    includedDistanceTotal += this.props.challenge.isSwim ? result.swimPointsTotal : 0;
+                    includedDistanceTotal += this.props.challenge.isBike ? result.bikeDistanceTotal : 0;
+                    includedDistanceTotal += this.props.challenge.isRun ? result.runPointsTotal : 0;
+                    this.putMarkerOnRoute(polyline, includedDistanceTotal, result.userRecord ? result.displayName : result.teamName);
                 });
             } else {
                 alert("directions response " + status);
@@ -176,6 +176,25 @@ class Map extends Component {
             })
         } else {
             this.onScriptLoad()
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.updatedResults && this.props.updatedResults !== prevProps.updatedResults) {
+            if (!window.google) {
+                var s = document.createElement('script');
+                s.type = 'text/javascript';
+                s.src = `https://maps.googleapis.com/maps/api/js?key=${FB_CONFIG.API_KEY}&libraries=places`
+                var x = document.getElementsByTagName('script')[0];
+                x.parentNode.insertBefore(s, x);
+                // Below is important. 
+                //We cannot access google.maps until it's finished loading
+                s.addEventListener('load', e => {
+                    this.onScriptLoad()
+                })
+            } else {
+                this.onScriptLoad()
+            }
         }
     }
 
