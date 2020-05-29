@@ -19,6 +19,7 @@ class ResultClass {
     bikePointsTotal;
     bikeNbrActivities;
     bikeDurationTotal;
+    rank;
     runDistanceTotal;
     runPointsTotal;
     runNbrActivities;
@@ -53,6 +54,7 @@ class ResultClass {
         this.bikePointsTotal = 0;
         this.bikeNbrActivities = 0;
         this.bikeDurationTotal = 0;
+        this.rank = 0;
         this.runDistanceTotal = 0;
         this.runPointsTotal = 0;
         this.runNbrActivities = 0;

@@ -6,7 +6,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 
 const headCells = [
-    { id: 'place', numeric: false, disablePadding: false, label: 'Ranking' },
+    { id: 'rank', numeric: true, disablePadding: false, label: 'Ranking' },
     { id: 'displayName', numeric: false, disablePadding: false, label: 'Name' },
     { id: 'teamName', numeric: false, disablePadding: false, label: 'Team' },
     { id: 'durationTotal', numeric: true, disablePadding: false, label: 'Time' },
