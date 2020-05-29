@@ -24,6 +24,8 @@ const IconAvatars = (props) => {
   // <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" className={classes.avatar} />
 
   let avatar;
+  let authPhotoURL = props.user.authUser && props.user.authUser.photoURL ? props.user.authUser.photoURL : "";
+  console.log(`authPhotoURL: ${authPhotoURL}`);
   if (props.user.authUser && props.user.authUser.photoURL) {
     // use image avatar
     avatar = 

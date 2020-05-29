@@ -32,11 +32,15 @@ class User extends React.Component {
 
     // decontruct props
     render() {
-        let { id, uid, firstName, lastName, phoneNumber, email, photoURL, primaryRole, stravaUserAuth, stravaAthleteId} = this.props.userInfo;
+        let { id, uid, firstName, lastName, phoneNumber, photoObj, email, primaryRole, stravaUserAuth, stravaAthleteId} = this.props.userInfo;
         let { userMakeAdmin, userMakeTeamLead, userMakeUser, userMakeModerator } = this.props;
 
-        if (!photoURL) {
-            photoURL = "./images/noUserImage150x150.png";
+        let photoObjUrl = "./images/noUserImage150x150.png";
+        let photoObjFileName = "";
+
+        if (photoObj && photoObj.url && photoObj.url !== "") {
+            photoObjUrl = photoObj.url;
+            photoObjFileName = photoObj.fileName;
         }
 
         if (id === null) {
@@ -57,9 +61,10 @@ class User extends React.Component {
         return (
             <Card>
                 <CardMedia
-                    style={{ height: "150px" }}
-                    image={photoURL}
-                    title={firstName} />
+                    style={{ height: '150px' }}
+                    image={ photoObjUrl }
+                    title={ photoObjFileName }
+                />
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="h2">{firstName} {lastName}</Typography>
                     <Typography variant="body2" color="textSecondary" component="p">{email}</Typography>

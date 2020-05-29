@@ -9,7 +9,7 @@ class User {
     isUser: boolean;
     lastName: string;
     phoneNumber: string;
-    photoURL: string;
+    photoObj: {url: string};
     primaryRole: string;
     stravaAccessToken: string;
     stravaAthleteId:  string;
@@ -31,7 +31,7 @@ class User {
         this.isUser = false;
         this.lastName = "";
         this.phoneNumber = "";
-        this.photoURL = "";
+        this.photoObj.url = "";
         this.primaryRole = "";
         this.stravaAccessToken = "";
         this.stravaAthleteId = "";

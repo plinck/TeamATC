@@ -48,6 +48,9 @@ const provideAuthUserContext = Component => {
                 isTeamLead: false,
                 isModerator: false,
                 isUser: false,
+
+                updatedResults: 0, 
+                results: []         // results from backend
             };
         }
 
@@ -116,12 +119,13 @@ const provideAuthUserContext = Component => {
 
                     // Listen to current challenge to get name, descirption for pages
                     if (user.challengeUid) {
-                        this.setupChallengeListener(user.challengeUid)
+                        this.setupChallengeListener(user.challengeUid);
                         ResultsAPI.getChallengeResults(user.challengeUid).then( () => {
                             // Ignore - no need to process
                         }).catch(err => {
                             console.error(`Error in provide auth user context updating challenge results on backend ${err}`)
                         });
+                        this.setupResultsListener(user.challengeUid);
                     } else {
                         this.setupChallengeListener(CHALLENGE)               
                         ResultsAPI.getChallengeResults(CHALLENGE).then( () => {
@@ -205,6 +209,85 @@ const provideAuthUserContext = Component => {
             });
         }
 
+        setupResultsListener(challengeUid) {
+            this.perf = Util.getFirestorePerf();
+    
+            console.log(`Created result listener with challengeUid: ${challengeUid}`);
+            this.perf = Util.getFirestorePerf();
+            
+            const traceFullResultsFirestore = this.perf.trace('traceFullResultsFirestore');;
+            const traceGetResultsChanges = this.perf.trace('traceGetResultsChanges');
+
+            if (this.resultslistener) {
+                this.resultslistener();
+            }
+        
+            let allDBRefs = Util.getChallengeDependentRefs(challengeUid);
+            const dbResultsRef = allDBRefs.dbResultsRef;
+
+            let ref = dbResultsRef;
+            try {
+                traceFullResultsFirestore.start();
+            } catch {
+                console.error("traceFullResultsFirestore not started ...")
+            }
+
+            let results = [];
+            this.resultslistener = ref.onSnapshot((querySnapshot) => {
+                try {
+                    traceGetResultsChanges.start();
+                } catch {
+                    console.error("traceGetResultsChanges not started ...")
+                }
+    
+                querySnapshot.docChanges().forEach(change => {
+                    if (change.type === "added") {
+                        let newResult = change.doc.data();
+                        newResult.id = change.doc.id;
+                        results.push(newResult);
+                    }
+                    if (change.type === "modified") {
+                        let changedResult = {};
+                        changedResult = change.doc.data();
+                        changedResult.id = change.doc.id;
+                        results = results.map(result => {
+                            if (changedResult.id === result.id) {
+                                return changedResult;
+                            } else {
+                                return result;
+                            }
+                        });
+                    }
+                    if (change.type === "removed") {
+                        // console.log(`Removed Result: ${change.doc.id}`);
+                        results.filter(result => {
+                            return result.id !== change.doc.id;
+                        });            
+                    }
+                });
+                this.setState({results: [...results], updatedResults: this.state.updatedResults +1});
+
+                try {
+                    traceGetResultsChanges.stop();
+                } catch {
+                    //
+                }
+
+                try {
+                    traceFullResultsFirestore.incrementMetric('nbrResults', this.results.length);
+                    traceFullResultsFirestore.stop();    
+                } catch {
+                    //
+                }
+
+                return;
+            }, (err) => {
+                console.error(`Error attaching listener: ${err}`);
+                return;
+            }); // Create listener
+        }
+    
+
         // This deletes listener to clean things up and prevent mem leaks
         componentWillUnmount() {
             this.listener();
@@ -214,6 +297,9 @@ const provideAuthUserContext = Component => {
             }
             if (this.challengeListener) {
                 this.challengeListener();
+            }
+            if (this.resultsListener) {
+                this.resultsListener();
             }
         }
 
@@ -226,6 +312,7 @@ const provideAuthUserContext = Component => {
                 <AuthUserContext.Provider value={this.state} >
                     <Component {...this.props} />
                 </AuthUserContext.Provider>
+                
             );
         }
     }
