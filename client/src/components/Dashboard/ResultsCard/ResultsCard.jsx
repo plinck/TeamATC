@@ -46,7 +46,7 @@ const ResultsCard = (props) => {
                 :
                 <Tooltip title="Show Results">
                     <span onClick={handleClickUserResults}>
-                        Individual Leaders
+                        Individual Leaderboard
                     </span>
                 </Tooltip>
             }
