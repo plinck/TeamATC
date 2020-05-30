@@ -157,7 +157,7 @@ const GoogleMapUser = (props) => {
                             totalDist={totalDist}
                         />
                     </Grid>
-                    <Grid container item xs={false} sm={3} md={4}>
+                    <Grid container item xs={false} sm={3} md={4} style={{paddingTop: '0px'}} >
                         <Grid item xs={12}>
                             <Typography variant="h5" style={{ textAlign: "center" }}>Challenge Details</Typography>
                             <ul style={{ margin: "5px 10px" }}>
