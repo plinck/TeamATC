@@ -7,9 +7,10 @@ import {
   Button,
   Container,
   Typography,
+  ButtonGroup,
+  Tooltip
 } from "@material-ui/core";
 import GetAppIcon from "@material-ui/icons/GetApp";
-
 
 import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
 import { ResultsDB } from "./ResultsDB";
@@ -48,6 +49,7 @@ class Results extends React.Component {
 
     this.state = {
       results: [],
+      data: 'users'
     };
   }
 
@@ -94,6 +96,8 @@ class Results extends React.Component {
   // Now we can render page - DO NOT change state in render()
   render() {
     const { classes } = this.props;
+    // const teamResults = this.props.context.results.filter(total => total.teamRecord);
+    // console.log(teamResults)
 
     // Some props take time to get ready so return null when uid not avaialble
     if (
@@ -121,6 +125,7 @@ class Results extends React.Component {
     let overallResults = this.state.results.overallResults;
     let teamResults = this.state.results.teamResults;
     let userResults = this.state.results.userResults;
+    console.log(teamResults);
     if (!userResults || !teamResults || !overallResults) {
       return (
         <Grid container style={{ marginTop: "10px" }} justify="center">
@@ -142,6 +147,20 @@ class Results extends React.Component {
           <Typography variant="h4">Results</Typography>
         </Grid>
         <Grid item xs={6} style={{ textAlign: "right" }}>
+          <ButtonGroup color="primary">
+            <Tooltip title="Users">
+              <Button
+              onClick={()=> this.setState({data: "users"})}
+              variant= {this.state.data === "users" ? "contained" : "outlined"}
+              >Users</Button>
+            </Tooltip>
+            <Tooltip title="Teams">
+              <Button
+              onClick={()=> this.setState({data: "teams"})}
+              variant={this.state.data === "teams" ? "contained" : "outlined"}
+              >Teams</Button>
+            </Tooltip>
+          </ButtonGroup>
           <CSVLink
             className={classes.csvButton}
             data={userResults}
@@ -159,14 +178,18 @@ class Results extends React.Component {
     if (this.props.user.authUser) {
       return (
         <div
-          style={{ backgroundColor: "#f2f2f2", overflow: 'scroll' }}
+          style={{ backgroundColor: "#f2f2f2", overflow: "scroll" }}
           className={classes.resultStyle}
         >
           <Container maxWidth="xl">
             <Grid container>
               {sortFilterRow}
               <Grid item xs={12} className={classes.tableContainer}>
-                <EnhancedTable data={userResults} />
+                <EnhancedTable
+                  data={this.state.data}
+                  users={userResults}
+                  teams={teamResults}
+                />
               </Grid>
             </Grid>
           </Container>

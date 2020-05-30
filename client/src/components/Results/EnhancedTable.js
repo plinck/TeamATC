@@ -60,8 +60,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EnhancedTable({ data }) {
-  const rows = data;
+export default function EnhancedTable({ data, users, teams }) {
+  const rows = data === "teams" ? teams : users;
   const classes = useStyles();
   const [order, setOrder] = React.useState("desc");
   const [orderBy, setOrderBy] = React.useState("pointsTotal");
