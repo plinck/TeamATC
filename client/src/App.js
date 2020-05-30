@@ -32,7 +32,7 @@ import SignInForm from './components/Auth/SignIn/SignIn';
 import PasswordForgetPage from './components/Auth/PasswordForget/PasswordForget';
 
 // Session/State Info for all components
-import provideAuthUserContext from './components/Auth/Session/provideAuthUserContext';
+import provideContext from './components/Auth/Session/provideContext';
 
 const styles = theme => ({
   toolbar: {
@@ -90,4 +90,4 @@ class App extends React.Component {
   }
 }
 
-export default provideAuthUserContext(withStyles(styles)(App));
+export default provideContext(withStyles(styles)(App));

@@ -10,4 +10,5 @@ const withAuthUserContext = Component => props => (
 );
 
 export default AuthUserContext;
-export { withAuthUserContext };
+const withContext = withAuthUserContext;    // duplicate for time to change over
+export { withContext, withAuthUserContext };

@@ -3,17 +3,18 @@ import { WidthProvider, Responsive } from "react-grid-layout";
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { withStyles } from '@material-ui/core/styles';
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/AuthUserContext";
 // import { Redirect } from "react-router";
 import ResultsCard from "./ResultsCard/ResultsCard.jsx";
 import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
 import PointsBreakdownGraph from './Graphs/PointsBreakdown.jsx';
+import ActivitiesCard from './ActivitiesCard/ActivitiesCard';
 import { Container, Grid, CircularProgress } from '@material-ui/core'
 import Util from "../Util/Util";
 import GoogleMapUser from './GoogleMap/GoogleMapUser';
 import ChallengeDB from '../Challenges/ChallengeDB';
-import ResultsListener from "../Results/ResultsListener";
 import UserWidget from "./UserWidget/UserWidget.jsx";
+import ActivityDB from "../Activity/ActivityDB";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
@@ -45,10 +46,10 @@ class DashboardBackend extends React.PureComponent {
         this.state = {
             layouts: JSON.parse(JSON.stringify(originalLayouts)),
             totals: [],
+            myActivities: [],
             challenge: {}
         };
 
-        this.resultsListener = undefined;
         this.perf = Util.getFirestorePerf();
     }
 
@@ -88,6 +89,16 @@ class DashboardBackend extends React.PureComponent {
         }).catch(err => console.error(err));
     }
 
+    fetchMyActivities(challengeId) {
+        if (this.props.context.uid) {
+            const uid = this.props.context.uid;
+            const filterObj = {filterName: "uid", filterValue: uid}
+            ActivityDB.getFiltered(filterObj, 10).then(res => {
+                this.setState({ myActivities: res.activities })
+            }).catch(err => console.error(err));
+        }
+    }
+
     componentDidMount() {
         this._mounted = true;
         let layouts = getFromLS("layouts") || {};
@@ -95,19 +106,17 @@ class DashboardBackend extends React.PureComponent {
         // console.log(`this.props.context.challengeUid: ${this.props.context.challengeUid}`);
         if (this.props.context.challengeUid) {
             this.fetchData(this.props.context.challengeUid)
+            this.fetchMyActivities(this.props.context.challengeUid);
         }
     }
 
     componentDidUpdate(prevProps) {
-        // console.log(`prevProps.user.challengeUid: ${prevProps.user.challengeUid}`);
+        // console.log(`prevprops.context.challengeUid: ${prevprops.context.challengeUid}`);
         // console.log(`this.props.context.challengeUid: ${this.props.context.challengeUid}`);
-        if (this.props.context.challengeUid && this.props.context.challengeUid !== prevProps.user.challengeUid) {
-            if (this.resultsListener) {
-                this.resultsListener();
-                // console.log(`Detached listener`);
-            }
+        if (this.props.context.challengeUid && this.props.context.challengeUid !== prevProps.context.challengeUid) {
             // console.log(this.props.context.challengeUid)
             this.fetchData(this.props.context.challengeUid);
+            this.fetchMyActivities(this.props.context.challengeUid);
         }
     }
     // Search for object in array based on key using uniqure ID
@@ -133,11 +142,6 @@ class DashboardBackend extends React.PureComponent {
     componentWillUnmount() {
         this._mounted = false;
 
-        // kill the listener
-        if (this.resultsListener) {
-            this.resultsListener();
-            // console.log(`Detached listener`);
-        }
     }
 
     render() {
@@ -184,6 +188,7 @@ class DashboardBackend extends React.PureComponent {
         const currentOverallResults = overallResults && overallResults.length > 0 ? overallResults[0] : undefined;
         const currentUserResults = userResults.find(result => result.uid === this.props.context.uid);
         const currentTeamResults = teamResults.find(result => result.teamUid === this.props.context.teamUid);
+        const myActivities = this.state.myActivities;
 
         if (this.props.context.uid) {
             return (
@@ -231,6 +236,9 @@ class DashboardBackend extends React.PureComponent {
                                         userTotals={userResults} 
                                         onlyTeams={true}
                                     />
+                                </div>
+                                <div key="2" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 6, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
+                                    <ActivitiesCard name={this.props.context.displayName} activities={myActivities} />
                                 </div>
                                 <div key="3" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 11, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                     <ResultsCard 
@@ -309,4 +317,4 @@ function saveToLS(key, value) {
 }
 
 
-export default withAuthUserContext(withStyles(styles)(WidthProvider(DashboardBackend)));
+export default withContext(withStyles(styles)(WidthProvider(DashboardBackend)));

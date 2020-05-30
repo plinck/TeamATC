@@ -55,7 +55,7 @@ const ActivitiesCard = (props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {props.activity.slice(0, 10).map((activity, index) => {
+                        {props.activities.slice(0, 10).map((activity, index) => {
                             const {
                                 activityDateTime,
                                 activityName, // swim, bike, run

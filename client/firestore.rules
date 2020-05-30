@@ -3,10 +3,10 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function isUserAdmin() {
-  		return request.auth.uid != null && get(/databases/$(database)/documents/ATC/prod/users/$(request.auth.uid)).data.isAdmin
+  		return request.auth.uid != null && get(/databases/$(database)/documents/MST/prod/users/$(request.auth.uid)).data.isAdmin
   	}
     
-    match /ATC/prod/users/{userID} {
+    match /MST/prod/users/{userID} {
       allow list: if request.auth.uid != null;
     	allow get: if request.auth.uid == userID || isUserAdmin();
     	allow delete: if request.auth.uid == userID || isUserAdmin();
@@ -14,14 +14,14 @@ service cloud.firestore {
       allow create: if request.auth.uid == request.resource.data.id || isUserAdmin();
     }
     
-    match /ATC/prod/ATCMembers/{email} {
+    match /MST/prod/ATCMembers/{email} {
     	allow read: if true;
     	allow delete: if request.auth.email == email || isUserAdmin();
     	allow update: if request.auth.email == email || isUserAdmin();
       allow create: if request.auth.email != request.resource.data.email || isUserAdmin();
     }
     
-    match /ATC/prod/challenges/{challengeDoc} {
+    match /MST/prod/challenges/{challengeDoc} {
       allow read: if request.auth.uid != null;
     	allow delete: if isUserAdmin();
     	allow update: if isUserAdmin();
@@ -50,24 +50,24 @@ service cloud.firestore {
     }
   
     function isDevUserAdmin() {
-  		return request.auth.uid != null && get(/databases/$(database)/documents/ATC/dev/users/$(request.auth.uid)).data.isAdmin
+  		return request.auth.uid != null && get(/databases/$(database)/documents/MST/dev/users/$(request.auth.uid)).data.isAdmin
   	}
     
-    match /ATC/dev/users/{userID} {
+    match /MST/dev/users/{userID} {
     	allow read: if request.auth.uid == userID || isDevUserAdmin();
     	allow delete: if request.auth.uid == userID || isDevUserAdmin();
     	allow update: if request.auth.uid == userID || isDevUserAdmin();
       allow create: if request.auth.uid == request.resource.data.id || isDevUserAdmin();
     }
     
-    match /ATC/dev/ATCMembers/{email} {
+    match /MST/dev/ATCMembers/{email} {
     	allow read: if request.auth.uid != null;
     	allow delete: if request.auth.email == email || isDevUserAdmin();
     	allow update: if request.auth.email == email || isDevUserAdmin();
       allow create: if request.auth.email != request.resource.data.email || isDevUserAdmin();
     }
     
-    match /ATC/dev/challenges/{challengeDoc} {
+    match /MST/dev/challenges/{challengeDoc} {
       allow read: if request.auth.uid != null;
     	allow delete: if isDevUserAdmin();
     	allow update: if isDevUserAdmin();
