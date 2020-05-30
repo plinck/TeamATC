@@ -4,6 +4,8 @@ import { APP_CONFIG } from "../FirebaseEnvironment";
 import { Result } from "../interfaces/Result";
 import { AllResults } from "../interfaces/Result.Types";
 import { Challenge } from "../interfaces/Challenge";
+import { User } from "../interfaces/User";
+import { UserDB } from "./UserDB";
 
 class ResultsDB {
 
@@ -81,7 +83,7 @@ class ResultsDB {
     }
 
     public save(allResults:AllResults) {
-        return new Promise<any>((resolve:any, reject:any) => {
+        return new Promise<any>(async (resolve:any, reject:any) => {
             // console.log(`ResultsDB.save -- save challenge ${allResults.challengeUid} document as: ${JSON.stringify(allResults)}`);
             const challengeUid = allResults.challengeUid;
             if (!challengeUid) {
@@ -108,6 +110,14 @@ class ResultsDB {
             }
             // All users
             for (let i = 0; i < allResults.userResults.length; i++) {
+                try {
+                    const userDB = new UserDB();
+                    const user: User = await userDB.get(allResults.userResults[i].uid);
+                    const photoUrl = user.photoObj ? user.photoObj.url : "";
+                    allResults.userResults[i].photoUrl = photoUrl;
+                } catch (err) {
+                    console.error(`Error getting user for result: ${err}`);
+                }
                 const resultsKey = `${allResults.challengeUid}-UR${i}`;
                 const result = JSON.parse(JSON.stringify(allResults.userResults[i]));
                 result.updateDateTime = new Date();
