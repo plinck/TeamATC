@@ -1,5 +1,5 @@
 import React from 'react';
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import { Grid, Card, CardContent, Typography, Button, CardMedia, CardActions } from '@material-ui/core';
 import moment from "moment";
 import { CHALLENGE } from "../Environment/Environment";
@@ -19,7 +19,7 @@ const Challenge = (props) => {
     }
 
     // dont ket non-admin delete or edit 
-    const enableEdit = (props.user && props.user.isAdmin) ? true : false;
+    const enableEdit = (props.context && props.context.isAdmin) ? true : false;
     // Dont aloow ANYONE to delete main/default challenge
     const allowDeleteChallenge = props.challenge.id !== CHALLENGE ? true : false;
 
@@ -70,4 +70,4 @@ const Challenge = (props) => {
     )
 }
 
-export default withAuthUserContext(Challenge);
+export default withContext(Challenge);

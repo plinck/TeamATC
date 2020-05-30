@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import TextField from '@material-ui/core/TextField';
 import NumberFormat from 'react-number-format';
 import localStyles from './Account.module.css';
@@ -242,7 +242,7 @@ class AccountForm extends React.Component {
   
                             <CardContent>
                                 <Typography variant="subtitle2">{message}</Typography>
-                                <Typography gutterBottom component="h2" variant="h5">User Profile (Role: {user.primaryRole}, challenge: {this.props.user.challengeName})</Typography>
+                                <Typography gutterBottom component="h2" variant="h5">User Profile (Role: {user.primaryRole}, challenge: {this.props.context.challengeName})</Typography>
                                 <label htmlFor="file">
                                     <input
                                         id="file"
@@ -412,4 +412,4 @@ class AccountForm extends React.Component {
     }
 }
 
-export default withStyles(styles)(withAuthUserContext(AccountForm));
+export default withStyles(styles)(withContext(AccountForm));

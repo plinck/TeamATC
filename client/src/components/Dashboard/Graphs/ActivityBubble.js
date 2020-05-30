@@ -6,7 +6,7 @@ import ActivityBubbleModal from './ActivityBubbleModal';
 import { Card, CardContent, Box } from '@material-ui/core';
 
 
-import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
+import { withContext } from "../../Auth/Session/Context";
 
 class ActivityBubble extends React.Component {
 
@@ -180,11 +180,11 @@ class ActivityBubble extends React.Component {
 
     render() {
         // Some props take time to get ready so return null when uid not avaialble
-        if (!this.props.user) {
+        if (!this.props.context) {
             return null;
         }
 
-        if (this.props.user.authUser) {
+        if (this.props.context.authUser) {
             return (
                 <Card style={{ height: "100%" }}>
                     <CardContent style={{ height: "100%" }}>
@@ -205,4 +205,4 @@ class ActivityBubble extends React.Component {
     }
 }
 
-export default withRouter(withAuthUserContext(ActivityBubble));
+export default withRouter(withContext(ActivityBubble));

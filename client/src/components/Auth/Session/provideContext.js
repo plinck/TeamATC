@@ -1,6 +1,6 @@
 import React from 'react';
 import Util from "../../Util/Util";
-import AuthUserContext from './AuthUserContext';
+import Context from './Context';
 import { withFirebase } from '../Firebase/FirebaseContext';
 import UserAuthAPI from '../../User/UserAuthAPI';
 import Session from "../../Util/Session.js";
@@ -66,7 +66,7 @@ const provideContext = Component => {
             }
         }
 
-        // NOTE:  This is where the AuthUserContext gets SET
+        // NOTE:  This is where the Context gets SET
         // I set it here it can be accessed anywhere below since context shared at top
         // Also the the the firebase app object is passed from the index.js component
         // above the app component so it can be used here.  
@@ -309,9 +309,9 @@ const provideContext = Component => {
         // I am not 100% sure its cleaner and easier but I will go with it for now.
         render() {
             return (
-                <AuthUserContext.Provider value={this.state} >
+                <Context.Provider value={this.state} >
                     <Component {...this.props} />
-                </AuthUserContext.Provider>
+                </Context.Provider>
                 
             );
         }

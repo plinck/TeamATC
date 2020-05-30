@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
+import { withContext } from '../Auth/Session/Context';
 
 import moment from "moment";
 
@@ -110,11 +110,11 @@ class Activity extends React.Component {
         }
 
         // Can only edit or delete your activities
-        let editIsDisabled = (this.props.user.authUser && (this.props.user.authUser.uid === uid)) ? false : true;
-        let deleteIsDisabled = (this.props.user.authUser && (this.props.user.authUser.uid === uid)) ? false : true;
+        let editIsDisabled = (this.props.context.authUser && (this.props.context.authUser.uid === uid)) ? false : true;
+        let deleteIsDisabled = (this.props.context.authUser && (this.props.context.authUser.uid === uid)) ? false : true;
 
         // Allow Admin to edit all records (later allow team moderator (teamLead) to edit their own teams workouts) 
-        if (this.props.user.isAdmin) {
+        if (this.props.context.isAdmin) {
             deleteIsDisabled = false
         }
 
@@ -127,7 +127,7 @@ class Activity extends React.Component {
             distanceDecimalPlaces = 0;
         }
 
-        let isThisMine = uid === this.props.user.uid ? true : false
+        let isThisMine = uid === this.props.context.uid ? true : false
 
         return (
             <ExpansionPanel style={{ margin: '10px 0px', padding: "0" }}>
@@ -233,4 +233,4 @@ class Activity extends React.Component {
     } // render()
 } // class
 
-export default withAuthUserContext(withRouter(withStyles(styles)(Activity)));
+export default withContext(withRouter(withStyles(styles)(Activity)));

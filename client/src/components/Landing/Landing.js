@@ -1,6 +1,6 @@
 import React from 'react';
 import './Landing.css';
-import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
+import { withContext } from '../Auth/Session/Context';
 import { Redirect } from 'react-router';
 import { useHistory } from "react-router-dom";
 import { Container, Button, Grid, Typography } from '@material-ui/core';
@@ -42,7 +42,7 @@ const Landing = (props) => {
     const history = useHistory();
     const classes = useStyles()
 
-    if (props.user.authUser) {
+    if (props.context.authUser) {
         return (
             <Redirect to="/dashboard" />
         );
@@ -91,4 +91,4 @@ const Landing = (props) => {
         </div >
     );
 }
-export default withAuthUserContext(Landing);
+export default withContext(Landing);

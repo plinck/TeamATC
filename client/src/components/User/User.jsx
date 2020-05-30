@@ -8,7 +8,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { withRouter } from 'react-router-dom';
-import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
+import { withContext } from '../Auth/Session/Context';
 import { Card, Grid, CardMedia, Typography, CardActions, CardContent } from '@material-ui/core';
 
 class User extends React.Component {
@@ -56,7 +56,7 @@ class User extends React.Component {
         };
 
         // dont let you delete yourself
-        const editIsDisabled = (this.props.user && this.props.user.authUser && this.props.user.authUser.uid) === uid ? true : false;
+        const editIsDisabled = (this.props.context && this.props.context.authUser && this.props.context.authUser.uid) === uid ? true : false;
 
         return (
             <Card>
@@ -168,4 +168,4 @@ class User extends React.Component {
     } // render()
 }
 
-export default withAuthUserContext(withRouter(User));
+export default withContext(withRouter(User));

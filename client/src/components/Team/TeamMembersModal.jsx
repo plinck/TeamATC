@@ -7,7 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TeamMember from "./TeamMember";
 import TeamDB from "./TeamDB";
 import { TableHead, TableRow, TableCell, Table, TableBody } from '@material-ui/core';
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 
 class TeamMembersModal extends React.Component {
     constructor(props) {
@@ -75,7 +75,7 @@ class TeamMembersModal extends React.Component {
                                 {this.state.teamMembers.map((teamMember, index) => {
                                     return (
                                         <TeamMember key={index} 
-                                        isThisMine={this.props.user.uid === teamMember.id ? true : false} 
+                                        isThisMine={this.props.context.uid === teamMember.id ? true : false} 
                                         teamMember={teamMember}
                                         index={index} />
                                     );
@@ -94,4 +94,4 @@ class TeamMembersModal extends React.Component {
     }
 }
 
-export default withAuthUserContext(TeamMembersModal);
+export default withContext(TeamMembersModal);

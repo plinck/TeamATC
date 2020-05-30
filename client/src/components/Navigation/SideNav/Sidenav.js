@@ -197,7 +197,7 @@ export default function SideNav(props) {
               <ListItemText>Contact Support</ListItemText>
             </ListItem>
           </a>
-          {props.user && props.user.isAdmin ?  
+          {props.context && props.context.isAdmin ?  
             <div>
               <Divider></Divider>
               <NavLink className={classes.sideText} to="/admin">

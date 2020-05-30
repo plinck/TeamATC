@@ -3,7 +3,7 @@ import { WidthProvider, Responsive } from "react-grid-layout";
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { withStyles } from '@material-ui/core/styles';
-import { withContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 // import { Redirect } from "react-router";
 import ResultsCard from "./ResultsCard/ResultsCard.jsx";
 import ActivityTypeBreakdown from "./Graphs/ActivityTypeBreakdown";
