@@ -86,8 +86,6 @@ class Leaderboard {
     }    
     // Calculate team results
     private calulateTeamResults(challenge:Challenge, results:Array<Result>, activity:Activity, updateType: ActivityUpdateType): Array<Result> {
-        // console.log("calulateUserResults() started ...");
-
         let newResult: Result = new Result(challenge.id);
         const idx = results.findIndex((result:Result) => {
             const foundIdx = result.teamUid === activity.teamUid;
