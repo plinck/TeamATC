@@ -76,15 +76,6 @@ class Result extends React.Component {
       return null;
     }
 
-    // Band odd rows for clarity
-    let rowBg = "";
-    if (this.props.index % 2 === 0) {
-      rowBg = "info.main";
-    }
-    if (this.props.result.teamRecord && !this.props.onlyTeams) {
-      rowBg = "yellow";
-    }
-
     // <TableCell>Place</TableCell>
     // <TableCell>Name</TableCell>
     // <TableCell>Team</TableCell>
@@ -96,8 +87,7 @@ class Result extends React.Component {
       <TableRow 
       key={this.props.index} 
       hover
-      tabIndex={-1} 
-      style={{ backgroundColor: `${rowBg}` }}>
+      tabIndex={-1} >
         <TableCell>{rank}</TableCell>
         <TableCell>
           {uid && uid === this.props.user.uid ? (
