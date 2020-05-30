@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router';
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import AccountForm from "./AccountForm";
 import PasswordChangeForm from '../Auth/PasswordForget/PasswordChange';
 import { withStyles } from '@material-ui/core/styles';
@@ -35,7 +35,7 @@ class Account extends React.Component {
       email,
       phoneNumber,
       primaryRole
-    } = this.props.user;
+    } = this.props.context;
     displayName = displayName || "";
     email = email || "";
     phoneNumber = phoneNumber || "";
@@ -46,7 +46,7 @@ class Account extends React.Component {
       return null;
     }
 
-    if (this.props.user.authUser) {
+    if (this.props.context.authUser) {
       return (
         <div className={classes.root}>
           <AccountForm
@@ -67,4 +67,4 @@ class Account extends React.Component {
   }
 }
 
-export default withAuthUserContext(withStyles(styles)(Account));
+export default withContext(withStyles(styles)(Account));

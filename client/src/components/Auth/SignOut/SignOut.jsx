@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom'
 import { Redirect } from 'react-router-dom'
 
 import { withFirebase } from '../Firebase/FirebaseContext';
-import AuthUserContext from '../Session/AuthUserContext';
+import Context from '../Session/Context';
 import { Button } from '@material-ui/core';
 
 class SignOutButton extends React.Component {
@@ -17,9 +17,9 @@ class SignOutButton extends React.Component {
   render() {
     return (
       <div className="center-align">
-        <AuthUserContext.Consumer>
+        <Context.Consumer>
           {user => user.authUser ? null : <Redirect to="/signin" />}
-        </AuthUserContext.Consumer>
+        </Context.Consumer>
 
         <Button variant="contained" color="secondary" onClick={this.handleSignout}>
           Logout

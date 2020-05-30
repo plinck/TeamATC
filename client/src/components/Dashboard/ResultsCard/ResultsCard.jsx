@@ -72,7 +72,7 @@ const ResultsCard = (props) => {
         totals = teamTotals;
     }
 
-    let uid = props.user ? props.user.uid : null
+    let uid = props.context ? props.context.uid : null
     // first set the correct totals bsed on challenge totals used
     let sortedTotals = totals.map((result) => {
         let includedDistanceTotal = 0;

@@ -6,7 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import { Link } from 'react-router-dom';
 import LaunchIcon from '@material-ui/icons/Launch';
 
-import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
+import { withContext } from "../../Auth/Session/Context";
 import { Card, CardContent, Box, Tooltip } from '@material-ui/core';
 
 class ActivityTypeBreakdown extends React.Component {
@@ -134,11 +134,11 @@ class ActivityTypeBreakdown extends React.Component {
                 </div>
             </Box>
         // Some props take time to get ready so return null when uid not avaialble
-        if (!this.props.user) {
+        if (!this.props.context) {
             return null;
         }
 
-        if (this.props.user.authUser) {
+        if (this.props.context.authUser) {
             return (
                 <Card style={{ height: '100%' }}>
                     <CardContent>
@@ -159,4 +159,4 @@ class ActivityTypeBreakdown extends React.Component {
     }
 }
 
-export default withRouter(withAuthUserContext(ActivityTypeBreakdown));
+export default withRouter(withContext(ActivityTypeBreakdown));

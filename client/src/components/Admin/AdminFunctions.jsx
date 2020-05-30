@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router';
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import { withStyles } from '@material-ui/core/styles';
 import Util from "../Util/Util";
 import {  Button } from "@material-ui/core";
@@ -40,15 +40,15 @@ class AdminFunctions extends React.Component {
     const { classes } = this.props;
 
     // Some props take time to get ready so return null when uid not avaialble
-    if (this.props.user.uid === null) {
+    if (this.props.context.uid === null) {
       return null;
     }
 
-    if (this.props.user.isAdmin) {
+    if (this.props.context.isAdmin) {
       return (
         <div className={classes.root}>
           <Button 
-            onClick={() => this.recalculateTotals(this.props.user.challengeUid)}
+            onClick={() => this.recalculateTotals(this.props.context.challengeUid)}
             variant="contained"
             color="primary"
             className={classes.button}>
@@ -64,4 +64,4 @@ class AdminFunctions extends React.Component {
   }
 }
 
-export default withAuthUserContext(withStyles(styles)(AdminFunctions));
+export default withContext(withStyles(styles)(AdminFunctions));

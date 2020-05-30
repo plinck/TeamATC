@@ -1,5 +1,5 @@
 import React from 'react';
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import { Grid, Card, CardContent, Typography, Button, CardActions } from '@material-ui/core';
 
 const Team = (props) => {
@@ -21,7 +21,7 @@ const Team = (props) => {
     }
 
     // dont ket non-admin delete or edit 
-    const enableEdit = (props.user && props.user.isAdmin) ? true : false;
+    const enableEdit = (props.context && props.context.isAdmin) ? true : false;
     // Dont allow anyone to delete a team with assigned users or acvities
     // This logic will come later
     const allowDeleteTeam = true;
@@ -71,4 +71,4 @@ const Team = (props) => {
     )
 }
 
-export default withAuthUserContext(Team);
+export default withContext(Team);

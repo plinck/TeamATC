@@ -3,7 +3,7 @@ import { Redirect } from 'react-router';
 import { withRouter } from 'react-router-dom';
 
 import Users from "../User/Users.jsx"
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import { Container, Grid, Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -36,7 +36,7 @@ class Admin extends React.Component {
         const { classes } = this.props
         const message = this.props && this.props.location && this.props.location.state ? this.props.location.state.message : "";
 
-        if (this.props.user.authUser && this.props.user.isAdmin) {
+        if (this.props.context.authUser && this.props.context.isAdmin) {
             return (
                 <div className={classes.root}>
                     <Container >
@@ -49,7 +49,7 @@ class Admin extends React.Component {
                     </Container>
                 </div>
             );
-        } else if (this.props.user.authUser) {
+        } else if (this.props.context.authUser) {
             return (
                 <Redirect to="/actitivies" />
             );
@@ -61,4 +61,4 @@ class Admin extends React.Component {
     }
 }
 
-export default withRouter(withAuthUserContext(withStyles(styles)(Admin)));
+export default withRouter(withContext(withStyles(styles)(Admin)));

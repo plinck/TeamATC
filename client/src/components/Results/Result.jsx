@@ -1,6 +1,6 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import { TableCell, TableRow } from "@material-ui/core";
 
 import { withStyles } from "@material-ui/core/styles";
@@ -72,7 +72,7 @@ class Result extends React.Component {
     } = this.props.result;
 
     // make sure you have a user before displaying
-    if (this.props.user.uid === null) {
+    if (this.props.context.uid === null) {
       return null;
     }
 
@@ -90,7 +90,7 @@ class Result extends React.Component {
       tabIndex={-1} >
         <TableCell>{rank}</TableCell>
         <TableCell>
-          {uid && uid === this.props.user.uid ? (
+          {uid && uid === this.props.context.uid ? (
             <img
               style={{ maxHeight: "20px" }}
               src={"/images/me.png"}
@@ -146,4 +146,4 @@ class Result extends React.Component {
   } // render()
 } // class
 
-export default withAuthUserContext(withRouter(withStyles(styles)(Result)));
+export default withContext(withRouter(withStyles(styles)(Result)));

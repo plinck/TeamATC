@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import GetAppIcon from "@material-ui/icons/GetApp";
 
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import { ResultsDB } from "./ResultsDB";
 
 import { withStyles } from "@material-ui/core/styles";
@@ -55,7 +55,7 @@ class Results extends React.Component {
 
   // Get All Results on Mount - check if anything passed
   componentDidMount() {
-    const challengeUid = this.props.user.challengeUid;
+    const challengeUid = this.props.context.challengeUid;
     if (challengeUid && challengeUid !== "") {
       const resultsDB = new ResultsDB();
       resultsDB
@@ -71,10 +71,10 @@ class Results extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (
-      this.props.user.challengeUid &&
-      this.props.user.challengeUid !== prevProps.user.challengeUid
+      this.props.context.challengeUid &&
+      this.props.context.challengeUid !== prevProps.user.challengeUid
     ) {
-      const challengeUid = this.props.user.challengeUid;
+      const challengeUid = this.props.context.challengeUid;
       if (challengeUid && challengeUid !== "") {
         const resultsDB = new ResultsDB();
         resultsDB
@@ -101,9 +101,9 @@ class Results extends React.Component {
 
     // Some props take time to get ready so return null when uid not avaialble
     if (
-      this.props.user.uid === null ||
-      !this.props.user.challengeUid ||
-      this.props.user.challengeUid === ""
+      this.props.context.uid === null ||
+      !this.props.context.challengeUid ||
+      this.props.context.challengeUid === ""
     ) {
       return (
         <Grid container style={{ marginTop: "10px" }} justify="center">
@@ -175,7 +175,7 @@ class Results extends React.Component {
       </Grid>
     );
 
-    if (this.props.user.authUser) {
+    if (this.props.context.authUser) {
       return (
         <div
           style={{ backgroundColor: "#f2f2f2", overflow: "scroll" }}
@@ -197,8 +197,8 @@ class Results extends React.Component {
       );
     } else {
       return <Redirect to="/" />;
-    } // if (this.props.user.authUser)
+    } // if (this.props.context.authUser)
   } // render()
 } // class
 
-export default withRouter(withAuthUserContext(withStyles(styles)(Results)));
+export default withRouter(withContext(withStyles(styles)(Results)));

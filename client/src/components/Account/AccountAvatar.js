@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import pink from '@material-ui/core/colors/pink';
 import Avatar from '@material-ui/core/Avatar';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
+import { withContext } from '../Auth/Session/Context';
 
 const styles = {
   avatar: {
@@ -24,18 +24,18 @@ const IconAvatars = (props) => {
   // <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" className={classes.avatar} />
 
   let avatar;
-  let authPhotoURL = props.user.authUser && props.user.authUser.photoURL ? props.user.authUser.photoURL : "";
+  let authPhotoURL = props.context.authUser && props.context.authUser.photoURL ? props.context.authUser.photoURL : "";
   console.log(`authPhotoURL: ${authPhotoURL}`);
-  if (props.user.authUser && props.user.authUser.photoURL) {
+  if (props.context.authUser && props.context.authUser.photoURL) {
     // use image avatar
     avatar = 
     <Avatar 
-      alt={props.user.displayName || "account"} 
-      src={props.user.authUser.photoURL}
+      alt={props.context.displayName || "account"} 
+      src={props.context.authUser.photoURL}
       className={classes.avatar}>
     </Avatar>;
-  } else if (props.user.displayName) {
-    let res = props.user.displayName.split(" ");
+  } else if (props.context.displayName) {
+    let res = props.context.displayName.split(" ");
     let initials = "";
     if (res[0][0]) {
       initials += res[0][0];
@@ -64,4 +64,4 @@ IconAvatars.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withAuthUserContext(withStyles(styles)(IconAvatars));
+export default withContext(withStyles(styles)(IconAvatars));

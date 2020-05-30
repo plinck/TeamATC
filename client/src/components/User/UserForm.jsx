@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import { withFirebase } from '../Auth/Firebase/FirebaseContext';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -202,7 +202,7 @@ class UserForm extends React.Component {
 
     componentDidUpdate(prevProps) {
         console.log(`component did update`);
-        if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
+        if (this.props.context.challengeUid && this.props.context.challengeUid !== prevProps.user.challengeUid) {
             if (this.state.user.id) {
                 this.fetchUser(this.state.user.id);
             }  
@@ -408,7 +408,7 @@ class UserForm extends React.Component {
     render() {
         const { classes } = this.props;
 
-        if (!this.props.user) {
+        if (!this.props.context) {
             console.log("No user yet")
             return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
         }
@@ -552,28 +552,28 @@ class UserForm extends React.Component {
                             <FormLabel component="legend">Current Roles</FormLabel>
                             <FormGroup row>
                             <FormControlLabel
-                                disabled={this.props && this.props.user && this.props.user.isAdmin ? false : true}
+                                disabled={this.props && this.props.context && this.props.context.isAdmin ? false : true}
                                 control={
                                 <Checkbox checked={user.isTeamLead} onClick={() => this.userMakeTeamLead(user.id)} />
                                 }
                                 label="TeamLead"
                             />
                             <FormControlLabel
-                                disabled={this.props && this.props.user && this.props.user.isAdmin ? false : true}
+                                disabled={this.props && this.props.context && this.props.context.isAdmin ? false : true}
                                 control={
                                 <Checkbox checked={user.isAdmin} onClick={() => this.userMakeAdmin(user.id)} />
                                 }
                                 label="Admin"
                             />
                             <FormControlLabel
-                                disabled={this.props && this.props.user && this.props.user.isAdmin ? false : true}
+                                disabled={this.props && this.props.context && this.props.context.isAdmin ? false : true}
                                 control={
                                 <Checkbox checked={user.isModerator} onClick={() => this.userMakeModerator(user.id)} />
                                 }
                                 label="Moderator"
                             />
                             <FormControlLabel
-                                disabled={this.props && this.props.user && this.props.user.isAdmin ? false : true}
+                                disabled={this.props && this.props.context && this.props.context.isAdmin ? false : true}
                                 control={
                                 <Checkbox checked={user.isUser} onClick={() => this.userMakeUser(user.id)} />
                                 }
@@ -611,4 +611,4 @@ class UserForm extends React.Component {
     }
 }
 
-export default withFirebase(withAuthUserContext(withRouter(withStyles(styles)(UserForm))));
+export default withFirebase(withContext(withRouter(withStyles(styles)(UserForm))));
