@@ -56,9 +56,9 @@
     "wp-start": "webpack --mode development",
     "wp-dev": "webpack-dev-server --open --config webpack.config.js",
     "wp-build": "webpack --mode production",
-    "start": "react-scripts --max_old_space_size=4096 start",
-    "build": "react-scripts --max_old_space_size=4096 build",
-    "test": "react-scripts --max_old_space_size=4096 test",
+    "start": "tslint --project tsconfig.json && react-scripts --max_old_space_size=4096 start",
+    "build": "tslint --project tsconfig.json && react-scripts --max_old_space_size=4096 build",
+    "test": "tslint --project tsconfig.json && react-scripts --max_old_space_size=4096 test",
     "eject": "react-scripts eject",
     "deploy": "npm run build && cd functions && npm run setenv && cd .. && firebase deploy",
     "deployhost": "npm run build && cd functions && npm run setenv && cd .. && firebase deploy --except functions",
@@ -76,5 +76,5 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ],
+  ]
 }
