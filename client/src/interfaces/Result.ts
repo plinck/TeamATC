@@ -1,4 +1,5 @@
 class Result {
+    id: string;
     challengeUid: string;
     overallRecord: boolean;
     teamRecord: boolean;
@@ -32,6 +33,7 @@ class Result {
     updateDateTime: Date;
 
     constructor(challengeUid: string) {
+        this.id = "";
         this.challengeUid = "";
         if (challengeUid && challengeUid !== "") {
             this.challengeUid = challengeUid;
@@ -42,7 +44,7 @@ class Result {
         this.teamName = "";
         this.userRecord = false;
         this.uid = "";
-        this.photoUrl = ;
+        this.photoUrl = "";
         this.displayName = "";
         this.rank = 0;
         this.distanceTotal = 0;

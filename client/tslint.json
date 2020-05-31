@@ -123,7 +123,13 @@
     "prefer-const": {"severity": "warning"},
 
     // Multi-line object literals and function calls should have a trailing comma. This helps avoid merge conflicts.
-    "trailing-comma": {"severity": "warning"}
+    "trailing-comma": {"severity": "warning"},
+
+    // Multi-line object literals and function calls should have a trailing comma. This helps avoid merge conflicts.
+    "no-trailing-whitespace": false,
+    "no-console": [{ "allow": ["warn", "error"] }],
+    "array-type": false,
+    "object-shorthand": false
   },
 
   "defaultSeverity": "error"
