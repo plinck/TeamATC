@@ -42,7 +42,7 @@ class Result {
         this.teamName = "";
         this.userRecord = false;
         this.uid = "";
-        this.photoUrl = ;
+        this.photoUrl = "";
         this.displayName = "";
         this.rank = 0;
         this.distanceTotal = 0;
