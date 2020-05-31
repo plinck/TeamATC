@@ -1,6 +1,7 @@
 import { Result } from "./Result";
 
 type ResultType = {
+    id: string;
     challengeUid: string;
     overallRecord: boolean;
     teamRecord: boolean;
@@ -41,4 +42,4 @@ type AllResults = {
     userResults: Array<Result>
 };
 
-export {AllResults, ResultType}
+export type {AllResults, ResultType}
