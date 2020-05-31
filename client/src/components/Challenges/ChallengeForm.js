@@ -19,6 +19,7 @@ import ChallengeDB from "./ChallengeDB"
 import ChallengeAPI from "./ChallengeAPI"
 
 import Photo from "../Util/Photo.js"
+import Spinner from "./Spinner"
 
 const useStyles = makeStyles(theme => ({
     buttonStyles: {
@@ -93,6 +94,7 @@ const ChallengeForm = (props) => {
     }
     const [challenge, setChallenge] = useState(CHALLENGE_INITIAL_VALUES);
     const [message, setMessage] = React.useState("");
+    const [working, setWorking] = React.useState(false);
     const [photoFile, setPhotoFile] = React.useState(null);
 
     // Domain object handlers
@@ -175,6 +177,7 @@ const ChallengeForm = (props) => {
 
     const handleSave = async (event) => {
         event.preventDefault();
+        setWorking(true);
         // NOTE: Add a processing popup
         let originArray = [challenge.startCity];
         let destinationArray = [];
@@ -191,6 +194,7 @@ const ChallengeForm = (props) => {
             console.log(`result (challengeDistance) from ChallengeAPI.calcDistanceMatrix: ${challengeDistance}`)
         } catch (err) {
             setMessage(`Error calling ChallengeAPI.calcDistanceMatrix ${err}`);
+            setWorking(false);
             return;
         }
 
@@ -208,8 +212,10 @@ const ChallengeForm = (props) => {
             setChallenge({ ...CLEAR_CHALLENGE_VALUES });
             setPhotoFile(null);
             props.handleUpdateChallenge(); // refresh parent
+            setWorking(false);
         }).catch(err => {
             setMessage(`Error uploading photo for challenge ${err}`);
+            setWorking(false);
         })
     }
 
@@ -241,6 +247,7 @@ const ChallengeForm = (props) => {
         <Card>
             <CardContent>
                 {message != null ? <p>{message}</p> : ""}
+                {working ? <span><Spinner />Updating, please wait ...</span> : ""}
                 <Typography variant="h5">Challenge</Typography>
                 <form noValidate autoComplete="off">
                     <TextField

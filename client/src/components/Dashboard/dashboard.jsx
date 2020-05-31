@@ -330,7 +330,7 @@ class Dashboard extends React.PureComponent {
                                     onlyTeams={true} />
                             </div>
                             <div key="2" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 6, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
-                                <ActivitiesCard name={this.props.context.displayName} activitis={myActivities} />
+                                <ActivitiesCard name={this.props.context.displayName} activities={myActivities} />
                             </div>
                             <div key="3" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 11, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                 <ResultsCard 
