@@ -4,8 +4,16 @@ type PhotoObj = {
     fileTitle: string
 }
 
+export type UserChallenge = {
+    challengeRef?: firebase.firestore.DocumentReference,
+    challengeUid: string,
+    teamRef?: firebase.firestore.DocumentReference,
+    teamUid: string
+}
+
 class User {
     id:  string;
+    challenges?: Array<UserChallenge>;
     challengeUid:  string;
     displayName:  string;
     email: string;
@@ -29,6 +37,7 @@ class User {
 
     constructor() {
         this.id = "";
+        this.challenges = [];
         this.challengeUid = "";
         this.displayName = "";
         this.email = "";

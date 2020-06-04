@@ -76,7 +76,7 @@ const Teams = (props) => {
     }
 
     const handleJoinTeam = (teamUid, teamName) => {
-        UserDB.updateTeam(props.context.uid, teamUid, teamName).then(() => {
+        UserDB.updateTeam(props.context.user, teamUid, teamName).then(() => {
             // User now assigned to new team
             setMessage(`joined team ${teamName}`);
             props.history.push({
