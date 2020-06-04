@@ -79,6 +79,7 @@ class Result extends React.Component {
     // <TableCell>Place</TableCell>
     // <TableCell>Name</TableCell>
     // <TableCell>Team</TableCell>
+    // <TableCell>NbrActivities</TableCell>
     // <TableCell>Time</TableCell>
     // <TableCell>Progress</TableCell>
     // <TableCell>Total</TableCell>
@@ -102,6 +103,9 @@ class Result extends React.Component {
           {userRecord ? displayName : teamName}
         </TableCell>
         <TableCell>{teamName}</TableCell>
+        <TableCell align="right">
+          {nbrActivities}
+        </TableCell>
         <TableCell align="right">
           {durationTotal
             .toFixed(0)
