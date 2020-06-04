@@ -1,30 +1,38 @@
 import { Result } from "../interfaces/Result";
+import { Team } from "../interfaces/Team";
+import { UserChallenge, User } from "../interfaces/User";
 
 type ContextType = {
     authUser: string,
     token: string,
 
-    uid: string,
-    displayName: string,
-    phoneNumber: string,
-    email: string,
+    user: User,
 
+    uid: string,
+    challenges: Array<UserChallenge>,
+    displayName: string,
+    email: string,
     firstName: string,
+    isAdmin: boolean,
+    isTeamLead: boolean,
+    isModerator: boolean,
+    isUser: boolean,
     lastName: string,
+    phoneNumber: string,
+    primaryRole: string,
     teamUid: string,
     teamName: string,
+
     challengeUid: string,
-    challengeDistance: 0,
+    challengeDistance: number,
     challengeName: string,
     stavaUserAuth : boolean,
     stravaRefreshToken : string,
     stravaAccessToken : string,
     stravaExpiresAt : Date,
-    primaryRole: string,
-    isAdmin: boolean,
-    isTeamLead: boolean,
-    isModerator: boolean,
-    isUser: boolean,
+    updatedTeams: number,
+    teams: Array<Team>,
+
     updatedResults: number,
     results: Array<Result>      // results from backend
 };

@@ -1,5 +1,6 @@
 import Util from "../Util/Util";
 import UserAuthAPI from "./UserAuthAPI";
+// import { UserChallenge, User } from "../../interfaces/User";
 
 // Backend functions for user DB in firestore and auth
 class UserDB {
@@ -13,6 +14,7 @@ class UserDB {
                 querySnapshot.forEach(doc => {
                     let user = {};
                     user = doc.data();
+                    user.challenges = user.challenges ? user.challenges : [];
                     user.displayName = user.displayName ? user.displayName : ""
                     user.firstName = user.firstName ? user.firstName : ""
                     user.lastName = user.lastName ? user.lastName : ""
@@ -39,6 +41,7 @@ class UserDB {
             docRef.get().then((doc) => {
                 if (doc.exists) {
                     let user = doc.data();
+                    user.challenges = user.challenges ? user.challenges : [];
                     user.id = doc.id;
                     return(resolve(user));
                 }
@@ -65,6 +68,7 @@ class UserDB {
                     foundUser = true;
                     console.log(doc.data());
                     user = doc.data();
+                    user.challenges = user.challenges ? user.challenges : [];
                     user.id = doc.id;
                 });
 
@@ -95,6 +99,7 @@ class UserDB {
                 docRef.get().then((doc) => {
                     if (doc.exists) {
                         let user = doc.data();
+                        user.challenges = user.challenges ? user.challenges : [];
                         user.id = doc.id;
                         resolve(user);
                     } else {
@@ -199,17 +204,43 @@ class UserDB {
 
     // Switch the challenge the user is in.
     // For now, delete the assigned team since teams are based on challenge
-    static updateChallenge (userId, challengeUid) {
-        console.log(`trying to update challenge; ${challengeUid}, for user ${userId}`);
+    static updateChallenge (user, teams, challengeUid) {
+        console.log(`trying to update challenge; ${challengeUid}, for user ${user.uid}`);
 
         return new Promise(async (resolve, reject) => {
-
+        
+            // first get challengese a user is in
+            let idx = -1;
+            if (user.challenges) {
+                idx = user.challenges.findIndex((userChallenge) => {
+                    const foundIdx = userChallenge.challengeUid === challengeUid;
+                    return foundIdx;
+                });
+            } else {
+                user.challenges = [];
+            }
+    
+            let teamUid = "";
+            let teamName = "";
+            if (idx > -1) {       // Found
+                teamUid = user.challenges[idx].teamUid;
+                teamName = teams.find(team => {
+                    if ( team.teamUid && team.teamUid === teamUid ) {
+                        return team.teamName;
+                    }
+                });
+            } else {
+                teamUid = "";
+                user.challenges.push({challengeUid: challengeUid, teamUid: teamUid});
+            }
+    
             // update
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
-            dbUsersRef.doc(userId).set({
+            dbUsersRef.doc(user.uid).set({
+                challenges: user.challenges,
                 challengeUid: challengeUid ? challengeUid  : "",
-                teamUid: null,
-                teamName: ""
+                teamUid: teamUid,
+                teamName: teamName
             }, {
                 merge: true
             }).then(() => {
@@ -224,14 +255,32 @@ class UserDB {
     }
     // Switch the challenge the user is in.
     // For now, delete the assigned team since teams are based on challenge
-    static updateTeam (userId, teamUid, teamName) {
-        console.log(`trying to update team: ${teamUid}, for user ${userId}`);
+    static updateTeam (user, teamUid, teamName) {
+        console.log(`trying to update team: ${teamUid}, for user ${user.uid}`);
 
         return new Promise(async (resolve, reject) => {
+            // first get challengese a user is in
+            let idx = -1;
+            if (user.challenges) {
+                idx = user.challenges.findIndex((userChallenge) => {
+                    const foundIdx = userChallenge.challengeUid === user.challengeUid;
+                    return foundIdx;
+                });
+            } else {
+                user.challenges = [];
+            }
+    
+            if (idx > -1) {       // Found
+                user.challenges[idx].teamUid = teamUid;
+            } else {
+                teamUid = teamUid;
+                user.challenges.push({challengeUid: user.challengeUid, teamUid: teamUid});
+            }
 
             // update
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
-            dbUsersRef.doc(userId).set({
+            dbUsersRef.doc(user.uid).set({
+                challenges: user.challenges,
                 teamUid: teamUid,
                 teamName: teamName ? teamName : ""
             }, {
@@ -261,6 +310,7 @@ class UserDB {
         // e.g. this function is ploymorphic so it can handle setting lots of userInfo or just seeding the firestore collection
         if (userInfo) {
             user = {
+                challenges: userInfo.challenges ? userInfo.challenges : [],
                 challengeUid: userInfo.challengeUid ? userInfo.challengeUid : "",
                 displayName: `${userInfo.firstName} ${userInfo.lastName}`,
                 email: userInfo.email.toLowerCase(),

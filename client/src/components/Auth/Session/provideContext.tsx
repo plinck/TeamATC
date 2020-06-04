@@ -10,6 +10,7 @@ import ResultsAPI from "../../Results/ResultsAPI";
 // Interfaces from BACKEND
 import { Challenge } from "../../../interfaces/Challenge";
 import { Result } from "../../../interfaces/Result";
+import { Team } from "../../../interfaces/Team";
 import { User } from "../../../interfaces/User";
 import Firebase from '../Firebase/Firebase';
 import { ContextType } from "../../../interfaces/Context.Types";
@@ -32,18 +33,27 @@ const provideContext = (Component: any) => {
         userListener: any;
         challengeListener: any;
         resultsListener: any;
+        teamsListener: any;
         perf: firebase.performance.Performance;
         state: ContextType = {
             authUser: null,
             token: null,
+            // all user info - elimated details after this
+            user: null,
 
+            // user info
             uid: null,
+            challenges: [],
             displayName: null,
-            phoneNumber: null,
             email: null,
-
             firstName: null,
+            isAdmin: false,
+            isTeamLead: false,
+            isModerator: false,
+            isUser: false,
             lastName: null,
+            phoneNumber: null,
+            primaryRole: "user",
             teamUid: null,
             teamName: null,
 
@@ -56,19 +66,16 @@ const provideContext = (Component: any) => {
             stravaAccessToken : null,
             stravaExpiresAt : null,            
 
-            primaryRole: "user",
-            isAdmin: false,
-            isTeamLead: false,
-            isModerator: false,
-            isUser: false,
+            updatedTeams: 0, 
+            teams: [],
 
             updatedResults: 0, 
             results: []         // results from backend
         };
 
-        constructor(props: Props) {
-            super(props);
-        }
+        // constructor(props: Props) {
+        //     super(props);
+        // }
 
         refreshToken = async () => {
             try {
@@ -142,6 +149,7 @@ const provideContext = (Component: any) => {
                             console.error(`Error in provide auth user context updating challenge results on backend ${err}`)
                         });
                         this.setupResultsListener(user.challengeUid);
+                        this.setupTeamsListener(user.challengeUid);
                     } else {
                         this.setupChallengeListener(CHALLENGE)               
                         ResultsAPI.getChallengeResults(CHALLENGE).then(() => {
@@ -153,13 +161,20 @@ const provideContext = (Component: any) => {
 
                     this.setState({
                         authUser,
+                        user,
                         uid: authUser.uid,
-                        email: authUser.email,
-
+                                                
+                        challenges: user.challenges,
                         displayName: user.displayName,
-                        phoneNumber: user.phoneNumber,
+                        email: user.email,
+                        isAdmin: user.isAdmin ? user.isAdmin : false,
+                        isTeamLead: user.isTeamLead ? user.isTeamLead : false,
+                        isModerator: user.isModerator ? user.isModerator : false,
+                        isUser: user.isUser ? user.isUser : false,
                         firstName: user.firstName,
                         lastName: user.lastName,
+                        phoneNumber: user.phoneNumber,
+                        primaryRole: user.primaryRole ? user.primaryRole : "",
                         teamUid: user.teamUid,
                         teamName: user.teamName,
 
@@ -168,13 +183,8 @@ const provideContext = (Component: any) => {
                         stavaUserAuth: user.stravaUserAuth ? true : false,
                         stravaRefreshToken : user.stravaRefreshToken ? user.stravaRefreshToken : null,
                         stravaAccessToken : user.stravaAccessToken ? user.stravaAccessToken : null,
-                        stravaExpiresAt : user.stravaExpiresAt ? user.stravaExpiresAt : null,            
+                        stravaExpiresAt : user.stravaExpiresAt ? user.stravaExpiresAt : null           
 
-                        primaryRole: user.primaryRole ? user.primaryRole : "",
-                        isAdmin: user.isAdmin ? user.isAdmin : false,
-                        isTeamLead: user.isTeamLead ? user.isTeamLead : false,
-                        isModerator: user.isModerator ? user.isModerator : false,
-                        isUser: user.isUser ? user.isUser : false
                     });
 
                     // update firebase auth profile if this user's info changed
@@ -308,7 +318,60 @@ const provideContext = (Component: any) => {
                 return;
             }); // Create listener
         }
+
+        setupTeamsListener(challengeUid: string) {
+            this.perf = Util.getFirestorePerf();
     
+            console.log(`Created teams listener with challengeUid: ${challengeUid}`);
+
+            if (this.teamsListener) {
+                this.teamsListener();
+            }
+        
+            const allDBRefs = Util.getChallengeDependentRefs(challengeUid);
+            const dbTeamsRef = allDBRefs.dbTeamsRef;
+
+            const ref = dbTeamsRef;
+
+            let teams: Array<Team> = [];
+            this.teamsListener = ref.onSnapshot((querySnapshot) => {
+    
+                querySnapshot.docChanges().forEach(change => {
+                    if (change.type === "added") {
+                        let newTeam: Team = new Team("");
+                        newTeam = change.doc.data() as Team;
+                        newTeam.id = change.doc.id;
+                        teams.push(newTeam);
+                    }
+                    if (change.type === "modified") {
+                        let changedTeam: Team = new Team("");
+                        changedTeam = change.doc.data() as Team;
+                        changedTeam.id = change.doc.id;
+                        teams = teams.map(team => {
+                            if (changedTeam.id === team.id) {
+                                return changedTeam;
+                            } else {
+                                return team;
+                            }
+                        });
+                    }
+                    if (change.type === "removed") {
+                        // console.log(`Removed Result: ${change.doc.id}`);
+                        teams.filter(team => {
+                            return team.id !== change.doc.id;
+                        });            
+                    }
+                });
+                const { updatedTeams } = this.state;
+                this.setState({teams: [...teams], updatedResults: updatedTeams + 1});
+                return;
+            }, (err: Error) => {
+                console.error(`Error attaching listener: ${err}`);
+                return;
+            }); // Create listener
+        }
+    
+
 
         // This deletes listener to clean things up and prevent mem leaks
         componentWillUnmount() {
@@ -322,6 +385,9 @@ const provideContext = (Component: any) => {
             }
             if (this.resultsListener) {
                 this.resultsListener();
+            }
+            if (this.teamsListener) {
+                this.teamsListener();
             }
         }
 
