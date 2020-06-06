@@ -31,7 +31,6 @@ export default function CustomMarker({ name, photo, $hover, label }) {
               Dist: {label.distance} miles
             </Typography>
             <Typography
-              margin
               variant="body2"
               color="textSecondary"
               component="p"
