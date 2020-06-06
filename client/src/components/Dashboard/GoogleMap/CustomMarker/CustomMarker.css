@@ -1,0 +1,32 @@
+.customMarker {
+    position: absolute;
+    cursor: pointer;
+    background: #ff0100;
+    width: 30px;
+    height: 30px;
+    /* -width/2 */
+    margin-left: -15px;
+    /* -height + arrow */
+    margin-top: -38px;
+    border-radius: 50%;
+    padding: 0px;
+  }
+  
+  .customMarker:after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 5px;
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: #ff0100 transparent;
+    display: block;
+    width: 0;
+  }
+  
+  .customMarker img {
+    width: 80%;
+    height: 80%;
+    margin: 3px;
+    border-radius: 50%;
+  }
