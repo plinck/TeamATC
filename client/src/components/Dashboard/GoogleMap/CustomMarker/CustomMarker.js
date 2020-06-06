@@ -1,71 +1,68 @@
-export default function createCustomMarkers(data, map) {
-  function CustomMarker(latlng, map, imageSrc) {
-    this.latlng_ = latlng;
-    this.imageSrc = imageSrc;
-    // Once the LatLng and text are set, add the overlay to the map.  This will
-    // trigger a call to panes_changed which should in turn call draw.
-    this.setMap(map);
-  }
+import React from "react";
+import { Avatar, Card, CardContent, Typography } from "@material-ui/core";
 
-  CustomMarker.prototype = new window.google.maps.OverlayView();
+export default function CustomMarker({ name, photo, $hover, label }) {
+  let initials = name.match(/\b\w/g) || [];
+  initials = ((initials.shift() || "") + (initials.pop() || "")).toUpperCase();
 
-  CustomMarker.prototype.draw = function () {
-    // Check if the div has been created.
-    var div = this.div_;
-    if (!div) {
-      // Create a overlay text DIV
-      div = this.div_ = document.createElement("div");
-      // Create the DIV representing our CustomMarker
-      div.className = "customMarker";
+  const style = {};
 
-      var img = document.createElement("img");
-      img.src = this.imageSrc;
-      div.appendChild(img);
-      var me = this;
-      window.google.maps.event.addDomListener(div, "click", function (event) {
-        console.log(data);
-      });
-
-      // Then add the overlay to the DOM
-      var panes = this.getPanes();
-      panes.overlayImage.appendChild(div);
-    }
-
-    // Position the overlay
-    var point = this.getProjection().fromLatLngToDivPixel(this.latlng_);
-    if (point) {
-      div.style.left = point.x + "px";
-      div.style.top = point.y + "px";
-    }
-  };
-
-  CustomMarker.prototype.remove = function () {
-    // Check if the overlay was on the map and needs to be removed.
-    if (this.div_) {
-      this.div_.parentNode.removeChild(this.div_);
-      this.div_ = null;
-    }
-  };
-
-  CustomMarker.prototype.getPosition = function () {
-    return this.latlng_;
-  };
-
-  //   var data = [
-  //     {
-  //       profileImage:
-  //         "http://www.gravatar.com/avatar/d735414fa8687e8874783702f6c96fa6?s=90&d=identicon&r=PG",
-  //       pos: [37.77085, -122.41356],
-  //     },
-  //     {
-  //       profileImage: "http://placekitten.com/90/90",
-  //       pos: [37.7722, -122.41555],
-  //     },
-  //   ];
-
-  new CustomMarker(
-    data.latlng,
-    map,
-    data.photo
+  return (
+    <div>
+      {$hover ? (
+        <Card
+          style={{
+            background: "white",
+            width: "150px",
+            top: "-125px",
+            right: "-75px",
+            position: "absolute",
+            zIndex: "500",
+          }}
+        >
+          <CardContent style={{ padding: "3px" }}>
+            <Typography
+              variant="h5"
+              style={{ fontSize: "18px", overflow: "hidden" }}
+            >
+              {name}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+              Dist: {label.distance} miles
+            </Typography>
+            <Typography
+              margin
+              variant="body2"
+              color="textSecondary"
+              component="p"
+            >
+              {label.complete}% complete
+            </Typography>
+          </CardContent>
+        </Card>
+      ) : null}
+      <Avatar
+        style={{
+          left: "-23px",
+          top: "-51px",
+          border: "3px solid #ff0100",
+          zIndex: "200",
+        }}
+        src={photo ? photo : null}
+      >{photo ? null : initials}</Avatar>
+      <div
+        style={{
+          position: "absolute",
+          zIndex: "199",
+          bottom: "-1px",
+          left: "-10px",
+          borderWidth: "10px 10px 0px",
+          borderStyle: "solid",
+          borderColor: "#ff0100 transparent",
+          display: "block",
+          width: "0px",
+        }}
+      />
+    </div>
   );
 }

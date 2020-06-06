@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import createEpoly from "./eploy.js";
 import { FB_CONFIG } from "../../Environment/Environment";
 import bikeIcon from "./pin.svg";
-import createCustomMarkers from "./CustomMarker/CustomMarker";
-import './CustomMarker/CustomMarker.css'
+import GoogleMapReact from "google-map-react";
+import CustomMarker from "./CustomMarker/CustomMarker";
 
 class Map extends Component {
   constructor(props) {
@@ -29,9 +29,10 @@ class Map extends Component {
     }
     let meters = distance * 1000 * 1.609344;
     let totalMeters = this.props.totalDist * 1000 * 1.609344;
-    let label = `<b>Dist: ${parseInt(distance)} </b><br><b> ${parseInt(
-      (distance / this.props.totalDist) * 100
-    )}% Complete </b>`;
+    let label = {
+      distance: parseInt(distance),
+      complete: parseInt((distance / this.props.totalDist) * 100),
+    };
     let title = `${name} - Dist: ${parseInt(distance)} `;
     this.createMarker(
       polyline.GetPointAtDistance(meters, totalMeters),
@@ -119,35 +120,17 @@ class Map extends Component {
   }
 
   createMarker(latlng, label, name, title, photo) {
-    let map = this.state.map;
     let infowindow = this.state.infowindow;
-    var contentString = "<b>" + name + "</b><br>" + label;
-    let icon = "";
-    if (photo) {
-      let data = {
-        infowindow,
-        latlng,
-        contentString,
-        photo
-      };
-      createCustomMarkers(data, map);
-    } else {
-      icon = bikeIcon;
-      var marker = new window.google.maps.Marker({
-        position: latlng,
-        map: map,
-        title: title,
-        icon: bikeIcon,
-        zIndex: Math.round(latlng.lat() * -100000) << 5,
-        contentString: contentString,
-      });
-      marker.myname = label;
-      window.google.maps.event.addListener(marker, "click", function () {
-        infowindow.setContent(contentString);
-        infowindow.open(map, marker);
-      });
-      return marker;
-    }
+    let data = {
+      infowindow,
+      latlng,
+      label,
+      name,
+      photo,
+    };
+    let marks = this.state.markers;
+    marks.push(data);
+    this.setState({ markers: marks });
   }
 
   // addWaypointMarkers(waypoints) {
@@ -171,22 +154,17 @@ class Map extends Component {
 
   // }
 
-  async onMapLoad() {
+  async onMapLoad(map, maps) {
     const [
       directionsDisplay,
       infowindow,
       directionsService,
-      map,
       polyline,
     ] = await Promise.all([
-      new window.google.maps.DirectionsRenderer({ suppressMarkers: false }),
-      new window.google.maps.InfoWindow(),
-      new window.google.maps.DirectionsService(),
-      new window.google.maps.Map(
-        document.getElementById(this.props.id),
-        this.props.options
-      ),
-      new window.google.maps.Polyline({
+      new maps.DirectionsRenderer({ suppressMarkers: false }),
+      new maps.InfoWindow(),
+      new maps.DirectionsService(),
+      new maps.Polyline({
         path: [],
         strokeColor: "#0099ff",
         strokeWeight: 3,
@@ -204,52 +182,37 @@ class Map extends Component {
     this.calcRoute();
   }
 
-  onScriptLoad() {
+  onScriptLoad(map, maps) {
     createEpoly();
-    this.onMapLoad();
-  }
-
-  componentDidMount() {
-    if (!window.google) {
-      var s = document.createElement("script");
-      s.type = "text/javascript";
-      s.src = `https://maps.googleapis.com/maps/api/js?key=${FB_CONFIG.API_KEY}&libraries=places`;
-      var x = document.getElementsByTagName("script")[0];
-      x.parentNode.insertBefore(s, x);
-      // Below is important.
-      //We cannot access google.maps until it's finished loading
-      s.addEventListener("load", (e) => {
-        this.onScriptLoad();
-      });
-    } else {
-      this.onScriptLoad();
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    if (
-      this.props.updatedResults &&
-      this.props.updatedResults !== prevProps.updatedResults
-    ) {
-      if (!window.google) {
-        var s = document.createElement("script");
-        s.type = "text/javascript";
-        s.src = `https://maps.googleapis.com/maps/api/js?key=${FB_CONFIG.API_KEY}&libraries=places`;
-        var x = document.getElementsByTagName("script")[0];
-        x.parentNode.insertBefore(s, x);
-        // Below is important.
-        //We cannot access google.maps until it's finished loading
-        s.addEventListener("load", (e) => {
-          this.onScriptLoad();
-        });
-      } else {
-        this.onScriptLoad();
-      }
-    }
+    this.onMapLoad(map, maps);
   }
 
   render() {
-    return <div style={this.style} id={this.props.id} />;
+    return (
+      <GoogleMapReact
+        bootstrapURLKeys={{ key: FB_CONFIG.API_KEY }}
+        defaultCenter={this.props.options.center}
+        defaultZoom={this.props.options.zoom}
+        yesIWantToUseGoogleMapApiInternals
+        onGoogleApiLoaded={({ map, maps }) => this.onScriptLoad(map, maps)}
+        hoverDistance={20}
+      >
+        {this.state.markers.length > 0
+          ? this.state.markers.map((marker, index) => {
+              return (
+                <CustomMarker
+                  key={index}
+                  lat={marker.latlng.lat()}
+                  lng={marker.latlng.lng()}
+                  name={marker.name}
+                  photo={marker.photo}
+                  label={marker.label}
+                />
+              );
+            })
+          : null}
+      </GoogleMapReact>
+    );
   }
 }
 export default Map;
