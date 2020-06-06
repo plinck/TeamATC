@@ -9,6 +9,7 @@ const headCells = [
     { id: 'rank', numeric: false, disablePadding: false, label: 'Rank' },
     { id: 'displayName', numeric: false, disablePadding: false, label: 'Name' },
     { id: 'teamName', numeric: false, disablePadding: false, label: 'Team' },
+    { id: 'nbrActivities', numeric: true, disablePadding: false, label: 'Nbr' },
     { id: 'durationTotal', numeric: true, disablePadding: false, label: 'Time' },
     { id: 'progress', numeric: true, disablePadding: false, label: 'Progress' },
     { id: 'pointsTotal', numeric: true, disablePadding: false, label: 'Total' },

@@ -3,65 +3,87 @@ import Util from "../../Util/Util";
 import Context from './Context';
 import { withFirebase } from '../Firebase/FirebaseContext';
 import UserAuthAPI from '../../User/UserAuthAPI';
-import Session from "../../Util/Session.js";
+import Session from "../../Util/Session";
 import {CHALLENGE} from "../../Environment/Environment";
 import ResultsAPI from "../../Results/ResultsAPI";
 
-// This component WRAPS Firebase and Authentication Context togtehr in 
+// Interfaces from BACKEND
+import { Challenge } from "../../../interfaces/Challenge";
+import { Result } from "../../../interfaces/Result";
+import { Team } from "../../../interfaces/Team";
+import { User } from "../../../interfaces/User";
+import Firebase from '../Firebase/Firebase';
+import { ContextType } from "../../../interfaces/Context.Types";
+
+// This component WRAPS Firebase and Authentication Context together
 // a HOC - Higher Order Component.
 // This allows providers to just wrap provideContext around a component
 // to get access to the firebase app and the session context info
 // SO BE CLEAR - This HOC is a WRAPPER in A WRAPPER
 // -- i.e. provideContext === withFirebase(ProvideContext)
-const provideContext = Component => {
-    class ProvideContext extends React.Component {
-        constructor(props) {
-            super(props);
+const provideContext = (Component: any) => {
+    interface OwnProps {
+        firebase: Firebase,
+    }
 
-            this.state = {
-                authUser: null,
-                token: null,
+    type Props = OwnProps; // & ButtonProps (other props?);
+        
+    class ProvideContext extends React.Component<Props> {
+        authListener: any;
+        userListener: any;
+        challengeListener: any;
+        resultsListener: any;
+        teamsListener: any;
+        perf: firebase.performance.Performance;
+        state: ContextType = {
+            authUser: null,
+            token: null,
+            // all user info - elimated details after this
+            user: null,
 
-                uid: null,
-                displayName: null,
-                phoneNumber: null,
-                email: null,
+            // user info
+            uid: null,
+            challenges: [],
+            displayName: null,
+            email: null,
+            firstName: null,
+            isAdmin: false,
+            isTeamLead: false,
+            isModerator: false,
+            isUser: false,
+            lastName: null,
+            phoneNumber: null,
+            primaryRole: "user",
+            teamUid: null,
+            teamName: null,
 
-                firstName: null,
-                lastName: null,
-                teamUid: null,
-                teamName: null,
+            challengeUid: null,
+            challengeDistance: 0,
+            challengeName: null,
 
-                challengeUid: null,
-                challengeDistance: 0,
-                challengeName: null,
-                challengeShutdownStartDate: null,
-                challengeShutdownEndDate: null,
+            stavaUserAuth : null,
+            stravaRefreshToken : null,
+            stravaAccessToken : null,
+            stravaExpiresAt : null,            
 
-                stavaUserAuth : null,
-                stravaRefreshToken : null,
-                stravaAccessToken : null,
-                stravaExpiresAt : null,            
+            updatedTeams: 0, 
+            teams: [],
 
-                primaryRole: "user",
-                isAdmin: false,
-                isTeamLead: false,
-                isModerator: false,
-                isUser: false,
+            updatedResults: 0, 
+            results: []         // results from backend
+        };
 
-                updatedResults: 0, 
-                results: []         // results from backend
-            };
-        }
+        // constructor(props: Props) {
+        //     super(props);
+        // }
 
         refreshToken = async () => {
             try {
-                let token = await this.props.firebase.doRefreshToken();
-                this.setState({
-                    token: token,
-                });
+                const token = await this.props.firebase.doRefreshToken();
+                this.setState({token});
             } catch {
                 console.error("Error refreshng token");
+
                 this.setState({ token: null });
             }
         }
@@ -72,7 +94,7 @@ const provideContext = Component => {
         // above the app component so it can be used here.  
         componentDidMount() {
             // Auth Listener
-            this.listener = this.props.firebase.auth.onAuthStateChanged(
+            this.authListener = this.props.firebase.auth.onAuthStateChanged(
                 authUser => {
                     if (authUser) {
                         // try to get userListener going
@@ -88,19 +110,20 @@ const provideContext = Component => {
             );
         }
 
-        setupUserListener(authUser) {
+        setupUserListener(authUser: any) {
             // kill if listening to someone else
             if (this.userListener) {
                 this.userListener();
             }
 
-            // User listener for the current signed in user
+            // userListener for the current signed in user
             // Try to set state together
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
-            let docRef = dbUsersRef.doc(authUser.uid);
-            this.userListener = docRef.onSnapshot((doc) => {
-                let user = doc.data();
-                if (user) {
+            const docRef: firebase.firestore.DocumentReference = dbUsersRef.doc(authUser.uid);
+            this.userListener = docRef.onSnapshot((doc: firebase.firestore.DocumentSnapshot) => {
+                if (doc.data()) {
+                    let user = new User();
+                    user = doc.data() as User;
                     user.id = doc.id;
                     if (user.isAdmin) {
                         user.primaryRole = "admin"
@@ -120,15 +143,16 @@ const provideContext = Component => {
                     // Listen to current challenge to get name, descirption for pages
                     if (user.challengeUid) {
                         this.setupChallengeListener(user.challengeUid);
-                        ResultsAPI.getChallengeResults(user.challengeUid).then( () => {
+                        ResultsAPI.getChallengeResults(user.challengeUid).then(() => {
                             // Ignore - no need to process
                         }).catch(err => {
                             console.error(`Error in provide auth user context updating challenge results on backend ${err}`)
                         });
                         this.setupResultsListener(user.challengeUid);
+                        this.setupTeamsListener(user.challengeUid);
                     } else {
                         this.setupChallengeListener(CHALLENGE)               
-                        ResultsAPI.getChallengeResults(CHALLENGE).then( () => {
+                        ResultsAPI.getChallengeResults(CHALLENGE).then(() => {
                             // Ignore - no need to process
                         }).catch(err => {
                             console.error(`Error in provide auth user context updating challenge results on backend ${err}`)
@@ -136,63 +160,71 @@ const provideContext = Component => {
                     }
 
                     this.setState({
-                        authUser: authUser,
+                        authUser,
+                        user,
                         uid: authUser.uid,
-                        email: authUser.email,
-
+                                                
+                        challenges: user.challenges,
                         displayName: user.displayName,
-                        phoneNumber: user.phoneNumber,
+                        email: user.email,
+                        isAdmin: user.isAdmin ? user.isAdmin : false,
+                        isTeamLead: user.isTeamLead ? user.isTeamLead : false,
+                        isModerator: user.isModerator ? user.isModerator : false,
+                        isUser: user.isUser ? user.isUser : false,
                         firstName: user.firstName,
                         lastName: user.lastName,
+                        phoneNumber: user.phoneNumber,
+                        primaryRole: user.primaryRole ? user.primaryRole : "",
                         teamUid: user.teamUid,
                         teamName: user.teamName,
 
                         challengeUid: user.challengeUid ? user.challengeUid : CHALLENGE,
 
-                        stavaUserAuth: user.stavaUserAuth ? true : false,
+                        stavaUserAuth: user.stravaUserAuth ? true : false,
                         stravaRefreshToken : user.stravaRefreshToken ? user.stravaRefreshToken : null,
                         stravaAccessToken : user.stravaAccessToken ? user.stravaAccessToken : null,
-                        stravaExpiresAt : user.stravaExpiresAt ? user.stravaExpiresAt : null,            
+                        stravaExpiresAt : user.stravaExpiresAt ? user.stravaExpiresAt : null           
 
-                        primaryRole: user.primaryRole ? user.primaryRole : "",
-                        isAdmin: user.isAdmin ? user.isAdmin : false,
-                        isTeamLead: user.isTeamLead ? user.isTeamLead : false,
-                        isModerator: user.isModerator ? user.isModerator : false,
-                        isUser: user.isUser ? user.isUser : false
                     });
 
                     // update firebase auth profile if this user's info changed
                     UserAuthAPI.updateCurrentUserAuthProfile(user).then(() => {
                         // OK, no harm done
                     }).catch(err => {
+                        return null;
                         // OK, no harm done
                     });
                 } else {            // If cant find *user* you still need to set authUser
                     this.setState({
-                        authUser: authUser,
+                        authUser,
                         uid: authUser.uid,
                         displayName: authUser.displayName,
                         phoneNumber: authUser.phoneNumber,
                         email: authUser.email
                     });
                 }
-                this.refreshToken();
+                this.refreshToken().then(() => {
+                    // Nada
+                }).catch(err => {
+                    console.error(`Error refreshing token ${err}`);
+                });
             });
         }
 
-        setupChallengeListener(challengeId) {
+        setupChallengeListener(challengeId: string) {
             // kill if listening to someone else
             if (this.challengeListener) {
                 this.challengeListener();
             }
 
-            // User listener for the current signed in user
+            // userListener for the current signed in user
             // Try to set state together
             const dbChallengesRef = Util.getBaseDBRefs().dbChallengesRef;
-            let docRef = dbChallengesRef.doc(challengeId);
+            const docRef = dbChallengesRef.doc(challengeId);
             this.challengeListener = docRef.onSnapshot((doc) => {
-                const challenge = doc.data();
-                if (challenge) {
+                if (doc.data()) {
+                    let challenge = new Challenge();
+                    challenge = doc.data() as Challenge;
                     challenge.id = doc.id;
                     Session.challenge = challenge;
                     // console.log(`Session.challenge: ${JSON.stringify(Session.challenge)}`)
@@ -200,8 +232,6 @@ const provideContext = Component => {
                     this.setState({
                         challengeDistance: challenge.challengeDistance ? challenge.challengeDistance : 0,
                         challengeName: challenge.name,
-                        challengeShutdownStartDate: challenge.challengeShutdownStartDate ? challenge.challengeShutdownStartDate.toDate() : null,
-                        challengeShutdownEndDate: challenge.challengeShutdownStartDate ? challenge.challengeShutdownEndDate.toDate() : null,     
                     });
                     // Set FB functions enviroment after challenge is updated
                     Util.setEnviromentFromClient();
@@ -209,31 +239,31 @@ const provideContext = Component => {
             });
         }
 
-        setupResultsListener(challengeUid) {
+        setupResultsListener(challengeUid: string) {
             this.perf = Util.getFirestorePerf();
     
             console.log(`Created result listener with challengeUid: ${challengeUid}`);
             this.perf = Util.getFirestorePerf();
             
-            const traceFullResultsFirestore = this.perf.trace('traceFullResultsFirestore');;
+            const traceFullResultsFirestore = this.perf.trace('traceFullResultsFirestore');
             const traceGetResultsChanges = this.perf.trace('traceGetResultsChanges');
 
-            if (this.resultslistener) {
-                this.resultslistener();
+            if (this.resultsListener) {
+                this.resultsListener();
             }
         
-            let allDBRefs = Util.getChallengeDependentRefs(challengeUid);
+            const allDBRefs = Util.getChallengeDependentRefs(challengeUid);
             const dbResultsRef = allDBRefs.dbResultsRef;
 
-            let ref = dbResultsRef;
+            const ref = dbResultsRef;
             try {
                 traceFullResultsFirestore.start();
             } catch {
                 console.error("traceFullResultsFirestore not started ...")
             }
 
-            let results = [];
-            this.resultslistener = ref.onSnapshot((querySnapshot) => {
+            let results: Array<Result> = [];
+            this.resultsListener = ref.onSnapshot((querySnapshot) => {
                 try {
                     traceGetResultsChanges.start();
                 } catch {
@@ -242,13 +272,14 @@ const provideContext = Component => {
     
                 querySnapshot.docChanges().forEach(change => {
                     if (change.type === "added") {
-                        let newResult = change.doc.data();
+                        let newResult: Result = new Result("");
+                        newResult = change.doc.data() as Result;
                         newResult.id = change.doc.id;
                         results.push(newResult);
                     }
                     if (change.type === "modified") {
-                        let changedResult = {};
-                        changedResult = change.doc.data();
+                        let changedResult: Result = new Result("");
+                        changedResult = change.doc.data() as Result;
                         changedResult.id = change.doc.id;
                         results = results.map(result => {
                             if (changedResult.id === result.id) {
@@ -265,7 +296,8 @@ const provideContext = Component => {
                         });            
                     }
                 });
-                this.setState({results: [...results], updatedResults: this.state.updatedResults +1});
+                const { updatedResults } = this.state;
+                this.setState({results: [...results], updatedResults: updatedResults + 1});
 
                 try {
                     traceGetResultsChanges.stop();
@@ -274,23 +306,76 @@ const provideContext = Component => {
                 }
 
                 try {
-                    traceFullResultsFirestore.incrementMetric('nbrResults', this.results.length);
+                    traceFullResultsFirestore.incrementMetric('nbrResults', results.length);
                     traceFullResultsFirestore.stop();    
                 } catch {
                     //
                 }
 
                 return;
-            }, (err) => {
+            }, (err: Error) => {
+                console.error(`Error attaching listener: ${err}`);
+                return;
+            }); // Create listener
+        }
+
+        setupTeamsListener(challengeUid: string) {
+            this.perf = Util.getFirestorePerf();
+    
+            console.log(`Created teams listener with challengeUid: ${challengeUid}`);
+
+            if (this.teamsListener) {
+                this.teamsListener();
+            }
+        
+            const allDBRefs = Util.getChallengeDependentRefs(challengeUid);
+            const dbTeamsRef = allDBRefs.dbTeamsRef;
+
+            const ref = dbTeamsRef;
+
+            let teams: Array<Team> = [];
+            this.teamsListener = ref.onSnapshot((querySnapshot) => {
+    
+                querySnapshot.docChanges().forEach(change => {
+                    if (change.type === "added") {
+                        let newTeam: Team = new Team("");
+                        newTeam = change.doc.data() as Team;
+                        newTeam.id = change.doc.id;
+                        teams.push(newTeam);
+                    }
+                    if (change.type === "modified") {
+                        let changedTeam: Team = new Team("");
+                        changedTeam = change.doc.data() as Team;
+                        changedTeam.id = change.doc.id;
+                        teams = teams.map(team => {
+                            if (changedTeam.id === team.id) {
+                                return changedTeam;
+                            } else {
+                                return team;
+                            }
+                        });
+                    }
+                    if (change.type === "removed") {
+                        // console.log(`Removed Result: ${change.doc.id}`);
+                        teams.filter(team => {
+                            return team.id !== change.doc.id;
+                        });            
+                    }
+                });
+                const { updatedTeams } = this.state;
+                this.setState({teams: [...teams], updatedResults: updatedTeams + 1});
+                return;
+            }, (err: Error) => {
                 console.error(`Error attaching listener: ${err}`);
                 return;
             }); // Create listener
         }
     
 
+
         // This deletes listener to clean things up and prevent mem leaks
         componentWillUnmount() {
-            this.listener();
+            this.authListener();
 
             if (this.userListener) {
                 this.userListener();
@@ -300,6 +385,9 @@ const provideContext = Component => {
             }
             if (this.resultsListener) {
                 this.resultsListener();
+            }
+            if (this.teamsListener) {
+                this.teamsListener();
             }
         }
 

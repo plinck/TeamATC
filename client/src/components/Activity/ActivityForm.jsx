@@ -392,17 +392,6 @@ class ActivityForm extends React.Component {
             return false;
         }
 
-        // This is added so a challenge can be *paused* which is STUPID and I wont do it ever
-        if (this.props.context.challengeShutdownStartDate && this.props.context.challengeShutdownEndDate) {
-            const startOfShutdownDay = moment(this.props.context.challengeShutdownStartDate).startOf("day").toDate();
-            const endOfShutdownDay = moment(this.props.context.challengeShutdownEndDate).endOf("day").toDate();
-            const endOfShutdownDayDisplay = moment(endOfShutdownDay).format('MM-DD-YYYY');
-            if (activity.activityDateTime >= startOfShutdownDay &&  activity.activityDateTime <= endOfShutdownDay) {
-                this.setState({ message: `Activity entry is paused.  No activities can be entered, End of shutdown after ${endOfShutdownDayDisplay}` });
-                return false;
-            }
-        }
-
         // If NEW activity, set the info to the current users info, if not use what is there so admiin can update
         if (!this.state.activity.id) {
             activity.displayName = this.props.context.displayName;

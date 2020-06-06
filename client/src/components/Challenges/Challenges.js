@@ -62,7 +62,7 @@ const Challenges = (props) => {
     }
 
     const handleJoinChallenge = (challenge) => {
-        UserDB.updateChallenge(props.context.uid, challenge.id).then(() => {
+        UserDB.updateChallenge(props.context.user, props.context.teams, challenge.id).then(() => {
             // User now assigned to new challenge
             setMessage(`joined challenge ${challenge.name}`);
             props.history.push({
