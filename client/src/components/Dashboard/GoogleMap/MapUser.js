@@ -195,7 +195,7 @@ class Map extends Component {
         defaultZoom={this.props.options.zoom}
         yesIWantToUseGoogleMapApiInternals
         onGoogleApiLoaded={({ map, maps }) => this.onScriptLoad(map, maps)}
-        hoverDistance={20}
+        hoverDistance={30}
       >
         {this.state.markers.length > 0
           ? this.state.markers.map((marker, index) => {
