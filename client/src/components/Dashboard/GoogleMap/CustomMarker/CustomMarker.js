@@ -7,16 +7,18 @@ const useStyles = makeStyles(() =>
     card: {
       background: "white",
       width: "150px",
-      top: "-125px",
+      top: "-115px",
       right: "-75px",
       position: "absolute",
       zIndex: "500",
     },
     avatar: {
-      left: "-23px",
-      top: "-51px",
+      left: "-18px",
+      top: "-41px",
       border: "3px solid #ff0100",
       zIndex: "200",
+      width: "30px",
+      height: "30px"
     },
     carrot: {
       position: "absolute",
