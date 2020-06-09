@@ -77,6 +77,7 @@ const addStravaActivity = ((user : any, stravaActivity : any) => {
         const dbActivitiesRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(user.challengeUid).collection(`activities`);
 
         // USe set so as not to duplicste activities
+        // PAULTODO : --- Addd check to ensure activity is in challenge date range -- if not dump to user activity collection
         const activityKey = `${stravaActivity.athlete.id}-${stravaActivity.id}`;
         dbActivitiesRef.doc(activityKey).set(activity).then(() => {
             console.log(`Firestore activity successfully added with id ${activityKey} for user: ${user.displayName}`);
