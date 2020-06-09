@@ -113,7 +113,8 @@ class ResultsDB {
                 try {
                     const userDB = new UserDB();
                     const user: User = await userDB.get(allResults.userResults[i].uid);
-                    const photoUrl = user.photoObj ? user.photoObj.url : "";
+                    const photoUrl = user.photoObj && user.photoObj.url ? user.photoObj.url : "";
+                    console.log(`Name: ${allResults.userResults[i].displayName}, photoUrl: ${photoUrl}`);
                     allResults.userResults[i].photoUrl = photoUrl;
                 } catch (err) {
                     console.error(`Error getting user for result: ${err}`);
