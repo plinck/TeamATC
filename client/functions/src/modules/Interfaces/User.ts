@@ -1,4 +1,5 @@
 class User {
+    id: string;
     challengeUid:  string;
     displayName:  string;
     email: string;
@@ -20,7 +21,12 @@ class User {
     teamUid: string;
     uid: string;
 
-    constructor() {
+    constructor(userId?: string) {
+        if (userId) {
+            this.id = "";
+        } else {
+            this.id = "";
+        }
         this.challengeUid = "";
         this.displayName = "";
         this.email = "";

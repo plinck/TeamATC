@@ -10,14 +10,18 @@ class Activity {
     duration:number;
     durationUnits:string;
     email:string;
-    stravaAcvitiy:boolean = false;
-    stravaAcvitiyId:string;
+    stravaActivity:boolean = false;
+    stravaActivityId:string;
     teamUid:string;
     teamName:string;
     uid:string;
 
-    constructor() {
-        this.id = "";
+    constructor(activityId?: string) {
+        if (activityId) {
+            this.id = activityId;
+        } else {
+            this.id = "";
+        }
         this.activityName = "";
         this.activityDateTime = new Date();
         this.activityType = "";
@@ -28,8 +32,8 @@ class Activity {
         this.duration = 0;
         this.durationUnits = "Hours";
         this.email = "";
-        this.stravaAcvitiy = false;
-        this.stravaAcvitiyId = "";
+        this.stravaActivity = false;
+        this.stravaActivityId = "";
         this.teamUid = "";
         this.teamName = "";
         this.uid = "";    
