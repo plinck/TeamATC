@@ -12,6 +12,13 @@ service cloud.firestore {
     	allow delete: if request.auth.uid == userID || isUserAdmin();
     	allow update: if request.auth.uid == userID || isUserAdmin();
       allow create: if request.auth.uid == request.resource.data.id || isUserAdmin();
+
+    	match /activities/{activityId} {
+        allow read: if request.auth.uid != null;
+        allow delete: if request.auth.uid == resource.data.uid || isUserAdmin();
+        allow update: if request.auth.uid == resource.data.uid || isUserAdmin();
+        allow create: if request.auth.uid == request.resource.data.uid || isUserAdmin();
+      }
     }
     
     match /ATC/prod/ATCMembers/{email} {
