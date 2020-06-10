@@ -392,13 +392,19 @@ class ActivityForm extends React.Component {
             return false;
         }
 
+        // make sure team is set to something valid and consistent
+        if (!activity.teamName ||  activity.teamName.length < 1 || !activity.teamUid || activity.teamUid.length < 0)
+        {
+            // MUST CHANGE BOTH TOGETHER so they match
+            activity.teamName = this.props.context.teamName;
+            activity.teamUid = this.props.context.teamUid;
+        }
+
         // If NEW activity, set the info to the current users info, if not use what is there so admiin can update
         if (!this.state.activity.id) {
             activity.displayName = this.props.context.displayName;
             activity.challengeUid = this.props.context.challengeUid;
             activity.email = this.props.context.authUser.email;
-            activity.teamName = activity.teamName ? activity.teamName : this.props.context.teamName;
-            activity.teamUid = activity.teamUid ? activity.teamUid : this.props.context.teamUid;
             activity.uid = this.props.context.authUser.uid;
         }
 
