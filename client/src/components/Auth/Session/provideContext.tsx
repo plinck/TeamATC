@@ -57,6 +57,7 @@ const provideContext = (Component: any) => {
             teamUid: null,
             teamName: null,
 
+            challenge: null,
             challengeUid: null,
             challengeDistance: 0,
             challengeName: null,
@@ -223,13 +224,21 @@ const provideContext = (Component: any) => {
             const docRef = dbChallengesRef.doc(challengeId);
             this.challengeListener = docRef.onSnapshot((doc) => {
                 if (doc.data()) {
+                    // must convert fromFB timestamp BEFORE assigning type since toDate) is not part of Challenge Type for Date
+                    const endDate = doc.data().endDate.toDate();
+                    const startDate = doc.data().endDate.toDate();
+
                     let challenge = new Challenge();
                     challenge = doc.data() as Challenge;
+                    challenge.endDate = endDate;
+                    challenge.startDate = startDate;
                     challenge.id = doc.id;
+
                     Session.challenge = challenge;
                     // console.log(`Session.challenge: ${JSON.stringify(Session.challenge)}`)
 
                     this.setState({
+                        challenge,
                         challengeDistance: challenge.challengeDistance ? challenge.challengeDistance : 0,
                         challengeName: challenge.name,
                     });

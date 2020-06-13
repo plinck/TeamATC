@@ -18,18 +18,6 @@ import { saveStravaEvent } from "./modules/events";
 import { StravaEventDB } from "./modules/db/StravaEventDB";
 import { DistanceMatrix } from "./modules/DistanceMatrix";
 
-// exports.scheduledFunction = functions.pubsub.schedule('5 6 * * *').onRun((context) => {
-//     console.log('This will be run every day at 6:05 AM UTC!');
-//     const leaderboard:Leaderboard = new Leaderboard();
-//     leaderboard.calculateLeaderboards().then(() => {
-//         console.log(`completed calculating leaderboards`);
-//     }).catch((err: Error) => {
-//         console.error(err);
-//     });
-
-//     return null;
-// });
-
 // Allow Admin to force recalc of totals froom client in case its out of whack
 exports.forceRecalculation = functions.https.onCall((req:any, context:any):any => {
     console.log('Recalculatng totals triggered ...');
@@ -296,6 +284,31 @@ exports.fBFupdateActivityTeamName = functions.https.onCall((req, context: functi
         const team:Team = req.team as Team;
         const teamUpdate = new TeamUpdate();
         teamUpdate.updateActivityTeamName(team, challengeUid).then(() => {
+            resolve(true);
+        }).catch((err: Error) => {
+            reject(err);
+        });   
+    });//Promise
+});
+
+exports.updateBlankActivityTeamName = functions.https.onCall((req, context: functions.https.CallableContext) => {
+    return new Promise<any>((resolve:any, reject:any) => {
+        const challengeUid = req.challengeUid;
+        const teamUpdate = new TeamUpdate();
+        teamUpdate.updateBlankActivityTeamName(challengeUid).then(() => {
+            resolve(true);
+        }).catch((err: Error) => {
+            reject(err);
+        });   
+    });//Promise
+});
+
+exports.deleteActvitiesPastChallengeEnd = functions.https.onCall((req, context: functions.https.CallableContext) => {
+    return new Promise<any>((resolve:any, reject:any) => {
+        const challenge: Challenge = req.challenge;
+
+        const teamUpdate = new TeamUpdate();
+        teamUpdate.deleteActvitiesPastChallengeEnd(challenge).then(() => {
             resolve(true);
         }).catch((err: Error) => {
             reject(err);

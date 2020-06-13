@@ -1,6 +1,7 @@
 import { Result } from "../interfaces/Result";
 import { Team } from "../interfaces/Team";
 import { UserChallenge, User } from "../interfaces/User";
+import { Challenge } from "./Challenge";
 
 type ContextType = {
     authUser: string,
@@ -23,13 +24,16 @@ type ContextType = {
     teamUid: string,
     teamName: string,
 
+    challenge: Challenge,
     challengeUid: string,
     challengeDistance: number,
     challengeName: string,
+
     stavaUserAuth : boolean,
     stravaRefreshToken : string,
     stravaAccessToken : string,
     stravaExpiresAt : Date,
+
     updatedTeams: number,
     teams: Array<Team>,
 
