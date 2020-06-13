@@ -10,7 +10,7 @@ import Dashboard from './components/Dashboard/dashboard.jsx';
 import DashboardBackend from './components/Dashboard/DashboardBackend.jsx';
 import Account from './components/Account/Account';
 import Admin from './components/Admin/Admin.jsx';
-import AdminFunctions from './components/Admin/AdminFunctions.jsx';
+import AdminFunctions from './components/Admin/AdminFunctions';
 import Results from './components/Results/Results';
 import Activities from './components/Activity/Activities.jsx';
 import ActivityPage from './components/Activity/ActivityPage.jsx';
