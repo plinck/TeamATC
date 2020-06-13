@@ -96,10 +96,22 @@ class TeamUpdate {
             const batch = admin.firestore().batch();
             const dbRef = activitiesRef.where("activityDateTime", ">", myChallenge.endDate);
             dbRef.get().then((querySnapshot) => {
-                querySnapshot.forEach(doc => {
-                    console.log(`Deleting activitiy with id: ${doc.id}`);
-                    batch.delete(doc.ref);
-                });
+                let batchCount: number = 0;
+                const BreakException = {};
+                try {
+                    querySnapshot.forEach(doc => {
+                        // Can only delete 500 at a time
+                        if (batchCount > 498) {
+                            throw BreakException;
+                        }
+                        // console.log(`Deleting activitiy with id: ${doc.id}`);
+                        batch.delete(doc.ref);
+                        batchCount += 1;
+                    });
+                } catch (e) {
+                    if (e !== BreakException) throw e;
+                    // All is just fine
+                }
                 return batch.commit();
             }).then(() => {
                 console.log("Activity Batch delete successfully committed!");
@@ -116,12 +128,12 @@ class TeamUpdate {
             const dbActivitiesRef = admin.firestore().collection(APP_CONFIG.ORG).doc(APP_CONFIG.ENV).collection("challenges").doc(challengeId).collection(`activities`);
             
             this.mergeActivitiesWithUsers(challengeId).then(activities => {
-                console.log(`Activities after merge: ${activities}`);
+                // console.log(`Activities after merge: ${activities}`);
 
                 // loop through nd update all activities
                 const batch = admin.firestore().batch();
                 for (const activity of activities) {
-                    console.log(activity);
+                    // console.log(activity);
                     const dbRef = dbActivitiesRef.doc(activity.id);
                     batch.set(dbRef, activity);
                 }
