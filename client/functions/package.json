@@ -3,7 +3,7 @@
     "description": "Cloud Functions for Firebase",
     "scripts": {
         "lint": "tslint --project tsconfig.json",
-        "build": "./node_modules/.bin/tslint --project tsconfig.json && ./node_modules/.bin/tsc",
+        "build": "tslint --project tsconfig.json && tsc",
         "watch": "tsc --watch",
         "serve": "firebase serve --only functions",
         "shell": "firebase functions:shell",
