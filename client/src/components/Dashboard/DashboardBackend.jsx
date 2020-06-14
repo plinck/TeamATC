@@ -211,7 +211,7 @@ class DashboardBackend extends React.PureComponent {
                             }
                         >
                             {this.state.challenge && this.state.challenge.startCity ?
-                                <div key="11" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 12, h: 12, x: 0, y: 0, minW: 6, minH: 11, maxW: 12, maxH: 18 }}>
+                                <div key="11" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 12, h: 14, x: 0, y: 0, minW: 6, minH: 11, maxW: 12, maxH: 18 }}>
                                     <GoogleMapUser
                                         challenge={this.state.challenge}
                                         title={this.state.challenge.name}
@@ -219,7 +219,7 @@ class DashboardBackend extends React.PureComponent {
                                         end={this.state.challenge.endCity}
                                         waypoints={this.state.challenge.waypoints}
                                         updatedResults={this.props.context.updatedResults}
-                                        results={userResults}
+                                        results={{user: userResults, team: teamResults}}
                                         endDate={this.state.challenge.endDate}
                                         callbackParent={() => this.onChildChanged()} />
                                 </div> : <></>}
