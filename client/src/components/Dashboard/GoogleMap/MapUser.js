@@ -94,7 +94,7 @@ class Map extends Component {
         // to each of the result records
         this.props.calcNextLegInfo(response.routes[0].legs, this.props.results);
         this.props.computeTotalDistance(response);
-        console.log(this.props.results);
+        this.setState({ markers: [] });
         this.props.results.forEach((result) => {
           let includedDistanceTotal = 0;
           includedDistanceTotal += this.props.challenge.isSwim
@@ -190,6 +190,7 @@ class Map extends Component {
   render() {
     return (
       <GoogleMapReact
+        key={this.props.rerender}
         bootstrapURLKeys={{ key: FB_CONFIG.API_KEY }}
         defaultCenter={this.props.options.center}
         defaultZoom={this.props.options.zoom}
