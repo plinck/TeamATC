@@ -94,7 +94,7 @@ class Result extends React.Component {
           {uid && uid === this.props.context.uid ? (
             <img
               style={{ maxHeight: "20px" }}
-              src={"/images/me.png"}
+              src={"./images/me.png"}
               alt={"me"}
             />
           ) : (
