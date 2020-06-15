@@ -190,13 +190,9 @@ class DashboardBackend extends React.PureComponent {
         const currentTeamResults = teamResults.find(result => result.teamUid === this.props.context.teamUid);
         const myActivities = this.state.myActivities;
 
-        if (this.props.context.uid) {
+        if (this.props.context.uid && this.state.challenge.id) {
             return (
                 <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
-                    {this.state.loadingFlag ?
-                        <Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading/Calculating ...</p> </Grid>
-                    : ""}
-
                     <Container maxWidth="xl">
                         {/* <button onClick={() => this.resetLayout()}>Reset Layout</button> */}
                         <ResponsiveReactGridLayout
@@ -288,7 +284,7 @@ class DashboardBackend extends React.PureComponent {
             );
         } 
         else {
-            return (<Grid container style={{ marginTop: '10px' }} justify="center"><p>Not Logged In ...</p> </Grid>)
+           return  <Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading/Calculating ...</p> </Grid>
         }
     }
 }
