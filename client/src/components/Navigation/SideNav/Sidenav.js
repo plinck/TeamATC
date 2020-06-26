@@ -18,6 +18,8 @@ import TimerIcon from "@material-ui/icons/Timer";
 import MailIcon from "@material-ui/icons/Mail";
 import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
 import EmojiEventsIcon from '@material-ui/icons/EmojiEvents';
+import FilterHdrIcon from '@material-ui/icons/FilterHdr';
+
 import { ORG } from "../../Environment/Environment";
 
 const drawerWidth = 240;
@@ -148,6 +150,17 @@ export default function SideNav(props) {
                 <EmojiEventsIcon />
               </ListItemIcon>
               <ListItemText>Results</ListItemText>
+            </ListItem>
+          </NavLink>
+          <NavLink className={classes.sideText} to="/hillrepeats">
+            <ListItem
+              selected={window.location.pathname === "/hillrepeats"}
+              button
+            >
+              <ListItemIcon>
+                <FilterHdrIcon />
+              </ListItemIcon>
+              <ListItemText>Hill Repeats</ListItemText>
             </ListItem>
           </NavLink>
           <NavLink className={classes.sideText} to="/activities">
