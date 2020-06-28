@@ -14,6 +14,7 @@ import Challenges from './components/Challenges/Challenges';
 import Dashboard from './components/Dashboard/dashboard.jsx';
 import DashboardBackend from './components/Dashboard/DashboardBackend.jsx';
 import HillRepeats from './components/HillRepeats/HillRepeats';
+import HillRepeatsDash from './components/HillRepeats/HillRepeatsDash';
 import LandingPage from './components/Landing/Landing';
 import Navigation from './components/Navigation/Navigation.jsx';
 import OAuthRedirect from './components/Strava/OAuthRedirect.jsx';
@@ -77,6 +78,7 @@ class App extends React.Component {
           <Route exact path="/adminfunctions" component={AdminFunctions} />
           <Route exact path="/challenges" component={Challenges} />
           <Route exact path="/hillrepeats" component={HillRepeats} />
+          <Route exact path="/hillrepeatsdash" component={HillRepeatsDash} />
           <Route exact path="/oauthredirect" component={OAuthRedirect} />
           <Route exact path="/results" component={Results} />
           <Route exact path="/teams" component={Teams} />

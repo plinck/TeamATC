@@ -4,6 +4,7 @@ import {
   CircularProgress,
   createStyles,
   Container,
+  Fab,
   Grid,
   StyleRules,
   Theme,
@@ -11,6 +12,8 @@ import {
   WithStyles
 } from "@material-ui/core";
 // import Button from "@material-ui/core/Button";
+import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
 
 import MaterialTable from 'material-table'
 import { withContext } from "../Auth/Session/Context";
@@ -65,7 +68,10 @@ const styles: (theme: Theme) => StyleRules<string> = theme =>
         display: "none",
       },
       textDecoration: "none",
-    }
+    },
+    fab: {
+        margin: theme.spacing(1),
+    },    
   });  
 
   // Just my own custom/extended props
@@ -79,7 +85,7 @@ type Data = any;
 type Column = any;
 type Actions = any;
 type Options = any;
-type Table = {columns : Column[], data: Data[], actions: Actions[], options: Options}
+type Table = {columns : Column[], data: Data[], actions?: Actions[], options?: Options}
 type MyState = Table;
 
 interface ContextProps {
@@ -110,16 +116,38 @@ class HillRepeats extends Component<Props, MyState> {
         };
     }    
 
-    handleCheckClick = ( rowData: any, name: string) => {
+    handleCheckClick = (rowData: any, name: string) => {
         // get the index of the row that changed and copy into new data row
         const idx = rowData.tableData.id;
-        let newDataRow = this.state.data[idx];
+        const newDataRow = this.state.data[idx];
+
+        // Replace the field that changed within that rpw
+        if (name === "addrepeat") {
+            newDataRow["repeats"] = this.state.data[idx]["repeats"] + 1;
+        } else {
+            newDataRow["repeats"] = this.state.data[idx]["repeats"] - 1;
+        }
+
+        // Put the newly changed row in data in place of old row
+        const newDataAllRows = this.state.data;
+        newDataAllRows.splice(idx, 1, newDataRow);   
+
+        // replace the data field in state
+        this.setState({ ...this.state, data: newDataAllRows });
+
+        //  I couldnt figure out an esier way to replace a specific rows', specific field checkbox in a simpler way.
+    };    
+
+    handlePlusMinusClick = (rowData: any, name: string) => {
+        // get the index of the row that changed and copy into new data row
+        const idx = rowData.tableData.id;
+        const newDataRow = this.state.data[idx];
 
         // Replace the field that changed within that rpw
         newDataRow[name] = !this.state.data[idx][name];
 
         // Put the newly changed row in data in place of old row
-        let newDataAllRows = this.state.data;
+        const newDataAllRows = this.state.data;
         newDataAllRows.splice(idx, 1, newDataRow);   
 
         // replace the data field in state
@@ -159,18 +187,36 @@ class HillRepeats extends Component<Props, MyState> {
                             field: 'checkin',
                             title: 'Check In',
                             editable: 'never',
-                            render: (rowData:any) => <Checkbox name="checkin" checked={rowData.checkin} onClick={() => this.handleCheckClick(rowData, "checkin")} />
+                            render: (rowData: any) => <Checkbox name="checkin" checked={rowData.checkin} onClick={() => this.handleCheckClick(rowData, "checkin")} />
                           },
                           {
                             field: 'checkout',
                             title: 'Check Out',
                             editable: 'never',
-                            render: (rowData:any) => <Checkbox name="checkout" checked={rowData.checkout} onClick={() => this.handleCheckClick(rowData, "checkout")} />
+                            render: (rowData: any) => <Checkbox name="checkout" checked={rowData.checkout} onClick={() => this.handleCheckClick(rowData, "checkout")} />
                           },
             
                           { title: 'Name', field: 'displayName', editable: 'onUpdate' },
                           { title: 'Email', field: 'email', editable: 'never' },
+                          
                           { title: 'Repeats', field: 'repeats', type: 'numeric' },
+
+                          {
+                            field: 'addrepeat',
+                            title: 'More',
+                            editable: 'never',
+                            render: (rowData: any) => <Fab onClick={() => this.handleCheckClick(rowData, "addrepeat")} color="primary" aria-label="Add" className={classes.fab}><AddIcon /></Fab>
+                    
+                          },
+
+                          {
+                            field: 'removerepeat',
+                            title: 'Less',
+                            editable: 'never',
+                            render: (rowData: any) => <Fab onClick={() => this.handleCheckClick(rowData, "removerepeat")} color="primary" aria-label="Add" className={classes.fab}><RemoveIcon /></Fab>
+                    
+                          },
+
                         ]}
             
                         data={this.state.data}

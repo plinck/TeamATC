@@ -14,13 +14,17 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.45",
     "@material-ui/pickers": "^3.0.0-beta.1",
+    "@types/classnames": "^2.2.10",
     "@types/node": "^14.0.13",
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
+    "@types/react-grid-layout": "^0.17.1",
+    "@types/react-plotly.js": "^2.2.4",
     "@types/react-router": "^5.1.7",
     "axios": "^0.18.1",
     "caniuse-api": "^3.0.0",
     "caniuse-lite": "^1.0.30001079",
+    "classnames": "^2.2.6",
     "css-loader": "^3.4.2",
     "date-fns": "^2.0.0-beta.5",
     "dotenv": "^7.0.0",
@@ -54,7 +58,9 @@
     "typescript": "^3.9.3",
     "underscore": "^1.9.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/plotly.js": "^1.50.13"
+  },
   "scripts": {
     "lint": "tslint --project tsconfig.json",
     "lintfunctions": "cd functions && tslint --project tsconfig.json && cd ..",
