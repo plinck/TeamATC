@@ -36,7 +36,11 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
         this.props.hillRepeats.forEach((repeat: HillRepeat) => {
             // find the index of the date in the array
             const idx = allRepeatsByDate.findIndex((repeatsForOneDate: RepeatsForDate) => {
-                const foundIdx = repeatsForOneDate.date === repeat.repeatDateTime;
+                const repeatsForOneDateStartOfDate = moment(repeatsForOneDate.date).startOf("day").toDate();
+                const repeatStartOfDate = moment(repeat.repeatDateTime).startOf("day").toDate();
+
+                // cant compare dates since they are never equal
+                const foundIdx = repeatsForOneDateStartOfDate.getTime() === repeatStartOfDate.getTime();
                 return foundIdx;
             });
             if (idx > -1) {       
@@ -58,6 +62,10 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
                 }
                 allRepeatsByDate.push(newRepeatsForDate);    
             }
+        });
+
+        allRepeatsByDate = allRepeatsByDate.sort((a, b) => {
+            return (a.date > b.date) ? 1 : -1;
         });
 
         let dateRepeatsTrace: Plotly.Data[] = [];

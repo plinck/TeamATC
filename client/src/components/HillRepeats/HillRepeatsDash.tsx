@@ -1,4 +1,6 @@
 import React from 'react';
+import moment from "moment";
+
 import { WidthProvider, Responsive } from "react-grid-layout";
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
@@ -86,6 +88,8 @@ class HillRepeatsDash extends React.Component<Props> {
                     let newRepeat: HillRepeat = new HillRepeat(change.doc.id);
                     newRepeat = change.doc.data() as HillRepeat;
                     newRepeat.repeatDateTime = change.doc.data().repeatDateTime.toDate();
+                    newRepeat.repeatDateTime = moment(newRepeat.repeatDateTime).startOf("day").toDate();
+
                     newRepeat.id = change.doc.id;
                     allRepeats.push(newRepeat);
                 }
@@ -93,6 +97,8 @@ class HillRepeatsDash extends React.Component<Props> {
                     let changedRepeat: HillRepeat = new HillRepeat("");
                     changedRepeat = change.doc.data() as HillRepeat;
                     changedRepeat.repeatDateTime = change.doc.data().repeatDateTime.toDate();
+                    changedRepeat.repeatDateTime = moment(changedRepeat.repeatDateTime).startOf("day").toDate();
+
                     changedRepeat.id = change.doc.id;
                     allRepeats = allRepeats.map(repeat => {
                         if (changedRepeat.id === repeat.id) {
