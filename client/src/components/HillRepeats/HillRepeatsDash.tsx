@@ -7,7 +7,6 @@ import { ClassValue } from 'classnames/types';
 import { StyleRules } from "@material-ui/core/styles";
 import { Container } from '@material-ui/core'
 
-import StockWidget from './StockWidget/StockWidget';
 import HillRepeatsTotalsGraph from './HillsRepeatsTotalsGraph/HillRepeatsTotalsGraph';
 
 const globalAny:any = global;
@@ -107,9 +106,6 @@ class HillRepeatsDash extends React.Component<Props> {
 
                         <div key="1" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 6, h: 8, x: 0, y: 0, minW: 6, minH: 8, maxW: 10 }}>
                             <HillRepeatsTotalsGraph />
-                        </div>
-                        <div key="2" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 4, x: 6, y: 0, minW: 4, minH: 4, maxW: 6 }}>
-                            <StockWidget />
                         </div>
 
                     </ResponsiveReactGridLayout>

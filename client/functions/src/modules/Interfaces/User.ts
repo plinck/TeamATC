@@ -1,5 +1,18 @@
+type PhotoObj = {
+    url: string,
+    fileName: string,
+    fileTitle: string
+}
+
+export type UserChallenge = {
+    challengeUid: string,
+    teamUid: string
+}
+
 class User {
-    id: string;
+    id?:  string;
+
+    challenges?: Array<UserChallenge>;
     challengeUid:  string;
     displayName:  string;
     email: string;
@@ -10,7 +23,7 @@ class User {
     isUser: boolean;
     lastName: string;
     phoneNumber: string;
-    photoObj: {url: string};
+    photoObj?: PhotoObj;
     primaryRole: string;
     stravaAccessToken: string;
     stravaAthleteId:  string;
@@ -21,12 +34,10 @@ class User {
     teamUid: string;
     uid: string;
 
-    constructor(userId?: string) {
-        if (userId) {
-            this.id = "";
-        } else {
-            this.id = "";
-        }
+    constructor() {
+        this.id = "";
+        
+        this.challenges = [];
         this.challengeUid = "";
         this.displayName = "";
         this.email = "";
@@ -37,7 +48,7 @@ class User {
         this.isUser = false;
         this.lastName = "";
         this.phoneNumber = "";
-        this.photoObj.url = "";
+        this.photoObj = {url: "", fileName: "", fileTitle: ""};
         this.primaryRole = "";
         this.stravaAccessToken = "";
         this.stravaAthleteId = "";

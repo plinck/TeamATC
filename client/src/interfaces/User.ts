@@ -5,14 +5,13 @@ type PhotoObj = {
 }
 
 export type UserChallenge = {
-    challengeRef?: firebase.firestore.DocumentReference,
     challengeUid: string,
-    teamRef?: firebase.firestore.DocumentReference,
     teamUid: string
 }
 
 class User {
-    id:  string;
+    id?:  string;
+
     challenges?: Array<UserChallenge>;
     challengeUid:  string;
     displayName:  string;
@@ -24,7 +23,7 @@ class User {
     isUser: boolean;
     lastName: string;
     phoneNumber: string;
-    photoObj: PhotoObj;
+    photoObj?: PhotoObj;
     primaryRole: string;
     stravaAccessToken: string;
     stravaAthleteId:  string;
@@ -37,6 +36,7 @@ class User {
 
     constructor() {
         this.id = "";
+
         this.challenges = [];
         this.challengeUid = "";
         this.displayName = "";
