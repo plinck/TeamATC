@@ -6,7 +6,6 @@ class HillRepeat {
     displayName: string;
     elevationGainPerRepeat: number;
     repeats: number;
-    totalElevationGain: number;
     uid: string;
 
     lastUpdateDateTime: Date;
@@ -22,7 +21,6 @@ class HillRepeat {
         this.displayName = "";
         this.elevationGainPerRepeat = 0;
         this.repeats = 0;
-        this.totalElevationGain = 0;
         this.uid = "";
 
         this.lastUpdateDateTime = new Date();
