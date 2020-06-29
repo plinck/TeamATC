@@ -142,7 +142,7 @@ let Navigation = (props) => {
           <FilterHdrIcon />
         </ListItemIcon>
         <ListItemText>
-          <NavLink className={classes.mobileButton} to="/hillrepeats">
+          <NavLink className={classes.mobileButton} to="/hillrepeatsdash">
             Hill Repeats
           </NavLink>
         </ListItemText>
@@ -284,7 +284,7 @@ let Navigation = (props) => {
           <FilterHdrIcon />
         </ListItemIcon>
         <ListItemText>
-          <NavLink className={classes.mobileButton} to="/hillrepeats">
+          <NavLink className={classes.mobileButton} to="/hillrepeatsdash">
             Hill Repeats
           </NavLink>
         </ListItemText>

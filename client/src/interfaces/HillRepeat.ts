@@ -1,7 +1,7 @@
 class HillRepeat {
-    id: string;
+    id?: string;
     
-    date: Date;
+    repeatDateTime: Date;
     description?: string;
     displayName: string;
     elevationGainPerRepeat: number;
@@ -16,7 +16,7 @@ class HillRepeat {
         } else {
             this.id = "";
         }
-        this.date = new Date();
+        this.repeatDateTime = new Date();
         this.description = "";
         this.displayName = "";
         this.elevationGainPerRepeat = 0;

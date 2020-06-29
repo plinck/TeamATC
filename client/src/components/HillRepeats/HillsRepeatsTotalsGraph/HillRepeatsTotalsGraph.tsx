@@ -8,11 +8,11 @@ import LaunchIcon from '@material-ui/icons/Launch';
 
 import { withContext } from "../../Auth/Session/Context";
 import { ContextType } from "../../../interfaces/Context.Types";
+import { HillRepeat } from "../../../interfaces/HillRepeat";
 
 interface OwnProps {
-    repeats: Array<any>;
+    hillRepeats: Array<HillRepeat>;
 }
-
 interface ContextProps {
     context: ContextType;
   }  
@@ -28,40 +28,37 @@ interface RepeatsForDate {
 }
 
 class HillRepeatsTotalsGraph extends React.Component<Props> {
-    
+    hillRepeatsListener: any;
+
     plotGraph() {
-        let allRepeatsByDate: Array<RepeatsForDate> = [
-            {
-                date: new Date('06/03/2020'),
-                userNames: ['Paul', "Jerome", "Jessica"],
-                userRepeats: [5, 8, 10]
-            },
-            {
-                date: new Date('06/10/2020'),
-                userNames: ['Paul', "Jerome", "Steph", "Jessica"],
-                userRepeats: [8, 2, 9, 11]
-            },
-            {
-                date: new Date('06/17/2020'),
-                userNames: ['Paul', "Jerome", "Steph", "Jessica"],
-                userRepeats: [9, 6, 9, 12]
-            },
-            {
-                date: new Date('06/24/2020'),
-                userNames: ['Paul', "Jerome", "Steph", "Jessica"],
-                userRepeats: [16, 5, 8, 12]
-            },
-            {
-                date: new Date('07/01/2020'),
-                userNames: ['Paul', "Jerome", "Steph"],
-                userRepeats: [12, 4, 7]
-            },
-            {
-                date: new Date('07/08/2020'),
-                userNames: ['Paul', "Jerome", "Steph", "Jessica"],
-                userRepeats: [16, 5, 8, 12]
-            },
-        ]
+        let allRepeatsByDate: Array<RepeatsForDate> = [];
+
+        this.props.hillRepeats.forEach((repeat: HillRepeat) => {
+            // find the index of the date in the array
+            const idx = allRepeatsByDate.findIndex((repeatsForOneDate: RepeatsForDate) => {
+                const foundIdx = repeatsForOneDate.date === repeat.repeatDateTime;
+                return foundIdx;
+            });
+            if (idx > -1) {       
+                // Found, results for this oone so add to it
+                allRepeatsByDate[idx].date = repeat.repeatDateTime;  // redudant
+                allRepeatsByDate[idx].userNames.push(repeat.displayName);
+                allRepeatsByDate[idx].userRepeats.push(repeat.repeats);
+            } else {
+                // New
+                const userNames: Array<string> = Array<string>();
+                const userRepeats: Array<number> = Array<number>();
+                userNames.push(repeat.displayName);
+                userRepeats.push(repeat.repeats);
+
+                const newRepeatsForDate: RepeatsForDate = {
+                    date: repeat.repeatDateTime,
+                    userNames: userNames,
+                    userRepeats: userRepeats
+                }
+                allRepeatsByDate.push(newRepeatsForDate);    
+            }
+        });
 
         let dateRepeatsTrace: Plotly.Data[] = [];
 

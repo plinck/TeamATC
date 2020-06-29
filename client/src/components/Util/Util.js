@@ -58,11 +58,13 @@ class Util {
     const firebase = new Firebase();
 
     const dbUsersRef = firebase.db.collection(ORG).doc(ENV).collection(`users`);
+    const dbHillRepeatsRef = firebase.db.collection(ORG).doc(ENV).collection(`hillrepeats`);
     const dbATCMembersRef = firebase.db.collection(ORG).doc(ENV).collection(`ATCMembers`);
     const dbChallengesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges");
 
     return {
       dbUsersRef: dbUsersRef,
+      dbHillRepeatsRef: dbHillRepeatsRef,
       dbATCMembersRef: dbATCMembersRef,
       dbChallengesRef: dbChallengesRef,
     }

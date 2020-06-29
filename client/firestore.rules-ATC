@@ -19,8 +19,15 @@ service cloud.firestore {
         allow update: if request.auth.uid == userID || isUserAdmin();
         allow create: if request.auth.uid == userID || isUserAdmin();
       }
-}
+    }
     
+    match /ATC/prod/hillrepeats/{userID} {
+      allow read: if request.auth.uid != null;
+    	allow delete: if request.auth.uid == userID || isUserAdmin();
+    	allow update: if request.auth.uid == userID || isUserAdmin();
+      allow create: if request.auth.uid == request.resource.data.id || isUserAdmin();
+    }
+
     match /ATC/prod/ATCMembers/{email} {
     	allow read: if true;
     	allow delete: if request.auth.email == email || isUserAdmin();

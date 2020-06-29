@@ -12,6 +12,7 @@ const MemberInfo = require("./MemberInfo.js");
 const Activities = require("./Activities.js");
 const Users = require("./Users.js");
 const Backup = require("./Backup.js");
+const HillRepeats = require("./HillRepeats");
 
 function exitProgram() {
     console.log("BYE!");
@@ -628,6 +629,38 @@ async function createTestActivities () {
     return;
 }
 
+async function createTestHillRepeats () {
+    let totalUserRepeatRecords = 100;
+    let i = 0;
+
+    let repeatDate = new Date("06/03/2020");
+    let repeatUserNbr = 0;
+    for (i = 0; i < totalUserRepeatRecords; i++) {
+        // get random stuff for activity
+        if (i % 20 === 0) {
+            repeatDate.setDate(repeatDate.getDate() + 7)
+            repeatUserNbr = 0;
+        }
+        const repeatDisplayName = `User ${repeatUserNbr}`;
+        repeatUserNbr += 1;
+        
+        const hillrepeat = {
+            repeatDateTime: repeatDate,
+            description: `Repeat nbr: ${i}`,
+            displayName: repeatDisplayName,
+            elevationGainPerRequest: 110,
+            repeats: Math.floor(Math.random() * 12) + 1,
+            uid: `xxxxx-${repeatUserNbr}`,
+            lastUpdateDateTime: new Date()
+        };
+        // console.log(`hillrepeat.repeatDateTime ${hillrepeat.repeatDateTime}`);
+
+        const newRepeat = await HillRepeats.create(hillrepeat);
+    }
+
+    return;
+}
+
 async function createRealtimeDBTestActivities() {
     var realtimeDB = admin.database();
     var dbRef = realtimeDB.ref("ATC/prod/activities");
@@ -680,6 +713,7 @@ function mainMenu() {
         copyProdToBack: Backup.copyProdToBack,
         //copyDevToProd: copyDevToProd,
         // createTestActivities: createTestActivities,
+        createTestHillRepeats: createTestHillRepeats,
         createRealtimeDBTestActivities: createRealtimeDBTestActivities,
         QUIT: exitProgram
     };

@@ -152,9 +152,9 @@ export default function SideNav(props) {
               <ListItemText>Results</ListItemText>
             </ListItem>
           </NavLink>
-          <NavLink className={classes.sideText} to="/hillrepeats">
+          <NavLink className={classes.sideText} to="/hillrepeatsdash">
             <ListItem
-              selected={window.location.pathname === "/hillrepeats"}
+              selected={window.location.pathname === "/hillrepeatsdash"}
               button
             >
               <ListItemIcon>

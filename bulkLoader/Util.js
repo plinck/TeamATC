@@ -21,9 +21,10 @@ class Util {
         }
         const db = admin.firestore();
 
-        console.log(`ORG: ${ORG}, ENV: ${ENV}, CHALLENGE: ${CHALLENGE}`);
+        // console.log(`ORG: ${ORG}, ENV: ${ENV}, CHALLENGE: ${CHALLENGE}`);
     
         const dbUsersRef = db.collection(ORG).doc(ENV).collection(`users`);
+        const dbHillRepeatsRef = db.collection(ORG).doc(ENV).collection(`hillrepeats`);
         const dbATCMembersRef = db.collection(ORG).doc(ENV).collection(`ATCMembers`);
         const dbChallengesRef = db.collection(ORG).doc(ENV).collection(`challenges`);
         const dbChallengeMembersRef = db.collection(ORG).doc(ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);        
@@ -32,6 +33,7 @@ class Util {
 
         // Prod
         const dbProdUsersRef = db.collection(ORG).doc(PROD_ENV).collection(`users`);
+        const dbProdHillRepeatsRef = db.collection(ORG).doc(PROD_ENV).collection(`hillrepeats`);
         const dbProdATCMembersRef = db.collection(ORG).doc(PROD_ENV).collection(`ATCMembers`);
         const dbProdChallengesRef = db.collection(ORG).doc(PROD_ENV).collection(`challenges`);
         const dbProdATCChallengeMemberRef = db.collection(ORG).doc(PROD_ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);        
@@ -40,6 +42,7 @@ class Util {
         
         // Dev
         const dbDevUsersRef = db.collection(ORG).doc(DEV_ENV).collection(`users`);
+        const dbDevHillRepeatsRef = db.collection(ORG).doc(DEV_ENV).collection(`hillrepeats`);
         const dbDevATCMembersRef = db.collection(ORG).doc(DEV_ENV).collection(`ATCMembers`);
         const dbDevChallengesRef = db.collection(ORG).doc(DEV_ENV).collection(`challenges`);
         const dbDevATCChallengeMemberRef = db.collection(ORG).doc(DEV_ENV).collection("challenges").doc(challengeUid).collection(`challengemembers`);        
@@ -50,6 +53,7 @@ class Util {
           challengeUid: challengeUid,
 
           dbUsersRef: dbUsersRef,
+          dbHillRepeatsRef: dbHillRepeatsRef,
           dbATCMembersRef: dbATCMembersRef,
           dbChallengesRef: dbChallengesRef,
           dbChallengeMembersRef: dbChallengeMembersRef,
@@ -57,6 +61,7 @@ class Util {
           dbTeamsRef: dbTeamsRef,
 
           dbProdUsersRef: dbProdUsersRef,
+          dbProdHillRepeatsRef: dbProdHillRepeatsRef,
           dbProdATCMembersRef: dbProdATCMembersRef,
           dbProdChallengesRef: dbProdChallengesRef,
           dbProdATCChallengeMemberRef: dbProdATCChallengeMemberRef,
@@ -64,6 +69,7 @@ class Util {
           dbProdTeamsRef: dbProdTeamsRef,
 
           dbDevUsersRef: dbDevUsersRef,
+          dbDevHillRepeatsRef: dbDevHillRepeatsRef,
           dbDevATCMembersRef: dbDevATCMembersRef,
           dbDevChallengesRef: dbDevChallengesRef,
           dbDevATCChallengeMemberRef: dbDevATCChallengeMemberRef,
