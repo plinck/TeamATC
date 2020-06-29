@@ -81,13 +81,17 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
                 x: repeat.userNames,
                 y: repeat.userRepeats,
                 name: displayDate,
-                type: "bar"
+                type: "bar",
+                hoverinfo: 'text',
+                text: [`Repeats: ${repeat.userRepeats}` ],
             } 
             dateRepeatsTrace.push(trace);
         });
 
         const data: Plotly.Data[] = dateRepeatsTrace;
-        const layout: Plotly.Layout & any = { barmode: 'stack' };
+        const layout: Plotly.Layout & any = { 
+            barmode: 'stack',
+         };        
         
         return (
             <Plot
@@ -95,7 +99,14 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
                 layout={layout}
                 useResizeHandler={true}
                 style={{ width: "100%", height: "100%" }}
-                config={{ displayModeBar: false }}
+                config={{ 
+                    displayModeBar: true,
+                    scrollZoom: true,
+                    modeBarButtonsToRemove: ['select2d','lasso2d',
+                        "hoverClosestCartesian", "hoverCompareCartesian",
+                        "sendDataToCloud", "toggleSpikelines"
+                    ]
+                }}
             />
         );
     }

@@ -7,7 +7,14 @@ import moment from "moment";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
-import { Button, Container, WithStyles, createStyles, Theme, withStyles } from "@material-ui/core";
+import { Button,
+    Container,
+    createStyles,
+    Theme,
+    Typography, 
+    withStyles,
+    WithStyles
+} from "@material-ui/core";
 
 import { ClassValue } from 'classnames/types';
 import { StyleRules } from "@material-ui/core/styles";
@@ -49,6 +56,7 @@ interface OwnProps {
 interface MyState {
     layouts?: ReactGridLayout.Layouts;
     hillRepeats: Array<HillRepeat>;
+    message?: string;
 }
 
 // Exposed to user's of component - not styles
@@ -60,7 +68,8 @@ class HillRepeatsDash extends React.Component<Props> {
 
     state: MyState = {
         layouts: JSON.parse(JSON.stringify(originalLayouts)),
-        hillRepeats: []
+        hillRepeats: [],
+        message: ""
     };
 
     constructor(props: any) {
@@ -118,6 +127,9 @@ class HillRepeatsDash extends React.Component<Props> {
                 }
             });
             this.setState({hillRepeats: [...allRepeats]});
+        }, (err: Error) => {
+            console.error(`Error retrieving hill repeats: ${err}`);
+            this.setState({message: `Error retrieving hill repeats: ${err}`});
         });
     }
 
@@ -161,11 +173,13 @@ class HillRepeatsDash extends React.Component<Props> {
     
     public render() {
         const { classes } = this.props;
+        const { message } = this.state;
     
         return (
             <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
                 <Container maxWidth="xl">
                     {/* <button onClick={() => this.resetLayout()}>Reset Layout</button> */}
+                    {message && message !== "" ? <Typography variant="subtitle2">{message}</Typography> : ""}
                     <Button 
                         onClick={() => this.gotoHillRepeatsPage()}
                         variant="contained"

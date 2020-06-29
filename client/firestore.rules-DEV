@@ -32,7 +32,7 @@ service cloud.firestore {
     	allow read: if true;
     	allow delete: if request.auth.email == email || isUserAdmin();
     	allow update: if request.auth.email == email || isUserAdmin();
-      allow create: if request.auth.uid == userID || isUserAdmin();
+      allow create: if request.auth.email != request.resource.data.email || isUserAdmin();
     }
     
     match /ATC/prod/challenges/{challengeDoc} {
