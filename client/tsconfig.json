@@ -25,5 +25,9 @@
   "compileOnSave": true,
   "include": [
     "src/**/*"
-  ]
+  ],
+  "rules": {
+    "no-string-literal": false,
+    "no-import-side-effect": false
+  }
 }

@@ -1,3 +1,4 @@
+/*tslint:disable:prefer-conditional-expression*/
 class HillRepeat {
     id?: string;
     

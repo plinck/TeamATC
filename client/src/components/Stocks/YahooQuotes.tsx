@@ -1,3 +1,8 @@
+/*tslint:disable:no-import-side-effect*/
+/*tslint:disable:no-submodule-imports*/
+/*tslint:disable:no-implicit-dependencies */
+/*tslint:disable:object-literal-shorthand */
+/*tslint:disable:align */
 import React, { useState, useEffect } from "react";
 import { Grid, WithStyles, createStyles, Theme, withStyles, Typography, Button} from '@material-ui/core';
 import { StyleRules } from "@material-ui/core/styles";
@@ -16,7 +21,7 @@ const styles: (theme: Theme) => StyleRules<string> = theme =>
             alignItems: "center",
             justifyContent: "center",
             justifyItems: "center",
-            width:350,
+            width: 350,
             backgroundColor: "f2f2f2"
         },
         grid: {
@@ -26,8 +31,8 @@ const styles: (theme: Theme) => StyleRules<string> = theme =>
             justifyItems: "center",
             margin: "0",
             backgroundColor: "transparent",
-            maxWidth:"100%",
-            flexBasis:"100%"
+            maxWidth: "100%",
+            flexBasis: "100%"
         },
         gridItem: {
             padding: theme.spacing(0),
@@ -90,11 +95,11 @@ type Props = WithStyles<typeof styles>;
         if (symbols && symbols !== "") {
             const request = {"symbols": symbols};        
             const getStocks = firebase.functions.httpsCallable('getStocks');
-            getStocks(request).then((res:any) => {
+            getStocks(request).then((res: any) => {
                 // Read result of the Cloud Function.
                 console.log(`Stock res: ${res}`);
                 let quotes: Array<Quote> = Array<Quote>();
-                let responses: any = res.data;
+                const responses: any = res.data;
     
                 quotes = responses.map((data: any) => {
                     const myQuote: Quote = new Quote();
@@ -116,7 +121,7 @@ type Props = WithStyles<typeof styles>;
     });
 
     useEffect(() => {
-        let URIRequest = "https://yahoo-finance15.p.rapidapi.com/api/yahoo/qu/quote/AAPL,MSFT";
+        const URIRequest = "https://yahoo-finance15.p.rapidapi.com/api/yahoo/qu/quote/AAPL,MSFT";
         
         axios.get(URIRequest,
             { headers: { 
@@ -127,7 +132,7 @@ type Props = WithStyles<typeof styles>;
             // console.log(`Success retrieving data: ${JSON.stringify(res.data)}`);
 
             let quotes: Array<Quote> = Array<Quote>();
-            let responses: any = res.data;
+            const responses: any = res.data;
 
             quotes = responses.map((data: any) => {
                 const myQuote: Quote = new Quote();

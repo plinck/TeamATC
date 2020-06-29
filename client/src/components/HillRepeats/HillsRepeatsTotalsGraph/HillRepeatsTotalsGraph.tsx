@@ -1,3 +1,7 @@
+/*tslint:disable:no-import-side-effect*/
+/*tslint:disable:no-submodule-imports*/
+/*tslint:disable:no-implicit-dependencies */
+/*tslint:disable:object-literal-shorthand */
 import React from 'react';
 import moment from "moment";
 
@@ -68,7 +72,7 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
             return (a.date > b.date) ? 1 : -1;
         });
 
-        let dateRepeatsTrace: Plotly.Data[] = [];
+        const dateRepeatsTrace: Plotly.Data[] = [];
 
         allRepeatsByDate.forEach((repeat: RepeatsForDate) => {
             const displayDate = moment(repeat.date).format("MM-DD");
@@ -82,8 +86,8 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
             dateRepeatsTrace.push(trace);
         });
 
-        let data: Plotly.Data[] = dateRepeatsTrace;
-        let layout:Plotly.Layout & any = {barmode: 'stack'};
+        const data: Plotly.Data[] = dateRepeatsTrace;
+        const layout: Plotly.Layout & any = { barmode: 'stack' };
         
         return (
             <Plot

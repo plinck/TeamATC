@@ -1,20 +1,21 @@
+/*tslint:disable:prefer-conditional-expression*/
 class Activity {
-    id:string;
-    activityName:string;
-    activityDateTime:Date;
-    activityType:string;
-    challengeUid:string;
-    displayName:string;
-    distance:number;
-    distanceUnits:string;
-    duration:number;
-    durationUnits:string;
-    email:string;
-    stravaActivity:boolean = false;
-    stravaActivityId:string;
-    teamUid:string;
-    teamName:string;
-    uid:string;
+    id: string;
+    activityName: string;
+    activityDateTime: Date;
+    activityType: string;
+    challengeUid: string;
+    displayName: string;
+    distance: number;
+    distanceUnits: string;
+    duration: number;
+    durationUnits: string;
+    email: string;
+    stravaActivity: boolean = false;
+    stravaActivityId: string;
+    teamUid: string;
+    teamName: string;
+    uid: string;
 
     constructor(activityId?: string) {
         if (activityId) {

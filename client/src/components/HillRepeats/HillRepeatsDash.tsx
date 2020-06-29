@@ -1,20 +1,22 @@
+/*tslint:disable:no-import-side-effect*/
+/*tslint:disable:no-submodule-imports*/
+/*tslint:disable:no-implicit-dependencies */
 import React from 'react';
 import moment from "moment";
 
 import { WidthProvider, Responsive } from "react-grid-layout";
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
-import { Button, WithStyles, createStyles, Theme, withStyles } from "@material-ui/core";
+import { Button, Container, WithStyles, createStyles, Theme, withStyles } from "@material-ui/core";
 
 import { ClassValue } from 'classnames/types';
 import { StyleRules } from "@material-ui/core/styles";
-import { Container } from '@material-ui/core'
 import Util from "../Util/Util";
 
 import { HillRepeat } from "../../interfaces/HillRepeat";
 import HillRepeatsTotalsGraph from './HillsRepeatsTotalsGraph/HillRepeatsTotalsGraph';
 
-const globalAny:any = global;
+const globalAny: any = global;
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || {};
@@ -44,24 +46,24 @@ interface OwnProps {
     style?: ClassValue;
 }
 
-interface myState {
+interface MyState {
     layouts?: ReactGridLayout.Layouts;
     hillRepeats: Array<HillRepeat>;
 }
 
 // Exposed to user's of component - not styles
-type PublicProps = OwnProps & myState;
+type PublicProps = OwnProps & MyState;
 type Props = PublicProps & WithStyles<typeof styles> & any;
 
 class HillRepeatsDash extends React.Component<Props> {
     hillRepeatsListener: any;
 
-    state: myState = {
+    state: MyState = {
         layouts: JSON.parse(JSON.stringify(originalLayouts)),
         hillRepeats: []
     };
 
-    constructor(props:any) {
+    constructor(props: any) {
         super(props);
 
         this.state = {
@@ -71,7 +73,7 @@ class HillRepeatsDash extends React.Component<Props> {
     }
 
     componentDidMount() {
-        let layouts: ReactGridLayout.Layouts = getFromLS("layouts") || {};
+        const layouts: ReactGridLayout.Layouts = getFromLS("layouts") || {};
         this.setState({ layouts: JSON.parse(JSON.stringify(layouts)) });
 
         if (this.hillRepeatsListener) {
@@ -191,12 +193,12 @@ class HillRepeatsDash extends React.Component<Props> {
                     </ResponsiveReactGridLayout>
                 </Container>
             </div>
-        ); //return
+        ); // return
     } // render()
 }
 
 function getFromLS(key: any) {
-    let ls:any = {};
+    let ls: any = {};
     if (globalAny.localStorage) {
         try {
             ls = JSON.parse(globalAny.localStorage.getItem("rgl-8")) || {};

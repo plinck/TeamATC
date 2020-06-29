@@ -12,8 +12,7 @@ import {
   WithStyles
 } from "@material-ui/core";
 // import Button from "@material-ui/core/Button";
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
+import { Add as AddIcon, Remove as RemoveIcon } from '@material-ui/icons';
 
 import MaterialTable from 'material-table'
 import { withContext } from "../Auth/Session/Context";
@@ -115,18 +114,13 @@ class HillRepeats extends Component<Props, MyState> {
             }  
         };
     }    
-
-    handleCheckClick = (rowData: any, name: string) => {
+    handlePlusMinusClick = (rowData: any, name: string) => {
         // get the index of the row that changed and copy into new data row
         const idx = rowData.tableData.id;
         const newDataRow = this.state.data[idx];
 
         // Replace the field that changed within that rpw
-        if (name === "addrepeat") {
-            newDataRow["repeats"] = this.state.data[idx]["repeats"] + 1;
-        } else {
-            newDataRow["repeats"] = this.state.data[idx]["repeats"] - 1;
-        }
+        newDataRow.repeats = name === "addrepeat" ? this.state.data[idx].repeats + 1 : this.state.data[idx].repeats - 1;
 
         // Put the newly changed row in data in place of old row
         const newDataAllRows = this.state.data;
@@ -138,7 +132,7 @@ class HillRepeats extends Component<Props, MyState> {
         //  I couldnt figure out an esier way to replace a specific rows', specific field checkbox in a simpler way.
     };    
 
-    handlePlusMinusClick = (rowData: any, name: string) => {
+    handleCheckClick = (rowData: any, name: string) => {
         // get the index of the row that changed and copy into new data row
         const idx = rowData.tableData.id;
         const newDataRow = this.state.data[idx];
@@ -205,7 +199,7 @@ class HillRepeats extends Component<Props, MyState> {
                             field: 'addrepeat',
                             title: 'More',
                             editable: 'never',
-                            render: (rowData: any) => <Fab onClick={() => this.handleCheckClick(rowData, "addrepeat")} color="primary" aria-label="Add" className={classes.fab}><AddIcon /></Fab>
+                            render: (rowData: any) => <Fab onClick={() => this.handlePlusMinusClick(rowData, "addrepeat")} color="primary" aria-label="Add" className={classes.fab}><AddIcon /></Fab>
                     
                           },
 
@@ -213,7 +207,7 @@ class HillRepeats extends Component<Props, MyState> {
                             field: 'removerepeat',
                             title: 'Less',
                             editable: 'never',
-                            render: (rowData: any) => <Fab onClick={() => this.handleCheckClick(rowData, "removerepeat")} color="primary" aria-label="Add" className={classes.fab}><RemoveIcon /></Fab>
+                            render: (rowData: any) => <Fab onClick={() => this.handlePlusMinusClick(rowData, "removerepeat")} color="primary" aria-label="Add" className={classes.fab}><RemoveIcon /></Fab>
                     
                           },
 
