@@ -36,6 +36,7 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
 
     plotGraph() {
         let allRepeatsByDate: Array<RepeatsForDate> = [];
+        let dict: any = {};
 
         this.props.hillRepeats.forEach((repeat: HillRepeat) => {
             // find the index of the date in the array
@@ -66,6 +67,14 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
                 }
                 allRepeatsByDate.push(newRepeatsForDate);    
             }
+
+            // compute user totals and put in dictionary to display in graph
+            let newUserRepeats = repeat.repeats;
+            if (dict[repeat.displayName]) {
+                newUserRepeats += dict[repeat.displayName];
+            }
+            dict[repeat.displayName] = newUserRepeats;
+
         });
 
         allRepeatsByDate = allRepeatsByDate.sort((a, b) => {
@@ -77,13 +86,22 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
         allRepeatsByDate.forEach((repeat: RepeatsForDate) => {
             const displayDate = moment(repeat.date).format("MM-DD");
 
+            // TODO : - get totals for each user and put in total to display
+            const t: Array<string> = [];
+            repeat.userNames.forEach((name: string) => {
+                const total = dict[name];
+                t.push(`Total ${total}`);
+            })
+
             const trace: Plotly.Data = {
                 x: repeat.userNames,
                 y: repeat.userRepeats,
                 name: displayDate,
                 type: "bar",
-                hoverinfo: 'text',
-                text: [`Repeats: ${repeat.userRepeats}` ],
+                text: t,
+                hovertemplate: '<i>Repeats</i>: %{y}' +
+                    '<br> %{text}'
+
             } 
             dateRepeatsTrace.push(trace);
         });
@@ -99,7 +117,9 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
                 layout={layout}
                 useResizeHandler={true}
                 style={{ width: "100%", height: "100%" }}
-                config={{ 
+                config={{
+                    displaylogo: false,
+                    responsive: true,
                     displayModeBar: true,
                     scrollZoom: true,
                     modeBarButtonsToRemove: ['select2d','lasso2d',
