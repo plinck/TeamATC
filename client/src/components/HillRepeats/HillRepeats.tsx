@@ -1,42 +1,50 @@
 import React, { Component } from 'react'
 import {
-  Checkbox,
-  CircularProgress,
-  createStyles,
-  Container,
-  Fab,
-  Grid,
-  StyleRules,
-  Theme,
-  withStyles,
-  WithStyles
+    Button,
+    Checkbox,
+    CircularProgress,
+    createStyles,
+    Container,
+    Fab,
+    Grid,
+    Hidden,
+    StyleRules,
+    Theme,
+    Typography,
+    withStyles,
+    WithStyles
 } from "@material-ui/core";
 import DatePicker from "react-datepicker";
 
 // import Button from "@material-ui/core/Button";
-import { Add as AddIcon, Remove as RemoveIcon } from '@material-ui/icons';
+import { Add as AddIcon, Remove as RemoveIcon, GetApp as GetAppIcon } from '@material-ui/icons';
+import { CSVLink } from "react-csv";
 
 import MaterialTable from 'material-table'
 import { withContext } from "../Auth/Session/Context";
 import { ContextType } from "../../interfaces/Context.Types";
+import Weekdays from "../../interfaces/Weekdays";
 
 const styles: (theme: Theme) => StyleRules<string> = theme =>
   createStyles({
     hillrepeats: {
-      width: "100%",
+      width: "99%",
       overflow: "auto",
-      marginLeft: "2%",
-      marginRight: "2%",
-      [theme.breakpoints.up("md")]: {
-        height: "79vh",
+      marginLeft: "1%",
+      marginRight: "1%",
+      [theme.breakpoints.up("sm")]: {
+        marginLeft: "50px",
+        marginRight: "50px"
       },
-      height: "65.5vh",
     },
     root: {
       [theme.breakpoints.up("md")]: {
         marginLeft: "57px",
       },
       paddingTop: "10px",
+    },
+    reactDatepickerPopper: {
+        zIndex: "9999!important" as any
     },
     heading: {
       fontSize: theme.typography.pxToRem(15),
@@ -65,9 +73,6 @@ const styles: (theme: Theme) => StyleRules<string> = theme =>
       fontSize: 200,
     },
     csvButton: {
-      [theme.breakpoints.down("md")]: {
-        display: "none",
-      },
       textDecoration: "none",
     },
     fab: {
@@ -187,29 +192,58 @@ class HillRepeats extends Component<Props, MyState> {
 
         const { classes } = this.props;
         const { repeatDateTime } = this.state;
+        const weekdays = new Weekdays();
       
         return(
             <Container className={classes.hillrepeats} maxWidth="xl">
-                <label>{`Activity Date: `}
-                </label>
-                <DatePicker
-                    id="repeatDateTime"
-                    name="repeatDateTime"
-                    value={repeatDateTime.toDateString()}
+                <Grid
+                    container
+                    xs={12}
+                    direction="row"
+                    justify="space-between"
+                    alignItems="center"
+                >
+                    <Grid item xs={8}>
+                        <Typography variant="h5" gutterBottom component="h2"><br/>Hill Repeats for Day</Typography>
+                    </Grid>
+                    <Grid item xs={4} style={{ textAlign: "left"}}>
+                            <Hidden smDown>
+                                <CSVLink 
+                                    className={classes.csvButton}
+                                    data={this.state.data}
+                                    filename={"teamatc-transactions.csv"}
+                                    target="_blank"
+                                    >
+                                    <Button color="default" startIcon={<GetAppIcon />}>
+                                        Export CSV
+                                    </Button>
+                                </CSVLink>
+                            </Hidden>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <div style={{zIndex: 999}}>
+                            <label>{`Date: `}
+                            </label>
+                            <DatePicker className={classes.reactDatepickerPopper}
+                                id="repeatDateTime"
+                                name="repeatDateTime"
+                                value={repeatDateTime.toDateString()}
 
-                    selected={repeatDateTime}
-                    onSelect={date => this.handleDateChange(date)} //when day is clicked
-                    onChange={date => this.handleDateChange(date)} //only when value has changed
+                                selected={repeatDateTime}
+                                onSelect={date => this.handleDateChange(date)} //when day is clicked
+                                onChange={date => this.handleDateChange(date)} //only when value has changed
 
-                    showTimeSelect
-                    timeFormat="HH:mm"
-                    timeIntervals={15}
-                    timeCaption="time"
-                    dateFormat="MMMM d, yyyy"
-                />
+                                openToDate={new Date()}
+                                autoFocus={true}
+                                dateFormat="MMMM d, yyyy"                        
+                            />
+                            <span><em><b> {weekdays.name[repeatDateTime.getDay()]}</b></em></span>
+                        </div>
+                    </Grid>
+                </Grid>
+                <br/>
 
-
-                    <MaterialTable
+                    <MaterialTable style={{zIndex: -1}}
                         title="Hill Repeats"
                         columns={[
                           {
