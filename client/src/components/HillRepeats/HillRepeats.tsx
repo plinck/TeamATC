@@ -73,7 +73,7 @@ const styles: (theme: Theme) => StyleRules<string> = theme =>
       fontSize: 200,
     },
     csvButton: {
-      textDecoration: "none",
+        marginRight: theme.spacing(3),
     },
     fab: {
         margin: theme.spacing(1),
@@ -206,8 +206,9 @@ class HillRepeats extends Component<Props, MyState> {
                     <Grid item xs={8}>
                         <Typography variant="h5" gutterBottom component="h2"><br/>Hill Repeats for Day</Typography>
                     </Grid>
-                    <Grid item xs={4} style={{ textAlign: "left"}}>
+                    <Grid item xs={3} style={{ textAlign: "right"}}>
                             <Hidden smDown>
+                                <Typography variant="h5" gutterBottom component="h2">
                                 <CSVLink 
                                     className={classes.csvButton}
                                     data={this.state.data}
@@ -218,6 +219,7 @@ class HillRepeats extends Component<Props, MyState> {
                                         Export CSV
                                     </Button>
                                 </CSVLink>
+                                </Typography>
                             </Hidden>
                     </Grid>
                     <Grid item xs={6}>
