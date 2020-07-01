@@ -211,7 +211,7 @@ class HillRepeats extends Component<Props, MyState> {
                                 <CSVLink 
                                     className={classes.csvButton}
                                     data={this.state.data}
-                                    filename={"teamatc-transactions.csv"}
+                                    filename={"hillrepeats.csv"}
                                     target="_blank"
                                     >
                                     <Button color="default" startIcon={<GetAppIcon />}>
