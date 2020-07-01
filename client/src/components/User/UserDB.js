@@ -228,6 +228,7 @@ class UserDB {
                     if ( team.teamUid && team.teamUid === teamUid ) {
                         return team.teamName;
                     }
+                    return null;
                 });
             } else {
                 teamUid = "";
@@ -273,7 +274,6 @@ class UserDB {
             if (idx > -1) {       // Found
                 user.challenges[idx].teamUid = teamUid;
             } else {
-                teamUid = teamUid;
                 user.challenges.push({challengeUid: user.challengeUid, teamUid: teamUid});
             }
 

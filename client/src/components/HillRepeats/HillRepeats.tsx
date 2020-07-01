@@ -11,6 +11,8 @@ import {
   withStyles,
   WithStyles
 } from "@material-ui/core";
+import DatePicker from "react-datepicker";
+
 // import Button from "@material-ui/core/Button";
 import { Add as AddIcon, Remove as RemoveIcon } from '@material-ui/icons';
 
@@ -84,8 +86,13 @@ type Data = any;
 type Column = any;
 type Actions = any;
 type Options = any;
-type Table = {columns : Column[], data: Data[], actions?: Actions[], options?: Options}
-type MyState = Table;
+type MyState = {
+    repeatDateTime: Date;
+    columns : Column[];
+    data: Data[];
+    actions?: Actions[];
+    options?: Options
+}
 
 interface ContextProps {
   context: ContextType;
@@ -102,6 +109,7 @@ class HillRepeats extends Component<Props, MyState> {
         super(props);
     
         this.state = {
+            repeatDateTime: new Date(),
             columns: [],
             data: [
                 { checkin: false, checkout: false, displayName: 'Jerome', email: 'jessica@email.com', repeats: 6 },
@@ -150,6 +158,14 @@ class HillRepeats extends Component<Props, MyState> {
         //  I couldnt figure out an esier way to replace a specific rows', specific field checkbox in a simpler way.
     };    
 
+    // Handle Date Picker Change
+    handleDateChange = (date: Date) => {
+        this.setState({
+            repeatDateTime: date
+        });    
+    }
+    
+
     render() {    
         if (this.props.context.uid === null) {
             return (
@@ -170,10 +186,29 @@ class HillRepeats extends Component<Props, MyState> {
         }
 
         const { classes } = this.props;
+        const { repeatDateTime } = this.state;
       
         return(
             <Container className={classes.hillrepeats} maxWidth="xl">
-                <div >
+                <label>{`Activity Date: `}
+                </label>
+                <DatePicker
+                    id="repeatDateTime"
+                    name="repeatDateTime"
+                    value={repeatDateTime.toDateString()}
+
+                    selected={repeatDateTime}
+                    onSelect={date => this.handleDateChange(date)} //when day is clicked
+                    onChange={date => this.handleDateChange(date)} //only when value has changed
+
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={15}
+                    timeCaption="time"
+                    dateFormat="MMMM d, yyyy"
+                />
+
+
                     <MaterialTable
                         title="Hill Repeats"
                         columns={[
@@ -246,7 +281,6 @@ class HillRepeats extends Component<Props, MyState> {
                             }),
                         }}
                     />
-                </div>
             </Container>
         )
     }
