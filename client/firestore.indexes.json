@@ -57,6 +57,20 @@
       ]
     },
     {
+      "collectionGroup": "hillRepeats",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "repeatDateTime",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "displayName",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "users",
       "queryScope": "COLLECTION",
       "fields": [

@@ -6,6 +6,7 @@ class HillRepeat {
     description?: string;
     displayName: string;
     elevationGainPerRepeat: number;
+    email?: string;
     repeats: number;
     uid: string;
 
@@ -21,6 +22,7 @@ class HillRepeat {
         this.description = "";
         this.displayName = "";
         this.elevationGainPerRepeat = 0;
+        this.email = "";
         this.repeats = 0;
         this.uid = "";
 

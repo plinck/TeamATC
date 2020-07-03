@@ -25,6 +25,9 @@ import { withContext } from "../Auth/Session/Context";
 import { ContextType } from "../../interfaces/Context.Types";
 import Weekdays from "../../interfaces/Weekdays";
 
+import { HillRepeat } from "../../interfaces/HillRepeat";
+import { HillRepeatsDB } from "./HillRepeatsDB";
+
 const styles: (theme: Theme) => StyleRules<string> = theme =>
   createStyles({
     hillrepeats: {
@@ -92,6 +95,7 @@ type Column = any;
 type Actions = any;
 type Options = any;
 type MyState = {
+    message?: string;
     repeatDateTime: Date;
     columns : Column[];
     data: Data[];
@@ -114,6 +118,7 @@ class HillRepeats extends Component<Props, MyState> {
         super(props);
     
         this.state = {
+            message: "",
             repeatDateTime: new Date(),
             columns: [],
             data: [
@@ -127,6 +132,38 @@ class HillRepeats extends Component<Props, MyState> {
             }  
         };
     }    
+
+    fetchHillRepeatsByDate(pRepeatDate: Date) {
+        let repeatDate: Date = pRepeatDate;
+        const hillRepeatsDB = new HillRepeatsDB();
+
+        if (!repeatDate) {
+            repeatDate = new Date();
+        }
+        hillRepeatsDB.getAll(repeatDate).then((pHillRepeats: any) => {
+            const hillRepeats = pHillRepeats as Array<HillRepeat>;
+            let data: Data[] = new Array<Data>();
+            
+            hillRepeats.forEach((repeat: HillRepeat) => {
+                data.push( {
+                    checkin: false,
+                    checkout: false,
+                    displayName: repeat.displayName,
+                    email: repeat.email ? repeat.email : "",
+                    repeats: repeat.repeats
+                })
+            });
+            this.setState( {data: data} );
+        }).catch((err: Error) => {
+            console.error(`${err}`);
+            this.setState({message: `Error retrieving hill repeats: ${err.message}`});
+        });
+
+    }
+    componentDidMount() {
+        this.fetchHillRepeatsByDate(this.state.repeatDateTime);
+    }
+
     handlePlusMinusClick = (rowData: any, name: string) => {
         // get the index of the row that changed and copy into new data row
         const idx = rowData.tableData.id;
@@ -165,6 +202,8 @@ class HillRepeats extends Component<Props, MyState> {
 
     // Handle Date Picker Change
     handleDateChange = (date: Date) => {
+        this.fetchHillRepeatsByDate(date);
+
         this.setState({
             repeatDateTime: date
         });    
