@@ -6,14 +6,15 @@ import { HillRepeat } from "../../interfaces/HillRepeat";
 
 class HillRepeatsDB {
 
-    getAll(filterByDate?: Date) {
+    getAll(pFilterByDate?: Date) {
         return new Promise((resolve: any, reject: any): any => {        
             const dbAllRefs = Util.getBaseDBRefs();
             const dbHillRepeatsRef = dbAllRefs.dbHillRepeatsRef;
+            let filterByDate: Date;
             let filteredRef: any = dbHillRepeatsRef;
 
-            if (filterByDate) { 
-                filterByDate = moment(filterByDate).startOf("day").toDate();
+            if (pFilterByDate) { 
+                filterByDate = moment(pFilterByDate).startOf("day").toDate();
                            
                 filteredRef = dbHillRepeatsRef
                     .where("repeatDateTime", "==", filterByDate)
@@ -23,7 +24,7 @@ class HillRepeatsDB {
                     .orderBy("displayName")        
             }
 
-            let allRepeats: Array<HillRepeat> = [];
+            const allRepeats: Array<HillRepeat> = [];
             filteredRef.get().then((querySnapshot: firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>) => {
                 querySnapshot.forEach(doc => {
                     let newRepeat: HillRepeat = new HillRepeat(doc.id);
@@ -39,7 +40,7 @@ class HillRepeatsDB {
                 console.error(`Error retrieving hill repeats: ${err}`);
                 reject(`Error retrieving hill repeats: ${err}`);
             });
-        }); //promise
+        }); // promise
     }
 }
 export { HillRepeatsDB }

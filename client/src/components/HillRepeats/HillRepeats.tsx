@@ -1,3 +1,4 @@
+/*tslint:disable:object-literal-shorthand*/
 import React, { Component } from 'react'
 import {
     Button,
@@ -142,10 +143,10 @@ class HillRepeats extends Component<Props, MyState> {
         }
         hillRepeatsDB.getAll(repeatDate).then((pHillRepeats: any) => {
             const hillRepeats = pHillRepeats as Array<HillRepeat>;
-            let data: Data[] = new Array<Data>();
+            const data: Data[] = new Array<Data>();
             
             hillRepeats.forEach((repeat: HillRepeat) => {
-                data.push( {
+                data.push({
                     checkin: false,
                     checkout: false,
                     displayName: repeat.displayName,
@@ -153,7 +154,7 @@ class HillRepeats extends Component<Props, MyState> {
                     repeats: repeat.repeats
                 })
             });
-            this.setState( {data: data} );
+            this.setState({data: data});
         }).catch((err: Error) => {
             console.error(`${err}`);
             this.setState({message: `Error retrieving hill repeats: ${err.message}`});
@@ -271,8 +272,8 @@ class HillRepeats extends Component<Props, MyState> {
                                 value={repeatDateTime.toDateString()}
 
                                 selected={repeatDateTime}
-                                onSelect={date => this.handleDateChange(date)} //when day is clicked
-                                onChange={date => this.handleDateChange(date)} //only when value has changed
+                                onSelect={date => this.handleDateChange(date)} // when day is clicked
+                                onChange={date => this.handleDateChange(date)} // only when value has changed
 
                                 openToDate={new Date()}
                                 autoFocus={true}
