@@ -25,6 +25,7 @@ interface ContextProps {
 type PublicProps = OwnProps;
 type Props = PublicProps & ContextProps & any;
 
+// Must keep userRepeatData together for sorting
 interface RepeatsForDate {
     date?: Date,
     userRepeatData?: Array<{displayName: string, nbrRepeats: number, totalRepeats?: number}>
