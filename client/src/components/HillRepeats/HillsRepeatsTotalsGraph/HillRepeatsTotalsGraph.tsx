@@ -89,13 +89,13 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
 
             repeat.userRepeatData = repeat.userRepeatData.map((userRepeat: any) => {
                 const total = totalDict[userRepeat.displayName];
-                let newUserRepeat = userRepeat;
+                const newUserRepeat = userRepeat;
                 newUserRepeat.totalRepeats = total;
                 return newUserRepeat;
             });
 
             // Getting sum of numbers
-            repeat.userRepeatData = repeat.userRepeatData.sort((a,b) => {
+            repeat.userRepeatData = repeat.userRepeatData.sort((a, b) => {
                 return (a.totalRepeats < b.totalRepeats) ? 1 : -1;
             });
 

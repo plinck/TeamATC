@@ -48,7 +48,7 @@ const styles: (theme: Theme) => StyleRules<string> = theme =>
       paddingTop: "10px",
     },
     reactDatepickerPopper: {
-        zIndex: "9999!important" as any
+		zIndex: "999!important" as any
     },
     heading: {
       fontSize: theme.typography.pxToRem(15),
@@ -162,15 +162,24 @@ class HillRepeats extends Component<Props, MyState> {
 
     }
     componentDidMount() {
-        this.fetchHillRepeatsByDate(this.state.repeatDateTime);
+       	this.fetchHillRepeatsByDate(this.state.repeatDateTime);
     }
+
+    // Handle Date Picker Change
+    handleDateChange = (date: Date) => {
+		this.fetchHillRepeatsByDate(date);
+
+		this.setState({
+			repeatDateTime: date
+		});    
+  	}
 
     handlePlusMinusClick = (rowData: any, name: string) => {
         // get the index of the row that changed and copy into new data row
         const idx = rowData.tableData.id;
         const newDataRow = this.state.data[idx];
 
-        // Replace the field that changed within that rpw
+        // Replace the field that changed within that row
         newDataRow.repeats = name === "addrepeat" ? this.state.data[idx].repeats + 1 : this.state.data[idx].repeats - 1;
 
         // Put the newly changed row in data in place of old row
@@ -188,7 +197,7 @@ class HillRepeats extends Component<Props, MyState> {
         const idx = rowData.tableData.id;
         const newDataRow = this.state.data[idx];
 
-        // Replace the field that changed within that rpw
+        // Replace the field that changed within that row
         newDataRow[name] = !this.state.data[idx][name];
 
         // Put the newly changed row in data in place of old row
@@ -199,17 +208,7 @@ class HillRepeats extends Component<Props, MyState> {
         this.setState({ ...this.state, data: newDataAllRows });
 
         //  I couldnt figure out an esier way to replace a specific rows', specific field checkbox in a simpler way.
-    };    
-
-    // Handle Date Picker Change
-    handleDateChange = (date: Date) => {
-        this.fetchHillRepeatsByDate(date);
-
-        this.setState({
-            repeatDateTime: date
-        });    
-    }
-    
+    };        
 
     render() {    
         if (this.props.context.uid === null) {
@@ -247,23 +246,23 @@ class HillRepeats extends Component<Props, MyState> {
                         <Typography variant="h5" gutterBottom component="h2"><br/>Hill Repeats for Day</Typography>
                     </Grid>
                     <Grid item xs={3} style={{ textAlign: "right"}}>
-                            <Hidden smDown>
-                                <Typography variant="h5" gutterBottom component="h2">
-                                <CSVLink 
-                                    className={classes.csvButton}
-                                    data={this.state.data}
-                                    filename={"hillrepeats.csv"}
-                                    target="_blank"
-                                    >
-                                    <Button color="default" startIcon={<GetAppIcon />}>
-                                        Export CSV
-                                    </Button>
-                                </CSVLink>
-                                </Typography>
-                            </Hidden>
+						<Hidden smDown>
+							<Typography variant="h5" gutterBottom component="h2">
+							<CSVLink 
+								className={classes.csvButton}
+								data={this.state.data}
+								filename={"hillrepeats.csv"}
+								target="_blank"
+								>
+								<Button color="default" startIcon={<GetAppIcon />}>
+									Export CSV
+								</Button>
+							</CSVLink>
+							</Typography>
+						</Hidden>
                     </Grid>
                     <Grid item xs={6}>
-                        <div style={{zIndex: 999}}>
+                        <div style={{zIndex: 2, position: "relative"}}>
                             <label>{`Date: `}
                             </label>
                             <DatePicker className={classes.reactDatepickerPopper}
@@ -284,8 +283,8 @@ class HillRepeats extends Component<Props, MyState> {
                     </Grid>
                 </Grid>
                 <br/>
-
-                    <MaterialTable style={{zIndex: -1}}
+				<div style={{zIndex: 1, position: "relative"}}>
+                    <MaterialTable
                         title="Hill Repeats"
                         columns={[
                           {
@@ -357,6 +356,7 @@ class HillRepeats extends Component<Props, MyState> {
                             }),
                         }}
                     />
+				</div>
             </Container>
         )
     }
