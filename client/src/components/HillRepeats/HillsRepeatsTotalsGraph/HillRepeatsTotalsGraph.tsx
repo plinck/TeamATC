@@ -25,17 +25,9 @@ interface ContextProps {
 type PublicProps = OwnProps;
 type Props = PublicProps & ContextProps & any;
 
-interface RepeatsForUser {
-    dates?: Array<Date>,
-    displayName: string,
-    userRepeats: Array<number>,
-    totalRepeats?: number
-}
 interface RepeatsForDate {
     date?: Date,
-    userRepeatInfoArray?: Array<RepeatsForUser>,
-    displayNames: Array<string>,
-    userRepeats: Array<number>
+    userRepeatData?: Array<{displayName: string, nbrRepeats: number, totalRepeats?: number}>
 }
 
 class HillRepeatsTotalsGraph extends React.Component<Props> {
@@ -43,7 +35,6 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
 
     plotGraph() {
         let allRepeatsByDate: Array<RepeatsForDate> = [];
-        let allRepeatsByUser: Array<RepeatsForUser> = [];
         const totalDict: any = {};
 
         this.props.hillRepeats.forEach((repeat: HillRepeat) => {
@@ -59,24 +50,9 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
             if (idx > -1) {       
                 // Found, results for this oone so add to it
                 allRepeatsByDate[idx].date = repeat.repeatDateTime;  // redudant
-                allRepeatsByDate[idx].displayNames.push(repeat.displayName);
-                allRepeatsByDate[idx].userRepeats.push(repeat.repeats);
 
-                const displayNamesIdx = allRepeatsByDate[idx].userRepeatInfoArray.findIndex((userRepeat: RepeatsForUser) => {
-                    const foundIdx = userRepeat.displayName === repeat.displayName;
-                    return foundIdx;
-                });
-                if (displayNamesIdx > -1) {       
-                    allRepeatsByDate[idx].userRepeatInfoArray[displayNamesIdx].displayName = repeat.displayName;
-                    allRepeatsByDate[idx].userRepeatInfoArray[displayNamesIdx].userRepeats.push(repeat.repeats);
-                    allRepeatsByDate[idx].userRepeatInfoArray[displayNamesIdx].totalRepeats += repeat.repeats;
-                } else {
-                    allRepeatsByDate[idx].userRepeatInfoArray.push({
-                        displayName: repeat.displayName,
-                        userRepeats: [repeat.repeats],
-                        totalRepeats: repeat.repeats
-                    });
-                }
+                allRepeatsByDate[idx].userRepeatData.push({displayName: repeat.displayName, nbrRepeats: repeat.repeats, totalRepeats: 0});
+
             } else {
                 // New
                 const displayNames: Array<string> = Array<string>();
@@ -86,37 +62,10 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
 
                 const newRepeatsForDate: RepeatsForDate = {
                     date: repeat.repeatDateTime,
-                    userRepeatInfoArray: [{displayName: repeat.displayName, userRepeats: userRepeats, totalRepeats: repeat.repeats}],
-                    displayNames: displayNames,
-                    userRepeats: userRepeats
+
+                    userRepeatData: [{displayName: repeat.displayName, nbrRepeats: repeat.repeats, totalRepeats: 0}]
                 }
                 allRepeatsByDate.push(newRepeatsForDate);        
-            }
-
-            // Now, populate the array of user repeats
-            const userIndex = allRepeatsByUser.findIndex((repeatsForOneUser: RepeatsForUser) => {
-                const repeatUser = repeat.displayName;
-
-                // cant compare dates since they are never equal
-                const foundIdx = repeatUser === repeatsForOneUser.displayName;
-                return foundIdx;
-            });
-            if (userIndex > -1) {       
-                // Found, results for this oone so add to it
-                allRepeatsByUser[userIndex].displayName = repeat.displayName;
-                allRepeatsByUser[userIndex].dates.push(repeat.repeatDateTime);
-                allRepeatsByUser[userIndex].userRepeats.push(repeat.repeats);
-                allRepeatsByUser[userIndex].totalRepeats += repeat.repeats;
-            } else {
-                const userRepeats: Array<number> = Array<number>();
-                userRepeats.push(repeat.repeats);
-                
-                allRepeatsByUser.push({
-                    dates: [repeat.repeatDateTime],
-                    displayName: repeat.displayName,
-                    userRepeats: userRepeats,
-                    totalRepeats: repeat.repeats
-                });
             }
 
             // compute user totals and put in dictionary to display in graph
@@ -131,37 +80,32 @@ class HillRepeatsTotalsGraph extends React.Component<Props> {
         allRepeatsByDate = allRepeatsByDate.sort((a, b) => {
             return (a.date > b.date) ? 1 : -1;
         });
-        allRepeatsByUser = allRepeatsByUser.sort((a, b) => {
-            return (a.displayName > b.displayName) ? 1 : -1;
-        });
 
         const dateRepeatsTrace: Plotly.Data[] = [];
 
         allRepeatsByDate.forEach((repeat: RepeatsForDate) => {
             const displayDate = moment(repeat.date).format("MM-DD");
 
-            let totalRepeats: Array<string> = [];
-            repeat.displayNames.forEach((name: string) => {
-                const total = totalDict[name];
-                totalRepeats.push(`Total ${total}`);
+            repeat.userRepeatData = repeat.userRepeatData.map((userRepeat: any) => {
+                const total = totalDict[userRepeat.displayName];
+                let newUserRepeat = userRepeat;
+                newUserRepeat.totalRepeats = total;
+                return newUserRepeat;
             });
 
-            // const allDisplayNames = repeat.userRepeatInfoArray.map(userRepeatInfo => {
-            //     return userRepeatInfo.displayName;
-            // }); 
-            // const allUserRepeats = repeat.userRepeatInfoArray.map(userRepeatInfo => {
-            //     return userRepeatInfo.userRepeats;
-            // }); 
+            // Getting sum of numbers
+            repeat.userRepeatData = repeat.userRepeatData.sort((a,b) => {
+                return (a.totalRepeats < b.totalRepeats) ? 1 : -1;
+            });
 
             const trace: Plotly.Data = {
-                x: repeat.displayNames,
-                y: repeat.userRepeats,
+                x: repeat.userRepeatData.map(userRepeat => userRepeat.displayName),
+                y: repeat.userRepeatData.map(userRepeat => userRepeat.nbrRepeats),
                 name: displayDate,
                 type: "bar",
-                text: totalRepeats,
+                text: repeat.userRepeatData.map(userRepeat => `Total ${userRepeat.totalRepeats}`),
                 hovertemplate: '<i>Repeats</i>: %{y}' +
                     '<br> %{text}'
-
             } 
             dateRepeatsTrace.push(trace);
         });
