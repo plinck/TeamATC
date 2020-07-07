@@ -42,5 +42,57 @@ class HillRepeatsDB {
             });
         }); // promise
     }
+
+    update(pRepeat: HillRepeat) {
+        console.log(`trying to update repeat in fb: ${pRepeat}`);
+        let newRepeat = {...pRepeat};
+        // Delete the id field since you do not want in db as it is they key
+        try {
+            delete newRepeat.id
+        } catch {
+            // no op - dont care
+        }
+
+        return new Promise((resolve, reject) => {
+            // update
+            console.log("Repeat updated, newRepeat=", newRepeat);
+            const dbAllRefs = Util.getBaseDBRefs();
+            const dbHillRepeatsRef = dbAllRefs.dbHillRepeatsRef;
+            dbHillRepeatsRef.doc(pRepeat.id).set(newRepeat, {
+                merge: true
+            }).then(() => {
+                console.log("completed");
+                resolve();
+            }).catch(err => {
+                console.error(`error updating repeat: ${newRepeat}`);
+                reject(err);
+            });
+        });
+    }
+
+    add(pRepeat: HillRepeat) {
+        console.log(`trying to update repeat in fb: ${pRepeat}`);
+        let newRepeat = {...pRepeat};
+        // Delete the id field since you do not want in db as it is they key
+        try {
+            delete newRepeat.id
+        } catch {
+            // no op - dont care
+        }
+
+        return new Promise((resolve, reject) => {
+            // update
+            console.log("Repeat added, newRepeat=", newRepeat);
+            const dbAllRefs = Util.getBaseDBRefs();
+            const dbHillRepeatsRef = dbAllRefs.dbHillRepeatsRef;
+            dbHillRepeatsRef.add(newRepeat).then(() => {
+                console.log("completed");
+                resolve();
+            }).catch(err => {
+                console.error(`error adding repeat: ${newRepeat}`);
+                reject(err);
+            });
+        });
+    }
 }
 export { HillRepeatsDB }

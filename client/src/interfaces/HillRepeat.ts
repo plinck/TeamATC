@@ -2,11 +2,13 @@
 class HillRepeat {
     id?: string;
     
-    repeatDateTime: Date;
+    checkin: boolean;
+    checkout: boolean;
     description?: string;
     displayName: string;
     elevationGainPerRepeat: number;
     email?: string;
+    repeatDateTime: Date;
     repeats: number;
     uid: string;
 
@@ -18,11 +20,13 @@ class HillRepeat {
         } else {
             this.id = "";
         }
-        this.repeatDateTime = new Date();
+        this.checkin = false;
+        this.checkout = false;   
         this.description = "";
         this.displayName = "";
         this.elevationGainPerRepeat = 0;
         this.email = "";
+        this.repeatDateTime = new Date();
         this.repeats = 0;
         this.uid = "";
 

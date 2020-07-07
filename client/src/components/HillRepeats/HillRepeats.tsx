@@ -29,6 +29,8 @@ import Weekdays from "../../interfaces/Weekdays";
 import { HillRepeat } from "../../interfaces/HillRepeat";
 import { HillRepeatsDB } from "./HillRepeatsDB";
 
+const DEFAULT_ELEVATION_GAIN: number = 110;
+
 const styles: (theme: Theme) => StyleRules<string> = theme =>
   createStyles({
     hillrepeats: {
@@ -147,11 +149,17 @@ class HillRepeats extends Component<Props, MyState> {
             
             hillRepeats.forEach((repeat: HillRepeat) => {
                 data.push({
-                    checkin: false,
-                    checkout: false,
+					id: repeat.id,
+					
+                    checkin: repeat.checkin,
+                    checkout: repeat.checkout,
+                    description: repeat.description,
                     displayName: repeat.displayName,
+                    elevationGainPerRepeat: repeat.elevationGainPerRepeat,
                     email: repeat.email ? repeat.email : "",
-                    repeats: repeat.repeats
+                    repeatDateTime: repeat.repeatDateTime,
+                    repeats: repeat.repeats,
+                    uid: repeat.uid
                 })
             });
             this.setState({data: data});
@@ -180,16 +188,24 @@ class HillRepeats extends Component<Props, MyState> {
         const newDataRow = this.state.data[idx];
 
         // Replace the field that changed within that row
-        newDataRow.repeats = name === "addrepeat" ? this.state.data[idx].repeats + 1 : this.state.data[idx].repeats - 1;
+		newDataRow.repeats = name === "addrepeat" ? this.state.data[idx].repeats + 1 : this.state.data[idx].repeats - 1;
+		newDataRow.checkin = true;
+		newDataRow.checkout = true;
+		
+		const hillRepeat: HillRepeat = {...newDataRow};
+		hillRepeat.elevationGainPerRepeat = hillRepeat.elevationGainPerRepeat ? hillRepeat.elevationGainPerRepeat : DEFAULT_ELEVATION_GAIN;
+		const hillRepeatsDB = new HillRepeatsDB();
+		hillRepeatsDB.update(hillRepeat).then(() => {
+			// Put the newly changed row in data in place of old row
+			const newDataAllRows = this.state.data;
+			newDataAllRows.splice(idx, 1, newDataRow);   
 
-        // Put the newly changed row in data in place of old row
-        const newDataAllRows = this.state.data;
-        newDataAllRows.splice(idx, 1, newDataRow);   
-
-        // replace the data field in state
-        this.setState({ ...this.state, data: newDataAllRows });
-
-        //  I couldnt figure out an esier way to replace a specific rows', specific field checkbox in a simpler way.
+			// replace the data field in state
+			this.setState({ ...this.state, message: "Updated", data: newDataAllRows });
+		}).catch((err: Error) => {
+            console.error(`${err}`);
+            this.setState({message: `Error updating hill repeats: ${err.message}`});
+		});
     };    
 
     handleCheckClick = (rowData: any, name: string) => {
@@ -198,7 +214,22 @@ class HillRepeats extends Component<Props, MyState> {
         const newDataRow = this.state.data[idx];
 
         // Replace the field that changed within that row
-        newDataRow[name] = !this.state.data[idx][name];
+		newDataRow[name] = !this.state.data[idx][name];
+		
+		const hillRepeat: HillRepeat = {...newDataRow};
+		hillRepeat.elevationGainPerRepeat = hillRepeat.elevationGainPerRepeat ? hillRepeat.elevationGainPerRepeat : DEFAULT_ELEVATION_GAIN;
+		const hillRepeatsDB = new HillRepeatsDB();
+		hillRepeatsDB.update(hillRepeat).then(() => {
+			// Put the newly changed row in data in place of old row
+			const newDataAllRows = this.state.data;
+			newDataAllRows.splice(idx, 1, newDataRow);   
+
+			// replace the data field in state
+			this.setState({ ...this.state, message: "Updated", data: newDataAllRows });
+		}).catch((err: Error) => {
+            console.error(`${err}`);
+            this.setState({message: `Error updating hill repeats: ${err.message}`});
+		});
 
         // Put the newly changed row in data in place of old row
         const newDataAllRows = this.state.data;

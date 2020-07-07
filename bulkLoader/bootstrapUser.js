@@ -633,7 +633,7 @@ async function createTestHillRepeats () {
     let totalUserRepeatRecords = 100;
     let i = 0;
 
-    let repeatDate = new Date("06/03/2020");
+    let repeatDate = new Date("06/04/2020");
     let repeatUserNbr = 0;
     for (i = 0; i < totalUserRepeatRecords; i++) {
         // get random stuff for activity
@@ -641,16 +641,19 @@ async function createTestHillRepeats () {
             repeatDate.setDate(repeatDate.getDate() + 7)
             repeatUserNbr = 0;
         }
-        const repeatDisplayName = `User ${repeatUserNbr}`;
+        const repeatDisplayName = `User ${String(repeatUserNbr).padStart(3, '0')}`;
         repeatUserNbr += 1;
         
         const hillrepeat = {
-            repeatDateTime: repeatDate,
+            checkin: false,
+            checkout: false,
             description: `Repeat nbr: ${i}`,
             displayName: repeatDisplayName,
             elevationGainPerRequest: 110,
+            repeatDateTime: repeatDate,
             repeats: Math.floor(Math.random() * 12) + 1,
             uid: `xxxxx-${repeatUserNbr}`,
+
             lastUpdateDateTime: new Date()
         };
         // console.log(`hillrepeat.repeatDateTime ${hillrepeat.repeatDateTime}`);
