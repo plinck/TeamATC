@@ -1,4 +1,5 @@
 class User {
+    id: string;
     challengeUid:  string;
     displayName:  string;
     email: string;
@@ -9,7 +10,7 @@ class User {
     isUser: boolean;
     lastName: string;
     phoneNumber: string;
-    photoURL: string;
+    photoObj: {url: string};
     primaryRole: string;
     stravaAccessToken: string;
     stravaAthleteId:  string;
@@ -20,7 +21,12 @@ class User {
     teamUid: string;
     uid: string;
 
-    constructor() {
+    constructor(userId?: string) {
+        if (userId) {
+            this.id = "";
+        } else {
+            this.id = "";
+        }
         this.challengeUid = "";
         this.displayName = "";
         this.email = "";
@@ -31,7 +37,7 @@ class User {
         this.isUser = false;
         this.lastName = "";
         this.phoneNumber = "";
-        this.photoURL = "";
+        this.photoObj.url = "";
         this.primaryRole = "";
         this.stravaAccessToken = "";
         this.stravaAthleteId = "";

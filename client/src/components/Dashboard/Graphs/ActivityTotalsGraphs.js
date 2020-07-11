@@ -3,7 +3,7 @@ import Plot from 'react-plotly.js';
 import { Redirect } from 'react-router';
 import { withRouter } from 'react-router-dom';
 
-import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
+import { withContext } from "../../Auth/Session/Context";
 
 class ActivityTotalsGraphs extends React.Component {
     // Dnt need constructor but leave sig in case I need to addd to it
@@ -87,11 +87,11 @@ class ActivityTotalsGraphs extends React.Component {
 
     render() {
         // Some props take time to get ready so return null when uid not avaialble
-        if (!this.props.user) {
+        if (!this.props.context) {
             return null;
         }
 
-        if (this.props.user.authUser) {
+        if (this.props.context.authUser) {
             return (
                 <div>
                     <div className="card">
@@ -110,4 +110,4 @@ class ActivityTotalsGraphs extends React.Component {
     }
 }
 
-export default withRouter(withAuthUserContext(ActivityTotalsGraphs));
+export default withRouter(withContext(ActivityTotalsGraphs));

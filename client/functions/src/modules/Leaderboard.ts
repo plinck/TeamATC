@@ -67,33 +67,10 @@ class Leaderboard {
             userResults = this.calulateUserResults(challenge, userResults, activity, ActivityUpdateType.create);
         }
     
-        // Sort the team and user results based on total points DESC          
-        userResults.sort((a:Result, b:Result) => {
-            const totalA = a.pointsTotal;
-            const totalB = b.pointsTotal;
-    
-            let comparison = 0;
-            if (totalA > totalB) {
-                comparison = 1;
-            } else if (totalA < totalB) {
-                comparison = -1;
-            }
-            return comparison * -1;  // Invert so it will sort in descending order
-        });
-    
-        teamResults.sort((a:Result, b:Result) => {
-            const totalA = a.pointsTotal;
-            const totalB = b.pointsTotal;
-    
-            let comparison = 0;
-            if (totalA > totalB) {
-                comparison = 1;
-            } else if (totalA < totalB) {
-                comparison = -1;
-            }
-            return comparison * -1;  // Invert so it will sort in descending order
-        });
-    
+        // Sort the team and user results based on total points DESC 
+        userResults = this.sortResultsAndAddRank(userResults);
+        teamResults = this.sortResultsAndAddRank(teamResults);
+            
         const allResults: AllResults = {challengeUid: challenge.id, overallResults, teamResults, userResults};
     
         return (allResults);
@@ -109,8 +86,6 @@ class Leaderboard {
     }    
     // Calculate team results
     private calulateTeamResults(challenge:Challenge, results:Array<Result>, activity:Activity, updateType: ActivityUpdateType): Array<Result> {
-        // console.log("calulateUserResults() started ...");
-
         let newResult: Result = new Result(challenge.id);
         const idx = results.findIndex((result:Result) => {
             const foundIdx = result.teamUid === activity.teamUid;
@@ -155,6 +130,7 @@ class Leaderboard {
         newResult.uid = activity.uid;
         newResult.displayName = activity.displayName;
         newResult.teamUid = activity.teamUid;
+        newResult.teamName = activity.teamName;
 
         newResult = this.computeRecordTotals(challenge, newResult, activity, updateType);
 
@@ -275,6 +251,30 @@ class Leaderboard {
         return newResult;
     }    
 
+    private sortResultsAndAddRank(results: Array<Result>): Array<Result> {
+        // Sort the results based on total points DESC    
+        const newResults = results;      
+        newResults.sort((a:Result, b:Result) => {
+            const totalA = a.pointsTotal;
+            const totalB = b.pointsTotal;
+    
+            let comparison = 0;
+            if (totalA > totalB) {
+                comparison = 1;
+            } else if (totalA < totalB) {
+                comparison = -1;
+            }
+            return comparison * -1;  // Invert so it will sort in descending order
+        });
+        
+        for (let i = 0; i < newResults.length; i++) {
+            newResults[i].rank = i+1;
+        }
+
+        return newResults;
+
+    }
+
     public calculateNewResults(challenge:Challenge, activity:Activity, updateType: ActivityUpdateType):any {
         return new Promise<any>((resolve:any, reject:any) => {
             // DONT update new one if you have to recalc since somehow it gets it
@@ -287,6 +287,10 @@ class Leaderboard {
                 newAllResults.overallResults = this.calulateOverallResults(challenge, allResults.overallResults, activity, updateType);
                 newAllResults.teamResults = this.calulateTeamResults(challenge, allResults.teamResults, activity, updateType);
                 newAllResults.userResults = this.calulateUserResults(challenge, allResults.userResults, activity, updateType);
+                // Sort the team and user results based on total points DESC 
+                newAllResults.userResults = this.sortResultsAndAddRank(newAllResults.userResults);
+                newAllResults.teamResults = this.sortResultsAndAddRank(newAllResults.teamResults);
+                console.log(`newAllResults.userResults with rank: ${JSON.stringify(newAllResults.userResults)}`);
 
                 const saveResultsDB:ResultsDB = new ResultsDB();
                 saveResultsDB.save(newAllResults).then (() => {

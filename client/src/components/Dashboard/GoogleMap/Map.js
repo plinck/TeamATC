@@ -39,7 +39,11 @@ class Map extends Component {
         let map = this.state.map
         var start = this.props.start;
         var end = this.props.end;
-        let waypoints = this.props.waypoints
+        let fullWaypoints = this.props.waypoints
+        let waypoints = [];
+        fullWaypoints.forEach(waypoint => {
+            waypoints.push({location: waypoint.location});
+        });
         var travelMode = window.google.maps.DirectionsTravelMode.DRIVING
         var request = {
             origin: start,

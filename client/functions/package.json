@@ -3,7 +3,7 @@
     "description": "Cloud Functions for Firebase",
     "scripts": {
         "lint": "tslint --project tsconfig.json",
-        "build": "./node_modules/.bin/tslint --project tsconfig.json && ./node_modules/.bin/tsc",
+        "build": "tslint --project tsconfig.json && tsc",
         "watch": "tsc --watch",
         "serve": "firebase serve --only functions",
         "shell": "firebase functions:shell",
@@ -16,6 +16,7 @@
     },
     "main": "lib/index.js",
     "dependencies": {
+        "@googlemaps/google-maps-services-js": "^2.6.1",
         "@types/request": "^2.48.4",
         "axios": "^0.19.2",
         "cors": "^2.8.5",

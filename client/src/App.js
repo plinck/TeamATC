@@ -10,7 +10,7 @@ import Dashboard from './components/Dashboard/dashboard.jsx';
 import DashboardBackend from './components/Dashboard/DashboardBackend.jsx';
 import Account from './components/Account/Account';
 import Admin from './components/Admin/Admin.jsx';
-import AdminFunctions from './components/Admin/AdminFunctions.jsx';
+import AdminFunctions from './components/Admin/AdminFunctions';
 import Results from './components/Results/Results';
 import Activities from './components/Activity/Activities.jsx';
 import ActivityPage from './components/Activity/ActivityPage.jsx';
@@ -24,13 +24,15 @@ import OAuthRedirect from './components/Strava/OAuthRedirect.jsx';
 import StravaTestPage from './components/Strava/StravaTestPage.jsx';
 import { Toolbar } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+import { BACKDASH } from "./components/Environment/Environment";
+
 
 // Auth components
 import SignInForm from './components/Auth/SignIn/SignIn';
 import PasswordForgetPage from './components/Auth/PasswordForget/PasswordForget';
 
 // Session/State Info for all components
-import provideAuthUserContext from './components/Auth/Session/provideAuthUserContext';
+import provideContext from './components/Auth/Session/provideContext';
 
 const styles = theme => ({
   toolbar: {
@@ -56,11 +58,20 @@ class App extends React.Component {
           <Route exact path="/" component={LandingPage} />
           <Route exact path="/signin" component={SignInForm} />
           <Route exact path="/pw-forget" component={PasswordForgetPage} />
-          <Route exact path="/dashboard" component={Dashboard} />
-          <Route exact path="/dashboardbackend" component={DashboardBackend} />
-          <Route exact path="/results" component={Results} />
+          {BACKDASH === "0" ?
+            <>
+            <Route exact path="/dashboard" component={Dashboard} />
+            <Route exact path="/dashboardalternate" component={DashboardBackend} />
+            </>
+            :
+            <>
+            <Route exact path="/dashboard" component={DashboardBackend} />
+            <Route exact path="/dashboardalternate" component={Dashboard} />   
+            </>       
+          }
           <Route exact path="/challenges" component={Challenges} />
           <Route exact path="/teams" component={Teams} />
+          <Route exact path="/results" component={Results} />
           <Route exact path="/account" component={Account} />
           <Route exact path="/admin" component={Admin} />
           <Route exact path="/adminfunctions" component={AdminFunctions} />
@@ -79,4 +90,4 @@ class App extends React.Component {
   }
 }
 
-export default provideAuthUserContext(withStyles(styles)(App));
+export default provideContext(withStyles(styles)(App));

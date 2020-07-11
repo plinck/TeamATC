@@ -4,7 +4,7 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { withStyles } from '@material-ui/core/styles';
 import { Leaderboard } from "./CalculateTotals/Leaderboard";
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import { Redirect } from "react-router";
 import ResultsCard from "./ResultsCard/ResultsCard.jsx";
 import ActivitiesCard from './ActivitiesCard/ActivitiesCard';
@@ -183,10 +183,10 @@ class Dashboard extends React.PureComponent {
 
     // This is to render interim without waiting for all to be done.
     renderTotals(activities) {
-        // console.log(`renderTotals ,teamUid:${this.props.user.teamUid} teamName:${this.props.user.teamName} uid:${this.props.user.uid} displayName:${this.props.user.displayName}`);
+        // console.log(`renderTotals ,teamUid:${this.props.context.teamUid} teamName:${this.props.context.teamName} uid:${this.props.context.uid} displayName:${this.props.context.displayName}`);
         const totals = Leaderboard.calculateLeaderboards(activities,
-            this.props.user.teamUid, this.props.user.teamName,
-            this.props.user.uid, this.props.user.displayName);
+            this.props.context.teamUid, this.props.context.teamName,
+            this.props.context.uid, this.props.context.displayName);
         let myActivities = this.myActivitiesFilter(activities);
         this.setState({
             activities,
@@ -206,24 +206,24 @@ class Dashboard extends React.PureComponent {
         this._mounted = true;
         let layouts = getFromLS("layouts") || {};
         this.setState({ layouts: JSON.parse(JSON.stringify(layouts)) });
-        // console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
-        if (this.props.user.challengeUid) {
-            this.createListener(this.props.user.challengeUid)
-            this.fetchData(this.props.user.challengeUid)
+        // console.log(`this.props.context.challengeUid: ${this.props.context.challengeUid}`);
+        if (this.props.context.challengeUid) {
+            this.createListener(this.props.context.challengeUid)
+            this.fetchData(this.props.context.challengeUid)
         }
     }
 
     componentDidUpdate(prevProps) {
         // console.log(`prevProps.user.challengeUid: ${prevProps.user.challengeUid}`);
-        // console.log(`this.props.user.challengeUid: ${this.props.user.challengeUid}`);
-        if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
+        // console.log(`this.props.context.challengeUid: ${this.props.context.challengeUid}`);
+        if (this.props.context.challengeUid && this.props.context.challengeUid !== prevProps.user.challengeUid) {
             if (this.activityListener) {
                 this.activityListener();
                 // console.log(`Detached listener`);
             }
-            // console.log(this.props.user.challengeUid)
-            this.createListener(this.props.user.challengeUid)
-            this.fetchData(this.props.user.challengeUid)
+            // console.log(this.props.context.challengeUid)
+            this.createListener(this.props.context.challengeUid)
+            this.fetchData(this.props.context.challengeUid)
         }
     }
     // Search for object in array based on key using uniqure ID
@@ -259,7 +259,7 @@ class Dashboard extends React.PureComponent {
     myActivitiesFilter(activities) {
         let myActivities = [];
         myActivities = activities.filter(activity => {
-            if (activity.uid === this.props.user.uid) {
+            if (activity.uid === this.props.context.uid) {
                 return activity;
             } else {
                 return false;
@@ -276,14 +276,14 @@ class Dashboard extends React.PureComponent {
         if (!this.state.totals || !this.state.totals.userResults || !this.state.totals.teamResults) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
-        if (!this.props.user) {
+        if (!this.props.context) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
-        const currentUserResults = this.state.totals.userResults.find(result => result.uid === this.props.user.uid);
-        const currentTeamResults = this.state.totals.teamResults.find(result => result.teamUid === this.props.user.teamUid);
+        const currentUserResults = this.state.totals.userResults.find(result => result.uid === this.props.context.uid);
+        const currentTeamResults = this.state.totals.teamResults.find(result => result.teamUid === this.props.context.teamUid);
 
         let myActivities = this.state.myActivities;
-        if (this.props.user.authUser) {
+        if (this.props.context.authUser) {
 
             return (
                 <div style={{ backgroundColor: "#f2f2f2" }} className={classes.root}>
@@ -318,8 +318,8 @@ class Dashboard extends React.PureComponent {
                                 </div> : <></>}
                             <div key="12" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 4, x: 0, y: 1, minW: 3, minH: 4, maxW: 4, maxH: 5 }}>
                                 <TeamWidget
-                                    team={this.props.user.teamName}
-                                    challenge={this.props.user.challengeName}
+                                    team={this.props.context.teamName}
+                                    challenge={this.props.context.challengeName}
                                 />
                             </div>
                             <div key="1" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 6, x: 4, y: 1, minW: 4, minH: 6, maxW: 6 }}>
@@ -330,11 +330,11 @@ class Dashboard extends React.PureComponent {
                                     onlyTeams={true} />
                             </div>
                             <div key="2" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 6, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
-                                <ActivitiesCard name={this.props.user.displayName} activity={myActivities} />
+                                <ActivitiesCard name={this.props.context.displayName} activities={myActivities} />
                             </div>
                             <div key="3" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 11, x: 8, y: 1, minW: 4, minH: 6, maxW: 6 }}>
                                 <ResultsCard 
-                                    user={this.props.user} 
+                                    user={this.props.context} 
                                     challenge={this.state.challenge}
                                     teamTotals={this.state.totals.teamResults} 
                                     userTotals={this.state.totals.userResults} 
@@ -349,13 +349,13 @@ class Dashboard extends React.PureComponent {
                             </div>
                             <div key="5" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 8, x: 4, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
-                                    title={`Breakdown - ${this.props.user.displayName}`}
+                                    title={`Breakdown - ${this.props.context.displayName}`}
                                     currentTotalsShare={currentUserResults}
                                 />
                             </div>
                             <div key="6" className={this.props.width <= 600 ? classes.mobile : null} data-grid={{ w: 4, h: 8, x: 8, y: 2, minW: 3, minH: 8, maxW: 6, maxH: 9 }}>
                                 <ActivityTypeBreakdown
-                                    title={`Breakdown - Team ${this.props.user.teamName}`}
+                                    title={`Breakdown - Team ${this.props.context.teamName}`}
                                     currentTotalsShare={currentTeamResults}
                                 />
                             </div>
@@ -423,4 +423,4 @@ function saveToLS(key, value) {
 }
 
 
-export default withAuthUserContext(withStyles(styles)(WidthProvider(Dashboard)));
+export default withContext(withStyles(styles)(WidthProvider(Dashboard)));

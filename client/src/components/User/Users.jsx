@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { Redirect } from 'react-router';
 
 
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import User from './User';
 import UserDB from "./UserDB";
 import { Grid } from '@material-ui/core';
@@ -44,7 +44,7 @@ class Users extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.user && this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
+        if (this.props.context && this.props.context.challengeUid && this.props.context.challengeUid !== prevProps.user.challengeUid) {
             // Do Work
         }
     }
@@ -125,7 +125,7 @@ class Users extends React.Component {
     }
 
     render() {
-        if (this.props.user.authUser && this.props.user.isAdmin) {
+        if (this.props.context.authUser && this.props.context.isAdmin) {
             return (
                 <Grid style={{ paddingTop: "10px" }} container spacing={2} alignItems="stretch">
                     <div>{this.state.message}</div>
@@ -145,7 +145,7 @@ class Users extends React.Component {
                     })}
                 </Grid>
             );
-        } else if (this.props.user.authUser) {
+        } else if (this.props.context.authUser) {
             return (
                 <Redirect to="/activities" />
             );
@@ -157,4 +157,4 @@ class Users extends React.Component {
     }
 }
 
-export default withRouter(withAuthUserContext(Users));
+export default withRouter(withContext(Users));

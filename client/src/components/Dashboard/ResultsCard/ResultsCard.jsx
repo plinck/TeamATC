@@ -37,14 +37,19 @@ const ResultsCard = (props) => {
 
     const leaderboardTitleRow =
         <Box className="row" fontStyle="oblique" fontWeight="fontWeightBold">
-            <Link style={{ textDecoration: "none", color: "grey" }}
-                to={{
-                    pathname: "/activities",
-                    state: {
-                        filterByString: "Mine"
-                    }
-                }}>{onlyTeams ? "Team Leaderboard" : "Individual Leaders"}
-            </Link>
+            {onlyTeams ? 
+                <Tooltip title="Show Results">
+                    <span onClick={handleClickTeamResults}>
+                        Team Leaderboard 
+                    </span>
+                </Tooltip>
+                :
+                <Link style={{ textDecoration: "none", color: "grey" }}
+                    to={{
+                        pathname: "/results",
+                    }}>{onlyTeams ? "Team Leaderboard" : "Individual Leaders"}
+                 </Link>
+            }
             <div style={{ float: 'right' }}>
                 {onlyTeams ? 
                     <Tooltip title="Show Results">
@@ -67,7 +72,7 @@ const ResultsCard = (props) => {
         totals = teamTotals;
     }
 
-    let uid = props.user ? props.user.uid : null
+    let uid = props.context ? props.context.uid : null
     // first set the correct totals bsed on challenge totals used
     let sortedTotals = totals.map((result) => {
         let includedDistanceTotal = 0;
@@ -110,10 +115,10 @@ const ResultsCard = (props) => {
                         <TableRow>
                             <TableCell style={{ fontWeight: "bold" }}>Name</TableCell>
                             <TableCell style={{ fontWeight: "bold" }}>Total</TableCell>
-                            {props.challenge && props.challenge.isSwim ? <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Swim</TableCell> : ""}
-                            {props.challenge && props.challenge.isBike ? <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Bike</TableCell> : ""}
-                            {props.challenge && props.challenge.isRun ? <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Run</TableCell> : ""}
-                            {props.challenge && props.challenge.isOther ? <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Other</TableCell> : ""}
+                            {props.challenge && props.challenge.isSwim ? <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Swim</TableCell> : null}
+                            {props.challenge && props.challenge.isBike ? <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Bike</TableCell> : null}
+                            {props.challenge && props.challenge.isRun ? <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Run</TableCell> : null}
+                            {props.challenge && props.challenge.isOther ? <TableCell style={{ fontWeight: "bold" }} padding="none" align="right">Other</TableCell> : null}
                         
                         </TableRow>
                     </TableHead>
@@ -126,10 +131,10 @@ const ResultsCard = (props) => {
                                     </Tooltip> : null}  {result.userRecord ? result.displayName : result.teamName}
                                 </TableCell>
                                 <TableCell>{result.pointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
-                                {props.challenge && props.challenge.isSwim ? <TableCell padding="none" align="right">{result.swimPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : ""}
-                                {props.challenge && props.challenge.isBike ? <TableCell padding="none" align="right">{result.bikePointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : ""}
-                                {props.challenge && props.challenge.isRun ? <TableCell padding="none" align="right">{result.runPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : ""}
-                                {props.challenge && props.challenge.isOther ? <TableCell padding="none" align="right">{result.otherPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : ""}
+                                {props.challenge && props.challenge.isSwim ? <TableCell padding="none" align="right">{result.swimPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : null}
+                                {props.challenge && props.challenge.isBike ? <TableCell padding="none" align="right">{result.bikePointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : null}
+                                {props.challenge && props.challenge.isRun ? <TableCell padding="none" align="right">{result.runPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : null}
+                                {props.challenge && props.challenge.isOther ? <TableCell padding="none" align="right">{result.otherPointsTotal.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</TableCell> : null}
                             </TableRow>
                         ))}
                     </TableBody>

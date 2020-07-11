@@ -3,7 +3,7 @@ import Plot from 'react-plotly.js';
 import { Redirect } from 'react-router';
 import { withRouter } from 'react-router-dom';
 
-import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
+import { withContext } from "../../Auth/Session/Context";
 import { Card, CardContent, Box } from '@material-ui/core';
 
 const PointsBreakdownGraph = (props) => {
@@ -84,11 +84,11 @@ const PointsBreakdownGraph = (props) => {
     }
 
     // Some props take time to get ready so return null when uid not avaialble
-    if (!props.user) {
+    if (!props.context) {
         return null;
     }
 
-    if (props.user.authUser) {
+    if (props.context.authUser) {
         return (
             <Card style={{ height: "100%" }}>
                 <CardContent>
@@ -106,4 +106,4 @@ const PointsBreakdownGraph = (props) => {
     }
 }
 
-export default withRouter(withAuthUserContext(PointsBreakdownGraph));
+export default withRouter(withContext(PointsBreakdownGraph));

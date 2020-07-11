@@ -12,7 +12,7 @@ import { Card, CardContent } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
 import { withFirebase } from '../Firebase/FirebaseContext';
-import AuthUserContext from '../Session/AuthUserContext';
+import Context from '../Session/Context';
 import UserDB from "../../User/UserDB.js";
 import { ORG } from "../../Environment/Environment"
 
@@ -214,9 +214,9 @@ class SignInFormBase extends React.Component {
         return (
             <div className={classes.root}>
                 <Container className={classes.container}>
-                    <AuthUserContext.Consumer>
+                    <Context.Consumer>
                         {user => user.authUser ? <Redirect to="/dashboard" /> : null}
-                    </AuthUserContext.Consumer>
+                    </Context.Consumer>
                     <Grid container
                         justify="center">
                         <Grid style={{ marginTop: '70px' }} xs={11} md={6} item>

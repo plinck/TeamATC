@@ -23,7 +23,7 @@ import DirectionsRunIcon from "@material-ui/icons/DirectionsRun";
 import BuildIcon from "@material-ui/icons/Build";
 import ActivityUserSearch from "./ActivityUserSearch";
 
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import Activity from "./Activity";
 import ActivityDB from "./ActivityDB";
 
@@ -162,15 +162,15 @@ class Activities extends React.Component {
         break;
       case "Team":
         filterObj.filterName = "teamUid";
-        filterObj.filterValue = this.props.user.teamUid;
+        filterObj.filterValue = this.props.context.teamUid;
         break;
       case "Mine":
         filterObj.filterName = "uid";
-        filterObj.filterValue = this.props.user.uid;
+        filterObj.filterValue = this.props.context.uid;
         break;
       default:
         filterObj.filterName = "uid";
-        filterObj.filterValue = this.props.user.uid;
+        filterObj.filterValue = this.props.context.uid;
     }
 
     this.setState({ isLoading: true });
@@ -204,11 +204,11 @@ class Activities extends React.Component {
         break;
       case "Team":
         filterObj.filterName = "teamUid";
-        filterObj.filterValue = this.props.user.teamUid;
+        filterObj.filterValue = this.props.context.teamUid;
         break;
       case "Mine":
         filterObj.filterName = "uid";
-        filterObj.filterValue = this.props.user.uid;
+        filterObj.filterValue = this.props.context.uid;
         break;
       default:
         filterObj = undefined;
@@ -345,7 +345,7 @@ class Activities extends React.Component {
     const { classes } = this.props;
 
     // Some props take time to get ready so return null when uid not avaialble
-    if (this.props.user.uid === null) {
+    if (this.props.context.uid === null) {
       return (
         <Grid container style={{ marginTop: "10px" }} justify="center">
           <CircularProgress /> <p>Loading ...</p>{" "}
@@ -430,7 +430,7 @@ class Activities extends React.Component {
               </Select>
             </FormControl>
           </Grid>
-          {this.props.user.isAdmin ? (
+          {this.props.context.isAdmin ? (
             <Grid item xs={12} md={4}>
               <ActivityUserSearch
                 activities={this.state.activities}
@@ -547,7 +547,7 @@ class Activities extends React.Component {
       </Grid>
     );
 
-    if (this.props.user.authUser) {
+    if (this.props.context.authUser) {
       // Conditional rendering
       let activityView = (
         <div>
@@ -604,8 +604,8 @@ class Activities extends React.Component {
       );
     } else {
       return <Redirect to="/" />;
-    } // if (this.props.user.authUser)
+    } // if (this.props.context.authUser)
   } // render()
 } // class
 
-export default withRouter(withAuthUserContext(withStyles(styles)(Activities)));
+export default withRouter(withContext(withStyles(styles)(Activities)));

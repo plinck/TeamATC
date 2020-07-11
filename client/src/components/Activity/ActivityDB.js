@@ -50,7 +50,7 @@ class ActivityDB {
                         activities.push(activity);
                     });
                     startAfter = querySnapshot.docs[querySnapshot.docs.length-1];
-                    return (resolve({activities: activities, lastActivityDoc: startAfter}));
+                    resolve({activities: activities, lastActivityDoc: startAfter});
                 })
                 .catch(err => {
                     reject(err);

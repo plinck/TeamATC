@@ -3,7 +3,7 @@ import { NavLink, Link } from "react-router-dom";
 import SignOutButton from "../Auth/SignOut/SignOut.jsx";
 import AppBar from "@material-ui/core/AppBar";
 import { makeStyles } from "@material-ui/core/styles";
-import AuthUserContext, { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import Context, { withContext } from "../Auth/Session/Context";
 import { withRouter } from "react-router-dom";
 import AccountMenu from "../Account/AccountMenu";
 import AdminMenu from "../Admin/AdminMenu.jsx";
@@ -35,6 +35,7 @@ import AddIcon from "@material-ui/icons/Add";
 import MailIcon from "@material-ui/icons/Mail";
 import PeopleIcon from "@material-ui/icons/People";
 import { ORG } from "../Environment/Environment.js";
+import EmojiEventsIcon from '@material-ui/icons/EmojiEvents';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -122,6 +123,16 @@ let Navigation = (props) => {
         <ListItemText>
           <NavLink className={classes.mobileButton} to="/dashboard">
             Home
+          </NavLink>
+        </ListItemText>
+      </ListItem>
+      <ListItem>
+        <ListItemIcon>
+          <EmojiEventsIcon />
+        </ListItemIcon>
+        <ListItemText>
+          <NavLink className={classes.mobileButton} to="/results">
+            Results
           </NavLink>
         </ListItemText>
       </ListItem>
@@ -217,9 +228,9 @@ let Navigation = (props) => {
   );
   const navigationAdmin = (
     <div className={classes.navButtonsHide}>
-      <AuthUserContext.Consumer>
+      <Context.Consumer>
         {user => <Sidenav {...props} user={user} />}
-      </AuthUserContext.Consumer>
+      </Context.Consumer>
 
       <NavLink className={classes.menuButton} to="/activitypage">
         <Fab size="small" color="primary" aria-label="add">
@@ -244,6 +255,16 @@ let Navigation = (props) => {
         <ListItemText>
           <NavLink className={classes.mobileButton} to="/dashboard">
             Home
+          </NavLink>
+        </ListItemText>
+      </ListItem>
+      <ListItem>
+        <ListItemIcon>
+          <EmojiEventsIcon />
+        </ListItemIcon>
+        <ListItemText>
+          <NavLink className={classes.mobileButton} to="/results">
+            Results
           </NavLink>
         </ListItemText>
       </ListItem>
@@ -383,10 +404,10 @@ let Navigation = (props) => {
   // ANY COMPONENT that needs authUser info uses consumer this way
 
   let navBar, navBarMobile;
-  if (props.user.authUser && props.user.isAdmin) {
+  if (props.context.authUser && props.context.isAdmin) {
     navBar = navigationAdmin;
     navBarMobile = navigationAdminMobile;
-  } else if (props.user.authUser) {
+  } else if (props.context.authUser) {
     navBar = navigationAuth;
     navBarMobile = navigationAuthMobile;
   } else {
@@ -409,7 +430,7 @@ let Navigation = (props) => {
           <Toolbar
             style={{ minHeight: "64px" }}
             className={
-              props.user.authUser
+              props.context.authUser
                 ? classes.toolBarFlex
                 : classes.nonAuthToolBarFlex
             }
@@ -426,7 +447,7 @@ let Navigation = (props) => {
             <Typography
               variant="h4"
               className={
-                props.user.authUser ? classes.title : classes.nonAuthTitle
+                props.context.authUser ? classes.title : classes.nonAuthTitle
               }
             >
               <Link style={{ textDecoration: "none", color: "white" }} to="/">
@@ -442,14 +463,14 @@ let Navigation = (props) => {
             {navBar}
           </Toolbar>
         </Container>
-        {props.user.authUser ? (
+        {props.context.authUser ? (
           <Container maxWidth="xl" style={{ backgroundColor: "red" }}>
             <Toolbar className={classes.subHeader}>
               <Typography variant="subtitle1">
-                Team: {props.user.teamName}
+                Team: {props.context.teamName}
               </Typography>
               <Typography variant="subtitle1">
-                Challenge: {props.user.challengeName}
+                Challenge: {props.context.challengeName}
               </Typography>
             </Toolbar>
           </Container>
@@ -459,4 +480,4 @@ let Navigation = (props) => {
   );
 }; //class
 
-export default withAuthUserContext(withRouter(Navigation));
+export default withContext(withRouter(Navigation));

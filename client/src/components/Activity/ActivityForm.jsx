@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import './Activity.css'
 
 
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import { Redirect } from "react-router";
 import TextField from "@material-ui/core/TextField";
 import { withStyles } from "@material-ui/core/styles";
@@ -48,8 +48,8 @@ const INITIAL_STATE = {
         distanceUnits: "",
         duration: "",
         email: "",
-        stravaAcvitiy: false,
-        stravaAcvitiyId: "",
+        stravaActivity: false,
+        stravaActivityId: "",
         teamUid: "",
         teamName: "",
         uid: "",
@@ -114,13 +114,13 @@ class ActivityForm extends React.Component {
     componentDidMount() {
         this._mounted = true;
         
-        if (this.props.user.challengeUid) {
+        if (this.props.context.challengeUid) {
             // only get activity if its an update, otherwise assume new
             if (this.state.activity.id) {
                 this.fetchActivity(this.state.activity.id);
             }  else {
-                const teamName = this.props.user.teamName ? this.props.user.teamName : "";
-                const teamUid = this.props.user.teamUid ? this.props.user.teamUid: "";
+                const teamName = this.props.context.teamName ? this.props.context.teamName : "";
+                const teamUid = this.props.context.teamUid ? this.props.context.teamUid: "";
                 this.setState((prevState) => ({
                     activity: {                   
                         ...prevState.activity,    
@@ -129,18 +129,18 @@ class ActivityForm extends React.Component {
                     }}));    
             }
             // Get current challenge info - should be part of state maybe eventually
-            this.fetchCurrentChallenge(this.props.user.challengeUid);
+            this.fetchCurrentChallenge(this.props.context.challengeUid);
             this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
         }
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
+        if (this.props.context.challengeUid && this.props.context.challengeUid !== prevProps.user.challengeUid) {
             if (this.state.activity.id) {
                 this.fetchActivity(this.state.activity.id);
             }  else {
-                const teamName = this.props.user.teamName ? this.props.user.teamName : "";
-                const teamUid = this.props.user.teamUid ? this.props.user.teamUid: "";
+                const teamName = this.props.context.teamName ? this.props.context.teamName : "";
+                const teamUid = this.props.context.teamUid ? this.props.context.teamUid: "";
                 this.setState((prevState) => ({
                     activity: {                   
                         ...prevState.activity,    
@@ -148,8 +148,8 @@ class ActivityForm extends React.Component {
                         teamName: teamName,      
                     }}));    
             }
-            console.log(this.props.user.challengeUid)
-            this.fetchCurrentChallenge(this.props.user.challengeUid);
+            console.log(this.props.context.challengeUid)
+            this.fetchCurrentChallenge(this.props.context.challengeUid);
             this.fetchTeams();  // for pulldown so doesnt matter if user exists yet
         }
     }
@@ -288,17 +288,17 @@ class ActivityForm extends React.Component {
                         activityName: activity.activityName,
                         activityDateTime: activity.activityDateTime,
                         activityType: activity.activityType,
-                        challengeUid: this.props.user.challengeUid,
-                        displayName: this.props.user.displayName,
+                        challengeUid: this.props.context.challengeUid,
+                        displayName: this.props.context.displayName,
                         distance: activity.distance,
                         distanceUnits: activity.distanceUnits,
                         duration: activity.duration,      
-                        email: this.props.user.authUser.email,
-                        stravaAcvitiy: false,
-                        stravaAcvitiyId: "",
-                        teamName: this.props.user.teamName,
-                        teamUid: this.props.user.teamUid,
-                        uid: this.props.user.authUser.uid,
+                        email: this.props.context.authUser.email,
+                        stravaActivity: false,
+                        stravaActivityId: "",
+                        teamName: this.props.context.teamName,
+                        teamUid: this.props.context.teamUid,
+                        uid: this.props.context.authUser.uid,
                     },
                     dateTimeString: activity.activityDateTimeString,
                     message: `Uploaded FIT file, make any changes and hit <CREATE> to save`
@@ -392,25 +392,20 @@ class ActivityForm extends React.Component {
             return false;
         }
 
-        // This is added so a challenge can be *paused* which is STUPID and I wont do it ever
-        if (this.props.user.challengeShutdownStartDate && this.props.user.challengeShutdownEndDate) {
-            const startOfShutdownDay = moment(this.props.user.challengeShutdownStartDate).startOf("day").toDate();
-            const endOfShutdownDay = moment(this.props.user.challengeShutdownEndDate).endOf("day").toDate();
-            const endOfShutdownDayDisplay = moment(endOfShutdownDay).format('MM-DD-YYYY');
-            if (activity.activityDateTime >= startOfShutdownDay &&  activity.activityDateTime <= endOfShutdownDay) {
-                this.setState({ message: `Activity entry is paused.  No activities can be entered, End of shutdown after ${endOfShutdownDayDisplay}` });
-                return false;
-            }
+        // make sure team is set to something valid and consistent
+        if (!activity.teamName ||  activity.teamName.length < 1 || !activity.teamUid || activity.teamUid.length < 0)
+        {
+            // MUST CHANGE BOTH TOGETHER so they match
+            activity.teamName = this.props.context.teamName;
+            activity.teamUid = this.props.context.teamUid;
         }
 
         // If NEW activity, set the info to the current users info, if not use what is there so admiin can update
         if (!this.state.activity.id) {
-            activity.displayName = this.props.user.displayName;
-            activity.challengeUid = this.props.user.challengeUid;
-            activity.email = this.props.user.authUser.email;
-            activity.teamName = activity.teamName ? activity.teamName : this.props.user.teamName;
-            activity.teamUid = activity.teamUid ? activity.teamUid : this.props.user.teamUid;
-            activity.uid = this.props.user.authUser.uid;
+            activity.displayName = this.props.context.displayName;
+            activity.challengeUid = this.props.context.challengeUid;
+            activity.email = this.props.context.authUser.email;
+            activity.uid = this.props.context.authUser.uid;
         }
 
         if (!activity.uid || activity.uid.length < 1) {
@@ -518,7 +513,7 @@ class ActivityForm extends React.Component {
         const { classes } = this.props;
 
         // Some props take time to get ready so return null when uid not avaialble
-        if (!this.props.user) {
+        if (!this.props.context) {
             return (<Grid container style={{ marginTop: '10px' }} justify="center"><CircularProgress /> <p>Loading ...</p> </Grid>)
         }
         
@@ -541,12 +536,12 @@ class ActivityForm extends React.Component {
         // Dont use props to set the team and user for activity unless its NEW, if exissts use from state / current record
         if (!activity.id) {
             // console.log(`using current users session info for activity add`);
-            activity.displayName = this.props.user.displayName;
-            activity.challengeUid = this.props.user.challengeUid;
-            activity.email = this.props.user.authUser.email;
-            activity.teamName = activity.teamName ? activity.teamName : this.props.user.teamName;
-            activity.teamUid = activity.teamUid ? activity.teamUid : this.props.user.teamUid;
-            activity.uid = this.props.user.authUser.uid;
+            activity.displayName = this.props.context.displayName;
+            activity.challengeUid = this.props.context.challengeUid;
+            activity.email = this.props.context.authUser.email;
+            activity.teamName = activity.teamName ? activity.teamName : this.props.context.teamName;
+            activity.teamUid = activity.teamUid ? activity.teamUid : this.props.context.teamUid;
+            activity.uid = this.props.context.authUser.uid;
         } else {
             // console.log(`using current activity info for activity updates`);
             console.log(`user/team info is uid: ${activity.uid}, email: ${activity.email}, displayName: ${activity.displayName}, teamUid: ${activity.teamUid}, teamName: ${activity.teamName}, `);
@@ -554,7 +549,7 @@ class ActivityForm extends React.Component {
 
         console.log(`Activity Team: ${activity.teamUid}/${activity.teamName}`);
 
-        if (this.props.user.authUser) {
+        if (this.props.context.authUser) {
             return (
                 <Container>
                     <Grid container>
@@ -739,4 +734,4 @@ class ActivityForm extends React.Component {
     }
 };
 
-export default withStyles(styles)(withAuthUserContext(withRouter(ActivityForm)));
+export default withStyles(styles)(withContext(withRouter(ActivityForm)));

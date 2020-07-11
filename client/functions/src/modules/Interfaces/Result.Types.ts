@@ -1,14 +1,16 @@
 import { Result } from "./Result";
 
 type ResultType = {
-    challengeUid: string,
+    challengeUid: string;
     overallRecord: boolean;
     teamRecord: boolean;
     teamUid: string;
     teamName: string;
     userRecord: boolean;
     uid: string;
+    photoUrl: string;
     displayName: string;
+    rank: number;
     distanceTotal: number;
     pointsTotal: number;
     durationTotal: number;

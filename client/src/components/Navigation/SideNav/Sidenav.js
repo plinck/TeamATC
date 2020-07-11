@@ -17,6 +17,7 @@ import DashboardIcon from "@material-ui/icons/Dashboard";
 import TimerIcon from "@material-ui/icons/Timer";
 import MailIcon from "@material-ui/icons/Mail";
 import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
+import EmojiEventsIcon from '@material-ui/icons/EmojiEvents';
 import { ORG } from "../../Environment/Environment";
 
 const drawerWidth = 240;
@@ -138,6 +139,17 @@ export default function SideNav(props) {
               <ListItemText>Home</ListItemText>
             </ListItem>
           </NavLink>
+          <NavLink className={classes.sideText} to="/results">
+            <ListItem
+              selected={window.location.pathname === "/results"}
+              button
+            >
+              <ListItemIcon>
+                <EmojiEventsIcon />
+              </ListItemIcon>
+              <ListItemText>Results</ListItemText>
+            </ListItem>
+          </NavLink>
           <NavLink className={classes.sideText} to="/activities">
             <ListItem
               selected={window.location.pathname === "/activities"}
@@ -185,7 +197,7 @@ export default function SideNav(props) {
               <ListItemText>Contact Support</ListItemText>
             </ListItem>
           </a>
-          {props.user && props.user.isAdmin ?  
+          {props.context && props.context.isAdmin ?  
             <div>
               <Divider></Divider>
               <NavLink className={classes.sideText} to="/admin">

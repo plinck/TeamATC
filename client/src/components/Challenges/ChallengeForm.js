@@ -17,7 +17,10 @@ import FormLabel from '@material-ui/core/FormLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import ChallengeDB from "./ChallengeDB"
+import ChallengeAPI from "./ChallengeAPI"
+
 import Photo from "../Util/Photo.js"
+import Spinner from "./Spinner"
 
 const useStyles = makeStyles(theme => ({
     buttonStyles: {
@@ -53,13 +56,16 @@ const ChallengeForm = (props) => {
     const CLEAR_CHALLENGE_VALUES = {
         id: undefined,
         description: "",
-        endDate: moment(new Date('2020-08-18T21:11:54')).endOf("day").toDate(),
+        challengeDistance: 0,
+        endDate:  moment(new Date('2020-08-18T21:11:54')).endOf("day").toDate(),
         isCurrentChallenge: false,
         name: "",
         photoObj: null,
         startDate: moment(new Date()).startOf("day").toDate(),
         startCity: "",
+        startCityGeometry: "",
         endCity: "",
+        endCityGeometry: "",
         waypoints: [],
         isSwim: true,
         isBike: true,
@@ -70,13 +76,16 @@ const ChallengeForm = (props) => {
     const CHALLENGE_INITIAL_VALUES = {
         id: props.id,
         description: "",
+        challengeDistance: 0,
         endDate: moment(new Date('2020-08-18T21:11:54')).endOf("day").toDate(),
         isCurrentChallenge: false,
         name: "",
         photoObj: null,
         startDate: moment(new Date()).startOf("day").toDate(),
         startCity: "",
+        startCityGeometry: "",
         endCity: "",
+        endCityGeometry: "",
         waypoints: [],
         isSwim: true,
         isBike: true,
@@ -86,6 +95,7 @@ const ChallengeForm = (props) => {
     }
     const [challenge, setChallenge] = useState(CHALLENGE_INITIAL_VALUES);
     const [message, setMessage] = React.useState("");
+    const [working, setWorking] = React.useState(false);
     const [photoFile, setPhotoFile] = React.useState(null);
 
     // Domain object handlers
@@ -112,16 +122,17 @@ const ChallengeForm = (props) => {
         setChallenge({ ...challenge, startDate: startOfDay })
     };
 
-    const handleStartCityChange = city => {
-        setChallenge({ ...challenge, startCity: city })
+    const handleStartCityChange = (city, geometry) => {
+        setChallenge({ ...challenge, startCity: city, startCityGeometry: geometry })
     }
-    const handleEndCityChange = city => {
-        setChallenge({ ...challenge, endCity: city })
+    const handleEndCityChange = (city, geometry) => {
+        setChallenge({ ...challenge, endCity: city, endCityGeometry: geometry })
     }
 
-    const handleAddWaypoint = city => {
+    const handleAddWaypoint = (city, geometry) => {
         let newWaypoint = {
-            location: city
+            location: city,
+            geometry: geometry
         }
         let newWaypoints = challenge.waypoints ? challenge.waypoints : []
         newWaypoints.push(newWaypoint)
@@ -147,11 +158,17 @@ const ChallengeForm = (props) => {
     const uploadPhotoToGoogleStorage = () => {
         return new Promise((resolve, reject) => {
             if (photoFile) {
-                Photo.uploadPhoto(photoFile, "challenge").then(photoObj => {
+                // first delete the old photo
+                const fileName = challenge.photoObj && challenge.photoObj.fileName ? challenge.photoObj.fileName : "";
+                Photo.deletePhoto(fileName).then(photoObj => {
+                    console.log(`deleted old photo`);
+                    return (Photo.uploadPhoto(photoFile, "challenge"));
+                }).then((photoObj) => {
+                    console.log(`uploaded photo`);
                     photoObj.fileTitle = "challenge";
                     resolve(photoObj);
-                }).catch(err => {
-                    setMessage(`Error uploading photo for challenge ${err}`);
+                }).catch((err) => {
+                    setMessage(`Error uploading photo for challenge ${err.message}`);
                     reject(err);
                 });
             } else {
@@ -160,13 +177,33 @@ const ChallengeForm = (props) => {
         }); // Promise
     }
 
-    const handleSave = (event) => {
+    const handleSave = async (event) => {
         event.preventDefault();
+        setWorking(true);
+        // NOTE: Add a processing popup
+        let originArray = [challenge.startCity];
+        let destinationArray = [];
+        challenge.waypoints.forEach(waypoint => {
+            originArray.push(waypoint.location);
+            destinationArray.push(waypoint.location);
+        });
+        destinationArray.push(challenge.endCity);
+        let challengeDistance = 0;
+
+        try {
+            let res = await ChallengeAPI.calcDistanceMatrix(originArray, destinationArray);
+            challengeDistance = res.data;
+            console.log(`result (challengeDistance) from ChallengeAPI.calcDistanceMatrix: ${challengeDistance}`)
+        } catch (err) {
+            setMessage(`Error calling ChallengeAPI.calcDistanceMatrix ${err}`);
+            setWorking(false);
+            return;
+        }
 
         uploadPhotoToGoogleStorage().then(photoObj => {
-            console.log(`uploaded photo`);
             // NOW chain promises to update or create challenge
             challenge.photoObj = photoObj ? photoObj : null;
+            challenge.challengeDistance = challengeDistance;
             if (challenge.id) {
                 ChallengeDB.update(challenge);
             } else {
@@ -177,8 +214,10 @@ const ChallengeForm = (props) => {
             setChallenge({ ...CLEAR_CHALLENGE_VALUES });
             setPhotoFile(null);
             props.handleUpdateChallenge(); // refresh parent
+            setWorking(false);
         }).catch(err => {
             setMessage(`Error uploading photo for challenge ${err}`);
+            setWorking(false);
         })
     }
 
@@ -210,6 +249,7 @@ const ChallengeForm = (props) => {
         <Card>
             <CardContent>
                 {message != null ? <p>{message}</p> : ""}
+                {working ? <span><Spinner />Updating, please wait ...</span> : ""}
                 <Typography variant="h5">Challenge</Typography>
                 <form noValidate autoComplete="off">
                     <TextField

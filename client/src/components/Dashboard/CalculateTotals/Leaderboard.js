@@ -1,4 +1,4 @@
-import { Result } from "../../Results/Result";
+import { ResultClass } from "../../Results/ResultClass";
 
 class Leaderboard {
 
@@ -12,7 +12,7 @@ class Leaderboard {
     }
 
     static totals(activities) {
-        let overallResults = new Result();
+        let overallResults = new ResultClass();
         let userResults = [];
         let teamResults =[];
     
@@ -69,7 +69,7 @@ class Leaderboard {
     static calulateTeamResults(results, activity, updateType) {
         // console.log("calulateUserResults() started ...");
 
-        let newResult = new Result();
+        let newResult = new ResultClass();
         const idx = results.findIndex((result) => {
             const foundIdx = result.teamUid === activity.teamUid;
             return foundIdx;
@@ -99,7 +99,7 @@ class Leaderboard {
     static calulateUserResults(results, activity, updateType) {
         // console.log("calulateUserResults() started ...");
 
-        let newResult = new Result();
+        let newResult = new ResultClass();
         const idx = results.findIndex((result) => {
             const foundIdx = result.uid === activity.uid;
             return foundIdx;
@@ -113,6 +113,7 @@ class Leaderboard {
         newResult.uid = activity.uid;
         newResult.displayName = activity.displayName;
         newResult.teamUid = activity.teamUid;
+        newResult.teamNAme = activity.teamName;
 
         newResult = Leaderboard.computeRecordTotals(newResult, activity, updateType);
 

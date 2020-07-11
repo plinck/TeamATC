@@ -1,5 +1,6 @@
 import Util from "../Util/Util";
 import UserAuthAPI from "./UserAuthAPI";
+// import { UserChallenge, User } from "../../interfaces/User";
 
 // Backend functions for user DB in firestore and auth
 class UserDB {
@@ -13,6 +14,7 @@ class UserDB {
                 querySnapshot.forEach(doc => {
                     let user = {};
                     user = doc.data();
+                    user.challenges = user.challenges ? user.challenges : [];
                     user.displayName = user.displayName ? user.displayName : ""
                     user.firstName = user.firstName ? user.firstName : ""
                     user.lastName = user.lastName ? user.lastName : ""
@@ -39,6 +41,7 @@ class UserDB {
             docRef.get().then((doc) => {
                 if (doc.exists) {
                     let user = doc.data();
+                    user.challenges = user.challenges ? user.challenges : [];
                     user.id = doc.id;
                     return(resolve(user));
                 }
@@ -65,6 +68,7 @@ class UserDB {
                     foundUser = true;
                     console.log(doc.data());
                     user = doc.data();
+                    user.challenges = user.challenges ? user.challenges : [];
                     user.id = doc.id;
                 });
 
@@ -95,6 +99,7 @@ class UserDB {
                 docRef.get().then((doc) => {
                     if (doc.exists) {
                         let user = doc.data();
+                        user.challenges = user.challenges ? user.challenges : [];
                         user.id = doc.id;
                         resolve(user);
                     } else {
@@ -148,10 +153,11 @@ class UserDB {
         return new Promise(async (resolve, reject) => {
             const authUser = await Util.getCurrentAuthUser();
             // we always want uid = id to keep auth and firestore in sync
-            authUser.updateProfile({
-                displayName: newUser.displayName,
-                photoURL: user.photoURL,
-            }).then(() => {
+            const profileUpdate = {displayName: newUser.displayName};
+            if (newUser.photoObj && newUser.photoObj.url && newUser.photoObj.url !== "") {
+                profileUpdate.photoURL = newUser.photoObj.url;
+            }
+            authUser.updateProfile(profileUpdate).then(() => {
                 console.log("Auth Profile for User successfully updated!");
                 const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
                 dbUsersRef.doc(user.id).set(newUser, { merge: true }).then(() => {
@@ -198,17 +204,43 @@ class UserDB {
 
     // Switch the challenge the user is in.
     // For now, delete the assigned team since teams are based on challenge
-    static updateChallenge (userId, challengeUid) {
-        console.log(`trying to update challenge; ${challengeUid}, for user ${userId}`);
+    static updateChallenge (user, teams, challengeUid) {
+        console.log(`trying to update challenge; ${challengeUid}, for user ${user.uid}`);
 
         return new Promise(async (resolve, reject) => {
-
+        
+            // first get challengese a user is in
+            let idx = -1;
+            if (user.challenges) {
+                idx = user.challenges.findIndex((userChallenge) => {
+                    const foundIdx = userChallenge.challengeUid === challengeUid;
+                    return foundIdx;
+                });
+            } else {
+                user.challenges = [];
+            }
+    
+            let teamUid = "";
+            let teamName = "";
+            if (idx > -1) {       // Found
+                teamUid = user.challenges[idx].teamUid;
+                teamName = teams.find(team => {
+                    if ( team.teamUid && team.teamUid === teamUid ) {
+                        return team.teamName;
+                    }
+                });
+            } else {
+                teamUid = "";
+                user.challenges.push({challengeUid: challengeUid, teamUid: teamUid});
+            }
+    
             // update
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
-            dbUsersRef.doc(userId).set({
+            dbUsersRef.doc(user.uid).set({
+                challenges: user.challenges,
                 challengeUid: challengeUid ? challengeUid  : "",
-                teamUid: null,
-                teamName: ""
+                teamUid: teamUid,
+                teamName: teamName
             }, {
                 merge: true
             }).then(() => {
@@ -223,14 +255,32 @@ class UserDB {
     }
     // Switch the challenge the user is in.
     // For now, delete the assigned team since teams are based on challenge
-    static updateTeam (userId, teamUid, teamName) {
-        console.log(`trying to update team: ${teamUid}, for user ${userId}`);
+    static updateTeam (user, teamUid, teamName) {
+        console.log(`trying to update team: ${teamUid}, for user ${user.uid}`);
 
         return new Promise(async (resolve, reject) => {
+            // first get challengese a user is in
+            let idx = -1;
+            if (user.challenges) {
+                idx = user.challenges.findIndex((userChallenge) => {
+                    const foundIdx = userChallenge.challengeUid === user.challengeUid;
+                    return foundIdx;
+                });
+            } else {
+                user.challenges = [];
+            }
+    
+            if (idx > -1) {       // Found
+                user.challenges[idx].teamUid = teamUid;
+            } else {
+                teamUid = teamUid;
+                user.challenges.push({challengeUid: user.challengeUid, teamUid: teamUid});
+            }
 
             // update
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
-            dbUsersRef.doc(userId).set({
+            dbUsersRef.doc(user.uid).set({
+                challenges: user.challenges,
                 teamUid: teamUid,
                 teamName: teamName ? teamName : ""
             }, {
@@ -260,6 +310,7 @@ class UserDB {
         // e.g. this function is ploymorphic so it can handle setting lots of userInfo or just seeding the firestore collection
         if (userInfo) {
             user = {
+                challenges: userInfo.challenges ? userInfo.challenges : [],
                 challengeUid: userInfo.challengeUid ? userInfo.challengeUid : "",
                 displayName: `${userInfo.firstName} ${userInfo.lastName}`,
                 email: userInfo.email.toLowerCase(),
@@ -269,8 +320,8 @@ class UserDB {
                 isTeamLead: userInfo.isTeamLead ? true : false,
                 isUser: userInfo.isUser ? true : false,
                 lastName: userInfo.lastName,
-                phoneNumber: userInfo.phoneNumber ? userInfo.phoneNumber : "",
-                photoURL: userInfo.photoURL ? userInfo.photoURL : "",
+                phoneNumber: userInfo.phoneNumber ? userInfo.phoneNumber : "",    
+                photoObj: userInfo.photoObj ? userInfo.photoObj : {fileName: "", fileTitle: "", url: ""},
                 primaryRole: userInfo.primaryRole ? userInfo.primaryRole : "User",
                 stravaAccessToken: userInfo.stravaAccessToken ? userInfo.stravaAccessToken : "",
                 stravaAthleteId : userInfo.stravaAthleteId ? userInfo.stravaAthleteId : "",
@@ -289,7 +340,6 @@ class UserDB {
                 phoneNumber: authUser.user.phoneNumber ? authUser.user.phoneNumber : "",
                 uid: authUser.user.uid,
                 email: authUser.user.email.toLowerCase(),
-                photoURL: authUser.user.photoURL ? authUser.user.photoURL : "",
                 teamName: user.teamName ? user.teamName : "",
                 teamUid: user.teamUid ? user.teamUid : ""
             };
@@ -298,18 +348,7 @@ class UserDB {
         return new Promise((resolve, reject) => {
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
                     // update if exists, create if not existing
-            dbUsersRef.doc(authUser.user.uid).set({
-                displayName: user.firstName + " " + user.lastName,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                phoneNumber: user.phoneNumber,
-                uid: user.uid,
-                email: user.email,
-                photoURL: user.photoURL,
-                teamName: user.teamName,
-                teamUid: user.teamUid
-
-            }).then(() => {
+            dbUsersRef.doc(authUser.user.uid).set(user, {merge: true} ).then(() => {
                 console.log("Users updated with ID: ", authUser.user.uid);
                 resolve(authUser.user.uid);
             }).catch(err => {

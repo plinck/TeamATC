@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import { Container, makeStyles, Typography, Grid } from '@material-ui/core';
 import queryString from 'query-string'
 import StravaAPI from "./StravaAPI.js"
@@ -58,9 +58,9 @@ const OAuthRedirect = (props) => {
         console.log(`code ${code}`);// "top"
 
         // If no error process the OAuth return by storing in user record
-        if (!error && state && code && props.user.uid) {
+        if (!error && state && code && props.context.uid) {
             console.log("next Step after OAUTH Returns success");
-            StravaAPI.getOAuthToken(props.user.uid, code).then(res => {
+            StravaAPI.getOAuthToken(props.context.uid, code).then(res => {
                 // console.log(`Success in StravaAPI.getOAuthToken, res: ${JSON.stringify(res)}`);
                 // redirect with message - how to show on dashboard
                 setMessage(`Succesfully Authorized Strava!`)
@@ -70,7 +70,7 @@ const OAuthRedirect = (props) => {
             });
         }
 
-    }, [error, state, code, props.user.uid]);
+    }, [error, state, code, props.context.uid]);
 
     const sendAuthorizationRequest = () => {
         StravaAPI.sendAuthRequestExpress();
@@ -111,4 +111,4 @@ const OAuthRedirect = (props) => {
     )
 }
 
-export default withAuthUserContext(OAuthRedirect);
+export default withContext(OAuthRedirect);

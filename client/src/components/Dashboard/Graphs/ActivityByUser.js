@@ -5,7 +5,7 @@ import moment from "moment";
 import { Redirect } from 'react-router';
 import { withRouter } from 'react-router-dom';
 
-import { withAuthUserContext } from "../../Auth/Session/AuthUserContext";
+import { withContext } from "../../Auth/Session/Context";
 
 class ActivityByUser extends React.Component {
     plotActivities = (uid) => {
@@ -155,20 +155,20 @@ class ActivityByUser extends React.Component {
 
     render() {
         // Some props take time to get ready so return null when uid not avaialble
-        if (!this.props.user) {
+        if (!this.props.context) {
             return null;
         }
 
-        const displayName = this.props.user.displayName;
+        const displayName = this.props.context.displayName;
 
-        if (this.props.user.authUser) {
+        if (this.props.context.authUser) {
             return (
                 <div>
                     <div className="col s12 l6">
                         <div className="card">
                             <div className="card-content pCard">
                                 <span className="card-title">{this.props.title ? this.props.title : 'ActivityByUser'} : {displayName}</span>
-                                {this.plotActivities(this.props.user.authUser.uid)}
+                                {this.plotActivities(this.props.context.authUser.uid)}
                             </div>
                             <div className="card-action pCard">
                                 <div className="center-align">
@@ -187,4 +187,4 @@ class ActivityByUser extends React.Component {
     }
 }
 
-export default withRouter(withAuthUserContext(ActivityByUser));
+export default withRouter(withContext(ActivityByUser));

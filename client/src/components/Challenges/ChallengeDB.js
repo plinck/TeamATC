@@ -20,8 +20,6 @@ class ChallengeDB {
                     challenge.id = doc.id;
                     challenge.startDate = challenge.startDate.toDate();
                     challenge.endDate = challenge.endDate.toDate();
-                    challenge.challengeShutdownStartDate = challenge.challengeShutdownStartDate ? challenge.challengeShutdownStartDate.toDate() : null;
-                    challenge.challengeShutdownEndDate = challenge.challengeShutdownStartDate ? challenge.challengeShutdownEndDate.toDate() : null;       
                     challenges.push(challenge);
                 });
                 resolve(challenges);
@@ -48,8 +46,6 @@ class ChallengeDB {
                         challenge.id = doc.id;
                         challenge.startDate = challenge.startDate.toDate();
                         challenge.endDate = challenge.endDate.toDate();
-                        challenge.challengeShutdownStartDate = challenge.challengeShutdownStartDate ? challenge.challengeShutdownStartDate.toDate() : null;
-                        challenge.challengeShutdownEndDate = challenge.challengeShutdownStartDate ? challenge.challengeShutdownEndDate.toDate() : null;       
                         resolve(challenge);
                     } else {
                         reject(`Challenge not found with id: ${id}`);
@@ -67,12 +63,15 @@ class ChallengeDB {
             const dbChallengesRef = Util.getBaseDBRefs().dbChallengesRef;
             let challengeNew = {
                 description: challenge.description,
+                challengeDistance: challenge.challengeDistance ? challenge.challengeDistance : 0,
                 endDate: challenge.endDate,
                 isCurrentChallenge: challenge.isCurrentChallenge ? challenge.isCurrentChallenge : false,
                 name: challenge.name,
                 startDate: challenge.startDate,
                 startCity: challenge.startCity ? challenge.startCity : false,
+                startCityGeometry: challenge.startCityGeometry ? challenge.startCityGeometry : {lat:0, lng:0},
                 endCity: challenge.endCity ? challenge.endCity : false,
+                endCityGeometry: challenge.endCityGeometry ? challenge.endCityGeometry : {lat:0, lng:0},
                 waypoints: challenge.waypoints ? challenge.waypoints : false,
                 isSwim: challenge.isSwim !== undefined &&  challenge.isSwim !== null ? challenge.isSwim : false,
                 isBike: challenge.isBike !== undefined &&  challenge.isBike !== null ? challenge.isBike : false,
@@ -100,12 +99,15 @@ class ChallengeDB {
             const dbChallengesRef = Util.getBaseDBRefs().dbChallengesRef;
             let challengeNew = {
                 description: challenge.description,
+                challengeDistance: challenge.challengeDistance ? challenge.challengeDistance : 0,
                 endDate: challenge.endDate,
                 isCurrentChallenge: challenge.isCurrentChallenge ? challenge.isCurrentChallenge : false,
                 name: challenge.name,
                 startDate: challenge.startDate,
                 startCity: challenge.startCity ? challenge.startCity : false,
+                startCityGeometry: challenge.startCityGeometry ? challenge.startCityGeometry : {lat:0, lng:0},
                 endCity: challenge.endCity ? challenge.endCity : false,
+                endCityGeometry: challenge.endCityGeometry ? challenge.endCityGeometry : {lat:0, lng:0},
                 waypoints: challenge.waypoints ? challenge.waypoints : false,
                 isSwim: challenge.isSwim !== undefined &&  challenge.isSwim !== null ? challenge.isSwim : false,
                 isBike: challenge.isBike !== undefined &&  challenge.isBike !== null ? challenge.isBike : false,
@@ -184,8 +186,6 @@ class ChallengeDB {
                 });
         });
     }
-
-
 
 }
 

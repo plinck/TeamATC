@@ -72,11 +72,12 @@ class UserAuthAPI {
         // HERE
         let promise = 
             this.getCurrentAuthUser().then (authUser => {
-                authUser.updateProfile({
-                    displayName: `${user.firstName} ${user.lastName}`,
-                    photoURL: user.photoURL ? user.photoURL : "",
-                    phoneNumber: user.phoneNumber ? user.phoneNumber : ""
-                }).then(() => {
+                const profileUpdate = {displayName: user.displayName, phoneNumber: user.phoneNumber ? user.phoneNumber : ""};
+                if (user.photoObj && user.photoObj.url && user.photoObj.url !== "") {
+                    profileUpdate.photoURL = user.photoObj.url;
+                }
+    
+                authUser.updateProfile(profileUpdate).then(() => {
                     // Update successful - doesnt matter
                 }).catch((error) => {
                     // An error happened - doesnt matter, just log

@@ -6,7 +6,9 @@ class Result {
     teamName: string;
     userRecord: boolean;
     uid: string;
+    photoUrl: string;
     displayName: string;
+    rank: number;
     distanceTotal: number;
     pointsTotal: number;
     durationTotal: number;
@@ -40,7 +42,9 @@ class Result {
         this.teamName = "";
         this.userRecord = false;
         this.uid = "";
+        this.photoUrl = "";
         this.displayName = "";
+        this.rank = 0;
         this.distanceTotal = 0;
         this.pointsTotal = 0;
         this.durationTotal = 0;

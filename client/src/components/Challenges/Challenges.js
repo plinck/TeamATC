@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router';
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import { Container, Typography, makeStyles, Grid } from '@material-ui/core';
 import ChallengeDB from "./ChallengeDB"
 import ChallengeForm from './ChallengeForm';
@@ -64,7 +64,7 @@ const Challenges = (props) => {
     }
 
     const handleJoinChallenge = (challenge) => {
-        UserDB.updateChallenge(props.user.uid, challenge.id).then(() => {
+        UserDB.updateChallenge(props.context.user, props.context.teams, challenge.id).then(() => {
             // User now assigned to new challenge
             setMessage(`joined challenge ${challenge.name}`);
             props.history.push({
@@ -93,7 +93,7 @@ const Challenges = (props) => {
         fetchData();
     }, []);
 
-    const userCanUpdateChallenge = (props.user && props.user.isAdmin) ? true : false;
+    const userCanUpdateChallenge = (props.context && props.context.isAdmin) ? true : false;
 
     return (
         <div className={classes.root}>
@@ -124,4 +124,4 @@ const Challenges = (props) => {
     )
 }
 
-export default withAuthUserContext(withRouter(Challenges));
+export default withContext(withRouter(Challenges));

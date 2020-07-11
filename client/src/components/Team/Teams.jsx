@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import { Container, Typography, makeStyles, Grid } from '@material-ui/core';
 import TeamDB from "./TeamDB"
 import TeamForm from './TeamForm';
@@ -76,7 +76,7 @@ const Teams = (props) => {
     }
 
     const handleJoinTeam = (teamUid, teamName) => {
-        UserDB.updateTeam(props.user.uid, teamUid, teamName).then(() => {
+        UserDB.updateTeam(props.context.user, teamUid, teamName).then(() => {
             // User now assigned to new team
             setMessage(`joined team ${teamName}`);
             props.history.push({
@@ -101,10 +101,13 @@ const Teams = (props) => {
     // i.e. if you dont use optional parameter (array of properities to watch), it
     // will fire this function every single time the component is refreshed which isnt cool.
     useEffect(() => {
-        fetchData();
-    }, [props.user]);
+        TeamDB.getTeams().then(teams => {
+            setTeams(teams);
+            // Each time you refresh, make sure the currnt id is cleared
+        }).catch(err => setMessage(err));
+    }, [props.context]);
 
-    const userCanUpdateTeam = (props.user && props.user.isAdmin) ? true : false;
+    const userCanUpdateTeam = (props.context && props.context.isAdmin) ? true : false;
 
     return (
         <div className={classes.root}>
@@ -138,4 +141,4 @@ const Teams = (props) => {
     )
 }
 
-export default withAuthUserContext(Teams);
+export default withContext(Teams);

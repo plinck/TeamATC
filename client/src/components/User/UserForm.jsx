@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import { withFirebase } from '../Auth/Firebase/FirebaseContext';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -94,7 +94,7 @@ class UserForm extends React.Component {
                 isUser: false,
                 lastName: "",
                 phoneNumber: "",
-                photoURL: "",
+                photoObj: {},
                 primaryRole: "",
                 stravaAccessToken: "",
                 stravaAthleteId : "",
@@ -202,7 +202,7 @@ class UserForm extends React.Component {
 
     componentDidUpdate(prevProps) {
         console.log(`component did update`);
-        if (this.props.user.challengeUid && this.props.user.challengeUid !== prevProps.user.challengeUid) {
+        if (this.props.context.challengeUid && this.props.context.challengeUid !== prevProps.user.challengeUid) {
             if (this.state.user.id) {
                 this.fetchUser(this.state.user.id);
             }  
@@ -236,14 +236,15 @@ class UserForm extends React.Component {
             authUser.user.lastName = user.lastName ? user.lastName : "";
             authUser.user.firstName = user.firstName ? user.firstName : "";
             authUser.user.phoneNumber = user.phoneNumber ? user.phoneNumber : "";
-            authUser.user.photoURL = user.photoURL ? user.photoUR : "";
+            authUser.user.photoURL = user.photoObj ? user.photoObj.url : "";
 
            // Now Create the user in firestore
             UserDB.addAuthUserToFirestore(authUser, user).then((id) => {
+
                 this.setState((prevState) => ({
                     user: {                   
                         ...prevState.user,   
-                        [id]: id      
+                        id: id      
                     },
                     message: "New User Added.",
                 }));
@@ -407,7 +408,7 @@ class UserForm extends React.Component {
     render() {
         const { classes } = this.props;
 
-        if (!this.props.user) {
+        if (!this.props.context) {
             console.log("No user yet")
             return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
         }
@@ -433,21 +434,6 @@ class UserForm extends React.Component {
             user.firstName !== "" &&
             user.lastName !== "" &&
             user.phoneNumber !== "";
-
-            
-
-        // if (typeof this.state.teams === 'undefined') {
-        //     console.error("Fatal Error")
-        //     return (<div> <p>FATAL ERROR Gettng teams, something goofy going on ...</p> </div>)
-        // }
-        // if (!challenges || challenges === null) {
-        //     console.log("No challenges yet")
-        //     return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
-        // }
-        // if (!teams || teams === null) {
-        //     console.log("No teams yet")
-        //     return (<div> <CircularProgress className={classes.progress} /> <p>Loading ...</p> </div>)
-        // }
 
         console.log(`rendering with ${challenges.length} challenges and ${teams ? teams.length : 0} teams `);
 
@@ -518,18 +504,6 @@ class UserForm extends React.Component {
                             }}
                         />
 
-                        <TextField
-                            id="photoURL"
-                            name="photoURL"
-                            value={user.photoURL ? user.photoURL : ""}
-                            label="Photo URL"
-                            variant="outlined"
-                            placeholder="http://www.image.com/image.png"
-                            className={classes.textField}
-                            type="text"
-                            margin="normal"
-                            onChange={this.onChange}
-                        />
                         <FormControl variant="outlined" required className={classes.formControl}>
                             <InputLabel id="challengeNameLabel">Challenge Name</InputLabel>
                             <Select
@@ -578,28 +552,28 @@ class UserForm extends React.Component {
                             <FormLabel component="legend">Current Roles</FormLabel>
                             <FormGroup row>
                             <FormControlLabel
-                                disabled={this.props && this.props.user && this.props.user.isAdmin ? false : true}
+                                disabled={this.props && this.props.context && this.props.context.isAdmin ? false : true}
                                 control={
                                 <Checkbox checked={user.isTeamLead} onClick={() => this.userMakeTeamLead(user.id)} />
                                 }
                                 label="TeamLead"
                             />
                             <FormControlLabel
-                                disabled={this.props && this.props.user && this.props.user.isAdmin ? false : true}
+                                disabled={this.props && this.props.context && this.props.context.isAdmin ? false : true}
                                 control={
                                 <Checkbox checked={user.isAdmin} onClick={() => this.userMakeAdmin(user.id)} />
                                 }
                                 label="Admin"
                             />
                             <FormControlLabel
-                                disabled={this.props && this.props.user && this.props.user.isAdmin ? false : true}
+                                disabled={this.props && this.props.context && this.props.context.isAdmin ? false : true}
                                 control={
                                 <Checkbox checked={user.isModerator} onClick={() => this.userMakeModerator(user.id)} />
                                 }
                                 label="Moderator"
                             />
                             <FormControlLabel
-                                disabled={this.props && this.props.user && this.props.user.isAdmin ? false : true}
+                                disabled={this.props && this.props.context && this.props.context.isAdmin ? false : true}
                                 control={
                                 <Checkbox checked={user.isUser} onClick={() => this.userMakeUser(user.id)} />
                                 }
@@ -637,4 +611,4 @@ class UserForm extends React.Component {
     }
 }
 
-export default withFirebase(withAuthUserContext(withRouter(withStyles(styles)(UserForm))));
+export default withFirebase(withContext(withRouter(withStyles(styles)(UserForm))));

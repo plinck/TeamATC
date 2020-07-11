@@ -12,6 +12,8 @@ class LocationSearchBar extends Component {
         this.state = {
             city: '',
             query: '',
+            lat: 0,
+            lng: 0,
             fieldValue: ""
         };
 
@@ -33,7 +35,7 @@ class LocationSearchBar extends Component {
         // Avoid paying for data that you don't need by restricting the set of
         // place fields that are returned to just the address components and formatted
         // address.
-        this.autocomplete.setFields(['address_components', 'formatted_address']);
+        this.autocomplete.setFields(['address_components', 'formatted_address', 'geometry']);
 
         // Fire Event when a suggested name is selected
         this.autocomplete.addListener('place_changed', this.handlePlaceSelect);
@@ -44,22 +46,29 @@ class LocationSearchBar extends Component {
         // Extract City From Address Object
         const addressObject = this.autocomplete.getPlace();
         const address = addressObject.address_components;
+        const lat = addressObject.geometry.location.lat();
+        const lng = addressObject.geometry.location.lng();
+        const geometry = {lat: lat, lng: lng};
 
         // Check if address is valid
         if (address) {
             // Set State
-            this.props.handleCityChange(addressObject.formatted_address);
+            this.props.handleCityChange(addressObject.formatted_address, geometry);
             this.setState(
                 {
-                    city: address[0].long_name,
+                    city: addressObject.formatted_address,
+                    fieldValue: addressObject.formatted_address,
+                    lat: lat,
+                    lng: lng,
                     query: addressObject.formatted_address,
                 }
             );
         }
     }
 
-    hanleFieldValueChange = event => {
-        this.setState({ [event.target.name ]: event.target.value });
+    handleFieldValueChange = event => {
+        console.log(`hanleFieldValueChange: event ${event.target.name}:${event.target.value}`);
+        this.setState({ [event.target.name]: event.target.value });
     };
 
     componentDidMount() {
@@ -92,7 +101,7 @@ class LocationSearchBar extends Component {
                         id={this.props.id}
                         name="fieldValue"
                         value={fieldValue}
-                        onChange={this.hanleFieldValueChange}
+                        onChange={this.handleFieldValueChange}
                         placeholder="Search City"
                         inputProps={{
                             style: { padding: '10px' }

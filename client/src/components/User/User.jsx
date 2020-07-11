@@ -8,7 +8,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { withRouter } from 'react-router-dom';
-import { withAuthUserContext } from '../Auth/Session/AuthUserContext';
+import { withContext } from '../Auth/Session/Context';
 import { Card, Grid, CardMedia, Typography, CardActions, CardContent } from '@material-ui/core';
 
 class User extends React.Component {
@@ -32,11 +32,15 @@ class User extends React.Component {
 
     // decontruct props
     render() {
-        let { id, uid, firstName, lastName, phoneNumber, email, photoURL, primaryRole, stravaUserAuth, stravaAthleteId} = this.props.userInfo;
+        let { id, uid, firstName, lastName, phoneNumber, photoObj, email, primaryRole, stravaUserAuth, stravaAthleteId} = this.props.userInfo;
         let { userMakeAdmin, userMakeTeamLead, userMakeUser, userMakeModerator } = this.props;
 
-        if (!photoURL) {
-            photoURL = "./images/noUserImage150x150.png";
+        let photoObjUrl = "./images/noUserImage150x150.png";
+        let photoObjFileName = "";
+
+        if (photoObj && photoObj.url && photoObj.url !== "") {
+            photoObjUrl = photoObj.url;
+            photoObjFileName = photoObj.fileName;
         }
 
         if (id === null) {
@@ -52,14 +56,15 @@ class User extends React.Component {
         };
 
         // dont let you delete yourself
-        const editIsDisabled = (this.props.user && this.props.user.authUser && this.props.user.authUser.uid) === uid ? true : false;
+        const editIsDisabled = (this.props.context && this.props.context.authUser && this.props.context.authUser.uid) === uid ? true : false;
 
         return (
             <Card>
                 <CardMedia
-                    style={{ height: "150px" }}
-                    image={photoURL}
-                    title={firstName} />
+                    style={{ height: '150px' }}
+                    image={ photoObjUrl }
+                    title={ photoObjFileName }
+                />
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="h2">{firstName} {lastName}</Typography>
                     <Typography variant="body2" color="textSecondary" component="p">{email}</Typography>
@@ -163,4 +168,4 @@ class User extends React.Component {
     } // render()
 }
 
-export default withAuthUserContext(withRouter(User));
+export default withContext(withRouter(User));

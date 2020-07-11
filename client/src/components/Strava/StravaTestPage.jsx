@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { withAuthUserContext } from "../Auth/Session/AuthUserContext";
+import { withContext } from "../Auth/Session/Context";
 import { Container, makeStyles, Typography, Grid } from '@material-ui/core';
 import queryString from 'query-string'
 import StravaAPI from "./StravaAPI.js"
@@ -62,9 +62,9 @@ const StravaTestPage = (props) => {
         console.log(`code ${code}`);// "top"
 
         // If no error process the OAuth return by storing in user record
-        if (!error && state && code && props.user.uid) {
+        if (!error && state && code && props.context.uid) {
             console.log("next Step after OAUTH Returns success");
-            StravaAPI.getOAuthToken(props.user.uid, code).then(res => {
+            StravaAPI.getOAuthToken(props.context.uid, code).then(res => {
                 // console.log(`Success in StravaAPI.getOAuthToken, res: ${JSON.stringify(res)}`);
                 // redirect with message - how to show on dashboard
             }).catch (err => {
@@ -72,14 +72,14 @@ const StravaTestPage = (props) => {
             });
         }
 
-    }, [error, state, code, props.user.uid]);
+    }, [error, state, code, props.context.uid]);
 
     const sendAuthorizationRequest = () => {
         StravaAPI.sendAuthRequestExpress("http://localhost:3000/stravatestpage");
     }
     const refreshStravaToken = () => {
-        if (props.user.uid && props.user.stravaRefreshToken) {
-            StravaAPI.refreshStravaToken(props.user.uid, props.user.stravaRefreshToken).then( data => {
+        if (props.context.uid && props.context.stravaRefreshToken) {
+            StravaAPI.refreshStravaToken(props.context.uid, props.context.stravaRefreshToken).then( data => {
                 setMessage(`StravaAPI.refreshStravaToken Successful`);    
             }).catch (err => {
                 console.error(`StravaAPI.refreshStravaToken: error ${err}`);
@@ -91,8 +91,8 @@ const StravaTestPage = (props) => {
         }
     }
     const deauthorizeStrava = () => {
-        if (props.user.uid && props.user.stravaAccessToken) {
-            StravaAPI.deauthorizeStrava(props.user.uid, props.user.stravaAccessToken).then( data => {
+        if (props.context.uid && props.context.stravaAccessToken) {
+            StravaAPI.deauthorizeStrava(props.context.uid, props.context.stravaAccessToken).then( data => {
                 setMessage(`StravaAPI.deauthorizeStrava Successful`);    
             }).catch (err => {
                 console.error(`StravaAPI.deauthorizeStrava: error ${err}`);
@@ -104,8 +104,8 @@ const StravaTestPage = (props) => {
         }
     }
     const getStravaActivities = () => {
-        if (props.user.uid && props.user.stravaAccessToken) {
-            StravaAPI.getStravaActivities(props.user.uid, props.user.stravaAccessToken).then( data => {
+        if (props.context.uid && props.context.stravaAccessToken) {
+            StravaAPI.getStravaActivities(props.context.uid, props.context.stravaAccessToken).then( data => {
                 setMessage(`StravaAPI.getStravaActivities Successful`);    
             }).catch (err => {
                 console.error(`StravaAPI.getStravaActivities: error ${err}`);
@@ -117,7 +117,7 @@ const StravaTestPage = (props) => {
         }
     }
     const sendStravaSubscribeRequest = () => {
-        if (props.user.uid && props.user.stravaAccessToken) {
+        if (props.context.uid && props.context.stravaAccessToken) {
             StravaAPI.sendStravaSubscribeRequest().then( data => {
                 setMessage(`StravaAPI.sendStravaSubscribeRequest Successful`);    
             }).catch (err => {
@@ -201,4 +201,4 @@ const StravaTestPage = (props) => {
     )
 }
 
-export default withAuthUserContext(StravaTestPage);
+export default withContext(StravaTestPage);

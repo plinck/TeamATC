@@ -16,18 +16,7 @@ import { ActivityUpdateType } from "./modules/interfaces/Common.Types";
 import { StravaEvent, IncomingStravaEventType } from './modules/interfaces/StravaEvent';
 import { saveStravaEvent } from "./modules/events";
 import { StravaEventDB } from "./modules/db/StravaEventDB";
-
-// exports.scheduledFunction = functions.pubsub.schedule('5 6 * * *').onRun((context) => {
-//     console.log('This will be run every day at 6:05 AM UTC!');
-//     const leaderboard:Leaderboard = new Leaderboard();
-//     leaderboard.calculateLeaderboards().then(() => {
-//         console.log(`completed calculating leaderboards`);
-//     }).catch((err: Error) => {
-//         console.error(err);
-//     });
-
-//     return null;
-// });
+import { DistanceMatrix } from "./modules/DistanceMatrix";
 
 // Allow Admin to force recalc of totals froom client in case its out of whack
 exports.forceRecalculation = functions.https.onCall((req:any, context:any):any => {
@@ -168,6 +157,7 @@ exports.listenStravaEvents = functions.firestore
 // Get all resuls for challenge
 exports.getChallengeResults = functions.https.onCall((req:any, context:any):any => {
     return new Promise((resolve, reject) => {
+        console.log(`in get challenge results promise`);
         const challenge = new Challenge(req.challengeUid);
         const leaderboard: Leaderboard = new Leaderboard();
         leaderboard.getResults(challenge).then((allResults:AllResults) => {
@@ -179,7 +169,7 @@ exports.getChallengeResults = functions.https.onCall((req:any, context:any):any 
 });
 
 exports.setEnviromentFromClient = functions.https.onCall((environment, context) => {
-    // console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
+    console.log(`called setEnviromentFromClient with environment ${JSON.stringify(environment)}`)
     envSet(environment.org, environment.env, environment.challengeUid);
         return {message: `Saved environment ${APP_CONFIG.ORG}, ${APP_CONFIG.ENV}, ${APP_CONFIG.CHALLENGEUID}`};
 });
@@ -266,6 +256,15 @@ exports.updateUserActivityDisplayName = functions.https.onCall((req, context: fu
     });//Promise
 });
 
+// Get distanxe from google
+exports.calcDistanceMatrix = functions.https.onCall((req, context: functions.https.CallableContext) => {
+    console.log("calcDistanceMatrix");
+    console.log(req);
+    const distanceMatrix = new DistanceMatrix();
+    const travelMode =  req.travelMode ? req.travelMode : "DRIVING";
+    return distanceMatrix.calcDistanceMatrix(req.origins, req.destinations, travelMode)
+});
+
 // Update Teams - module functions
 exports.fBFupdateTeam = functions.https.onCall((req, context: functions.https.CallableContext) => {
     return new Promise<any>((resolve:any, reject:any) => {
@@ -285,6 +284,31 @@ exports.fBFupdateActivityTeamName = functions.https.onCall((req, context: functi
         const team:Team = req.team as Team;
         const teamUpdate = new TeamUpdate();
         teamUpdate.updateActivityTeamName(team, challengeUid).then(() => {
+            resolve(true);
+        }).catch((err: Error) => {
+            reject(err);
+        });   
+    });//Promise
+});
+
+exports.updateBlankActivityTeamName = functions.https.onCall((req, context: functions.https.CallableContext) => {
+    return new Promise<any>((resolve:any, reject:any) => {
+        const challengeUid = req.challengeUid;
+        const teamUpdate = new TeamUpdate();
+        teamUpdate.updateBlankActivityTeamName(challengeUid).then(() => {
+            resolve(true);
+        }).catch((err: Error) => {
+            reject(err);
+        });   
+    });//Promise
+});
+
+exports.deleteActvitiesPastChallengeEnd = functions.https.onCall((req, context: functions.https.CallableContext) => {
+    return new Promise<any>((resolve:any, reject:any) => {
+        const challenge: Challenge = req.challenge;
+
+        const teamUpdate = new TeamUpdate();
+        teamUpdate.deleteActvitiesPastChallengeEnd(challenge).then(() => {
             resolve(true);
         }).catch((err: Error) => {
             reject(err);

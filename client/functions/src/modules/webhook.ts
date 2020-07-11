@@ -35,6 +35,7 @@ app.get('/strava', (req, res) => {
 });
 
 app.post('/strava', async (req, res) => {
+    console.log("In Strava webhook post API");
     const event: IncomingStravaEventType = req.body as IncomingStravaEventType;
     console.log(`[STRAVA] Event: {
         aspect_type:${event.aspect_type}
@@ -58,17 +59,10 @@ app.post('/strava', async (req, res) => {
         res.status(200).json({ success: true });
         return;
     });
-    // saveStravaEvent(event).then(() => {
-    //     //return res.status(200).json({ success: true });
-    // }).catch(err => {
-    //     //return res.status(200).json({ success: true });
-    // });
-    // // I think i need to return quickly from this so strava knows it worked. ...
-    // return res.status(200).json({ success: true });
 });
 
 app.get('/subscribe', (req, res) => {
-        console.log(`called webhooks subscribe`);
+        console.log(`Called webhooks subscribe`);
         const callbackURL = req.query.callback_url ? req.query.callback_url : FUNCTIONS_CONFIG.strava.callback_url;
 
         const params = {
