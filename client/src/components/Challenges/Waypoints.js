@@ -78,7 +78,7 @@ class Waypoints extends Component {
                     url={`https://maps.googleapis.com/maps/api/js?key=${FB_CONFIG.API_KEY}&libraries=places`}
                     onLoad={this.handleScriptLoad}
                 />
-                <FormControl style={{ minWidth: "100%" }}>
+                <FormControl style={{ minWidth: "100%", marginTop: '10px' }}>
                     <InputLabel htmlFor='waypoints'>{"Waypoints (In Order)"}</InputLabel>
                     <Input
                         id='waypoints'

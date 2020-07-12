@@ -3,7 +3,7 @@ import Script from "react-load-script";
 import { FB_CONFIG } from "../Environment/Environment";
 import { withStyles } from "@material-ui/core/styles";
 import createEpoly from "../Dashboard/GoogleMap/eploy";
-import { Typography, TextField } from "@material-ui/core";
+import { Typography, TextField, Divider } from "@material-ui/core";
 
 const styles = () => ({
   searchBar: {
@@ -125,7 +125,9 @@ const SwimRoutePlanner = (props) => {
         url={`https://maps.googleapis.com/maps/api/js?key=${FB_CONFIG.API_KEY}&libraries=places`}
         onLoad={handleScriptLoad}
       />
-      <br></br>
+      <br />
+      <Divider />
+      <br />
       <Typography variant="h5">Draw Swim Route</Typography>
       <Typography variant="body1">
         Use the Search Bar to find a stating point. Add waypoints to the route

@@ -263,7 +263,7 @@ const ChallengeForm = (props) => {
             <CardContent>
                 {message != null ? <p>{message}</p> : ""}
                 {working ? <span><Spinner />Updating, please wait ...</span> : ""}
-                <Typography variant="h5">Challenge</Typography>
+                <Typography variant="h4">Challenge</Typography>
                 <form noValidate autoComplete="off">
                     <TextField
                         className={classes.fullWidth}
@@ -326,10 +326,9 @@ const ChallengeForm = (props) => {
                     <LocationSearchBar value={challenge.endCity} title="End City" id="endCity" handleCityChange={handleEndCityChange} />
                     <Waypoints handleAddWaypoint={handleAddWaypoint} handleDelete={handleDelete} waypoints={challenge.waypoints} />
                     <br />
-                    {challenge.isSwim ?
-                        <SwimRoutePlanner handleAddSwimRoute={handleAddSwimRoute} />
-                        : null}
-                    <hr />
+                    <SwimRoutePlanner handleAddSwimRoute={handleAddSwimRoute} />
+                    <br/>
+                    <Divider />
                     <FormControl component="fieldset" className={classes.formControl}>
                         <FormLabel component="legend">Activity Types</FormLabel>
                         <FormGroup row>
