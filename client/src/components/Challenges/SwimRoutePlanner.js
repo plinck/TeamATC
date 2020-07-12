@@ -3,12 +3,7 @@ import Script from "react-load-script";
 import { FB_CONFIG } from "../Environment/Environment";
 import { withStyles } from "@material-ui/core/styles";
 import createEpoly from "../Dashboard/GoogleMap/eploy";
-import {
-  Typography,
-  TextField,
-  Button,
-  InputAdornment,
-} from "@material-ui/core";
+import { Typography, TextField } from "@material-ui/core";
 
 const styles = () => ({
   searchBar: {
@@ -22,7 +17,7 @@ const styles = () => ({
 });
 
 const SwimRoutePlanner = (props) => {
-  const { classes } = props;
+  const { classes, handleAddSwimRoute } = props;
 
   const options = {
     center: { lat: 37.0902, lng: -95.7129 },
@@ -35,22 +30,7 @@ const SwimRoutePlanner = (props) => {
   const [map, setMap] = useState();
   const [polyline, setPolyline] = useState();
   const [distance, setDistance] = useState();
-  const [laps, setLaps] = useState(1);
-  const [points, setPoints] = useState([]);
-  // let markers = [];
-  const [markers, setMarkers] = useState([])
-
-  const handleLapsChange = (e) => {
-    if (e.target.value <= 0) {
-      setLaps(1);
-    } else {
-      setLaps(e.target.value);
-    }
-  };
-
-  useEffect(() => {
-    console.log(points);
-  }, [points]);
+  const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
     if (polyline && map) {
@@ -58,16 +38,10 @@ const SwimRoutePlanner = (props) => {
     }
   }, [map, polyline]);
 
-  // useEffect(() => {
-  //   if (polyline) {
-  //     onDrawComplete(polyline);
-  //   }
-  // }, [points]);
-
   const removeMarker = (marker) => {
     for (var i = 0; i < markers.length; i++) {
       if (markers[i] === marker) {
-        let tempMark = markers
+        let tempMark = markers;
         tempMark[i].setMap(null);
         tempMark.splice(i, 1);
         polyline.getPath().removeAt(i);
@@ -82,10 +56,8 @@ const SwimRoutePlanner = (props) => {
       position: event.latLng,
       map: map,
     });
-    let marks = markers
-    marks.push(marker)
-    console.log(event.latLng.lat())
-    console.log(event.latLng.lng())
+    let marks = markers;
+    marks.push(marker);
     polyline.getPath().push(event.latLng);
     window.google.maps.event.addListener(marker, "click", (event) =>
       removeMarker(marker)
@@ -98,7 +70,8 @@ const SwimRoutePlanner = (props) => {
     const miles = meters / 1000 / 1.609344; //m ro km to miles
     console.log(miles);
     setDistance(miles);
-    setMarkers(marks)
+    setMarkers(marks);
+    handleAddSwimRoute(marks);
   };
 
   const handleScriptLoad = async () => {
@@ -124,7 +97,7 @@ const SwimRoutePlanner = (props) => {
 
     searchBox.addListener("places_changed", function () {
       let places = searchBox.getPlaces();
-      if (places.length == 0) {
+      if (places.length === 0) {
         return;
       }
 
@@ -155,8 +128,9 @@ const SwimRoutePlanner = (props) => {
       <br></br>
       <Typography variant="h5">Draw Swim Route</Typography>
       <Typography variant="body1">
-        Use the Search Bar to find a stating point. Add waypoints to the route by
-        clicking on the map. Click a waypoint again to remove it. Select Save Route when done.
+        Use the Search Bar to find a stating point. Add waypoints to the route
+        by clicking on the map. Click a waypoint again to remove it. Select Save
+        Route when done.
       </Typography>
       <TextField
         className={classes.searchBar}
@@ -180,31 +154,6 @@ const SwimRoutePlanner = (props) => {
           : 0}{" "}
         miles
       </Typography>
-      <TextField
-        id="standard-number"
-        label="Number of Laps"
-        type="number"
-        variant="outlined"
-        value={laps}
-        onChange={handleLapsChange}
-        InputProps={{
-          endAdornment: <InputAdornment position="end">Laps</InputAdornment>,
-        }}
-      />
-      <Typography variant="h6">
-        Total Distance:{" "}
-        {distance
-          ? (distance * laps)
-              .toFixed(0)
-              .toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-          : 0}{" "}
-        miles
-      </Typography>
-      <br />
-      <Button variant="contained" color="primary">
-        Save Route
-      </Button>
     </>
   );
 };

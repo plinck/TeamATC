@@ -67,6 +67,7 @@ const ChallengeForm = (props) => {
         endCity: "",
         endCityGeometry: "",
         waypoints: [],
+        swimRoute: [],
         isSwim: true,
         isBike: true,
         isRun: true,
@@ -87,6 +88,7 @@ const ChallengeForm = (props) => {
         endCity: "",
         endCityGeometry: "",
         waypoints: [],
+        swimRoute: [],
         isSwim: true,
         isBike: true,
         isRun: true,
@@ -137,6 +139,17 @@ const ChallengeForm = (props) => {
         let newWaypoints = challenge.waypoints ? challenge.waypoints : []
         newWaypoints.push(newWaypoint)
         setChallenge({ ...challenge, waypoints: newWaypoints })
+    }
+
+    const handleAddSwimRoute = (markers) => {
+        let routeWaypoints = []
+        markers.forEach(marker => {
+            let waypoint = {
+                geometry: {lat: marker.position.lat(), lng: marker.position.lng()}
+            }
+            routeWaypoints.push(waypoint)
+        })
+        setChallenge({...challenge, swimRoute: routeWaypoints})
     }
 
     const handleDelete = chipToDelete => () => {
@@ -314,7 +327,7 @@ const ChallengeForm = (props) => {
                     <Waypoints handleAddWaypoint={handleAddWaypoint} handleDelete={handleDelete} waypoints={challenge.waypoints} />
                     <br />
                     {challenge.isSwim ?
-                        <SwimRoutePlanner />
+                        <SwimRoutePlanner handleAddSwimRoute={handleAddSwimRoute} />
                         : null}
                     <hr />
                     <FormControl component="fieldset" className={classes.formControl}>
