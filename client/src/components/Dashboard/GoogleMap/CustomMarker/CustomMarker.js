@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 import { Avatar, Card, CardContent, Typography } from "@material-ui/core";
 
 const useStyles = makeStyles(() =>
@@ -39,8 +39,6 @@ export default function CustomMarker({ name, photo, $hover, label }) {
 
   let initials = name.match(/\b\w/g) || [];
   initials = ((initials.shift() || "") + (initials.pop() || "")).toUpperCase();
-
-  const style = {};
 
   return (
     <div>

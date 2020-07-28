@@ -1,36 +1,42 @@
 import { Result } from "./Result";
 
 type ResultType = {
+    id?: string;
+
     challengeUid: string;
     overallRecord: boolean;
+
     teamRecord: boolean;
     teamUid: string;
     teamName: string;
+
     userRecord: boolean;
     uid: string;
-    photoUrl: string;
     displayName: string;
-    rank: number;
+
     distanceTotal: number;
-    pointsTotal: number;
     durationTotal: number;
     nbrActivities: number;
-    swimDistanceTotal: number;
-    swimPointsTotal: number;
-    swimNbrActivities: number;
-    swimDurationTotal: number;
+    photoUrl: string;
+    pointsTotal: number;
+    rank: number;
+    
     bikeDistanceTotal: number;
     bikePointsTotal: number;
     bikeNbrActivities: number;
     bikeDurationTotal: number;
+    otherDistanceTotal: number;
+    otherDurationTotal: number;
+    otherPointsTotal: number;
+    otherNbrActivities: number;
     runDistanceTotal: number;
     runPointsTotal: number;
     runNbrActivities: number;
     runDurationTotal: number;
-    otherDistanceTotal: number;
-    otherPointsTotal: number;
-    otherNbrActivities: number;
-    otherDurationTotal: number;
+    swimDistanceTotal: number;
+    swimPointsTotal: number;
+    swimNbrActivities: number;
+    swimDurationTotal: number;
     updateDateTime: Date;
 }
 

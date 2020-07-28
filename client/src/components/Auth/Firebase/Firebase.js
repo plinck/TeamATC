@@ -45,6 +45,7 @@ class Firebase {
     this.currentAuthUser = firebase.auth().currentUser;
     this.auth = firebase.auth();
     this.db = firebase.firestore();
+    this.firestore = firebase.firestore;
     this.functions = firebase.functions();
     this.storage = firebase.storage();
     this.perf = firebase.performance();

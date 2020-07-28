@@ -58,11 +58,13 @@ class Util {
     const firebase = new Firebase();
 
     const dbUsersRef = firebase.db.collection(ORG).doc(ENV).collection(`users`);
+    const dbHillRepeatsRef = firebase.db.collection(ORG).doc(ENV).collection(`hillrepeats`);
     const dbATCMembersRef = firebase.db.collection(ORG).doc(ENV).collection(`ATCMembers`);
     const dbChallengesRef = firebase.db.collection(ORG).doc(ENV).collection("challenges");
 
     return {
       dbUsersRef: dbUsersRef,
+      dbHillRepeatsRef: dbHillRepeatsRef,
       dbATCMembersRef: dbATCMembersRef,
       dbChallengesRef: dbChallengesRef,
     }
@@ -166,12 +168,17 @@ class Util {
     return firebase;
   }
 
+  static getFirebaseRef = () => {
+    const firebase = new Firebase();
+    return firebase;
+  }
+
 
   static getFirebaseFirestore = () => {
     const firebase = new Firebase();
-    const fb = firebase.firestore;
+    const firestore = firebase.firestore;
 
-    return fb;
+    return firestore;
   }
 
   static apiGet = async (api) => {

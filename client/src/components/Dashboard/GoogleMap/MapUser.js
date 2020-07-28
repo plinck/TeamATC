@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import createEpoly from "./eploy.js";
 import { FB_CONFIG } from "../../Environment/Environment";
-import bikeIcon from "./pin.svg";
+// import bikeIcon from "./pin.svg";
 import GoogleMapReact from "google-map-react";
 import CustomMarker from "./CustomMarker/CustomMarker";
 

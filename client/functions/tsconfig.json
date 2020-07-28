@@ -10,10 +10,17 @@
     "outDir": "lib",
     "sourceMap": true,
     "lib": ["es2017"],
-    "target": "es2017"
+    "target": "es2017",
+    "types": [
+      "node"
+    ]
   },
   "compileOnSave": true,
   "include": [
     "src/**/*"
-  ]
+  ],
+  "exclude": [
+		".git",
+		"./node_modules"
+	]
 }
