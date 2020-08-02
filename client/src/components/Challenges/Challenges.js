@@ -7,7 +7,6 @@ import ChallengeForm from './ChallengeForm';
 import Challenge from "./Challenge"
 import UserDB from "../User/UserDB.js"
 import { ORG } from "../Environment/Environment"
-import Script from 'react-load-script';
 
 
 const useStyles = makeStyles(theme => ({

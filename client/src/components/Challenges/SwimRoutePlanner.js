@@ -36,6 +36,7 @@ const SwimRoutePlanner = (props) => {
     if (polyline && map) {
       map.addListener("click", addLatLng);
     }
+    // eslint-disable-next-line
   }, [map, polyline]);
 
   const removeMarker = (marker) => {
@@ -131,8 +132,7 @@ const SwimRoutePlanner = (props) => {
       <Typography variant="h5">Draw Swim Route</Typography>
       <Typography variant="body1">
         Use the Search Bar to find a stating point. Add waypoints to the route
-        by clicking on the map. Click a waypoint again to remove it. Select Save
-        Route when done.
+        by clicking on the map. Click a waypoint again to remove it.
       </Typography>
       <TextField
         className={classes.searchBar}
