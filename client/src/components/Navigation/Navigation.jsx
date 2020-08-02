@@ -36,6 +36,7 @@ import MailIcon from "@material-ui/icons/Mail";
 import PeopleIcon from "@material-ui/icons/People";
 import { ORG } from "../Environment/Environment.js";
 import EmojiEventsIcon from '@material-ui/icons/EmojiEvents';
+import FilterHdrIcon from '@material-ui/icons/FilterHdr';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -133,6 +134,16 @@ let Navigation = (props) => {
         <ListItemText>
           <NavLink className={classes.mobileButton} to="/results">
             Results
+          </NavLink>
+        </ListItemText>
+      </ListItem>
+      <ListItem>
+        <ListItemIcon>
+          <FilterHdrIcon />
+        </ListItemIcon>
+        <ListItemText>
+          <NavLink className={classes.mobileButton} to="/hillrepeatsdash">
+            Hill Repeats
           </NavLink>
         </ListItemText>
       </ListItem>
@@ -265,6 +276,16 @@ let Navigation = (props) => {
         <ListItemText>
           <NavLink className={classes.mobileButton} to="/results">
             Results
+          </NavLink>
+        </ListItemText>
+      </ListItem>
+      <ListItem>
+        <ListItemIcon>
+          <FilterHdrIcon />
+        </ListItemIcon>
+        <ListItemText>
+          <NavLink className={classes.mobileButton} to="/hillrepeatsdash">
+            Hill Repeats
           </NavLink>
         </ListItemText>
       </ListItem>

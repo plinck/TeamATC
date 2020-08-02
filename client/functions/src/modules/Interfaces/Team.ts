@@ -1,5 +1,5 @@
 class Team {
-    id: string;
+    id?: string;
     description:  string;
     name:  string;
 
