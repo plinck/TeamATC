@@ -224,7 +224,7 @@ class HillRepeats extends Component<Props, MyState> {
         myDataAllRows.splice(idx, 1, newDataRow);   
 
         // replace the data field in state
-        this.setState({ ...this.state, message: "Updated", data: newDataAllRows });
+        this.setState({ ...this.state, message: "Updated", data: myDataAllRows });
       }).catch((err: Error) => {
         console.error(`${err}`);
         this.setState({message: `Error updating hill repeats: ${err.message}`});
