@@ -45,7 +45,7 @@ class HillRepeatsDB {
 
     update(pRepeat: HillRepeat) {
         console.log(`trying to update repeat in fb: ${pRepeat}`);
-        let newRepeat = {...pRepeat};
+        const newRepeat = {...pRepeat};
         // Delete the id field since you do not want in db as it is they key
         try {
             delete newRepeat.id
@@ -72,7 +72,7 @@ class HillRepeatsDB {
 
     add(pRepeat: HillRepeat) {
         console.log(`trying to update repeat in fb: ${pRepeat}`);
-        let newRepeat = {...pRepeat};
+        const newRepeat = {...pRepeat};
         // Delete the id field since you do not want in db as it is they key
         try {
             delete newRepeat.id
