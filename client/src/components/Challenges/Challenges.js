@@ -8,6 +8,7 @@ import Challenge from "./Challenge"
 import UserDB from "../User/UserDB.js"
 import { ORG } from "../Environment/Environment"
 
+
 const useStyles = makeStyles(theme => ({
     root: {
         [theme.breakpoints.up('md')]: {
@@ -99,7 +100,7 @@ const Challenges = (props) => {
                 {message ? <Typography color="primary" variant="subtitle1" align="center">{message}</Typography> : ""}
                 <Grid style={{ marginTop: '10px' }} container spacing={2} justify="center" alignItems="center">
                     {userCanUpdateChallenge ?
-                        <Grid item xs={12} md={5}>
+                        <Grid item xs={12} md={8}>
                             <ChallengeForm id={currentChallengeId}
                                 handleUpdateChallenge={handleUpdateChallenge}
                             />
