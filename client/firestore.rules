@@ -3,16 +3,16 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function isUserAdmin() {
-  		return request.auth.uid != null && get(/databases/$(database)/documents/MST/prod/users/$(request.auth.uid)).data.isAdmin
+  		return request.auth.uid != null && get(/databases/$(database)/documents/ATC/prod/users/$(request.auth.uid)).data.isAdmin
   	}
     
-    match /MST/prod/users/{userID} {
+    match /ATC/prod/users/{userID} {
       allow list: if request.auth.uid != null;
     	allow get: if request.auth.uid == userID || isUserAdmin();
     	allow delete: if request.auth.uid == userID || isUserAdmin();
     	allow update: if request.auth.uid == userID || isUserAdmin();
       allow create: if request.auth.uid == request.resource.data.id || isUserAdmin();
-
+      
       match /activities/{activityId} {
         allow read: if request.auth.uid != null;
         allow delete: if request.auth.uid == userID || isUserAdmin();
@@ -20,22 +20,22 @@ service cloud.firestore {
         allow create: if request.auth.uid == userID || isUserAdmin();
       }
     }
- 
-    match /MST/prod/hillrepeats/{userID} {
+    
+    match /ATC/prod/hillrepeats/{userID} {
       allow read: if request.auth.uid != null;
     	allow delete: if request.auth.uid == userID || isUserAdmin();
     	allow update: if request.auth.uid == userID || isUserAdmin();
       allow create: if request.auth.uid == request.resource.data.id || isUserAdmin();
     }
-    
-    match /MST/prod/ATCMembers/{email} {
+
+    match /ATC/prod/ATCMembers/{email} {
     	allow read: if true;
     	allow delete: if request.auth.email == email || isUserAdmin();
     	allow update: if request.auth.email == email || isUserAdmin();
       allow create: if request.auth.email != request.resource.data.email || isUserAdmin();
     }
     
-    match /MST/prod/challenges/{challengeDoc} {
+    match /ATC/prod/challenges/{challengeDoc} {
       allow read: if request.auth.uid != null;
     	allow delete: if isUserAdmin();
     	allow update: if isUserAdmin();
@@ -64,24 +64,24 @@ service cloud.firestore {
     }
   
     function isDevUserAdmin() {
-  		return request.auth.uid != null && get(/databases/$(database)/documents/MST/dev/users/$(request.auth.uid)).data.isAdmin
+  		return request.auth.uid != null && get(/databases/$(database)/documents/ATC/dev/users/$(request.auth.uid)).data.isAdmin
   	}
     
-    match /MST/dev/users/{userID} {
+    match /ATC/dev/users/{userID} {
     	allow read: if request.auth.uid == userID || isDevUserAdmin();
     	allow delete: if request.auth.uid == userID || isDevUserAdmin();
     	allow update: if request.auth.uid == userID || isDevUserAdmin();
       allow create: if request.auth.uid == request.resource.data.id || isDevUserAdmin();
     }
     
-    match /MST/dev/ATCMembers/{email} {
+    match /ATC/dev/ATCMembers/{email} {
     	allow read: if request.auth.uid != null;
     	allow delete: if request.auth.email == email || isDevUserAdmin();
     	allow update: if request.auth.email == email || isDevUserAdmin();
       allow create: if request.auth.email != request.resource.data.email || isDevUserAdmin();
     }
     
-    match /MST/dev/challenges/{challengeDoc} {
+    match /ATC/dev/challenges/{challengeDoc} {
       allow read: if request.auth.uid != null;
     	allow delete: if isDevUserAdmin();
     	allow update: if isDevUserAdmin();
