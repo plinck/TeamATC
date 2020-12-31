@@ -205,7 +205,7 @@ class UserDB {
     // Switch the challenge the user is in.
     // For now, delete the assigned team since teams are based on challenge
     static updateChallenge (user, teams, challengeUid) {
-        console.log(`trying to update challenge; ${challengeUid}, for user ${user.uid}`);
+        console.log(`trying to update challenge; ${challengeUid}, for user ${user.id}`);
 
         return new Promise(async (resolve, reject) => {
         
@@ -237,7 +237,7 @@ class UserDB {
     
             // update
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
-            dbUsersRef.doc(user.uid).set({
+            dbUsersRef.doc(user.id).set({
                 challenges: user.challenges,
                 challengeUid: challengeUid ? challengeUid  : "",
                 teamUid: teamUid,
@@ -257,7 +257,7 @@ class UserDB {
     // Switch the challenge the user is in.
     // For now, delete the assigned team since teams are based on challenge
     static updateTeam (user, teamUid, teamName) {
-        console.log(`trying to update team: ${teamUid}, for user ${user.uid}`);
+        console.log(`trying to update team: ${teamUid}, for user ${user.id}`);
 
         return new Promise(async (resolve, reject) => {
             // first get challengese a user is in
@@ -279,7 +279,7 @@ class UserDB {
 
             // update
             const dbUsersRef = Util.getBaseDBRefs().dbUsersRef;
-            dbUsersRef.doc(user.uid).set({
+            dbUsersRef.doc(user.id).set({
                 challenges: user.challenges,
                 teamUid: teamUid,
                 teamName: teamName ? teamName : ""
