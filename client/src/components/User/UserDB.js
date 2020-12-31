@@ -232,6 +232,7 @@ class UserDB {
                 });
             } else {
                 teamUid = "";
+                teamName = "";
                 user.challenges.push({challengeUid: challengeUid, teamUid: teamUid});
             }
     
@@ -240,8 +241,8 @@ class UserDB {
             dbUsersRef.doc(user.id).set({
                 challenges: user.challenges,
                 challengeUid: challengeUid ? challengeUid  : "",
-                teamUid: teamUid,
-                teamName: teamName
+                teamUid: teamUid ? teamUid : "",
+                teamName: teamName ? teamName : ""
             }, {
                 merge: true
             }).then(() => {
