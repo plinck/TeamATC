@@ -96,6 +96,7 @@ const ChallengeForm = (props) => {
         mapCalculation: "all"
     }
     const [challenge, setChallenge] = useState(CHALLENGE_INITIAL_VALUES);
+    const [swimRoute, setSwimRoute] = useState();
     const [message, setMessage] = React.useState("");
     const [working, setWorking] = React.useState(false);
     const [photoFile, setPhotoFile] = React.useState(null);
@@ -149,7 +150,8 @@ const ChallengeForm = (props) => {
             }
             routeWaypoints.push(waypoint)
         })
-        setChallenge({...challenge, swimRoute: routeWaypoints})
+        // setChallenge({...challenge, swimRoute: routeWaypoints})
+        setSwimRoute(routeWaypoints)
     }
 
     const handleDelete = chipToDelete => () => {
@@ -217,6 +219,7 @@ const ChallengeForm = (props) => {
             // NOW chain promises to update or create challenge
             challenge.photoObj = photoObj ? photoObj : null;
             challenge.challengeDistance = challengeDistance;
+            challenge.swimRoute = swimRoute
             if (challenge.id) {
                 ChallengeDB.update(challenge);
             } else {
