@@ -86,6 +86,8 @@ class Activities extends React.Component {
     super(props);
 
     this.state = {
+      allActivities: [],
+      allLoading: false,
       activities: [],
       lastActivityDoc: undefined,
       searchBy: "",
@@ -269,6 +271,16 @@ class Activities extends React.Component {
       });
   };
 
+  // Get all activities to download
+  getAllActivities = async () => {
+    this.setState({ allLoading: true });
+    const res = await ActivityDB.getFiltered(null, 10000);
+    console.log(res);
+    this.setState({ allActivities: res.activities, allLoading: false }, () => {
+      this.downloadLink.link.click();
+    });
+  };
+
   // Delete this activity
   activityDelete = (id) => {
     ActivityDB.delete(id)
@@ -403,6 +415,26 @@ class Activities extends React.Component {
                 Export CSV
               </Button>
             </CSVLink>
+            {this.props.context.isAdmin && (
+              <div style={{ display: "inline-block" }}>
+                <CSVLink
+                  className={classes.csvButton}
+                  data={this.state.allActivities}
+                  filename={"teamatc-Alltransactions.csv"}
+                  ref={(r) => (this.downloadLink = r)}
+                  target="_blank"
+                ></CSVLink>
+                <Button
+                  className={classes.csvButton}
+                  onClick={this.getAllActivities}
+                  color="default"
+                  startIcon={<GetAppIcon />}
+                  disabled={this.state.allLoading}
+                >
+                  Export All to CSV
+                </Button>
+              </div>
+            )}
           </Grid>
         </Grid>
         <Grid

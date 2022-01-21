@@ -156,16 +156,16 @@ const ChallengeForm = (props) => {
     setChallenge({ ...challenge, waypoints: newWaypoints });
   };
 
-//   const handleAddSwimRoute = (markers) => {
-//     let routeWaypoints = [];
-//     markers.forEach((marker) => {
-//       let waypoint = {
-//         geometry: { lat: marker.position.lat(), lng: marker.position.lng() },
-//       };
-//       routeWaypoints.push(waypoint);
-//     });
-//     setChallenge({ ...challenge, swimRoute: routeWaypoints });
-//   };
+  //   const handleAddSwimRoute = (markers) => {
+  //     let routeWaypoints = [];
+  //     markers.forEach((marker) => {
+  //       let waypoint = {
+  //         geometry: { lat: marker.position.lat(), lng: marker.position.lng() },
+  //       };
+  //       routeWaypoints.push(waypoint);
+  //     });
+  //     setChallenge({ ...challenge, swimRoute: routeWaypoints });
+  //   };
 
   const handleDelete = (chipToDelete) => () => {
     console.log(chipToDelete);
@@ -394,7 +394,6 @@ const ChallengeForm = (props) => {
                     name="isSwim"
                     value={challenge.isSwim}
                     onChange={() => onChange("isSwim", !challenge.isSwim)}
-                    disabled
                   />
                 }
                 label="Swim"
