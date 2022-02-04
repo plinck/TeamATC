@@ -87,10 +87,12 @@ class Leaderboard {
 
         // Updated the array of users results - each user has a record
         const newResultsArray = results;
-        if (idx > -1) {       // Found, results for this oone so add to it
-            newResultsArray[idx] = newResult;
-        } else {
-            newResultsArray.push(newResult);
+        if (activity.teamName) {
+            if (idx > -1) {       // Found, results for this oone so add to it
+                newResultsArray[idx] = newResult;
+            } else {
+                newResultsArray.push(newResult);
+            }
         }
 
         return (newResultsArray);
@@ -113,7 +115,7 @@ class Leaderboard {
         newResult.uid = activity.uid;
         newResult.displayName = activity.displayName;
         newResult.teamUid = activity.teamUid;
-        newResult.teamNAme = activity.teamName;
+        newResult.teamName = activity.teamName;
 
         newResult = Leaderboard.computeRecordTotals(newResult, activity, updateType);
 
