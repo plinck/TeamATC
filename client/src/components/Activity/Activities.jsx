@@ -20,6 +20,9 @@ import GetAppIcon from "@material-ui/icons/GetApp";
 import PoolIcon from "@material-ui/icons/Pool";
 import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
 import DirectionsRunIcon from "@material-ui/icons/DirectionsRun";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./Activity.css";
 import BuildIcon from "@material-ui/icons/Build";
 import ActivityUserSearch from "./ActivityUserSearch";
 
@@ -96,6 +99,8 @@ class Activities extends React.Component {
       orderBy: "None",
       isLoading: true,
       typeFilter: "All",
+      dateFilterStart: null,
+      dateFilterEnd: null,
     };
   }
 
@@ -158,6 +163,11 @@ class Activities extends React.Component {
       filterValue: undefined,
     };
 
+    let dateFilterObj = {
+      startDate: undefined,
+      endDate: undefined,
+    };
+
     switch (filterByString) {
       case "All":
         filterObj = undefined;
@@ -175,8 +185,14 @@ class Activities extends React.Component {
         filterObj.filterValue = this.props.context.uid;
     }
 
+    // add the date filter if they exist
+    if (this.state.dateFilterStart || this.state.dateFilterEnd) {
+      dateFilterObj.startDate = this.state.dateFilterStart;
+      dateFilterObj.endDate = this.state.dateFilterEnd;
+    }
+
     this.setState({ isLoading: true });
-    ActivityDB.getFiltered(filterObj, undefined, lastActivityDoc)
+    ActivityDB.getFiltered(filterObj, undefined, lastActivityDoc, dateFilterObj)
       .then((res) => {
         let activities = res.activities;
         this.setState({
@@ -200,6 +216,11 @@ class Activities extends React.Component {
       filterValue: undefined,
     };
 
+    const dateFilterObj = {
+      startDate: this.state.dateFilterStart,
+      endDate: this.state.dateFilterEnd,
+    };
+
     switch (filterBy) {
       case "All":
         filterObj = undefined;
@@ -217,7 +238,7 @@ class Activities extends React.Component {
     }
 
     this.setState({ isLoading: true });
-    ActivityDB.getFiltered(filterObj, undefined, lastActivityDoc)
+    ActivityDB.getFiltered(filterObj, undefined, lastActivityDoc, dateFilterObj)
       .then((res) => {
         let newActivities = res.activities;
         let joined = this.state.activities.concat(newActivities);
@@ -274,7 +295,18 @@ class Activities extends React.Component {
   // Get all activities to download
   getAllActivities = async () => {
     this.setState({ allLoading: true });
-    const res = await ActivityDB.getFiltered(null, 10000);
+
+    const dateFilterObj = {
+      startDate: this.state.dateFilterStart,
+      endDate: this.state.dateFilterEnd,
+    };
+
+    const res = await ActivityDB.getFiltered(
+      undefined,
+      10000,
+      undefined,
+      dateFilterObj
+    );
     console.log(res);
     this.setState({ allActivities: res.activities, allLoading: false }, () => {
       this.downloadLink.link.click();
@@ -318,7 +350,7 @@ class Activities extends React.Component {
   };
 
   // ************************************************************
-  // Form Change Handlers - try to keeo grouped
+  // Form Change Handlers - try to keep grouped
   // ************************************************************
   // general change
   handleChange = (event) => {
@@ -346,6 +378,18 @@ class Activities extends React.Component {
       default:
         break;
     }
+  };
+
+  // Date Change
+  handleDateChange = (date, name) => {
+    this.setState(
+      {
+        [name]: new Date(date),
+      },
+      () => {
+        this.getFilteredActivities();
+      }
+    );
   };
 
   // ************************************************************
@@ -460,6 +504,36 @@ class Activities extends React.Component {
                 <MenuItem value={"Team"}>Team</MenuItem>
                 <MenuItem value={"All"}>All</MenuItem>
               </Select>
+            </FormControl>
+            <FormControl className={classes.formControl}>
+              <DatePicker
+                id="dateFilterStart"
+                name="dateFilterStart"
+                labelId="dateFilterStartId"
+                placeholderText="Start Date"
+                value={this.state.dateFilterStart}
+                selected={this.state.dateFilterStart}
+                onSelect={(date) =>
+                  this.handleDateChange(date, "dateFilterStart")
+                } //when day is clicked
+                onChange={(date) =>
+                  this.handleDateChange(date, "dateFilterStart")
+                } //only when value has changed
+              />
+              <DatePicker
+                id="dateFilterEnd"
+                name="dateFilterEnd"
+                labelId="dateFilterEndId"
+                placeholderText="End Date"
+                value={this.state.dateFilterEnd}
+                selected={this.state.dateFilterEnd}
+                onSelect={(date) =>
+                  this.handleDateChange(date, "dateFilterEnd")
+                } //when day is clicked
+                onChange={(date) =>
+                  this.handleDateChange(date, "dateFilterEnd")
+                } //only when value has changed
+              />
             </FormControl>
           </Grid>
           {this.props.context.isAdmin ? (

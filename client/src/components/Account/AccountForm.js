@@ -142,7 +142,6 @@ class AccountForm extends React.Component {
         const user = this.state.user;
         // set team name from ID
         user.teamName = this.state.teamLookup[this.state.user.teamUid]
-
         this.uploadPhotoToGoogleStorage().then(photoObj => {
             // NOW chain promises to update
             if (photoObj) {
